@@ -1,0 +1,301 @@
+<div class="template-editor-container p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        {{ isEditMode ? 'Edit Template' : 'Create Template' }}
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">
+        {{
+          isEditMode
+            ? 'Update prompt template'
+            : 'Create a new prompt template with variable support'
+        }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="flex justify-center items-center py-12">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <!-- Editor Form -->
+  <div *ngIf="!loading" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Editor (2/3 width) -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Template Configuration Card -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Template Configuration</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="templateForm" class="space-y-4">
+            <!-- Template ID -->
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Template ID</mat-label>
+              <input
+                matInput
+                formControlName="template_id"
+                placeholder="e.g., threat_analysis_v1"
+              />
+              <mat-hint>
+                Unique identifier (lowercase, numbers, underscores, hyphens)
+              </mat-hint>
+              <mat-error
+                *ngIf="templateForm.get('template_id')?.hasError('required')"
+              >
+                Template ID is required
+              </mat-error>
+              <mat-error
+                *ngIf="templateForm.get('template_id')?.hasError('pattern')"
+              >
+                Only lowercase letters, numbers, underscores, and hyphens
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Prompt Type -->
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Prompt Type</mat-label>
+              <mat-select formControlName="prompt_type">
+                <mat-option
+                  *ngFor="let type of promptTypes"
+                  [value]="type.value"
+                >
+                  {{ type.label }}
+                </mat-option>
+              </mat-select>
+              <mat-hint>Type of prompt in the conversation flow</mat-hint>
+            </mat-form-field>
+
+            <!-- Template Content -->
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Template Content</mat-label>
+              <textarea
+                matInput
+                formControlName="template_content"
+                rows="12"
+                placeholder="Enter your template content here. Use {{
+                  '{variable_name}'
+                }} for placeholders."
+              >
+              </textarea>
+              <mat-hint>
+                Use curly braces for variables: {{ '{variable_name}' }}
+              </mat-hint>
+              <mat-error
+                *ngIf="
+                  templateForm.get('template_content')?.hasError('required')
+                "
+              >
+                Template content is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  templateForm.get('template_content')?.hasError('minlength')
+                "
+              >
+                Template must be at least 10 characters
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Deployment Status -->
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Deployment Status</mat-label>
+              <mat-select formControlName="deployment_status">
+                <mat-option
+                  *ngFor="let status of deploymentStatuses"
+                  [value]="status.value"
+                >
+                  {{ status.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Metadata Card -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Metadata (Optional)</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form
+            [formGroup]="metadataForm"
+            class="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Category</mat-label>
+              <input
+                matInput
+                formControlName="category"
+                placeholder="e.g., threat_intelligence"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Author</mat-label>
+              <input
+                matInput
+                formControlName="author"
+                placeholder="Your name"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full md:col-span-2">
+              <mat-label>Description</mat-label>
+              <textarea
+                matInput
+                formControlName="description"
+                rows="2"
+                placeholder="Brief description of this template's purpose"
+              >
+              </textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full md:col-span-2">
+              <mat-label>Tags</mat-label>
+              <input
+                matInput
+                formControlName="tags"
+                placeholder="security, analysis, threat (comma-separated)"
+              />
+            </mat-form-field>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-4 justify-end">
+        <button mat-stroked-button (click)="cancel()" [disabled]="saving">
+          Cancel
+        </button>
+        <button
+          mat-stroked-button
+          (click)="resetForm()"
+          [disabled]="saving || isEditMode"
+        >
+          <mat-icon>refresh</mat-icon>
+          Reset
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="saveTemplate()"
+          [disabled]="templateForm.invalid || saving"
+        >
+          <mat-spinner *ngIf="saving" diameter="20" class="inline-block mr-2">
+          </mat-spinner>
+          <mat-icon *ngIf="!saving">save</mat-icon>
+          {{ isEditMode ? 'Update Template' : 'Create Template' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Sidebar (1/3 width) -->
+    <div class="space-y-6">
+      <!-- Detected Variables Card -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Detected Variables</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div
+            *ngIf="detectedVariables.length === 0"
+            class="text-gray-500 text-sm"
+          >
+            <p>No variables detected</p>
+            <p class="text-xs mt-2">
+              Use {{ '{' }}variable_name{{ '}' }} syntax in your template
+            </p>
+          </div>
+
+          <div *ngIf="detectedVariables.length > 0" class="space-y-2">
+            <mat-chip-set>
+              <mat-chip
+                *ngFor="let variable of detectedVariables"
+                class="font-mono text-sm"
+              >
+                {{ variable }}
+              </mat-chip>
+            </mat-chip-set>
+
+            <div class="text-xs text-gray-600 dark:text-gray-400 mt-3">
+              <strong>{{ detectedVariables.length }}</strong> variable(s)
+              detected
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Preview Card -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Preview</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div
+            class="bg-gray-50 dark:bg-gray-800 p-4 rounded text-sm font-mono whitespace-pre-wrap break-words"
+          >
+            {{ getPreviewContent() }}
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Template Info -->
+      <mat-card *ngIf="isEditMode && currentTemplate">
+        <mat-card-header>
+          <mat-card-title>Template Info</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="space-y-2 text-sm">
+            <div>
+              <strong>Version:</strong> {{ currentTemplate.version_number }}
+            </div>
+            <div>
+              <strong>Created:</strong>
+              {{ formatDate(currentTemplate.created_at) }}
+            </div>
+            <div>
+              <strong>Updated:</strong>
+              {{ formatDate(currentTemplate.updated_at) }}
+            </div>
+            <div *ngIf="currentTemplate.approved_at">
+              <strong>Approved:</strong>
+              {{ formatDate(currentTemplate.approved_at) }}
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Help Card -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Variable Syntax</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="text-sm space-y-2">
+            <p class="font-semibold">How to use variables:</p>
+            <ul
+              class="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400"
+            >
+              <li>
+                Use
+                <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded"
+                  >{{ '{' }}variable_name{{ '}' }}</code
+                >
+              </li>
+              <li>Variables are auto-detected</li>
+              <li>Use descriptive names</li>
+              <li>
+                Examples: {{ '{' }}query{{ '}' }}, {{ '{' }}context{{ '}' }},
+                {{ '{' }}threat_description{{ '}' }}
+              </li>
+            </ul>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,271 @@
+<!-- Model Management Page - ADR-012 Layered Layout -->
+<div class="page-container">
+  <!-- Layer 2: Fixed Header + Controls -->
+  <div class="page-header-section">
+    <div class="page-title">
+      <h1>
+        <mat-icon>psychology</mat-icon>
+        Model Registry Management
+      </h1>
+      <p class="subtitle">
+        Manage LLM and embedding models, sync with inference server
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="syncModels()"
+        [disabled]="syncing"
+      >
+        <mat-icon>sync</mat-icon>
+        <span *ngIf="!syncing">Sync with Inference Server</span>
+        <span *ngIf="syncing">Syncing...</span>
+      </button>
+      <button mat-raised-button (click)="loadModels()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="page-controls">
+      <div class="controls-container">
+        <mat-form-field appearance="outline">
+          <mat-label>Filter by Provider</mat-label>
+          <mat-select
+            [(value)]="filterProvider"
+            (selectionChange)="applyFilters()"
+          >
+            <mat-option [value]="undefined">All Providers</mat-option>
+            <mat-option value="openai">OpenAI</mat-option>
+            <mat-option value="anthropic">Anthropic</mat-option>
+            <mat-option value="local">Local</mat-option>
+            <mat-option value="other">Other</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Filter by Type</mat-label>
+          <mat-select
+            [(value)]="filterModelType"
+            (selectionChange)="applyFilters()"
+          >
+            <mat-option [value]="undefined">All Types</mat-option>
+            <mat-option value="llm">LLM</mat-option>
+            <mat-option value="embedding">Embedding</mat-option>
+            <mat-option value="reasoning">Reasoning</mat-option>
+            <mat-option value="vision">Vision</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-checkbox [(ngModel)]="showHidden" (change)="applyFilters()">
+          Show Hidden Models
+        </mat-checkbox>
+
+        <button mat-button (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Model Statistics -->
+    <div class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <mat-icon>psychology</mat-icon>
+          <div class="stat-content">
+            <span class="stat-label">Total Models</span>
+            <span class="stat-value">{{ totalModels }}</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <mat-icon>check_circle</mat-icon>
+          <div class="stat-content">
+            <span class="stat-label">Available</span>
+            <span class="stat-value">{{ getAvailableCount() }}</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <mat-icon>data_object</mat-icon>
+          <div class="stat-content">
+            <span class="stat-label">LLM Models</span>
+            <span class="stat-value">{{ getLLMCount() }}</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <mat-icon>analytics</mat-icon>
+          <div class="stat-content">
+            <span class="stat-label">Embedding Models</span>
+            <span class="stat-value">{{ getEmbeddingCount() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 3: Scrollable Content -->
+  <div class="content-area">
+    <!-- Loading State -->
+    <div
+      *ngIf="loading"
+      class="loading-container"
+      role="status"
+      aria-live="polite"
+    >
+      <mat-spinner diameter="60"></mat-spinner>
+      <p>Loading models...</p>
+    </div>
+
+    <!-- Models Table -->
+    <div *ngIf="!loading" class="table-container">
+      <table mat-table [dataSource]="models" class="models-table">
+        <!-- Model ID Column -->
+        <ng-container matColumnDef="model_id">
+          <th mat-header-cell *matHeaderCellDef>Model ID</th>
+          <td mat-cell *matCellDef="let model">
+            <div class="model-id-cell">
+              <strong>{{ model.model_id }}</strong>
+              <small *ngIf="model.name !== model.model_id">{{
+                model.name
+              }}</small>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Provider Type Column -->
+        <ng-container matColumnDef="provider_type">
+          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <td mat-cell *matCellDef="let model">
+            <mat-chip>{{ model.provider_type }}</mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Provider Column (Gateway Instance) -->
+        <ng-container matColumnDef="provider">
+          <th mat-header-cell *matHeaderCellDef>Provider</th>
+          <td mat-cell *matCellDef="let model">
+            <mat-chip *ngIf="model.provider" class="gateway-provider-chip">
+              {{ model.provider }}
+            </mat-chip>
+            <mat-chip *ngIf="!model.provider" class="local-model-chip">
+              <mat-icon>computer</mat-icon>
+              Local
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Model Type Column -->
+        <ng-container matColumnDef="model_type">
+          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <td mat-cell *matCellDef="let model">
+            <mat-chip [class]="'type-' + model.model_type">
+              {{ model.model_type }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Context Window Column -->
+        <ng-container matColumnDef="context_window">
+          <th mat-header-cell *matHeaderCellDef>Context Window</th>
+          <td mat-cell *matCellDef="let model">
+            {{ formatNumber(model.context_window) }} tokens
+          </td>
+        </ng-container>
+
+        <!-- Embedding Dimensions Column -->
+        <ng-container matColumnDef="embedding_dimensions">
+          <th mat-header-cell *matHeaderCellDef>Embed Dims</th>
+          <td mat-cell *matCellDef="let model">
+            <span *ngIf="model.model_type === 'embedding'">
+              {{ formatNumber(model.embedding_dimensions) }}
+            </span>
+            <span *ngIf="model.model_type !== 'embedding'">-</span>
+          </td>
+        </ng-container>
+
+        <!-- Availability Column -->
+        <ng-container matColumnDef="is_available">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let model">
+            <mat-chip [class]="getAvailabilityClass(model.is_available)">
+              <mat-icon>{{ getAvailabilityIcon(model.is_available) }}</mat-icon>
+              {{ model.is_available ? 'Available' : 'Unavailable' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let model">
+            <button
+              mat-icon-button
+              (click)="viewModelDetails(model.id)"
+              matTooltip="View Details"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="editModel(model.id)"
+              matTooltip="Edit Metadata"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="onOpenPricing($event, model)"
+              matTooltip="Manage Pricing"
+              matTooltipHideDelay="0"
+            >
+              <mat-icon>euro</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="toggleHidden(model)"
+              [matTooltip]="model.is_hidden ? 'Unhide Model' : 'Hide Model'"
+            >
+              <mat-icon>{{
+                model.is_hidden ? 'visibility' : 'visibility_off'
+              }}</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="deleteModel(model)"
+              matTooltip="Delete Model"
+              color="warn"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && models.length === 0" class="empty-state">
+      <mat-icon>psychology</mat-icon>
+      <h2>No models found</h2>
+      <p>Try adjusting your filters or sync with the inference server.</p>
+    </div>
+  </div>
+
+  <!-- Layer 4: Fixed Footer with Pagination -->
+  <div class="page-footer" *ngIf="!loading && models.length > 0">
+    <mat-paginator
+      [length]="totalModels"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[10, 20, 50, 100]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+      aria-label="Select page of models"
+    >
+    </mat-paginator>
+  </div>
+</div>

@@ -1,0 +1,101 @@
+# Multi-stage Docker build for Angular application
+# Build stage
+FROM node:24-alpine AS build
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY frontend-angular/package*.json ./
+
+# Copy npm cache for offline installation (speeds up builds dramatically)
+# If cache doesn't exist, build will fail - run: bash scripts/bootstrap/build_npm_cache.sh
+# To build without cache, comment out the next 2 lines
+COPY npm_cache /app/npm_cache
+
+# Install dependencies from cache (fast ~1-2min) or skip cache if empty
+# Note: Using --ignore-scripts to skip Cypress download (not needed for production build)
+#       When cache includes Cypress (built with INCLUDE_CYPRESS=1), remove --ignore-scripts
+RUN if [ -d "/app/npm_cache/_cacache" ] && [ -n "$(ls -A /app/npm_cache/_cacache 2>/dev/null)" ]; then \
+    echo "✓ Using npm cache (fast build)..." && \
+    npm ci --include=dev --legacy-peer-deps --prefer-offline --ignore-scripts --cache /app/npm_cache && \
+    rm -rf /app/npm_cache; \
+    else \
+    echo "⚠ npm cache not found, installing from npm registry..." && \
+    rm -rf /app/npm_cache && \
+    npm ci --include=dev --legacy-peer-deps --ignore-scripts; \
+    fi
+
+# Copy source code
+COPY frontend-angular/ .
+
+# Verify ng is installed
+RUN ls -la node_modules/.bin/ng || echo "ng not found"
+
+# Build the application for production
+RUN npm run build -- --configuration=production
+
+# Production stage
+FROM nginx:alpine AS production
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Copy built application from build stage
+COPY --from=build /app/dist/aio-ui/browser /usr/share/nginx/html
+# Ensure runtime env template is available for envsubst step
+COPY --from=build /app/src/assets/env.js.template /usr/share/nginx/html/assets/env.js.template
+
+# Copy nginx configuration as main config (not as template)
+# This allows us to use envsubst manually with proper permissions
+COPY --from=build /app/nginx.conf.template /etc/nginx/nginx.conf.template
+
+# Copy PWA service worker configuration from build stage
+COPY --from=build /app/ngsw-config.json /usr/share/nginx/html/ngsw-config.json
+COPY --from=build /app/dist/aio-ui/browser/ngsw-worker.js /usr/share/nginx/html/ngsw-worker.js
+
+# Create entrypoint script that runs as root before nginx starts
+RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
+    echo 'set -e' >> /docker-entrypoint.sh && \
+    echo '' >> /docker-entrypoint.sh && \
+    echo '# Set default values for environment variables' >> /docker-entrypoint.sh && \
+    echo 'export BACKEND_HOST=${BACKEND_HOST:-orchestrator-api-test}' >> /docker-entrypoint.sh && \
+    echo 'export BACKEND_PORT=${BACKEND_PORT:-8000}' >> /docker-entrypoint.sh && \
+    echo 'export FRONTEND_VERBOSE_LOGGING=${FRONTEND_VERBOSE_LOGGING:-false}' >> /docker-entrypoint.sh && \
+    echo '' >> /docker-entrypoint.sh && \
+    echo '# Substitute environment variables in nginx config' >> /docker-entrypoint.sh && \
+    echo 'envsubst '"'"'$BACKEND_HOST $BACKEND_PORT'"'"' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf' >> /docker-entrypoint.sh && \
+    echo '' >> /docker-entrypoint.sh && \
+    echo '# Substitute runtime frontend config' >> /docker-entrypoint.sh && \
+    echo 'envsubst '"'"'$FRONTEND_VERBOSE_LOGGING'"'"' < /usr/share/nginx/html/assets/env.js.template > /usr/share/nginx/html/assets/env.js' >> /docker-entrypoint.sh && \
+    echo '' >> /docker-entrypoint.sh && \
+    echo '# Set proper permissions for nginx user' >> /docker-entrypoint.sh && \
+    echo 'chown nginx:nginx /etc/nginx/nginx.conf' >> /docker-entrypoint.sh && \
+    echo 'chmod 644 /etc/nginx/nginx.conf' >> /docker-entrypoint.sh && \
+    echo '' >> /docker-entrypoint.sh && \
+    echo '# Start nginx as nginx user' >> /docker-entrypoint.sh && \
+    echo 'exec nginx -g "daemon off;"' >> /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
+
+# Set proper permissions for directories that nginx needs to write to
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/log/nginx && \
+    chmod -R 755 /var/cache/nginx && \
+    chmod -R 755 /var/log/nginx && \
+    mkdir -p /var/run/nginx && \
+    chown -R nginx:nginx /var/run/nginx && \
+    chmod -R 755 /var/run/nginx
+
+# Note: We don't switch to USER nginx here because the entrypoint needs root
+# to write the config file, but nginx itself will run as the nginx user
+
+# Expose port 80
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:80/health || exit 1
+
+# Use custom entrypoint
+ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -1,0 +1,194 @@
+<!-- Table Visualizer Template -->
+<div class="table-visualizer-container">
+  <!-- Title -->
+  <h3 *ngIf="title" class="visualizer-title">{{ title }}</h3>
+
+  <!-- Tabbed multi-table -->
+  <mat-tab-group
+    *ngIf="isTabbed && tabs.length > 0"
+    class="tabbed-tables"
+    animationDuration="0ms"
+  >
+    <mat-tab *ngFor="let tab of tabs" [label]="tab.label">
+      <div class="tab-content">
+        <mat-form-field
+          *ngIf="config.filterable !== false"
+          class="filter-field"
+        >
+          <mat-label>Filter</mat-label>
+          <input
+            matInput
+            (keyup)="applyFilterTab($event, tab)"
+            placeholder="Type to filter results..."
+          />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+        <div class="table-container">
+          <table
+            mat-table
+            [dataSource]="tab.dataSource"
+            matSort
+            class="data-table"
+          >
+            <ng-container
+              *ngFor="let col of tab.columns"
+              [matColumnDef]="col.field"
+            >
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                [mat-sort-header]="col.sortable !== false ? col.field : ''"
+                [style.width]="col.width"
+              >
+                {{ col.header }}
+              </th>
+              <td mat-cell *matCellDef="let row" [style.width]="col.width">
+                <span>
+                  {{ formatCellDisplay(getCellValue(row, col.field)) }}
+                </span>
+              </td>
+            </ng-container>
+            <tr
+              mat-header-row
+              *matHeaderRowDef="tab.displayedColumns"
+            ></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: tab.displayedColumns"
+            ></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td
+                class="mat-cell"
+                [attr.colspan]="tab.displayedColumns.length"
+              >
+                <div class="no-data-message">
+                  <mat-icon>info</mat-icon>
+                  <span>No data available</span>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <mat-paginator
+          *ngIf="config.paginated !== false"
+          [pageSizeOptions]="[10, 25, 50, 100]"
+          [pageSize]="25"
+          showFirstLastButtons
+          aria-label="Select page"
+        >
+        </mat-paginator>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+  <!-- Single table (non-tabbed) -->
+  <ng-container *ngIf="!isTabbed">
+    <!-- Filter input -->
+    <mat-form-field *ngIf="config.filterable !== false" class="filter-field">
+      <mat-label>Filter</mat-label>
+      <input
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Type to filter results..."
+        #filter
+      />
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+
+    <!-- Table -->
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource" matSort class="data-table">
+        <!-- Dynamic columns -->
+        <ng-container
+          *ngFor="let col of config.columns"
+          [matColumnDef]="col.field"
+        >
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [mat-sort-header]="col.sortable !== false ? col.field : ''"
+            [style.width]="col.width"
+          >
+            {{ col.header }}
+          </th>
+          <td mat-cell *matCellDef="let row" [style.width]="col.width">
+            <span
+              [class.copyable]="col.copyable"
+              [matTooltip]="col.copyable ? 'Click to copy' : ''"
+              [tabindex]="col.copyable ? 0 : -1"
+              [attr.role]="col.copyable ? 'button' : null"
+              (click)="
+                col.copyable &&
+                  copyToClipboard(getCellValue(row, col.field))
+              "
+              (keydown.enter)="
+                col.copyable &&
+                  copyToClipboard(getCellValue(row, col.field))
+              "
+              (keydown.space)="
+                col.copyable &&
+                  copyToClipboard(getCellValue(row, col.field))
+              "
+            >
+              {{ formatCellDisplay(getCellValue(row, col.field)) }}
+              <mat-icon *ngIf="col.copyable" class="copy-icon" inline
+                >content_copy</mat-icon
+              >
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Actions column -->
+        <ng-container matColumnDef="actions" *ngIf="config.actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let row">
+            <button
+              *ngFor="let action of config.actions"
+              mat-icon-button
+              [matTooltip]="action.label"
+              (click)="handleAction(action.handler, row)"
+            >
+              <mat-icon>{{ action.icon }}</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Header and row declarations -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <!-- No data row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+            <div class="no-data-message">
+              <mat-icon>info</mat-icon>
+              <span>No data available</span>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Paginator -->
+    <mat-paginator
+      *ngIf="config.paginated !== false"
+      [pageSizeOptions]="[10, 25, 50, 100]"
+      [pageSize]="25"
+      showFirstLastButtons
+      aria-label="Select page"
+    >
+    </mat-paginator>
+  </ng-container>
+
+  <!-- Export buttons (single table or first tab's data when tabbed) -->
+  <div class="export-actions" *ngIf="config.export && config.export.length > 0">
+    <button
+      *ngFor="let format of config.export"
+      mat-stroked-button
+      (click)="exportData(format)"
+    >
+      <mat-icon>download</mat-icon>
+      Export {{ format.toUpperCase() }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-11-06T22:18:23.907726",
+  "config": {
+    "gateway_url": "http://localhost:8007",
+    "rps": 2.0,
+    "duration": 15,
+    "model": "llama-3.2-3b-instruct",
+    "max_concurrent": 20,
+    "timeout": 30
+  },
+  "results": {
+    "total_requests": 30,
+    "successful_requests": 30,
+    "failed_requests": 0,
+    "rate_limited_requests": 0,
+    "success_rate": 100.0,
+    "actual_rps": 0.5018894897347644,
+    "duration_seconds": 59.77411484718323
+  },
+  "latency_ms": {
+    "min": 1096,
+    "max": 4691,
+    "mean": 2969.3,
+    "median": 2641,
+    "p50": 2908,
+    "p95": 4652,
+    "p99": 4691,
+    "stdev": 1125.68428690868
+  },
+  "errors": {}
+}

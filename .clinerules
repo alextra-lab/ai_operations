@@ -1,0 +1,150 @@
+# IDE / Assistant rules for AI Operations Platform
+
+## General Behavior & Interaction
+
+- **Primary Goal:** Assist in developing and maintaining the AI Operations Platform (SOC AI Assistant), focusing on backend orchestration, frontend interactions, data handling, and security.
+- **Communication:** Use clear, concise English for all explanations and suggestions.
+- **Review Frequency:** Ask for review before committing changes or after implementing significant features or refactoring core logic (e.g., orchestration, auth, or retrieval).
+- **Action Preference:** When suggesting changes involving multiple files or complex logic, summarize the plan first. Suggest code changes rather than applying them directly unless explicitly asked.
+- **Clarity:** If instructions are ambiguous or potentially conflicting, please ask for clarification.
+
+## Coding Standards & Conventions
+
+### Python (Backend, Ingestion)
+
+- **Version:** Adhere strictly to Python 3.12 syntax and features.
+- **Style:** Follow PEP 8 guidelines for code style and formatting. Use tools like Black or Ruff for consistency if available.
+- **Type Hinting:** Mandatory. Use Python's type hinting for all function signatures, variables, and class attributes, especially where `pydantic` models are involved.
+- **Logging:** All log messages MUST be structured JSON. Ensure logs capture relevant context (e.g., request IDs, user info where appropriate, module/function name). Integrate with OpenTelemetry standards where applicable.
+- **Error Handling:** Implement robust error handling. Use specific exception types. Ensure sensitive information is not leaked in error messages or logs.
+- **Modularity:** Keep components modular, particularly within LangChain/LangGraph flows. Favor smaller, reusable functions/chains.
+
+### Angular (Frontend)
+
+- **Structure:** Follow the structure in `src/frontend-angular/`. Place pages in `/pages`, components in `/components`, handlers in `/handlers`. See `.cursorrules` and `.cursor/rules/` for Angular/TS rules.
+- **Clarity:** Ensure UI elements are clearly labelled and analyst workflows are intuitive.
+
+### General
+
+- **Comments:** Write comments to explain *why* something is done, not *what* the code does (the code should explain the 'what'). Keep comments in English.
+- **Dependencies:** Add new dependencies to the appropriate `requirements.txt` file and note the reason. Follow the dependency management guidelines documented in `docs/dependency_management.md`.
+
+## File and Directory Specific Rules
+
+- **Security Critical:**
+    - **DO NOT read or modify:**
+        - `.env` files anywhere in the project.
+        - Files matching `**/config/secrets.*`
+        - Any file explicitly containing API keys, passwords, or sensitive credentials.
+        - The `/data` directory or its contents (PostgreSQL, Qdrant volumes). These are runtime data stores.
+- **Configuration (`/config`):**
+    - Treat configuration files (e.g., prompt templates, environment settings) carefully. Ask before making significant changes.
+    - Ensure prompt templates (`/config/templates`) are parameterized and free of sensitive examples.
+- **Deployment (`/deploy`):**
+    - Exercise caution when editing `docker-compose.yml` or Kubernetes manifests (`/deploy/k8s`). These define infrastructure. Suggest changes for review.
+- **Testing (`src/{service-name}/tests`):**
+    - Each service contains its own `tests` directory with `unit` and `integration` subdirectories.
+    - New features or bug fixes should include corresponding unit or integration tests using `pytest`.
+    - Ensure tests cover `pydantic` schema validation and edge cases.
+    - Use absolute imports in test files: `from src.{service-name}.app.X import Y`.
+    - Create mock objects/fixtures for external dependencies to avoid test flakiness.
+    - Target 80%+ coverage for critical components.
+- **Schemas:** Each service has its own schemas under `src/{service}/app/`. Changes to Pydantic schemas must be backward compatible or versioned; they affect API contracts.
+- **Authentication:** Shared auth lives in `src/shared/auth/`. Modifications to JWT, mTLS, or OIDC require careful review.
+- **LLM and retrieval:** Orchestrator and inference-gateway handle LLM calls; corpus_svc handles retrieval. Use configured clients and adhere to LLM-Guard requirements for prompt validation.
+- **Documentation (`/docs`):**
+    - Suggest updates to architecture diagrams (`/docs/architecture`) or API documentation (`/docs/api`) when relevant code changes are made. Avoid direct edits unless asked.
+- **Temporary Scripts (`/temp_scripts/`):**
+    - All one-time or temporary scripts MUST be placed in the `/temp_scripts/` directory, never in the project root.
+    - Prefix script names with the task they support: `taskname_purpose.py`.
+    - Include comprehensive docstrings explaining the script's purpose, dependencies, and potential side effects.
+    - Document clearly if a script modifies source files with a WARNING comment at the top.
+    - Remove temporary scripts after their purpose has been served or archive them appropriately.
+
+## Context & Project Specifics
+
+- **Core Technologies:** Remember the primary stack: FastAPI (backend), Streamlit (frontend), LangChain/LangGraph (orchestration), Qdrant (vector search/RAG), PostgreSQL (structured data).
+- **Observability:** Align changes with existing OpenTelemetry tracing and structured logging practices.
+- **Security Focus:** This system handles potentially sensitive cyber defense data. Prioritize security, data privacy, and robust input validation (LLM-Guard) in all suggestions.
+- **Vector Embeddings:** The `all-minilm-l6-v2` model is used for embeddings stored in Qdrant. Changes affecting data ingestion or retrieval should account for this.
+
+## Database Migrations
+Migrations live under `ops/database/` (init, migrations, seed). Use sequential numbering (001, 002, …), descriptive names, and review before execution.
+
+## Script Management
+
+### Temporary Script Requirements
+
+When creating temporary scripts for one-time tasks:
+
+1. **Location:**
+   - Always place scripts in the `/temp_scripts/` directory
+   - NEVER create temporary scripts in the project root
+
+2. **Naming:**
+   - Use descriptive, task-focused names: `coverage_fix_imports.py`
+   - Include clear prefixes indicating purpose: `setup_`, `fix_`, `analyze_`
+
+3. **Documentation:**
+   - Each script must include a detailed docstring with:
+     ```python
+     """
+     Purpose: Fix import paths in test files
+
+     This script:
+     1. Modifies import paths in test files from 'app.X' to 'src.backend.app.X'
+     2. Only targets files with 'test_' in their name
+     3. Should be run ONCE - not meant for repeated execution
+
+     WARNING: Modifies source files!
+
+     Dependencies:
+     - None (standard library only)
+
+     Usage:
+     python temp_scripts/fix_test_imports.py
+     """
+     ```
+
+4. **Safety:**
+   - Scripts that modify source files must include clear warnings
+   - Add safeguards to prevent accidental rerunning if destructive
+   - Use command-line flags for any dangerous operations (`--force`, `--dry-run`)
+
+5. **Cleanup:**
+   - Remove or archive scripts after their purpose is served
+   - Document permanent changes made by temporary scripts in relevant documentation
+
+## Debugging Patterns & Technical Insights
+
+### API Field Verification
+- **Always verify actual API response structure** before making assumptions about field names
+- **Demo script failures**: Check if polling logic matches actual API response fields
+- **Pattern**: Use `curl` or direct API calls to verify field names (`"status"` vs `"state"`)
+
+### Container State Management
+- **Rebuild containers after code changes** to ensure clean state
+- **Command**: `docker compose down && docker compose up -d --build`
+- **Critical**: Changes to application code require container rebuilds to take effect
+
+### End-to-End Testing Approach
+- **Run complete pipelines** rather than isolated component testing for integration issues
+- **Full workflow validation**: Ingestion → Search → RAG → Analytics → Cleanup
+- **Pattern**: Let long-running processes complete to identify real vs apparent fixes
+
+### RAG Pipeline Debugging
+- **Zero sources pattern**: Check vector database collection initialization timing
+- **Static confidence scores**: Investigate confidence calculation logic in RAG pipeline
+- **Source retrieval failure**: Vector database may need collection created before embedding insertion
+
+### Database Schema Reconciliation
+- **Schema vs Model Alignment**: Always verify database table fields match Pydantic model definitions
+- **Migration Requirements**: Applied migrations 010-012 to align chunks table with code expectations
+- **Critical Fields**: Added missing `qdrant_point_id`, `token_count`, `updated_at` columns
+- **Validation Integration**: Use JSON validators in Pydantic models for automatic JSONB parsing
+- **Architecture Migration**: Successfully migrated from DocumentStorage to PostgreSQL + Qdrant distributed storage
+
+### Polling Function Best Practices
+- **Match API field names exactly**: Check `doc.get("status")` vs `doc.get("state")`
+- **Async vs sync processing**: Use `process_async: true` for large documents to avoid timeouts
+- **Error interpretation**: 500 errors may indicate field mismatches, not actual server failures

@@ -1,0 +1,39 @@
+# Default configuration for embedding service
+
+default_provider: local
+
+providers:
+  # OpenAI-compatible provider configuration (example: local inference server)
+  - name: openai
+    type: OPENAI_COMPATIBLE
+    enabled: true
+    priority: 10
+    connection:
+      url: http://host.docker.internal:1234/v1
+      auth_type: API_KEY
+      api_key_env: OPENAI_API_KEY
+      timeout_seconds: 60
+      max_retries: 3
+    models:
+      - name: text-embedding-nomic-embed-text-v1.5
+        dimensions: 768
+        server_model_name: text-embedding-nomic-embed-text-v1.5@q4_k_m
+        default: true
+        batch_size: 16
+      - name: text-embedding-bge-m3
+        dimensions: 1024
+        server_model_name: text-embedding-bge-m3
+        default: false
+        batch_size: 8
+
+  # Local model provider configuration (for fallback)
+  - name: local
+    type: LOCAL_MODEL
+    enabled: true
+    priority: 20
+    models:
+      - name: all-minilm-l6-v2
+        dimensions: 384
+        path: /opt/models/all-minilm-l6-v2
+        default: true
+        batch_size: 16

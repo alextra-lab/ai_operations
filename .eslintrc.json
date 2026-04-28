@@ -1,0 +1,80 @@
+{
+    "root": true,
+    "ignorePatterns": [
+        "projects/**/*",
+        "docs/archive/**/*"
+    ],
+    "overrides": [
+        {
+            "files": [
+                "*.ts"
+            ],
+            "extends": [
+                "eslint:recommended",
+                "@angular-eslint/recommended",
+                "@angular-eslint/template/process-inline-templates"
+            ],
+            "rules": {
+                "@angular-eslint/directive-selector": [
+                    "error",
+                    {
+                        "type": "attribute",
+                        "prefix": "app",
+                        "style": "camelCase"
+                    }
+                ],
+                "@angular-eslint/component-selector": [
+                    "error",
+                    {
+                        "type": "element",
+                        "prefix": "app",
+                        "style": "kebab-case"
+                    }
+                ],
+                "max-len": [
+                    "error",
+                    {
+                        "code": 80,
+                        "ignoreUrls": true,
+                        "ignoreStrings": true,
+                        "ignoreTemplateLiterals": true
+                    }
+                ],
+                "max-lines-per-function": [
+                    "error",
+                    {
+                        "max": 50,
+                        "skipBlankLines": true,
+                        "skipComments": true
+                    }
+                ],
+                "max-params": [
+                    "error",
+                    4
+                ],
+                "max-depth": [
+                    "error",
+                    2
+                ],
+                "prefer-const": "error",
+                "no-var": "error",
+                "no-console": "warn",
+                "no-debugger": "error",
+                "no-unused-vars": "error",
+                "no-duplicate-imports": "error",
+                "prefer-template": "error",
+                "object-shorthand": "error",
+                "prefer-arrow-callback": "error"
+            }
+        },
+        {
+            "files": [
+                "*.html"
+            ],
+            "extends": [
+                "@angular-eslint/template/recommended"
+            ],
+            "rules": {}
+        }
+    ]
+}

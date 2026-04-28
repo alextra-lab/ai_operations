@@ -1,0 +1,63 @@
+<!-- Tool Delete Dialog -->
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon class="warning-icon">warning</mat-icon>
+      Delete Tool?
+    </h2>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="warning-message">
+      <p>This will permanently delete the tool:</p>
+      <div class="tool-info">
+        <div class="info-row">
+          <span class="label">Name:</span>
+          <strong>{{ data.tool.name }}</strong>
+        </div>
+        <div class="info-row">
+          <span class="label">Tool ID:</span>
+          <code>{{ data.tool.tool_id }}</code>
+        </div>
+      </div>
+      <p class="warning-text">
+        This action cannot be undone. Ensure no active use cases depend on this
+        tool.
+      </p>
+    </div>
+
+    <div class="confirmation-section">
+      <mat-checkbox [(ngModel)]="confirmCheckbox">
+        I understand the impact
+      </mat-checkbox>
+
+      <mat-form-field appearance="outline" class="confirm-input">
+        <mat-label>Type tool ID to confirm</mat-label>
+        <input
+          matInput
+          [(ngModel)]="confirmInput"
+          placeholder="{{ data.tool.tool_id }}"
+        />
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <mat-icon>error</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()" [disabled]="isDeleting">
+      Cancel
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      (click)="onDelete()"
+      [disabled]="!canDelete"
+    >
+      Delete
+    </button>
+  </mat-dialog-actions>
+</div>

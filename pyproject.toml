@@ -1,0 +1,184 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai_operations_platform"
+version = "0.1.0"
+description = "AI Operations Platform - SOC AI Assistant"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "AI Operations Platform contributors" }]
+keywords = ["soc", "ai", "rag", "fastapi", "angular", "qdrant", "llm"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+
+[project.urls]
+Homepage = "https://github.com/alextra-lab/ai_operations"
+Repository = "https://github.com/alextra-lab/ai_operations"
+Issues = "https://github.com/alextra-lab/ai_operations/issues"
+Changelog = "https://github.com/alextra-lab/ai_operations/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=4.0.0",
+    "black>=25.0.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+extend-exclude = "docs/archive"
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "wheelhouse",
+    "*.egg-info",
+    "docs/archive/*"
+]
+
+# Same as Black.
+line-length = 100
+
+# Assume Python 3.12
+target-version = "py312"
+
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+select = [
+    "E4",   # pycodestyle errors
+    "E7",   # pycodestyle errors
+    "E9",   # pycodestyle errors
+    "W",    # pyflakes warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "UP",   # pyupgrade
+    "ARG",  # flake8-unused-arguments
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "TID",  # flake8-tidy-imports
+    "Q",    # flake8-quotes
+    "N",    # pep8-naming
+    "RET",  # flake8-return
+    "PIE",  # flake8-pie
+    "PT",   # flake8-pytest-style
+    "RUF",  # Ruff-specific rules
+]
+
+# Ignore specific rules that are too strict for this project
+ignore = [
+    "E501",  # Line too long (handled by formatter)
+    "E402",  # Module level import not at top (needed for test configs)
+    "B008",  # Do not perform function calls in argument defaults
+    "B904",  # Allow `raise` without `from e` in except blocks
+    "C901",  # Too complex (let developers decide)
+    "PLR0913", # Too many arguments (let developers decide)
+    "PLR0912", # Too many branches (let developers decide)
+    "PLR0915", # Too many statements (let developers decide)
+    "TCH003", # Move standard library import into TYPE_CHECKING block
+    "TID252", # Prefer relative imports for containerized applications
+    "Q000",  # Single quotes found but double quotes preferred
+    "Q001",  # Single quote multiline found but double quotes preferred
+    "Q002",  # Single quote docstring found but double quotes preferred
+    "Q003",  # Change outer quotes to avoid escaping inner quotes
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.per-file-ignores]
+# Tests: magic values, assertions, pytest-style, exception naming (N818)
+"tests/**/*.py" = [
+    "S101", "PLR2004", "TID252", "ARG001", "ARG002", "S106",
+    "PT011", "PT017", "PT018", "PT012", "B017", "N818", "B023", "ARG005",
+]
+# Service-level tests (same rules as top-level tests)
+"src/**/tests/**/*.py" = [
+    "S101", "PLR2004", "TID252", "ARG001", "ARG002", "S106",
+    "PT011", "PT017", "PT018", "PT012", "B017", "N818", "RUF012", "ARG005",
+]
+
+# FastAPI routes: current_user for auth; test endpoints may have default params
+"src/**/routers/*.py" = [
+    "ARG001",    # Unused function argument (current_user needed for auth)
+]
+
+# Pydantic schemas use cls for validators (not self)
+"src/**/schemas/*.py" = [
+    "N805",      # First argument of a method should be named self (validators use cls)
+]
+
+# Allow non-abstract empty methods in abstract base classes
+"**/base.py" = ["B027"]
+
+# Ops/testing scripts: optional params, unused args, assert-in-except (script-style)
+"ops/testing/**/*.py" = ["ARG001", "ARG002", "PT017"]
+
+[tool.ruff.isort]
+known-first-party = ["src"]
+
+[tool.ruff.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "double"
+multiline-quotes = "double"
+
+[tool.ruff.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
+
+# Formatting is handled by Black
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.ruff.pylint]
+max-args = 8
+max-branches = 15
+max-returns = 8
+max-statements = 60
+
+[tool.pytest.ini_options]
+# Used by both CLI (`pytest`, `run_all_tests.py`) and IDE Test Explorer
+testpaths = ["tests", "src", "ops/testing"]
+pythonpath = ["."]
+addopts = "-v --tb=short"

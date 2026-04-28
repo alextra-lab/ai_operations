@@ -1,0 +1,175 @@
+/**
+ * Usage Summary Cards Styles
+ * ADR-012 compliant - Uses Tailwind utilities where possible
+ */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  gap: 16px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.metric-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    color: white;
+  }
+
+  &.blue {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+  }
+
+  &.green,
+  &.success-high {
+    background: linear-gradient(135deg, #4caf50, #388e3c);
+  }
+
+  &.success-medium {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+  }
+
+  &.success-low {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+  }
+
+  &.purple {
+    background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+  }
+
+  &.teal {
+    background: linear-gradient(135deg, #009688, #00796b);
+  }
+
+  &.orange {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+  }
+}
+
+.metric-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.metric-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.2;
+
+  &.tool-name {
+    font-size: 1.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &.success-high {
+    color: #4caf50;
+  }
+
+  &.success-medium {
+    color: #ff9800;
+  }
+
+  &.success-low {
+    color: #f44336;
+  }
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.metric-subtext {
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 2px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: #999;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .metric-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .metric-icon-wrapper {
+    width: 48px;
+    height: 48px;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+
+    &.tool-name {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}

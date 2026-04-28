@@ -1,0 +1,408 @@
+/**
+ * Tool Health Dashboard Styles
+ * T6-F2: Follows ADR-012 Hybrid CSS Strategy (Layered Page Layout)
+ */
+
+// Page container with flex layout
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  overflow: hidden;
+}
+
+// Layer 2: Fixed page header
+.page-header-section {
+  flex: 0 0 auto;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .page-title {
+    padding: 16px 24px 12px 24px;
+
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+      height: 36px;
+      color: #212121;
+
+      mat-icon {
+        color: #1976d2;
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .subtitle {
+      margin: 4px 0 0 38px;
+      color: #757575;
+      font-size: 13px;
+    }
+  }
+
+  .page-controls {
+    padding: 0 24px 12px 24px;
+
+    .controls-container {
+      background: #f5f5f5;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      padding: 8px 16px 4px 16px;
+
+      h3 {
+        margin: 0 !important;
+        font-size: 20px !important;
+        font-weight: 500;
+      }
+
+      // Hide Material form field subscript for tighter spacing
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+
+    .controls-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+  }
+}
+
+// Summary section
+.summary-section {
+  flex: 0 0 auto;
+  padding: 16px 24px;
+  background: #fafafa;
+}
+
+// Layer 3: Content area (split view)
+.content-area {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 0 24px 24px 24px;
+  overflow: hidden;
+  background: #fafafa;
+  min-height: 0;
+}
+
+// Left panel: Table
+.table-panel {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  mat-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  mat-card-content {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+}
+
+// Health table
+.health-table {
+  width: 100%;
+
+  .tool-name-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .tool-name {
+      font-weight: 500;
+      color: #212121;
+    }
+
+    .tool-id {
+      font-size: 12px;
+      color: #9e9e9e;
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    &.online {
+      background: rgba(76, 175, 80, 0.12);
+      color: #2e7d32;
+    }
+
+    &.offline {
+      background: rgba(244, 67, 54, 0.12);
+      color: #c62828;
+    }
+
+    &.disabled {
+      background: rgba(158, 158, 158, 0.12);
+      color: #616161;
+    }
+
+    &.unknown {
+      background: rgba(255, 152, 0, 0.12);
+      color: #ef6c00;
+    }
+  }
+
+  .no-data {
+    color: #9e9e9e;
+  }
+
+  .clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    &.selected {
+      background-color: #e3f2fd;
+    }
+  }
+}
+
+// Right panel: History
+.history-panel {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  mat-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  mat-card-content {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+}
+
+.history-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.time-range-selector {
+  mat-select {
+    width: 150px;
+  }
+}
+
+.latest-check {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 16px;
+
+  h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #424242;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .detail-label {
+      font-size: 12px;
+      color: #757575;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: #212121;
+
+      &.online {
+        color: #2e7d32;
+      }
+
+      &.offline {
+        color: #c62828;
+      }
+    }
+
+    &.error {
+      grid-column: span 2;
+
+      .detail-value {
+        color: #c62828;
+        font-weight: 400;
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+.history-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+
+  button,
+  a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+// Common states
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: #757575;
+
+  &.small {
+    padding: 24px;
+  }
+
+  p {
+    margin-top: 16px;
+    font-size: 14px;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+
+  .empty-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #bdbdbd;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #424242;
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    color: #757575;
+    font-size: 14px;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1024px) {
+  .content-area {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+
+  .table-panel,
+  .history-panel {
+    overflow: visible;
+    min-height: auto;
+
+    mat-card {
+      height: auto;
+      max-height: 400px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header-section {
+    .page-title {
+      padding: 16px;
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .subtitle {
+        margin-left: 0;
+      }
+    }
+
+    .page-controls {
+      padding: 0 16px 16px 16px;
+
+      .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  }
+
+  .summary-section {
+    padding: 12px 16px;
+  }
+
+  .content-area {
+    padding: 0 16px 16px 16px;
+    gap: 16px;
+  }
+
+  .latest-check .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .history-actions {
+    flex-direction: column;
+  }
+}

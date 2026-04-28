@@ -1,0 +1,96 @@
+// ============================================================================
+// ADR-012: Hybrid CSS Strategy (Material + Tailwind + Component SCSS)
+// Layer Order: Material Theme → Tailwind → App Overrides
+// ============================================================================
+
+// ============================================================================
+// LAYER 1: Angular Material Theme & System Variables
+// ============================================================================
+@use '@angular/material' as mat;
+
+// Include the common styles for Angular Material
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define design tokens before usage
+$background-gradient: radial-gradient(circle at top, #f0f4ff, #e6f9f7 70%);
+$body-font:
+  'Inter',
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  Helvetica,
+  Arial,
+  sans-serif;
+
+// Define the Material Design theme
+$aio-ui-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+// Apply Material theme to :root for CSS variable generation
+:root {
+  @include mat.all-component-themes($aio-ui-theme);
+  font-family: $body-font;
+  color: #12355b;
+  background: $background-gradient;
+  min-height: 100%;
+}
+
+// Include Material typography hierarchy
+@include mat.typography-hierarchy($aio-ui-theme);
+
+// ============================================================================
+// LAYER 2: Tailwind CSS Directives
+// ============================================================================
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// ============================================================================
+// LAYER 3: Third-Party Library Styles
+// ============================================================================
+
+// Material Icons - Local fonts for air-gapped deployment
+@import 'styles/material-icons-local.css';
+
+// Roboto Font - Local fonts for air-gapped deployment
+@import 'styles/roboto-local.css';
+
+// KaTeX CSS for math rendering
+@import 'katex/dist/katex.min.css';
+
+// Prism CSS for code syntax highlighting
+@import 'prismjs/themes/prism.css';
+
+// ============================================================================
+// LAYER 4: Global App Overrides & Custom Styles
+// ============================================================================
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: transparent;
+}
+
+// ============================================================================
+// Dark Theme Support (Future Enhancement)
+// ============================================================================
+// [data-theme='dark'] {
+//   // Dark theme overrides will go here
+// }

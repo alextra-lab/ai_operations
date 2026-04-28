@@ -1,0 +1,83 @@
+<!-- Test Result Viewer - T6-F4 -->
+
+<div class="result-viewer" role="region" aria-label="Test results">
+  <!-- Status Header -->
+  <div class="result-header">
+    <div class="status-badge" [class]="statusClass">
+      <mat-icon [fontIcon]="statusIcon" aria-hidden="true"></mat-icon>
+      <span class="status-text">{{ statusText }}</span>
+    </div>
+
+    <div class="result-meta">
+      <span class="duration">
+        <mat-icon aria-hidden="true">timer</mat-icon>
+        {{ formattedDuration }}
+      </span>
+      <span *ngIf="timestamp" class="timestamp">
+        <mat-icon aria-hidden="true">schedule</mat-icon>
+        {{ timestamp }}
+      </span>
+    </div>
+
+    <div class="result-actions">
+      <button
+        mat-icon-button
+        matTooltip="Copy result"
+        (click)="copyResult()"
+        aria-label="Copy result to clipboard"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        matTooltip="Copy full result object"
+        (click)="copyFullResult()"
+        aria-label="Copy full result object"
+      >
+        <mat-icon>code</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        [matTooltip]="isCollapsed() ? 'Expand' : 'Collapse'"
+        (click)="toggleCollapsed()"
+        [attr.aria-expanded]="!isCollapsed()"
+        aria-label="Toggle result details"
+      >
+        <mat-icon>
+          {{ isCollapsed() ? 'expand_more' : 'expand_less' }}
+        </mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Result Content -->
+  <div class="result-content" [class.collapsed]="isCollapsed()">
+    <!-- Success Result -->
+    <div *ngIf="result.success" class="success-content">
+      <div class="content-label">Response Data</div>
+      <pre class="json-content" aria-label="Response JSON">{{
+        formattedResult
+      }}</pre>
+    </div>
+
+    <!-- Error Result -->
+    <div *ngIf="!result.success" class="error-content">
+      <div class="content-label">Error</div>
+      <div class="error-message" role="alert">
+        {{ result.error || 'Unknown error occurred' }}
+      </div>
+
+      <!-- Show partial result if available -->
+      <div *ngIf="result.result" class="partial-result">
+        <div class="content-label">Partial Result</div>
+        <pre class="json-content">{{ formattedResult }}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Context -->
+  <div *ngIf="historyEntry" class="history-context">
+    <div class="content-label">Request Parameters</div>
+    <pre class="json-content small">{{ historyEntry.parameters | json }}</pre>
+  </div>
+</div>

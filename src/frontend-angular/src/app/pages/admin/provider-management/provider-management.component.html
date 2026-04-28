@@ -1,0 +1,200 @@
+<!-- Provider Management Page -->
+<!-- Follows ADR-012 Layered Page Layout Pattern -->
+
+<div class="page-container">
+  <!-- Layer 2: Page Header (Fixed) -->
+  <div class="page-header-layer">
+    <div class="page-header-controls">
+      <div class="header-left">
+        <h1 class="page-title">Provider Management</h1>
+        <p class="page-subtitle">Manage Inference Gateway LLM providers</p>
+      </div>
+
+      <div class="header-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="openCreateDialog()"
+          class="create-button"
+        >
+          <mat-icon>add</mat-icon>
+          Add Provider
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-container">
+      <mat-slide-toggle
+        [(ngModel)]="filters.enabled_only"
+        (change)="onFilterChange()"
+        class="filter-toggle"
+      >
+        Show enabled only
+      </mat-slide-toggle>
+
+      <span class="provider-count">
+        {{ totalProviders }} provider{{ totalProviders !== 1 ? 's' : '' }}
+        total
+      </span>
+    </div>
+  </div>
+
+  <!-- Layer 3: Content Area (Scrollable) -->
+  <div class="page-content-layer">
+    <div class="content-card">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p class="loading-text">Loading providers...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error && !isLoading" class="error-container">
+        <mat-icon class="error-icon">error</mat-icon>
+        <p class="error-text">{{ error }}</p>
+        <button mat-raised-button color="primary" (click)="loadProviders()">
+          Retry
+        </button>
+      </div>
+
+      <!-- Provider Table -->
+      <div *ngIf="!isLoading && !error" class="table-container">
+        <table mat-table [dataSource]="providers" class="providers-table">
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let provider">
+              <div class="provider-name-cell">
+                <strong>{{ provider.name }}</strong>
+                <span class="provider-url">{{ provider.base_url }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Provider Type Column -->
+          <ng-container matColumnDef="provider_type">
+            <th mat-header-cell *matHeaderCellDef>Type</th>
+            <td mat-cell *matCellDef="let provider">
+              <mat-chip class="provider-type-chip">
+                {{ provider.provider_type }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let provider">
+              <mat-chip [ngClass]="getStatusClass(provider.status)">
+                {{ provider.status }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Priority Column -->
+          <ng-container matColumnDef="priority">
+            <th mat-header-cell *matHeaderCellDef>Priority</th>
+            <td mat-cell *matCellDef="let provider">
+              {{ provider.priority }}
+            </td>
+          </ng-container>
+
+          <!-- Health Column -->
+          <ng-container matColumnDef="health">
+            <th mat-header-cell *matHeaderCellDef>Health</th>
+            <td mat-cell *matCellDef="let provider">
+              <mat-icon
+                [ngClass]="getHealthStatusClass(provider)"
+                [matTooltip]="
+                  provider.last_health_check
+                    ? 'Last check: ' + provider.last_health_check
+                    : 'Never checked'
+                "
+              >
+                {{ getHealthStatusIcon(provider) }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- Circuit State Column -->
+          <ng-container matColumnDef="circuit_state">
+            <th mat-header-cell *matHeaderCellDef>Circuit</th>
+            <td mat-cell *matCellDef="let provider">
+              <mat-chip
+                [ngClass]="getCircuitStateClass(provider.circuit_state)"
+                [matTooltip]="
+                  'Errors: ' +
+                  provider.error_count +
+                  ' / Success: ' +
+                  provider.success_count
+                "
+              >
+                {{ provider.circuit_state }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Enabled Column -->
+          <ng-container matColumnDef="is_enabled">
+            <th mat-header-cell *matHeaderCellDef>Enabled</th>
+            <td mat-cell *matCellDef="let provider">
+              <mat-slide-toggle
+                [checked]="provider.is_enabled"
+                (change)="toggleProvider(provider)"
+                [color]="'primary'"
+              >
+              </mat-slide-toggle>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let provider">
+              <button
+                mat-icon-button
+                (click)="testProvider(provider)"
+                matTooltip="Test connectivity"
+                class="action-button"
+              >
+                <mat-icon>wifi_tethering</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="openEditDialog(provider)"
+                matTooltip="Edit provider"
+                class="action-button"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="deleteProvider(provider)"
+                matTooltip="Delete provider"
+                class="action-button action-button-danger"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Table Header and Rows -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        <!-- Pagination -->
+        <mat-paginator
+          [length]="totalProviders"
+          [pageSize]="filters.limit || 20"
+          [pageIndex]="(filters.offset || 0) / (filters.limit || 20)"
+          [pageSizeOptions]="[10, 20, 50, 100]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons
+        >
+        </mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,193 @@
+worker_processes auto;
+error_log /var/log/nginx/error.log debug;
+pid /tmp/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # Allow larger file uploads (100MB)
+    client_max_body_size 100M;
+
+    # Enhanced logging to debug the issue
+    log_format debug_format '$remote_addr - $remote_user [$time_local] "$request" '
+                           '$status $body_bytes_sent "$http_referer" '
+                           '"$http_user_agent" "$http_x_forwarded_for" '
+                           'upstream: "$upstream_addr" '
+                           'upstream_status: "$upstream_status" '
+                           'request_time: "$request_time" '
+                           'upstream_response_time: "$upstream_response_time"';
+
+    access_log /var/log/nginx/access.log debug_format;
+
+    server {
+        listen 80;
+        server_name localhost;
+        root /usr/share/nginx/html;
+        index index.html;
+
+        # Health check endpoint
+        location /health {
+            access_log off;
+            return 200 "healthy\n";
+            add_header Content-Type text/plain;
+        }
+
+        # Admin Audit Logs API - SPECIFIC route (backend has /admin/audit-logs, not /api/v1/admin/audit-logs)
+        location ^~ /api/v1/admin/audit-logs {
+            rewrite ^/api/v1/(.*) /$1 break;
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_buffering off;
+            add_header X-Debug-Location "admin-audit-proxy" always;
+        }
+
+        # Admin Roles API - SPECIFIC route (backend has /admin/roles, not /api/v1/admin/roles)
+        location ^~ /api/v1/admin/roles/ {
+            rewrite ^/api/v1/(.*) /$1 break;
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_buffering off;
+            add_header X-Debug-Location "admin-roles-proxy" always;
+        }
+
+        # Admin Pricing API - pass-through (backend already uses /api/v1/...)
+        location ^~ /api/v1/admin/pricing/ {
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT};
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_buffering off;
+            add_header X-Debug-Location "admin-pricing-proxy" always;
+        }
+
+        # Auth API - SPECIFIC route (backend has /auth, not /api/v1/auth)
+        location ^~ /api/v1/auth/ {
+            rewrite ^/api/v1/(.*) /$1 break;
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_buffering off;
+            add_header X-Debug-Location "auth-proxy" always;
+        }
+
+        # Collections API - SPECIFIC route (backend has /v1/admin/collections)
+        location ^~ /api/v1/admin/collections/ {
+            rewrite ^/api/(.*) /$1 break;
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_buffering off;
+            add_header X-Debug-Location "collections-proxy" always;
+        }
+
+        # Gateway Admin API - P3-T1 Provider Management & P3-T2 Metrics
+        # Routes: /api/admin/gateway/* are handled by orchestrator-api
+        # (Orchestrator proxies to inference-gateway internally)
+        location ^~ /api/admin/gateway/ {
+            rewrite ^/api/(.*) /$1 break;
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_buffering off;
+            add_header X-Debug-Location "gateway-admin-proxy" always;
+        }
+
+        # Tools Admin API - Pass through (backend uses /api/v1/admin/tools)
+        location ~ ^/api/v1/admin/tools(/.*)?$ {
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}$request_uri;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_buffering off;
+            proxy_redirect off;
+            add_header X-Debug-Location "tools-admin-proxy" always;
+        }
+
+        # Admin API routes - Strip /api prefix (backend uses /admin/ not /api/admin/)
+        location ^~ /api/admin/ {
+            rewrite ^/api/(.*) /$1 break;
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_buffering off;
+            add_header X-Debug-Location "admin-api-proxy" always;
+        }
+
+
+        # WebSocket Proxy
+        location /ws/ {
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/ws/;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_read_timeout 86400s;
+            proxy_send_timeout 86400s;
+            add_header X-Debug-Location "websocket-proxy" always;
+        }
+
+        # ALL OTHER /api routes - Keep /api prefix (backend has /api/security, /api/v1, etc.)
+        location ^~ /api/ {
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT};
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # SSE (Server-Sent Events) specific configuration
+            proxy_buffering off;
+            proxy_cache off;
+            proxy_read_timeout 24h;
+            proxy_send_timeout 24h;
+            proxy_set_header Connection '';
+            proxy_set_header X-Accel-Buffering no;
+
+            add_header X-Debug-Location "api-proxy" always;
+        }
+
+        # Static files
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+            add_header X-Debug-Location "static-files" always;
+        }
+
+        # Angular routing - LAST
+        location / {
+            try_files $uri $uri/ /index.html;
+            add_header X-Debug-Location "angular-routing" always;
+        }
+    }
+}

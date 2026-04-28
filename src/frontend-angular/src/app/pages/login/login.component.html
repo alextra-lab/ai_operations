@@ -1,0 +1,83 @@
+<div class="login-container" role="main">
+  <mat-card class="login-card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Sign in to AI Operations Platform</mat-card-title>
+      <mat-card-subtitle>
+        Enter your credentials to access the AIO console.
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Session Expiry Warning -->
+      @if (sessionExpiredMessage()) {
+        <div
+          class="session-expired-warning flex items-center gap-3 p-4 mb-4 bg-error-container text-on-error-container rounded-md"
+          role="alert"
+        >
+          <mat-icon aria-hidden="true">info</mat-icon>
+          <span>{{ sessionExpiredMessage() }}</span>
+        </div>
+      }
+
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+        novalidate
+        aria-describedby="login-error"
+      >
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            formControlName="username"
+            autocomplete="username"
+            required
+          />
+          @if (loginForm.controls.username.hasError('required')) {
+            <mat-error>Username is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            type="password"
+            formControlName="password"
+            autocomplete="current-password"
+            required
+          />
+          @if (loginForm.controls.password.hasError('required')) {
+            <mat-error>Password is required</mat-error>
+          }
+        </mat-form-field>
+
+        @if (errorMessage()) {
+          <div class="error-message" id="login-error">
+            <mat-icon aria-hidden="true" fontIcon="warning"></mat-icon>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="submit-button"
+          type="submit"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <mat-progress-spinner
+              mode="indeterminate"
+              diameter="18"
+              strokeWidth="2"
+            ></mat-progress-spinner>
+          }
+          @if (!isSubmitting()) {
+            <span>Sign in</span>
+          }
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

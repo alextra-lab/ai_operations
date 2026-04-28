@@ -1,0 +1,98 @@
+<h2 mat-dialog-title>Assign Use Case to Role: {{ data.roleName }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="assignForm" class="assign-form">
+    <!-- Use Case Selection -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Select Use Case</mat-label>
+      <mat-select
+        formControlName="use_case_id"
+        required
+        aria-label="Select use case to assign"
+      >
+        <mat-option *ngIf="isLoadingUseCases" disabled>
+          Loading use cases...
+        </mat-option>
+        <mat-option *ngFor="let useCase of useCases" [value]="useCase.id">
+          <div class="use-case-option">
+            <strong>{{ getUseCaseName(useCase) }}</strong>
+            <small *ngIf="getUseCaseDetails(useCase)">{{
+              getUseCaseDetails(useCase)
+            }}</small>
+          </div>
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="assignForm.get('use_case_id')?.hasError('required')">
+        Use case selection is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Expiration Date (Optional) -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Expiration Date (Optional)</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker"
+        formControlName="expires_at"
+        aria-label="Optional expiration date for access"
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-hint>Leave empty for permanent access</mat-hint>
+    </mat-form-field>
+
+    <!-- Metadata: Reason -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Reason (Optional)</mat-label>
+      <textarea
+        matInput
+        formControlName="metadata_reason"
+        rows="2"
+        placeholder="Why is this access being granted?"
+        aria-label="Reason for assignment"
+      ></textarea>
+      <mat-hint>Recommended for audit trail</mat-hint>
+    </mat-form-field>
+
+    <!-- Metadata: Approved By -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Approved By (Optional)</mat-label>
+      <input
+        matInput
+        formControlName="metadata_approved_by"
+        placeholder="Manager or security lead"
+        aria-label="Person who approved this assignment"
+      />
+    </mat-form-field>
+
+    <!-- Metadata: Ticket Reference -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Ticket/Request ID (Optional)</mat-label>
+      <input
+        matInput
+        formControlName="metadata_ticket"
+        placeholder="e.g., SEC-2024-042"
+        aria-label="Associated ticket or request ID"
+      />
+    </mat-form-field>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message" role="alert">
+      {{ error }}
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="isSubmitting">
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="assignForm.invalid || isSubmitting || isLoadingUseCases"
+  >
+    {{ isSubmitting ? 'Assigning...' : 'Assign Use Case' }}
+  </button>
+</mat-dialog-actions>

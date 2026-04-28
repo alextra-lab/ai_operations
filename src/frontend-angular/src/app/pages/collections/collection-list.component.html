@@ -1,0 +1,273 @@
+<!-- Collection List Component -->
+<!-- LAYERED_PAGE_LAYOUT_PATTERN Applied -->
+<!-- ADR-012 Compliant: Material + Tailwind utilities -->
+
+<div class="page-container">
+  <!-- Layer 2: Page Header + Controls (NEVER SCROLLS) -->
+  <div class="page-header-section">
+    <div class="page-title">
+      <h1>
+        <mat-icon>inventory_2</mat-icon>
+        Collection Management
+      </h1>
+      <p class="subtitle">Organize documents with specific embedding models</p>
+    </div>
+
+    <div class="page-controls">
+      <div class="controls-container">
+        <form [formGroup]="filterForm" class="filters-form">
+          <!-- Search -->
+          <mat-form-field
+            appearance="outline"
+            class="filter-field search-field"
+          >
+            <mat-label>Search</mat-label>
+            <input
+              matInput
+              [value]="searchQuery"
+              (input)="onSearchChange($any($event.target).value)"
+              placeholder="Search collections"
+            />
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+
+          <!-- Embedding Model Filter -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Embedding Model</mat-label>
+            <mat-select formControlName="embeddingModel">
+              <mat-option value="">All Models</mat-option>
+              <mat-option
+                *ngFor="let model of embeddingModels"
+                [value]="model.id"
+              >
+                {{ model.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Status Filter -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="">All Status</mat-option>
+              <mat-option value="active">Active Only</mat-option>
+              <mat-option value="inactive">Inactive Only</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Action Buttons -->
+          <div class="filter-actions">
+            <button
+              mat-button
+              type="button"
+              (click)="clearFilters()"
+              class="clear-btn"
+            >
+              <mat-icon>clear</mat-icon>
+              Clear Filters
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="openCreateDialog()"
+              class="create-btn"
+            >
+              <mat-icon>add</mat-icon>
+              Create Collection
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div
+    *ngIf="isLoading && filteredCollections.length === 0"
+    class="loading-state"
+  >
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="mt-4 text-gray-600">Loading collections...</p>
+  </div>
+
+  <!-- Layer 3: Content Area (SCROLLS) -->
+  <div class="content-area">
+    <!-- Results Count -->
+    <div class="results-info mb-4">
+      <span *ngIf="!isLoading"
+        >Showing {{ filteredCollections.length }} of
+        {{ totalCount }} collections</span
+      >
+      <span *ngIf="isLoading" class="text-gray-500">Loading...</span>
+    </div>
+
+    <!-- Table Card -->
+    <mat-card class="table-card mb-6">
+      <!-- Empty State -->
+      <div
+        *ngIf="!isLoading && filteredCollections.length === 0"
+        class="empty-state"
+      >
+        <mat-icon>inventory_2</mat-icon>
+        <p>No collections found</p>
+        <button mat-raised-button color="primary" (click)="openCreateDialog()">
+          Create Your First Collection
+        </button>
+      </div>
+
+      <!-- Table -->
+      <table
+        *ngIf="!isLoading && filteredCollections.length > 0"
+        mat-table
+        [dataSource]="filteredCollections"
+        class="collections-table"
+      >
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let collection">
+            <div class="collection-name-cell">
+              <strong>{{ collection.name }}</strong>
+              <mat-chip *ngIf="collection.is_system_managed" class="system-chip"
+                >SYSTEM</mat-chip
+              >
+            </div>
+            <div *ngIf="collection.description" class="collection-description">
+              {{ collection.description }}
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Embedding Model Column -->
+        <ng-container matColumnDef="embedding_model">
+          <th mat-header-cell *matHeaderCellDef>Embedding Model</th>
+          <td mat-cell *matCellDef="let collection">
+            <div class="embedding-info">
+              <mat-chip
+                [color]="getProviderColor(collection.embedding_provider)"
+              >
+                {{ collection.embedding_provider }}
+              </mat-chip>
+              <div class="model-details">
+                <span class="model-name">{{ collection.embedding_model }}</span>
+                <span class="model-dimensions"
+                  >{{ collection.embedding_dimensions }}D</span
+                >
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Document Count Column -->
+        <ng-container matColumnDef="document_count">
+          <th mat-header-cell *matHeaderCellDef>Documents</th>
+          <td mat-cell *matCellDef="let collection">
+            <span class="document-count">{{ collection.document_count }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Active Status Column -->
+        <ng-container matColumnDef="is_active">
+          <th mat-header-cell *matHeaderCellDef>Active</th>
+          <td mat-cell *matCellDef="let collection">
+            <mat-slide-toggle
+              [checked]="collection.is_active"
+              (change)="toggleActive(collection)"
+              [disabled]="collection.is_system_managed"
+              matTooltip="Toggle active status"
+            >
+            </mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <!-- Default Column -->
+        <ng-container matColumnDef="is_default">
+          <th mat-header-cell *matHeaderCellDef>Default</th>
+          <td mat-cell *matCellDef="let collection">
+            <mat-icon
+              *ngIf="collection.is_default"
+              color="primary"
+              matTooltip="System default collection"
+            >
+              star
+            </mat-icon>
+          </td>
+        </ng-container>
+
+        <!-- Updated At Column -->
+        <ng-container matColumnDef="updated_at">
+          <th mat-header-cell *matHeaderCellDef>Updated</th>
+          <td mat-cell *matCellDef="let collection">
+            {{ formatDate(collection.updated_at) }}
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let collection">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="openEditDialog(collection)">
+                <mat-icon>edit</mat-icon>
+                <span>Edit</span>
+              </button>
+              <button mat-menu-item (click)="viewStats(collection)">
+                <mat-icon>analytics</mat-icon>
+                <span>View Statistics</span>
+              </button>
+              <mat-divider></mat-divider>
+              <button
+                mat-menu-item
+                (click)="confirmDelete(collection)"
+                [disabled]="
+                  collection.is_system_managed || collection.document_count > 0
+                "
+              >
+                <mat-icon color="warn">delete</mat-icon>
+                <span>Delete</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </mat-card>
+
+    <!-- Info Panel -->
+    <mat-card class="info-panel">
+      <mat-card-header>
+        <mat-icon>info</mat-icon>
+        <mat-card-title>About Collections</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          Collections organize documents with specific embedding models for
+          accurate semantic search.
+        </p>
+        <ul>
+          <li>
+            <strong>Embedding Model:</strong> Each collection is bound to a
+            specific embedding model (immutable after creation)
+          </li>
+          <li>
+            <strong>Document Assignment:</strong> Documents must be assigned to
+            a collection during upload
+          </li>
+          <li>
+            <strong>Multi-Collection Queries:</strong> Use Cases can search
+            across multiple collections
+          </li>
+          <li>
+            <strong>System Managed:</strong> Default collections cannot be
+            deleted
+          </li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

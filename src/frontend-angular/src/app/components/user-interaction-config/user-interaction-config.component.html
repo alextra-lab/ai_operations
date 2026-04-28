@@ -1,0 +1,99 @@
+<mat-expansion-panel [expanded]="true">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon>person</mat-icon>
+      User Interaction
+      <span class="validation-badge" *ngIf="hasErrors">
+        <mat-icon class="text-red-600">error</mat-icon>
+      </span>
+      <span class="validation-badge" *ngIf="!hasErrors && hasWarnings">
+        <mat-icon class="text-amber-600">warning</mat-icon>
+      </span>
+    </mat-panel-title>
+    <mat-panel-description>
+      Configure user inputs and how they appear in the prompt
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex()"
+    (selectedIndexChange)="selectedTabIndex.set($event)"
+    class="user-interaction-tabs"
+  >
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>edit_note</mat-icon>
+        <span>1. Input Fields</span>
+        <span class="field-count" *ngIf="inputFields.length > 0">
+          ({{ inputFields.length }})
+        </span>
+      </ng-template>
+
+      <div class="tab-content">
+        <p class="tab-description">
+          Define the input fields that users fill in when executing this use
+          case.
+        </p>
+
+        <app-input-field-builder
+          [fields]="inputFields"
+          (fieldsChange)="onInputFieldsChange($event)"
+        ></app-input-field-builder>
+      </div>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>description</mat-icon>
+        <span>2. User Prompt Template</span>
+      </ng-template>
+
+      <div class="tab-content">
+        <p class="tab-description">
+          Define how user inputs are merged into the prompt using
+          <code>{{ '{{variable}}' }}</code> placeholders.
+        </p>
+
+        <div
+          class="auto-generate-section"
+          *ngIf="canGenerateTemplate"
+        >
+          <div class="auto-generate-hint">
+            <mat-icon>lightbulb</mat-icon>
+            <span>No template defined yet.</span>
+          </div>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="generateTemplate()"
+            [disabled]="inputFields.length === 0"
+            matTooltip="Generate a starter template using all defined input fields"
+          >
+            <mat-icon>auto_awesome</mat-icon>
+            Generate Template from Fields
+          </button>
+          <p
+            class="auto-generate-note"
+            *ngIf="inputFields.length === 0"
+          >
+            Define input fields first (Tab 1) to enable auto-generation.
+          </p>
+        </div>
+
+        <app-user-prompt-template-editor
+          [inputFields]="inputFields"
+          [value]="userPromptTemplate"
+          (valueChange)="onUserPromptTemplateChange($event)"
+        ></app-user-prompt-template-editor>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+  <div class="sync-status-section">
+    <app-field-template-sync-status
+      [statuses]="syncStatus"
+      (createField)="createFieldFromVariable($event)"
+      (insertIntoTemplate)="insertFieldIntoTemplate($event)"
+    ></app-field-template-sync-status>
+  </div>
+</mat-expansion-panel>

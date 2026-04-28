@@ -1,0 +1,36 @@
+<!-- Usage By Center Chart -->
+<!-- Horizontal bar chart showing tool usage per center -->
+
+<div class="chart-wrapper">
+  <!-- Metric Toggle -->
+  <div class="chart-controls">
+    <mat-button-toggle-group
+      [value]="metric"
+      (change)="onMetricChange($event.value)"
+      aria-label="Select metric to display"
+    >
+      <mat-button-toggle value="calls"> Calls </mat-button-toggle>
+      <mat-button-toggle value="cost"> Cost </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <!-- Chart Container -->
+  <div class="chart-container">
+    <div *ngIf="isLoading" class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading chart...</p>
+    </div>
+
+    <canvas
+      #chartCanvas
+      [hidden]="isLoading || data.length === 0"
+      [attr.aria-label]="'Tool usage by center ' + metric + ' chart'"
+    >
+    </canvas>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && data.length === 0" class="empty-state">
+      <p>No center usage data available</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,628 @@
+<!-- ADR-012 Compliant: Material + Tailwind utilities -->
+<div class="registration-wizard-container">
+  <div class="page-header-section">
+    <div class="page-title">
+      <h1>
+        <mat-icon>add_circle</mat-icon>
+        Register New MCP Tool
+      </h1>
+      <p class="subtitle">
+        Guided workflow for registering MCP tools with validation and testing
+      </p>
+    </div>
+  </div>
+
+  <div class="content-area">
+    <mat-card class="wizard-card">
+      <mat-horizontal-stepper #stepper linear>
+        <!-- Step 1: Basic Info -->
+        <mat-step label="Basic Information">
+          <ng-template matStepContent>
+            <h2 class="step-title">Basic Information</h2>
+            <p class="step-description">
+              Provide basic tool identification and categorization
+            </p>
+
+            <form [formGroup]="basicInfoForm" (ngSubmit)="onBasicInfoSubmit()">
+              <!-- Tool Name (primary input) -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tool Name *</mat-label>
+                <input
+                  matInput
+                  formControlName="name"
+                  placeholder="Docker MCP Gateway"
+                />
+                <mat-hint> Human-readable name for the tool </mat-hint>
+                <mat-error
+                  *ngIf="basicInfoForm.get('name')?.hasError('required')"
+                >
+                  Tool name is required
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Auto-generated Tool ID (read-only preview) -->
+              <div
+                *ngIf="basicInfoForm.get('tool_id')?.value"
+                class="tool-id-preview"
+              >
+                <span class="label">Tool ID:</span>
+                <code>{{ basicInfoForm.get('tool_id')?.value }}</code>
+                <span class="hint">(auto-generated from name)</span>
+              </div>
+
+              <!-- Description (prominent, required) -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description *</mat-label>
+                <textarea
+                  matInput
+                  formControlName="description"
+                  rows="3"
+                  placeholder="Describe what this tool does and when to use it..."
+                ></textarea>
+                <mat-hint>
+                  Clear description helps users understand the tool's purpose
+                </mat-hint>
+                <mat-error
+                  *ngIf="basicInfoForm.get('description')?.hasError('required')"
+                >
+                  Description is required
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Category (optional) -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Category (optional)</mat-label>
+                <mat-select formControlName="category">
+                  <mat-option value="custom">Custom / General</mat-option>
+                  <mat-option value="database">Database</mat-option>
+                  <mat-option value="vector_db">Vector Database</mat-option>
+                  <mat-option value="web_scraping">Web Scraping</mat-option>
+                  <mat-option value="reasoning">Reasoning</mat-option>
+                  <mat-option value="documentation">Documentation</mat-option>
+                </mat-select>
+                <mat-hint>Optional categorization for organization</mat-hint>
+              </mat-form-field>
+
+              <div class="form-actions">
+                <button mat-button (click)="onCancel()">Cancel</button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="basicInfoForm.invalid || loading"
+                >
+                  Next
+                </button>
+              </div>
+            </form>
+          </ng-template>
+        </mat-step>
+
+        <!-- Step 2: MCP Configuration -->
+        <mat-step label="MCP Configuration">
+          <ng-template matStepContent>
+            <h2 class="step-title">MCP Configuration</h2>
+            <p class="step-description">
+              Configure MCP server connection details
+            </p>
+
+            <form [formGroup]="mcpConfigForm" (ngSubmit)="onMcpConfigSubmit()">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Server Type *</mat-label>
+                <mat-select formControlName="mcp_server_type">
+                  <mat-option value="stdio">STDIO</mat-option>
+                  <mat-option value="http">HTTP</mat-option>
+                  <mat-option value="sse">SSE</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="
+                    mcpConfigForm.get('mcp_server_type')?.hasError('required')
+                  "
+                >
+                  Server type is required
+                </mat-error>
+              </mat-form-field>
+
+              <div
+                *ngIf="mcpConfigForm.get('mcp_server_type')?.value === 'stdio'"
+              >
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Command *</mat-label>
+                  <input
+                    matInput
+                    formControlName="mcp_command"
+                    placeholder='["python", "-m", "mcp_server"]'
+                  />
+                  <mat-error
+                    *ngIf="
+                      mcpConfigForm.get('mcp_command')?.hasError('required')
+                    "
+                  >
+                    Command is required for STDIO servers
+                  </mat-error>
+                  <mat-hint>JSON array of command and arguments</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <div
+                *ngIf="
+                  mcpConfigForm.get('mcp_server_type')?.value === 'http' ||
+                  mcpConfigForm.get('mcp_server_type')?.value === 'sse'
+                "
+              >
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Endpoint URL *</mat-label>
+                  <input
+                    matInput
+                    formControlName="mcp_endpoint"
+                    placeholder="http://host.docker.internal:5601/api/agent_builder/mcp"
+                  />
+                  <mat-error
+                    *ngIf="
+                      mcpConfigForm.get('mcp_endpoint')?.hasError('required')
+                    "
+                  >
+                    Endpoint URL is required
+                  </mat-error>
+                  <mat-error
+                    *ngIf="mcpConfigForm.get('mcp_endpoint')?.hasError('url')"
+                  >
+                    {{
+                      mcpConfigForm.get('mcp_endpoint')?.errors?.['url']
+                        ?.message || 'Invalid URL format'
+                    }}
+                  </mat-error>
+                  <mat-hint
+                    >Use http:// or https:// URL (e.g.,
+                    http://host.docker.internal:5601/api/agent_builder/mcp)</mat-hint
+                  >
+                </mat-form-field>
+              </div>
+
+              <div class="flex justify-between gap-2 mt-6">
+                <button mat-button (click)="stepper.previous()">Back</button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="mcpConfigForm.invalid || loading"
+                >
+                  Next
+                </button>
+              </div>
+            </form>
+          </ng-template>
+        </mat-step>
+
+        <!-- Step 3: Security Classification & Authentication -->
+        <mat-step label="Security">
+          <ng-template matStepContent>
+            <h2 class="step-title">Security Classification</h2>
+            <p class="step-description">
+              Classify the tool's security profile for risk management
+            </p>
+
+            <form [formGroup]="securityForm" (ngSubmit)="onSecuritySubmit()">
+              <!-- Security Classification Section (ADR-057) -->
+              <div class="security-classification-section">
+                <h3 class="section-subtitle">Risk Classification</h3>
+
+                <!-- Data Source Type -->
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Data Source *</mat-label>
+                  <mat-select formControlName="data_source_type">
+                    <mat-option value="internal">
+                      <span class="option-with-hint">
+                        <strong>Internal</strong> - Company-controlled sources
+                      </span>
+                    </mat-option>
+                    <mat-option value="external">
+                      <span class="option-with-hint">
+                        <strong>External</strong> - Third-party/public sources
+                      </span>
+                    </mat-option>
+                    <mat-option value="none">
+                      <span class="option-with-hint">
+                        <strong>None</strong> - No data retrieval (reasoning
+                        tools)
+                      </span>
+                    </mat-option>
+                    <mat-option value="mixed">
+                      <span class="option-with-hint">
+                        <strong>Mixed</strong> - Aggregated gateway (multiple
+                        sources)
+                      </span>
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint>
+                    <ng-container
+                      [ngSwitch]="securityForm.get('data_source_type')?.value"
+                    >
+                      <span *ngSwitchCase="'internal'">
+                        Elasticsearch datalake, internal APIs, company databases
+                      </span>
+                      <span *ngSwitchCase="'external'">
+                        Web scraping, public APIs, third-party services
+                      </span>
+                      <span *ngSwitchCase="'none'">
+                        ClearThought, Sequential Thinking, analysis tools
+                      </span>
+                      <span *ngSwitchCase="'mixed'">
+                        Docker MCP Gateway with heterogeneous tools
+                      </span>
+                      <span *ngSwitchDefault
+                        >Where does the tool get its data?</span
+                      >
+                    </ng-container>
+                  </mat-hint>
+                </mat-form-field>
+
+                <!-- Data Flow Direction -->
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Data Flow *</mat-label>
+                  <mat-select formControlName="data_flow_direction">
+                    <mat-option value="ingress">
+                      <strong>Ingress</strong> - Data comes INTO system
+                    </mat-option>
+                    <mat-option value="egress">
+                      <strong>Egress</strong> - Data goes OUT of system
+                    </mat-option>
+                    <mat-option value="bidirectional">
+                      <strong>Bidirectional</strong> - Both directions
+                    </mat-option>
+                    <mat-option value="none">
+                      <strong>None</strong> - No external data flow
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint>
+                    <ng-container
+                      [ngSwitch]="
+                        securityForm.get('data_flow_direction')?.value
+                      "
+                    >
+                      <span *ngSwitchCase="'ingress'">
+                        Retrieval tools, data importers
+                      </span>
+                      <span *ngSwitchCase="'egress'">
+                        ⚠️ Alert: Data exfiltration risk - requires DLP review
+                      </span>
+                      <span *ngSwitchCase="'bidirectional'">
+                        ⚠️ Both ingress and egress - full monitoring enabled
+                      </span>
+                      <span *ngSwitchCase="'none'">
+                        Pure computation, reasoning only
+                      </span>
+                      <span *ngSwitchDefault>How does data flow?</span>
+                    </ng-container>
+                  </mat-hint>
+                </mat-form-field>
+
+                <!-- Network Access Level -->
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Network Access *</mat-label>
+                  <mat-select formControlName="network_access_level">
+                    <mat-option value="isolated">
+                      <strong>Isolated</strong> - No network access
+                    </mat-option>
+                    <mat-option value="internal">
+                      <strong>Internal</strong> - Company network only
+                    </mat-option>
+                    <mat-option value="external">
+                      <strong>External</strong> - Public internet access
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint>
+                    <ng-container
+                      [ngSwitch]="
+                        securityForm.get('network_access_level')?.value
+                      "
+                    >
+                      <span *ngSwitchCase="'isolated'">
+                        Safest - pure local computation
+                      </span>
+                      <span *ngSwitchCase="'internal'">
+                        VPN/firewall protected internal resources
+                      </span>
+                      <span *ngSwitchCase="'external'">
+                        ⚠️ Internet access - egress filtering applied
+                      </span>
+                      <span *ngSwitchDefault
+                        >What network can the tool reach?</span
+                      >
+                    </ng-container>
+                  </mat-hint>
+                </mat-form-field>
+
+                <!-- Max Data Sensitivity -->
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Max Data Sensitivity *</mat-label>
+                  <mat-select formControlName="max_data_sensitivity">
+                    <mat-option value="public">
+                      <strong>Public</strong> - Public data only
+                    </mat-option>
+                    <mat-option value="internal">
+                      <strong>Internal</strong> - Business confidential
+                    </mat-option>
+                    <mat-option value="confidential">
+                      <strong>Confidential</strong> - Sensitive business data
+                    </mat-option>
+                    <mat-option value="restricted">
+                      <strong>Restricted</strong> - PII, PHI, regulated data
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint>
+                    Highest data classification this tool can process
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+
+              <!-- Authentication Section -->
+              <div class="authentication-section">
+                <h3 class="section-subtitle">Authentication</h3>
+
+                <mat-checkbox
+                  formControlName="requires_authentication"
+                  class="auth-checkbox"
+                >
+                  Requires Authentication
+                </mat-checkbox>
+
+                <div *ngIf="securityForm.get('requires_authentication')?.value">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Secret Name *</mat-label>
+                    <input matInput formControlName="secret_name" />
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Secret Value *</mat-label>
+                    <input
+                      matInput
+                      type="password"
+                      formControlName="secret_value"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button mat-button (click)="stepper.previous()">Back</button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="securityForm.invalid || loading"
+                >
+                  Next
+                </button>
+              </div>
+            </form>
+          </ng-template>
+        </mat-step>
+
+        <!-- Step 4: Connection Test -->
+        <mat-step label="Connection Test">
+          <ng-template matStepContent>
+            <h2 class="step-title">Connection Test</h2>
+            <p class="step-description">
+              Test connection to MCP server and discover capabilities using the
+              credentials you provided
+            </p>
+
+            <div class="connection-test-content">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="testConnection()"
+                [disabled]="loading"
+                class="test-button"
+              >
+                <mat-icon>network_check</mat-icon>
+                Test Connection
+              </button>
+
+              <div *ngIf="loading" class="loading-indicator">
+                <mat-spinner diameter="24"></mat-spinner>
+                <span>Testing connection...</span>
+              </div>
+
+              <div *ngIf="connectionResult" class="test-result">
+                <div
+                  *ngIf="connectionResult['success']"
+                  class="success-message"
+                >
+                  <mat-icon>check_circle</mat-icon>
+                  Connection successful! Discovered
+                  {{ connectionResult['tool_count'] }} tools.
+                </div>
+                <div *ngIf="!connectionResult['success']" class="error-message">
+                  <mat-icon>error</mat-icon>
+                  Connection failed: {{ connectionResult['error'] }}
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button mat-button (click)="stepper.previous()">Back</button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="stepper.next()"
+                  [disabled]="!connectionResult?.['success']"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </ng-template>
+        </mat-step>
+
+        <!-- Step 5: Permissions -->
+        <mat-step label="Permissions">
+          <ng-template matStepContent>
+            <h2 class="step-title">Permissions & Limits</h2>
+            <p class="step-description">
+              Configure RBAC permissions and rate limits
+            </p>
+
+            <form
+              [formGroup]="permissionsForm"
+              (ngSubmit)="onPermissionsSubmit()"
+            >
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Rate Limit (per minute)</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="rate_limit_per_minute"
+                />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Max Concurrent Calls</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="max_concurrent_calls"
+                />
+              </mat-form-field>
+
+              <div class="form-actions">
+                <button mat-button (click)="stepper.previous()">Back</button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="permissionsForm.invalid || loading"
+                >
+                  Next
+                </button>
+              </div>
+            </form>
+          </ng-template>
+        </mat-step>
+
+        <!-- Step 6: Review & Confirm -->
+        <mat-step label="Review & Confirm">
+          <ng-template matStepContent>
+            <h2 class="step-title">Review & Confirm</h2>
+            <p class="step-description">
+              Review complete configuration before committing
+            </p>
+
+            <div class="review-summary">
+              <h3>Basic Information</h3>
+              <p><strong>Name:</strong> {{ basicInfo['name'] }}</p>
+              <p>
+                <strong>Tool ID:</strong>
+                <code>{{ basicInfo['tool_id'] }}</code>
+              </p>
+              <p>
+                <strong>Description:</strong> {{ basicInfo['description'] }}
+              </p>
+              <p
+                *ngIf="
+                  basicInfo['category'] && basicInfo['category'] !== 'custom'
+                "
+              >
+                <strong>Category:</strong> {{ basicInfo['category'] }}
+              </p>
+
+              <h3>MCP Configuration</h3>
+              <p>
+                <strong>Server Type:</strong>
+                {{ mcpConfig['mcp_server_type'] | uppercase }}
+              </p>
+              <p *ngIf="mcpConfig['mcp_command']">
+                <strong>Command:</strong>
+                <code>{{ mcpConfig['mcp_command'] }}</code>
+              </p>
+              <p *ngIf="mcpConfig['mcp_endpoint']">
+                <strong>Endpoint:</strong> {{ mcpConfig['mcp_endpoint'] }}
+              </p>
+
+              <h3>Connection Test</h3>
+              <p *ngIf="connectionResult && connectionResult['success']">
+                ✅ Successfully connected ({{ connectionResult['tool_count'] }}
+                tools discovered)
+              </p>
+              <p *ngIf="connectionResult && !connectionResult['success']">
+                ⚠️ Connection not verified
+              </p>
+
+              <h3>Security Classification</h3>
+              <div class="security-summary">
+                <p>
+                  <strong>Data Source:</strong>
+                  <span
+                    class="security-badge"
+                    [ngClass]="securityConfig['data_source_type']"
+                  >
+                    {{ securityConfig['data_source_type'] | uppercase }}
+                  </span>
+                </p>
+                <p>
+                  <strong>Data Flow:</strong>
+                  <span
+                    class="security-badge"
+                    [ngClass]="securityConfig['data_flow_direction']"
+                  >
+                    {{ securityConfig['data_flow_direction'] | uppercase }}
+                  </span>
+                </p>
+                <p>
+                  <strong>Network Access:</strong>
+                  <span
+                    class="security-badge"
+                    [ngClass]="securityConfig['network_access_level']"
+                  >
+                    {{ securityConfig['network_access_level'] | uppercase }}
+                  </span>
+                </p>
+                <p>
+                  <strong>Max Sensitivity:</strong>
+                  <span
+                    class="security-badge"
+                    [ngClass]="securityConfig['max_data_sensitivity']"
+                  >
+                    {{ securityConfig['max_data_sensitivity'] | uppercase }}
+                  </span>
+                </p>
+              </div>
+
+              <div
+                *ngIf="securityConfig['requires_authentication']"
+                class="auth-summary"
+              >
+                <p>🔐 <strong>Authentication:</strong> Required</p>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button mat-button (click)="stepper.previous()">Back</button>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="onReviewConfirm()"
+                [disabled]="loading"
+              >
+                <mat-icon>check_circle</mat-icon>
+                Register Tool
+              </button>
+            </div>
+          </ng-template>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </mat-card>
+
+    <!-- Loading Overlay -->
+    <div *ngIf="loading" class="loading-overlay">
+      <mat-spinner></mat-spinner>
+      <p>Processing...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      <mat-icon>error</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+  </div>
+</div>

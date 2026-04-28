@@ -1,0 +1,210 @@
+<!-- LAYERED_PAGE_LAYOUT_PATTERN Applied -->
+<!-- ADR-012 Compliant: Material + Tailwind utilities + Rounded Controls Container -->
+<div class="page-container">
+  <!-- Layer 2: Page Header + Controls (NEVER SCROLLS) -->
+  <div class="page-header-section">
+    <!-- Page Title -->
+    <div class="page-title">
+      <h1>
+        <mat-icon>library_books</mat-icon>
+        Pattern Library
+      </h1>
+      <p class="subtitle">
+        Curated prompt engineering patterns from
+        <a href="https://www.promptingguide.ai/" target="_blank">promptingguide.ai</a>
+      </p>
+    </div>
+
+    <!-- Page Controls - December 2025 Standard -->
+    <div class="page-controls">
+      <div class="controls-container">
+        <!-- Row 1: Title + Description (inline) -->
+        <div class="flex items-center gap-2 mb-1">
+          <h3 class="!m-0 text-base font-medium">Search & Filter</h3>
+          <span class="text-xs text-gray-500">
+            Find patterns by name, category, or popularity
+          </span>
+        </div>
+
+        <!-- Row 2: Search + Category + Sort controls -->
+        <div class="flex gap-3 items-center">
+          <!-- Search (flexible width) -->
+          <mat-form-field appearance="outline" class="flex-1 min-w-[200px]">
+            <mat-label>Search patterns</mat-label>
+            <input matInput [formControl]="searchControl" placeholder="Search by name, description, or tags" />
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <!-- Category (fixed width) -->
+          <mat-form-field appearance="outline" class="w-44">
+            <mat-label>Category</mat-label>
+            <mat-select [formControl]="categoryControl">
+              <mat-option [value]="null">All Categories</mat-option>
+              <mat-option *ngFor="let cat of categories" [value]="cat.id">
+                <mat-icon [style.color]="cat.color">{{ cat.icon }}</mat-icon>
+                {{ cat.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Sort by (fixed width) -->
+          <mat-form-field appearance="outline" class="w-36">
+            <mat-label>Sort by</mat-label>
+            <mat-select [formControl]="sortByControl">
+              <mat-option value="use_count">Most Popular</mat-option>
+              <mat-option value="name">Name</mat-option>
+              <mat-option value="category">Category</mat-option>
+              <mat-option value="created_at">Newest</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Sort order (narrow) -->
+          <mat-form-field appearance="outline" class="w-32">
+            <mat-label>Order</mat-label>
+            <mat-select [formControl]="sortOrderControl">
+              <mat-option value="desc">Descending</mat-option>
+              <mat-option value="asc">Ascending</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Row 3: View toggle + Items per page + Clear + Results -->
+        <div class="flex gap-3 items-center mt-2">
+          <!-- View Mode Toggle -->
+          <div class="view-controls">
+            <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="onViewModeChange('grid')"
+              matTooltip="Grid View">
+              <mat-icon>grid_view</mat-icon>
+            </button>
+            <button mat-icon-button [class.active]="viewMode === 'list'" (click)="onViewModeChange('list')"
+              matTooltip="List View">
+              <mat-icon>view_list</mat-icon>
+            </button>
+          </div>
+
+          <!-- Items Per Page (narrow) -->
+          <mat-form-field appearance="outline" class="w-24">
+            <mat-label>Per page</mat-label>
+            <mat-select [(ngModel)]="pageSize" (selectionChange)="onItemsPerPageChange()">
+              <mat-option *ngFor="let option of itemsPerPageOptions" [value]="option">
+                {{ option }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Clear button -->
+          <button mat-button (click)="clearFilters()">
+            <mat-icon>clear</mat-icon>
+            Clear Filters
+          </button>
+
+          <!-- Spacer -->
+          <div class="flex-1"></div>
+
+          <!-- Results summary -->
+          <div class="text-sm text-gray-600" *ngIf="!loading">
+            Found <strong class="text-blue-600">{{ totalPatterns }}</strong> pattern{{
+            totalPatterns !== 1 ? 's' : ''
+            }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 3: Content Area (SCROLLS) -->
+  <div class="content-area">
+    <!-- Loading state -->
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading patterns...</p>
+    </div>
+
+    <!-- Error state -->
+    <mat-card *ngIf="error && !loading" class="error-card">
+      <mat-icon>error</mat-icon>
+      <p>{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="loadPatterns()">
+        <mat-icon>refresh</mat-icon>
+        Retry
+      </button>
+    </mat-card>
+
+    <!-- Empty state -->
+    <mat-card *ngIf="!loading && !error && patterns.length === 0" class="empty-state">
+      <mat-icon>search_off</mat-icon>
+      <h2>No patterns found</h2>
+      <p>Try adjusting your filters or search query.</p>
+      <button mat-raised-button color="primary" (click)="clearFilters()">
+        Clear Filters
+      </button>
+    </mat-card>
+
+    <!-- Grid View -->
+    <div *ngIf="!loading && !error && viewMode === 'grid' && patterns.length > 0" class="patterns-grid">
+      <mat-card *ngFor="let pattern of patterns" class="pattern-card" (click)="viewPattern(pattern)">
+        <!-- Category badge -->
+        <div class="category-badge" [style.background-color]="getCategoryInfo(pattern.category).color">
+          <mat-icon>{{ getCategoryInfo(pattern.category).icon }}</mat-icon>
+          <span>{{ getCategoryInfo(pattern.category).label }}</span>
+        </div>
+
+        <!-- Pattern name and description -->
+        <div class="pattern-header">
+          <h3>{{ pattern.name }}</h3>
+          <p class="pattern-description">{{ pattern.description }}</p>
+        </div>
+
+        <!-- Tags -->
+        <div class="tags-section" *ngIf="pattern.tags && pattern.tags.length > 0">
+          <mat-chip-set>
+            <mat-chip *ngFor="let tag of pattern.tags.slice(0, 3)">
+              {{ tag }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <!-- Footer -->
+        <div class="pattern-footer">
+          <div class="use-count" matTooltip="Times used">
+            <mat-icon>trending_up</mat-icon>
+            <span>{{ pattern.use_count }}</span>
+          </div>
+
+          <button mat-icon-button (click)="viewPattern(pattern); $event.stopPropagation()" matTooltip="View details">
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- List View -->
+    <div *ngIf="!loading && !error && viewMode === 'list' && patterns.length > 0" class="patterns-list">
+      <div *ngFor="let pattern of patterns" class="pattern-list-item" (click)="viewPattern(pattern)">
+        <div class="pattern-icon">
+          <mat-icon [style.color]="getCategoryInfo(pattern.category).color">
+            {{ getCategoryInfo(pattern.category).icon }}
+          </mat-icon>
+        </div>
+
+        <div class="pattern-info">
+          <div class="pattern-name">{{ pattern.name }}</div>
+          <div class="pattern-description">{{ pattern.description }}</div>
+        </div>
+
+        <div class="pattern-category">
+          <span class="category-tag" [style.background-color]="getCategoryInfo(pattern.category).color">
+            {{ getCategoryInfo(pattern.category).label }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 4: Page Footer (Pagination - NEVER SCROLLS) -->
+  <div class="page-footer" *ngIf="!loading && !error && patterns.length > 0">
+    <mat-paginator [length]="totalPatterns" [pageSize]="pageSize" [pageSizeOptions]="itemsPerPageOptions"
+      [pageIndex]="currentPage - 1" (page)="onPageChange($event)" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

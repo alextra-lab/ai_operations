@@ -1,0 +1,221 @@
+<h2 mat-dialog-title>
+  <mat-icon>add</mat-icon>
+  Create New Collection
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="createForm" class="create-form">
+    <!-- Name Field -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Collection Name</mat-label>
+      <input
+        matInput
+        formControlName="name"
+        placeholder="e.g., threat_intelligence"
+        required
+        autocomplete="off"
+      />
+      <mat-hint
+        >Lowercase, alphanumeric, underscores, and hyphens only</mat-hint
+      >
+      <mat-error *ngIf="createForm.get('name')?.hasError('required')">
+        Name is required
+      </mat-error>
+      <mat-error *ngIf="createForm.get('name')?.hasError('minlength')">
+        Name must be at least 3 characters
+      </mat-error>
+      <mat-error *ngIf="createForm.get('name')?.hasError('invalid')">
+        {{ createForm.get('name')?.errors?.['invalid'] }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Description Field -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        formControlName="description"
+        rows="3"
+        placeholder="Describe the purpose of this collection"
+        maxlength="1000"
+      ></textarea>
+      <mat-hint align="end"
+        >{{ createForm.get('description')?.value?.length || 0 }}/1000</mat-hint
+      >
+    </mat-form-field>
+
+    <!-- Embedding Model Selection -->
+    <div class="flex items-center gap-2 mb-2">
+      <mat-icon class="text-gray-600">psychology</mat-icon>
+      <h3 class="text-base font-medium text-gray-800 m-0">Embedding Model</h3>
+    </div>
+
+    <!-- Model Dropdown -->
+    <mat-form-field
+      appearance="outline"
+      class="full-width"
+      *ngIf="!isLoadingModels"
+    >
+      <mat-label>Select Embedding Model</mat-label>
+      <mat-select formControlName="embedding_model" required>
+        @for (model of embeddingModels; track model.id) {
+          <mat-option [value]="model.model_id" [disabled]="!model.is_available">
+            <div class="model-option">
+              <div class="model-option-header">
+                <span class="model-name">{{ model.name }}</span>
+                @if (model.model_id === 'all-MiniLM-L6-v2') {
+                  <span class="built-in-badge">BUILT-IN</span>
+                }
+              </div>
+              <div class="model-option-details">
+                <span class="provider-badge">{{ model.provider }}</span>
+                <span class="dims-badge"
+                  >{{ model.embedding_dimensions }}D</span
+                >
+                @if (!model.is_available) {
+                  <mat-icon class="unavailable-icon">warning</mat-icon>
+                }
+              </div>
+            </div>
+          </mat-option>
+        }
+      </mat-select>
+      <mat-hint
+        >Choose the embedding model for this collection (immutable after
+        creation)</mat-hint
+      >
+      <mat-error
+        *ngIf="createForm.get('embedding_model')?.hasError('required')"
+      >
+        Embedding model is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoadingModels" class="loading-container">
+      <mat-spinner diameter="32"></mat-spinner>
+      <p>Loading embedding models...</p>
+    </div>
+
+    <!-- Selected Model Display -->
+    @if (selectedModel && !isLoadingModels) {
+      <div class="border border-gray-300 rounded-lg p-4 bg-gray-50 mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-base font-medium text-gray-900">
+            {{ selectedModel.name }}
+          </div>
+          <div class="flex items-center gap-2">
+            <span
+              class="px-2 py-1 rounded text-xs font-medium uppercase bg-green-100 text-green-800"
+            >
+              {{ selectedModel.provider }}
+            </span>
+            <span
+              class="px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-700"
+            >
+              {{ selectedModel.embedding_dimensions }}D
+            </span>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 m-0">{{ selectedModel.description }}</p>
+      </div>
+    }
+
+    <!-- Information Note -->
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+      <div class="flex items-start gap-2">
+        <mat-icon class="text-yellow-600 text-lg">lightbulb</mat-icon>
+        <p class="text-xs text-yellow-900 m-0 leading-relaxed">
+          The embedding model is <strong>immutable</strong> after collection
+          creation. Use Cases can search multiple collections only if they share
+          the same embedding model.
+        </p>
+      </div>
+    </div>
+
+    <!-- Auto-Chunking Configuration Section (P4-DOC-07) -->
+    <div class="mt-4">
+      <div class="flex items-center gap-2 mb-3">
+        <mat-icon class="text-gray-600">auto_fix_high</mat-icon>
+        <h3 class="text-base font-medium text-gray-800 m-0">
+          Auto-Chunking Detection
+        </h3>
+      </div>
+
+      <!-- Enable/Disable Toggle -->
+      <mat-slide-toggle
+        formControlName="auto_chunk_enabled"
+        color="primary"
+        class="mb-3"
+      >
+        Enable automatic chunking strategy detection
+      </mat-slide-toggle>
+
+      <!-- Sample Size Selector (shown when enabled) -->
+      <mat-form-field
+        appearance="outline"
+        class="full-width"
+        *ngIf="createForm.get('auto_chunk_enabled')?.value"
+      >
+        <mat-label>Analysis Sample Size</mat-label>
+        <mat-select formControlName="preflight_sample_tokens">
+          <mat-option [value]="5000">
+            5,000 tokens <span class="text-gray-500">(~10-15 sec)</span>
+          </mat-option>
+          <mat-option [value]="10000">
+            10,000 tokens <span class="text-gray-500">(~20-25 sec)</span>
+          </mat-option>
+          <mat-option [value]="25000">
+            25,000 tokens <span class="text-gray-500">(~45-60 sec)</span>
+          </mat-option>
+          <mat-option [value]="50000">
+            50,000 tokens <span class="text-gray-500">(~90-120 sec)</span>
+          </mat-option>
+        </mat-select>
+        <mat-hint
+          >Larger samples = more accurate but slower upload processing</mat-hint
+        >
+      </mat-form-field>
+
+      <!-- Info Note about Auto-Chunking -->
+      <div
+        *ngIf="createForm.get('auto_chunk_enabled')?.value"
+        class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded"
+      >
+        <div class="flex items-start gap-2">
+          <mat-icon class="text-blue-600 text-sm">info</mat-icon>
+          <p class="text-xs text-blue-900 m-0 leading-relaxed">
+            When enabled, the system will analyze document structure and
+            automatically select the optimal chunking strategy (heading-aware,
+            table-aware, etc.) during upload.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">
+      <mat-icon>error</mat-icon>
+      {{ errorMessage }}
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="isSubmitting">
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="createForm.invalid || isSubmitting"
+  >
+    <mat-spinner
+      *ngIf="isSubmitting"
+      diameter="20"
+      class="button-spinner"
+    ></mat-spinner>
+    <span *ngIf="!isSubmitting">Create Collection</span>
+  </button>
+</mat-dialog-actions>

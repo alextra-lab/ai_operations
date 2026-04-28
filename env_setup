@@ -1,0 +1,20 @@
+# Source test env and set PYTHONPATH for running from repo root.
+# Usage: source env_setup   (from project root)
+# Credentials and secrets must live only in env files (config/env/env.test or .env).
+# Copy config/env/env.test.template to config/env/env.test and set values before use.
+
+AIO_ROOT="${AIO_ROOT:-$(cd "$(dirname "$0")" && pwd)}"
+export AIO_ROOT
+
+if [ -f "$AIO_ROOT/config/env/env.test" ]; then
+  set -a
+  # shellcheck source=config/env/env.test
+  . "$AIO_ROOT/config/env/env.test"
+  set +a
+else
+  echo "Warning: $AIO_ROOT/config/env/env.test not found."
+  echo "Copy from config/env/env.test.template and set credentials (no secrets in repo)."
+fi
+
+# PYTHONPATH for imports when running tests from repo root
+export PYTHONPATH="$AIO_ROOT/src:$(for d in "$AIO_ROOT"/src/*/; do echo -n "${d}:"; done)app"

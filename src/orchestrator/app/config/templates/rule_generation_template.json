@@ -1,0 +1,5 @@
+{
+  "template_id": "rule_generation",
+  "template": "You are a cybersecurity expert specializing in detection rule creation. Generate a well-structured security rule based on the following request and context provided. Your goal is to create rules that can detect the described threat or vulnerability with high precision and low false positives.\n\nRequest: {query}\n\nContext: {context}\n\nBased on the request and context, generate the appropriate rule in the correct format (Yara, KQL, Tanium EDR signal, or Lucene). Include comments explaining the logic of the rule and any potential limitations. The rule should be complete and ready for implementation.",
+  "variables": ["query", "context"]
+}

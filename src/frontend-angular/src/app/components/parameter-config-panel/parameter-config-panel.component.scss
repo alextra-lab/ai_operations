@@ -1,0 +1,404 @@
+/**
+ * ParameterConfigPanelComponent Styles
+ *
+ * ADR-012 Hybrid CSS Strategy compliant
+ * WCAG 2.1 AA color contrast
+ */
+
+.config-panel {
+  margin-bottom: 16px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  ::ng-deep .mat-expansion-panel-header {
+    background: #f5f5f5;
+
+    &:hover {
+      background: #eeeeee;
+    }
+  }
+
+  ::ng-deep .mat-expansion-panel-header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+
+    mat-icon {
+      color: #1976d2;
+    }
+  }
+}
+
+// ============================================================================
+// Form Styles
+// ============================================================================
+
+.config-form {
+  padding: 16px 0;
+}
+
+.form-section {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h4 {
+    display: flex;
+    align-items: center;
+    margin: 0 0 16px 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+
+    .ml-auto {
+      margin-left: auto;
+    }
+  }
+
+  .section-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: #1976d2;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: #2196f3;
+    }
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.flex-1 {
+  flex: 1;
+  min-width: 0; // Prevent flex item overflow
+}
+
+.full-width {
+  width: 100%;
+}
+
+// ============================================================================
+// Material Form Field Overrides
+// ============================================================================
+
+::ng-deep .mat-mdc-form-field {
+  width: 100%;
+
+  .mat-mdc-form-field-hint {
+    font-size: 0.75rem;
+    color: #666;
+  }
+
+  .mat-mdc-form-field-error {
+    font-size: 0.75rem;
+  }
+}
+
+::ng-deep .mat-mdc-select-panel {
+  max-height: 300px;
+}
+
+// ============================================================================
+// Custom Parameters Section
+// ============================================================================
+
+.custom-params {
+  padding: 16px;
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-top: 16px;
+}
+
+// ============================================================================
+// Warning Banner
+// ============================================================================
+
+.warning-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  background: #fff9f0;
+  border: 1px solid #ff9800;
+  border-radius: 4px;
+  color: #e65100;
+  font-size: 0.875rem;
+
+  mat-icon {
+    color: #ff9800;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  span {
+    flex: 1;
+  }
+}
+
+// ============================================================================
+// Advanced Panel
+// ============================================================================
+
+.advanced-panel {
+  margin-top: 16px;
+  border: 1px solid #e0e0e0;
+
+  ::ng-deep .mat-expansion-panel-header {
+    background: #fafafa;
+    height: 48px;
+    padding: 0 16px;
+  }
+
+  ::ng-deep .mat-expansion-panel-body {
+    padding: 16px;
+  }
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+}
+
+// ============================================================================
+// Form Actions
+// ============================================================================
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+
+  button {
+    min-width: 100px;
+
+    mat-icon {
+      margin-right: 8px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// ============================================================================
+// Checkboxes
+// ============================================================================
+
+::ng-deep .mat-mdc-checkbox {
+  margin: 8px 0;
+
+  .mdc-checkbox__background {
+    border-color: #666;
+  }
+
+  .mdc-label {
+    color: #333;
+    font-size: 0.875rem;
+  }
+}
+
+::ng-deep .mat-mdc-slide-toggle {
+  .mdc-label {
+    color: #333;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+}
+
+// ============================================================================
+// Responsive Design
+// ============================================================================
+
+@media (max-width: 768px) {
+  .config-form {
+    padding: 12px 0;
+  }
+
+  .form-section {
+    margin-bottom: 20px;
+
+    h4 {
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+  }
+
+  .custom-params {
+    padding: 12px;
+  }
+
+  .form-actions {
+    margin-top: 16px;
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .config-panel {
+    ::ng-deep .mat-expansion-panel-header-title {
+      font-size: 0.9rem;
+    }
+  }
+
+  .form-section h4 {
+    font-size: 0.9rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    .ml-auto {
+      margin-left: 0;
+    }
+  }
+
+  .warning-banner {
+    flex-direction: column;
+    align-items: flex-start;
+
+    mat-icon {
+      align-self: flex-start;
+    }
+  }
+}
+
+// ============================================================================
+// Accessibility
+// ============================================================================
+
+// Reduced motion for users with motion sensitivity
+@media (prefers-reduced-motion: reduce) {
+  ::ng-deep .mat-expansion-panel,
+  ::ng-deep .mat-mdc-form-field {
+    transition: none;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .config-panel,
+  .custom-params,
+  .warning-banner,
+  .advanced-panel {
+    border-width: 2px;
+  }
+
+  ::ng-deep .mat-mdc-form-field {
+    .mdc-text-field--outlined .mdc-notched-outline {
+      border-width: 2px;
+    }
+  }
+}
+
+// Focus visible for keyboard navigation
+:focus-visible {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+// Screen reader only text
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// ============================================================================
+// Loading State
+// ============================================================================
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+// ============================================================================
+// Tooltips
+// ============================================================================
+
+::ng-deep .mat-mdc-tooltip {
+  font-size: 0.75rem;
+  max-width: 300px;
+}
+
+// ============================================================================
+// Animations
+// ============================================================================
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-params,
+.warning-banner {
+  animation: slideIn 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-params,
+  .warning-banner {
+    animation: none;
+  }
+}

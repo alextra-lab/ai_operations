@@ -1,0 +1,106 @@
+.app-toolbar {
+  display: flex;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #1f3a93, #16a085);
+  color: #ffffff;
+}
+
+.toolbar-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: 0.05rem;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-menu button {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.nav-menu button.active {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-menu button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.session-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(255, 152, 0, 0.1);
+  border: 1px solid #ff9800;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-right: 16px;
+  font-size: 0.875rem;
+  color: #f57c00;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  margin-left: 16px;
+}
+
+.user-info {
+  padding: 16px;
+  min-width: 200px;
+}
+
+.user-name {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.user-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.session-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+.role-badge {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.main {
+  min-height: calc(100vh - 64px);
+  padding: 3rem 1.5rem;
+  background: radial-gradient(circle at top, #f0f4ff, #e6f9f7 70%);
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding: 2rem;
+  }
+
+  .nav-menu {
+    display: none;
+    /* Hide navigation on mobile for now */
+  }
+}

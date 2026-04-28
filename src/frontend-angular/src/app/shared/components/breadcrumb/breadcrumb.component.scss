@@ -1,0 +1,44 @@
+// ============================================================================
+// Breadcrumb - Compact Design (SCSS for button states only)
+// Tailwind handles: layout, typography, responsive
+// SCSS handles: button hover/focus states only
+// ============================================================================
+
+.breadcrumb-content {
+  // Ensure proper font size (16px body-large)
+  font-size: 16px;
+  line-height: 24px;
+
+  .current-page {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+.breadcrumb-button {
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  font-size: 16px;
+  line-height: 24px;
+
+  &:hover:not(.disabled) {
+    background-color: var(--mat-sys-surface-container-high);
+  }
+
+  &:focus {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .breadcrumb-button {
+    transition: none;
+  }
+}

@@ -1,0 +1,170 @@
+<h2 mat-dialog-title>Create New User</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="createForm" class="create-form">
+    <!-- Username -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Username</mat-label>
+      <input
+        matInput
+        formControlName="username"
+        required
+        aria-label="Username"
+        aria-required="true"
+      />
+      <mat-error *ngIf="createForm.get('username')?.hasError('required')">
+        Username is required
+      </mat-error>
+      <mat-error *ngIf="createForm.get('username')?.hasError('minlength')">
+        Username must be at least 3 characters
+      </mat-error>
+      <mat-error *ngIf="createForm.get('username')?.hasError('maxlength')">
+        Username cannot exceed 50 characters
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Full Name -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Full Name</mat-label>
+      <input
+        matInput
+        formControlName="full_name"
+        required
+        aria-label="Full name"
+        aria-required="true"
+      />
+      <mat-error *ngIf="createForm.get('full_name')?.hasError('required')">
+        Full name is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Email (Optional) -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email (Optional)</mat-label>
+      <input
+        matInput
+        type="email"
+        formControlName="email"
+        aria-label="Email address"
+      />
+      <mat-error *ngIf="createForm.get('email')?.hasError('email')">
+        Invalid email address
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Password -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        type="password"
+        formControlName="password"
+        required
+        aria-label="Password"
+        aria-required="true"
+      />
+      <mat-hint>
+        <span [class]="'strength-' + getPasswordStrength()">
+          {{
+            getPasswordStrength()
+              ? 'Strength: ' + getPasswordStrength()
+              : 'Minimum 8 characters'
+          }}
+        </span>
+      </mat-hint>
+      <mat-error *ngIf="createForm.get('password')?.hasError('required')">
+        Password is required
+      </mat-error>
+      <mat-error *ngIf="createForm.get('password')?.hasError('minlength')">
+        Password must be at least 8 characters
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Confirm Password -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Confirm Password</mat-label>
+      <input
+        matInput
+        type="password"
+        formControlName="confirmPassword"
+        required
+        aria-label="Confirm password"
+        aria-required="true"
+      />
+      <mat-error *ngIf="createForm.hasError('passwordMismatch')">
+        Passwords do not match
+      </mat-error>
+    </mat-form-field>
+
+    <!-- System Roles (single-select via checkboxes) -->
+    <section class="role-section">
+      <h3>System Roles</h3>
+      <p class="hint">Select one primary system role.</p>
+      <div class="checkbox-grid">
+        <mat-checkbox
+          *ngFor="let role of systemRoles"
+          [checked]="selectedSystemRole === role.role_name"
+          (change)="onSystemRoleChange(role.role_name, $event.checked)"
+          aria-label="System role {{ role.display_name }}"
+        >
+          {{ role.display_name }}
+        </mat-checkbox>
+      </div>
+    </section>
+
+    <!-- Grouping Roles -->
+    <section class="role-section">
+      <h3>Grouping Roles</h3>
+      <p class="hint">Use case access groups (multi-select).</p>
+      <div class="checkbox-grid">
+        <mat-checkbox
+          *ngFor="let role of groupingRoles"
+          [checked]="selectedGroupingRoles.has(role.role_name)"
+          (change)="toggleGroupingRole(role.role_name, $event.checked)"
+          aria-label="Grouping role {{ role.role_name }}"
+        >
+          {{ role.display_name || role.role_name }}
+        </mat-checkbox>
+      </div>
+      <div *ngIf="!groupingRoles.length" class="empty-hint">
+        No grouping roles defined yet.
+      </div>
+    </section>
+
+    <!-- Teams -->
+    <section class="role-section">
+      <h3>Teams</h3>
+      <p class="hint">Team membership controls draft visibility.</p>
+      <div class="checkbox-grid">
+        <mat-checkbox
+          *ngFor="let team of teams"
+          [checked]="selectedTeams.has(team.team_id)"
+          (change)="toggleTeam(team.team_id, $event.checked)"
+          aria-label="Team {{ team.display_name }}"
+        >
+          {{ team.display_name }}
+        </mat-checkbox>
+      </div>
+      <div *ngIf="!teams.length" class="empty-hint">No teams created yet.</div>
+    </section>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message" role="alert">
+      {{ error }}
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="isSubmitting">
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="createForm.invalid || isSubmitting"
+  >
+    {{ isSubmitting ? 'Creating...' : 'Create User' }}
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,130 @@
+/**
+ * Tool Restrictions Component Styles (ADR-057)
+ */
+
+.tool-restrictions {
+  padding: 1rem 0;
+}
+
+.restrictions-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  .info-icon {
+    color: #757575;
+    font-size: 1.125rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    cursor: help;
+  }
+}
+
+.restrictions-config {
+  margin-top: 1rem;
+}
+
+.preset-select {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 1rem;
+}
+
+.custom-config-panel {
+  margin-top: 1rem;
+
+  mat-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    mat-icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+.config-section {
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #424242;
+    margin: 0 0 0.75rem 0;
+
+    mat-icon {
+      font-size: 1.125rem;
+      width: 1.125rem;
+      height: 1.125rem;
+      color: #757575;
+    }
+  }
+}
+
+.chip-group {
+  mat-chip-listbox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  mat-chip-option {
+    cursor: pointer;
+
+    &[aria-selected='true'] {
+      background-color: #e3f2fd !important;
+      border: 1px solid #1976d2;
+    }
+  }
+}
+
+.sensitivity-select {
+  width: 100%;
+  max-width: 250px;
+}
+
+.sensitivity-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+// Preset badge colors
+:host ::ng-deep {
+  .mat-mdc-chip.mat-mdc-chip-selected {
+    &.data-source-internal {
+      background-color: #c8e6c9 !important;
+      color: #2e7d32 !important;
+    }
+
+    &.data-source-external {
+      background-color: #ffecb3 !important;
+      color: #f57c00 !important;
+    }
+
+    &.data-flow-egress {
+      background-color: #ffcdd2 !important;
+      color: #c62828 !important;
+    }
+
+    &.network-external {
+      background-color: #ffcdd2 !important;
+      color: #c62828 !important;
+    }
+  }
+}

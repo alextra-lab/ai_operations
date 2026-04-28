@@ -1,0 +1,155 @@
+<!-- Tool Restrictions Component (ADR-057) -->
+<div class="tool-restrictions">
+  <!-- Enable/Disable Toggle -->
+  <div class="restrictions-header">
+    <mat-slide-toggle
+      [(ngModel)]="enabled"
+      (change)="onEnabledChange()"
+      [disabled]="disabled"
+      color="primary"
+    >
+      Enable Security Restrictions
+    </mat-slide-toggle>
+    <mat-icon
+      class="info-icon"
+      matTooltip="When enabled, tools must match security criteria to be available in this Use Case"
+    >
+      info
+    </mat-icon>
+  </div>
+
+  <!-- Restrictions Configuration -->
+  <div *ngIf="enabled" class="restrictions-config">
+    <!-- Preset Selection -->
+    <mat-form-field appearance="outline" class="preset-select">
+      <mat-label>Security Preset</mat-label>
+      <mat-select
+        [(ngModel)]="selectedPreset"
+        (selectionChange)="onPresetChange()"
+        [disabled]="disabled"
+      >
+        <mat-option value="none">None (Disabled)</mat-option>
+        <mat-option *ngFor="let key of presetKeys" [value]="key">
+          {{ presets[key].label }}
+        </mat-option>
+        <mat-option value="custom">Custom Configuration</mat-option>
+      </mat-select>
+      <mat-hint
+        *ngIf="selectedPreset !== 'none' && selectedPreset !== 'custom'"
+      >
+        {{ presets[selectedPreset].description }}
+      </mat-hint>
+    </mat-form-field>
+
+    <!-- Custom Configuration Panel -->
+    <mat-expansion-panel
+      *ngIf="enabled && selectedPreset !== 'none'"
+      class="custom-config-panel"
+      [expanded]="selectedPreset === 'custom'"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>tune</mat-icon>
+          Custom Configuration
+        </mat-panel-title>
+        <mat-panel-description>
+          Fine-tune security restrictions
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="config-grid">
+        <!-- Data Sources -->
+        <div class="config-section">
+          <h4>
+            <mat-icon>storage</mat-icon>
+            Allowed Data Sources
+          </h4>
+          <div class="chip-group">
+            <mat-chip-listbox>
+              <mat-chip-option
+                *ngFor="let option of dataSourceOptions"
+                [selected]="isDataSourceSelected(option.value)"
+                (click)="toggleDataSource(option.value)"
+                [disabled]="disabled"
+              >
+                <mat-icon matChipAvatar>{{ option.icon }}</mat-icon>
+                {{ option.label }}
+              </mat-chip-option>
+            </mat-chip-listbox>
+          </div>
+        </div>
+
+        <!-- Data Flow -->
+        <div class="config-section">
+          <h4>
+            <mat-icon>swap_horiz</mat-icon>
+            Allowed Data Flows
+          </h4>
+          <div class="chip-group">
+            <mat-chip-listbox>
+              <mat-chip-option
+                *ngFor="let option of dataFlowOptions"
+                [selected]="isDataFlowSelected(option.value)"
+                (click)="toggleDataFlow(option.value)"
+                [disabled]="disabled"
+              >
+                <mat-icon matChipAvatar>{{ option.icon }}</mat-icon>
+                {{ option.label }}
+              </mat-chip-option>
+            </mat-chip-listbox>
+          </div>
+        </div>
+
+        <!-- Network Access -->
+        <div class="config-section">
+          <h4>
+            <mat-icon>wifi</mat-icon>
+            Allowed Network Access
+          </h4>
+          <div class="chip-group">
+            <mat-chip-listbox>
+              <mat-chip-option
+                *ngFor="let option of networkOptions"
+                [selected]="isNetworkLevelSelected(option.value)"
+                (click)="toggleNetworkLevel(option.value)"
+                [disabled]="disabled"
+              >
+                <mat-icon matChipAvatar>{{ option.icon }}</mat-icon>
+                {{ option.label }}
+              </mat-chip-option>
+            </mat-chip-listbox>
+          </div>
+        </div>
+
+        <!-- Required Sensitivity -->
+        <div class="config-section">
+          <h4>
+            <mat-icon>security</mat-icon>
+            Required Data Sensitivity
+          </h4>
+          <mat-form-field appearance="outline" class="sensitivity-select">
+            <mat-select
+              [(ngModel)]="requiredSensitivity"
+              (selectionChange)="onSensitivityChange()"
+              [disabled]="disabled"
+            >
+              <mat-option
+                *ngFor="let option of sensitivityOptions"
+                [value]="option.value"
+              >
+                <span
+                  class="sensitivity-indicator"
+                  [style.background-color]="option.color"
+                ></span>
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+            <mat-hint>
+              Tools must support at least this data classification level
+            </mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </div>
+</div>

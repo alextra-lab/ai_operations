@@ -1,0 +1,201 @@
+// Quick Actions Bar Styles
+.quick-actions-bar {
+  background-color: var(--mat-surface-container-color);
+  border-bottom: 1px solid var(--mat-divider-color);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+
+  .quick-actions-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+
+    .quick-actions-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--mat-on-surface-variant-color);
+      font-size: 16px; // Increased from 14px
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0; // Prevent title from shrinking
+
+      .title-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+
+      .title-text {
+        font-size: 16px; // Increased from 14px
+      }
+    }
+
+    .quick-actions-list {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex: 1;
+      min-width: 0;
+
+      .quick-action-button {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 8px 16px !important;
+        border-radius: 20px !important;
+        background-color: var(--mat-primary-container-color) !important;
+        color: var(--mat-on-primary-container-color) !important;
+        transition: all 0.2s ease !important;
+        white-space: nowrap !important;
+        min-height: 36px !important;
+        flex-shrink: 0 !important; // Prevent buttons from shrinking
+        width: auto !important; // Allow buttons to size based on content
+        border: none !important; // Remove default button border
+
+        &:hover:not(.disabled) {
+          background-color: var(--mat-primary-container-hover-color);
+          transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        &:active:not(.disabled) {
+          transform: translateY(0);
+        }
+
+        &.disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .action-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+
+        .action-label {
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          overflow: visible !important; // Changed from hidden to visible
+          text-overflow: unset !important; // Changed from ellipsis to unset
+          max-width: none !important; // Changed from 150px to none
+          white-space: nowrap !important;
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .quick-actions-bar {
+    padding: 8px 12px;
+
+    .quick-actions-container {
+      gap: 12px;
+
+      .quick-actions-title {
+        .title-text {
+          display: none; // Hide title text on mobile
+        }
+      }
+
+      .quick-actions-list {
+        .quick-action-button {
+          padding: 6px 10px;
+          min-height: 32px;
+
+          .action-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+
+          .action-label {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-actions-bar {
+    .quick-actions-container {
+      .quick-actions-list {
+        .quick-action-button {
+          .action-label {
+            display: none; // Hide labels on very small screens
+          }
+        }
+      }
+    }
+  }
+}
+
+// Scrollbar Styling for Quick Actions List
+.quick-actions-list {
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--mat-outline-variant-color);
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--mat-outline-color);
+  }
+}
+
+// Focus styles for accessibility
+.quick-action-button {
+  &:focus {
+    outline: 2px solid var(--mat-primary-color);
+    outline-offset: 2px;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .quick-actions-bar {
+    border-bottom-width: 2px;
+
+    .quick-actions-container {
+      .quick-actions-list {
+        .quick-action-button {
+          border: 1px solid var(--mat-outline-color);
+        }
+      }
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .quick-actions-bar {
+    .quick-actions-container {
+      .quick-actions-list {
+        .quick-action-button {
+          transition: none;
+
+          &:hover:not(.disabled) {
+            transform: none;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,104 @@
+<!-- Configuration Import/Export Dialog -->
+<div class="dialog-container">
+  <!-- Dialog Header -->
+  <h2 mat-dialog-title>
+    <mat-icon>{{ data.mode === 'export' ? 'download' : 'upload' }}</mat-icon>
+    {{
+      data.mode === 'export' ? 'Export Configuration' : 'Import Configuration'
+    }}
+  </h2>
+
+  <!-- Dialog Content -->
+  <mat-dialog-content>
+    @if (isLoading) {
+      <div class="loading-container">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>{{ data.mode === 'export' ? 'Exporting...' : 'Processing...' }}</p>
+      </div>
+    } @else {
+      <!-- YAML Text Area -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>YAML Configuration</mat-label>
+        <textarea
+          matInput
+          [(ngModel)]="configYaml"
+          rows="20"
+          [readonly]="data.mode === 'export'"
+          placeholder="Enter YAML configuration..."
+          class="yaml-textarea"
+        ></textarea>
+        <mat-hint>
+          {{
+            data.mode === 'export'
+              ? 'Copy or download this configuration'
+              : 'Paste YAML configuration here'
+          }}
+        </mat-hint>
+      </mat-form-field>
+
+      <!-- Validation Errors -->
+      @if (validationErrors.length > 0) {
+        <div class="validation-errors">
+          <div class="error-header">
+            <mat-icon>error</mat-icon>
+            <span>Validation Errors</span>
+          </div>
+          <ul>
+            @for (error of validationErrors; track error) {
+              <li>{{ error }}</li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Validation Success -->
+      @if (isValid && data.mode === 'import') {
+        <div class="validation-success">
+          <mat-icon>check_circle</mat-icon>
+          <span>Configuration is valid and ready to import</span>
+        </div>
+      }
+    }
+  </mat-dialog-content>
+
+  <!-- Dialog Actions -->
+  <mat-dialog-actions align="end">
+    @if (data.mode === 'export') {
+      <button
+        mat-raised-button
+        (click)="copyToClipboard()"
+        [disabled]="!configYaml || isLoading"
+      >
+        <mat-icon>content_copy</mat-icon>
+        Copy
+      </button>
+      <button
+        mat-raised-button
+        (click)="downloadYaml()"
+        [disabled]="!configYaml || isLoading"
+      >
+        <mat-icon>download</mat-icon>
+        Download
+      </button>
+    } @else {
+      <button
+        mat-raised-button
+        (click)="validateYaml()"
+        [disabled]="!configYaml || isLoading"
+      >
+        <mat-icon>check</mat-icon>
+        Validate
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="importConfig()"
+        [disabled]="!configYaml || isLoading"
+      >
+        <mat-icon>upload</mat-icon>
+        Import
+      </button>
+    }
+    <button mat-button (click)="close()" [disabled]="isLoading">Close</button>
+  </mat-dialog-actions>
+</div>

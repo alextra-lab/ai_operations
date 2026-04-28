@@ -1,0 +1,32 @@
+/* Roboto Font - Local Font Files for Air-Gapped Deployment */
+/* Weights: 300 (Light), 400 (Regular), 500 (Medium) */
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src:
+    url('/fonts/roboto/roboto-latin-300.woff2') format('woff2'),
+    url('/fonts/roboto/roboto-latin-300.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src:
+    url('/fonts/roboto/roboto-latin-400.woff2') format('woff2'),
+    url('/fonts/roboto/roboto-latin-400.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src:
+    url('/fonts/roboto/roboto-latin-500.woff2') format('woff2'),
+    url('/fonts/roboto/roboto-latin-500.woff') format('woff');
+}

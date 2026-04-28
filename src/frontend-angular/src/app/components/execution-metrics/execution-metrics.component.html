@@ -1,0 +1,380 @@
+<!-- Execution Metrics Component -->
+<div class="execution-metrics" *ngIf="metrics">
+  <!-- Overall Status -->
+  <div class="overall-status">
+    <div class="status-header">
+      <div class="status-indicator" [style.color]="getOverallStatusColor()">
+        <mat-icon>{{ overallStatusIcon }}</mat-icon>
+      </div>
+      <div class="status-info">
+        <h3 class="status-title">Overall Status</h3>
+        <p class="status-description">
+          {{ overallStatusClass | titlecase }} execution with
+          <span class="confidence-score" [style.color]="getConfidenceColor()">
+            {{ formatPercentage(metrics.confidence_score) }} confidence
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metrics Grid -->
+  <div class="metrics-grid">
+    <!-- Retrieval Metrics -->
+    <mat-card class="metric-card" *ngIf="hasRetrievalMetrics">
+      <mat-card-header>
+        <div
+          mat-card-avatar
+          class="metric-icon"
+          [style.color]="getRetrievalStatusColor()"
+        >
+          <mat-icon>{{ performanceIndicators.retrieval.icon }}</mat-icon>
+        </div>
+        <mat-card-title>Retrieval Metrics</mat-card-title>
+        <mat-card-subtitle>Document search and ranking</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="metric-stats">
+          <div class="stat-item">
+            <div class="stat-label">Documents Retrieved</div>
+            <div class="stat-value">
+              {{ metrics.retrieval.hits }} / {{ metrics.retrieval.top_k }}
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Avg Similarity</div>
+            <div class="stat-value" [style.color]="getRetrievalStatusColor()">
+              {{ formatSimilarity(metrics.retrieval.avg_similarity) }}
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Similarity Range</div>
+            <div class="stat-value">
+              {{ formatSimilarity(metrics.retrieval.min_similarity) }} -
+              {{ formatSimilarity(metrics.retrieval.max_similarity) }}
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Source Count</div>
+            <div class="stat-value">{{ metrics.retrieval.source_count }}</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Guard Metrics -->
+    <mat-card class="metric-card" *ngIf="hasGuardMetrics">
+      <mat-card-header>
+        <div
+          mat-card-avatar
+          class="metric-icon"
+          [style.color]="getGuardStatusColor()"
+        >
+          <mat-icon>{{ performanceIndicators.guard.icon }}</mat-icon>
+        </div>
+        <mat-card-title>Security Guard</mat-card-title>
+        <mat-card-subtitle
+          >Content filtering and safety checks</mat-card-subtitle
+        >
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="metric-stats">
+          <div class="stat-item">
+            <div class="stat-label">Risk Score</div>
+            <div class="stat-value" [style.color]="getGuardStatusColor()">
+              {{ formatRiskScore(metrics.guard.risk_score) }}
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Content Modified</div>
+            <div class="stat-value">
+              <mat-icon
+                [style.color]="metrics.guard.modified ? '#f44336' : '#4caf50'"
+              >
+                {{ metrics.guard.modified ? 'warning' : 'check_circle' }}
+              </mat-icon>
+              {{ metrics.guard.modified ? 'Yes' : 'No' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Guard Details -->
+        <div class="guard-details" *ngIf="hasGuardDetails">
+          <h4>Security Analysis</h4>
+          <div class="detail-items">
+            <div class="detail-item" *ngIf="hasPIIDetected">
+              <mat-icon color="warn">person_off</mat-icon>
+              <span>PII detected & anonymized</span>
+            </div>
+
+            <div class="detail-item" *ngIf="hasJailbreakAttempt">
+              <mat-icon color="warn">security</mat-icon>
+              <span>Prompt injection attempt detected</span>
+            </div>
+
+            <div class="detail-item" *ngIf="hasSecretsDetected">
+              <mat-icon color="warn">vpn_key</mat-icon>
+              <span>Secrets detected (API keys, passwords)</span>
+            </div>
+
+            <div class="detail-item" *ngIf="hasGibberishDetected">
+              <mat-icon color="warn">text_snippet</mat-icon>
+              <span>Gibberish/nonsense detected</span>
+            </div>
+
+            <div class="detail-item" *ngIf="hasInvalidLanguage">
+              <mat-icon color="warn">language</mat-icon>
+              <span>Invalid or unsupported language</span>
+            </div>
+
+            <div class="detail-item" *ngIf="hasBlockedCategories">
+              <mat-icon color="warn">block</mat-icon>
+              <span
+                >Blocked scanners: {{ blockedCategoriesList.join(', ') }}</span
+              >
+            </div>
+
+            <div
+              class="detail-item"
+              *ngIf="
+                !hasPIIDetected &&
+                !hasJailbreakAttempt &&
+                !hasSecretsDetected &&
+                !hasGibberishDetected &&
+                !hasInvalidLanguage &&
+                !hasBlockedCategories
+              "
+            >
+              <mat-icon color="primary">check_circle</mat-icon>
+              <span>All security scans passed</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Model Metrics -->
+    <mat-card class="metric-card" *ngIf="hasModelMetrics">
+      <mat-card-header>
+        <div
+          mat-card-avatar
+          class="metric-icon"
+          [style.color]="getModelStatusColor()"
+        >
+          <mat-icon>{{ performanceIndicators.model.icon }}</mat-icon>
+        </div>
+        <mat-card-title>Model Performance</mat-card-title>
+        <mat-card-subtitle>AI model execution statistics</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Model Name - Full Width -->
+        <div class="model-name-row">
+          <div class="stat-label">Model</div>
+          <div class="stat-value-large">{{ displayModelName }}</div>
+        </div>
+
+        <!-- Tokens Row -->
+        <div class="tokens-row">
+          <div class="token-stat">
+            <div class="stat-label">Input Tokens</div>
+            <div class="stat-value">
+              {{ formatTokens(metrics.model.tokens_in) }}
+            </div>
+          </div>
+          <div class="token-stat">
+            <div class="stat-label">Output Tokens</div>
+            <div class="stat-value">
+              {{ formatTokens(metrics.model.tokens_out) }}
+            </div>
+          </div>
+          <div class="token-stat">
+            <div class="stat-label">Total Tokens</div>
+            <div class="stat-value">
+              {{
+                formatTokens(metrics.model.tokens_in + metrics.model.tokens_out)
+              }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Row -->
+        <div class="performance-row">
+          <div class="perf-stat">
+            <div class="stat-label">Processing Time</div>
+            <div class="stat-value" [style.color]="getModelStatusColor()">
+              {{ formatDuration(metrics.model.processing_time * 1000) }}
+            </div>
+          </div>
+          <div class="perf-stat">
+            <div class="stat-label">Cost Estimate</div>
+            <div class="stat-value">
+              {{
+                hasCostEstimate
+                  ? formatCost(metrics.model.metadata.cost_estimate)
+                  : 'N/A'
+              }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Model Parameters -->
+        <div class="model-parameters" *ngIf="hasModelParameters">
+          <h4>Model Parameters</h4>
+          <div class="parameter-grid">
+            <div
+              class="parameter-item"
+              *ngIf="modelParameters.temperature != null"
+            >
+              <span class="param-label">Temperature:</span>
+              <span class="param-value">{{ modelParameters.temperature }}</span>
+            </div>
+            <div
+              class="parameter-item"
+              *ngIf="modelParameters.max_tokens != null"
+            >
+              <span class="param-label">Max Tokens:</span>
+              <span class="param-value">{{ modelParameters.max_tokens }}</span>
+            </div>
+            <div class="parameter-item" *ngIf="modelParameters.top_p != null">
+              <span class="param-label">Top P:</span>
+              <span class="param-value">{{ modelParameters.top_p }}</span>
+            </div>
+            <div class="parameter-item" *ngIf="modelParameters.top_k != null">
+              <span class="param-label">Top K:</span>
+              <span class="param-value">{{ modelParameters.top_k }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cost Breakdown -->
+        <div class="cost-breakdown" *ngIf="hasCostBreakdown">
+          <h4>Cost Breakdown</h4>
+          <div class="breakdown-grid">
+            <div class="breakdown-item">
+              <span class="breakdown-label">Input Cost:</span>
+              <span class="breakdown-value">{{
+                formatCost(costBreakdown.input_cost)
+              }}</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Output Cost:</span>
+              <span class="breakdown-value">{{
+                formatCost(costBreakdown.output_cost)
+              }}</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Total Cost:</span>
+              <span class="breakdown-value total-cost">{{
+                formatCost(costBreakdown.total_cost)
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timing Breakdown -->
+        <div class="timing-breakdown" *ngIf="hasTimingBreakdown">
+          <h4>Processing Time Breakdown</h4>
+          <div class="timing-grid">
+            <div
+              class="timing-item"
+              *ngIf="timingBreakdown.retrieval_time != null"
+            >
+              <span class="timing-label">Retrieval:</span>
+              <span class="timing-value">{{
+                formatDuration(timingBreakdown.retrieval_time * 1000)
+              }}</span>
+              <span
+                class="timing-pct"
+                *ngIf="timingBreakdown.breakdown?.retrieval_pct"
+              >
+                ({{ timingBreakdown.breakdown.retrieval_pct }}%)
+              </span>
+            </div>
+            <div class="timing-item" *ngIf="timingBreakdown.guard_time != null">
+              <span class="timing-label">Security Guard:</span>
+              <span class="timing-value">{{
+                formatDuration(timingBreakdown.guard_time * 1000)
+              }}</span>
+              <span
+                class="timing-pct"
+                *ngIf="timingBreakdown.breakdown?.guard_pct"
+              >
+                ({{ timingBreakdown.breakdown.guard_pct }}%)
+              </span>
+            </div>
+            <div class="timing-item" *ngIf="timingBreakdown.model_time != null">
+              <span class="timing-label">Model Inference:</span>
+              <span class="timing-value">{{
+                formatDuration(timingBreakdown.model_time * 1000)
+              }}</span>
+              <span
+                class="timing-pct"
+                *ngIf="timingBreakdown.breakdown?.model_pct"
+              >
+                ({{ timingBreakdown.breakdown.model_pct }}%)
+              </span>
+            </div>
+            <div
+              class="timing-item total-timing"
+              *ngIf="timingBreakdown.total_time != null"
+            >
+              <span class="timing-label">Total:</span>
+              <span class="timing-value">{{
+                formatDuration(timingBreakdown.total_time * 1000)
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Performance Summary -->
+  <div class="performance-summary">
+    <h3>Performance Summary</h3>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="summary-icon" [style.color]="getRetrievalStatusColor()">
+          <mat-icon>{{ performanceIndicators.retrieval.icon }}</mat-icon>
+        </div>
+        <div class="summary-info">
+          <div class="summary-label">Retrieval</div>
+          <div class="summary-status" [style.color]="getRetrievalStatusColor()">
+            {{ performanceIndicators.retrieval.status | titlecase }}
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon" [style.color]="getGuardStatusColor()">
+          <mat-icon>{{ performanceIndicators.guard.icon }}</mat-icon>
+        </div>
+        <div class="summary-info">
+          <div class="summary-label">Security</div>
+          <div class="summary-status" [style.color]="getGuardStatusColor()">
+            {{ performanceIndicators.guard.status | titlecase }}
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon" [style.color]="getModelStatusColor()">
+          <mat-icon>{{ performanceIndicators.model.icon }}</mat-icon>
+        </div>
+        <div class="summary-info">
+          <div class="summary-label">Model</div>
+          <div class="summary-status" [style.color]="getModelStatusColor()">
+            {{ performanceIndicators.model.status | titlecase }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

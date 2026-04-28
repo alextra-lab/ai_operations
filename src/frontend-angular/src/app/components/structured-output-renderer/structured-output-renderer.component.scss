@@ -1,0 +1,191 @@
+// ============================================================================
+// Structured Output Renderer Component
+// Following ADR-012: Hybrid Material + Tailwind + Component SCSS
+// ============================================================================
+
+.structured-output-renderer {
+  padding: 16px;
+}
+
+// Sections Grid Layout
+.sections-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+  margin-top: 16px;
+}
+
+// Section Width Classes
+.section-full {
+  grid-column: span 12;
+}
+
+.section-half {
+  grid-column: span 6;
+
+  @media (max-width: 768px) {
+    grid-column: span 12;
+  }
+}
+
+.section-third {
+  grid-column: span 4;
+
+  @media (max-width: 768px) {
+    grid-column: span 12;
+  }
+}
+
+.section-two-thirds {
+  grid-column: span 8;
+
+  @media (max-width: 768px) {
+    grid-column: span 12;
+  }
+}
+
+// Section Styling
+.output-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    mat-icon {
+      color: #1976d2;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: #333;
+    }
+  }
+
+  mat-divider {
+    margin-bottom: 16px;
+  }
+}
+
+// Text Visualizer (panel = comparison-grid; key-value-grid = kv-summary)
+.text-visualizer {
+  &.text-panel {
+    .text-panel-title {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .text-panel-content {
+      margin: 0;
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  }
+
+  &.text-kv-grid {
+    .text-kv-list {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px 24px;
+      margin: 0;
+
+      dt {
+        font-weight: 600;
+        color: #555;
+      }
+
+      dd {
+        margin: 0;
+        color: #333;
+      }
+    }
+  }
+}
+
+// Unsupported Type
+.unsupported-type {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #fff3cd;
+  border-radius: 4px;
+  color: #856404;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+// No Data State
+.no-data {
+  text-align: center;
+  padding: 48px 24px;
+  color: #666;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+// ============================================================================
+// Responsive Design
+// ============================================================================
+
+@media (max-width: 768px) {
+  .structured-output-renderer {
+    padding: 12px;
+  }
+
+  .sections-grid {
+    gap: 16px;
+  }
+
+  .output-section {
+    padding: 16px;
+
+    .section-header {
+      h3 {
+        font-size: 16px;
+      }
+    }
+  }
+}

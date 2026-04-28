@@ -1,0 +1,50 @@
+.template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.template-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+
+  .template-details {
+    flex: 1;
+  }
+
+  .template-id {
+    font-family: var(--mat-font-family-mono, monospace);
+    font-size: 0.875rem;
+  }
+
+  .template-name {
+    font-weight: 500;
+  }
+
+  .template-description {
+    font-size: 0.875rem;
+    color: var(--mat-sys-outline, #666);
+    margin-top: 0.25rem;
+  }
+}
+
+.clear-link {
+  margin-top: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--mat-sys-primary, #1976d2);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.no-templates {
+  color: var(--mat-sys-outline, #666);
+  font-size: 0.875rem;
+}

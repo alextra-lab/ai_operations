@@ -1,0 +1,49 @@
+<!-- Timeline Visualizer Template -->
+<div class="timeline-visualizer-container">
+  <!-- Title -->
+  <h3 *ngIf="title" class="visualizer-title">{{ title }}</h3>
+
+  <!-- Timeline -->
+  <div class="timeline">
+    <div
+      *ngFor="let event of sortedEvents; let i = index; let last = last"
+      class="timeline-event"
+      [class.severity-low]="getEventSeverity(event) === 'low'"
+      [class.severity-medium]="getEventSeverity(event) === 'medium'"
+      [class.severity-high]="getEventSeverity(event) === 'high'"
+      [class.severity-critical]="getEventSeverity(event) === 'critical'"
+    >
+      <!-- Marker -->
+      <div class="timeline-marker">
+        <div class="marker-icon">
+          <mat-icon>{{ getSeverityIcon(getEventSeverity(event)) }}</mat-icon>
+        </div>
+        <div class="marker-line" *ngIf="!last"></div>
+      </div>
+
+      <!-- Content -->
+      <div class="timeline-content">
+        <div class="event-time">
+          {{ formatTime(String(event[config.time_field])) }}
+        </div>
+        <div class="event-label">
+          {{ getEventLabel(event) }}
+        </div>
+        <div class="event-details" *ngIf="getEventDetails(event)">
+          {{ getEventDetails(event) }}
+        </div>
+        <div class="event-severity" *ngIf="config.severity_field">
+          <span class="severity-badge">
+            {{ getEventSeverity(event) | uppercase }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="sortedEvents.length === 0" class="empty-state">
+    <mat-icon>event</mat-icon>
+    <p>No events to display</p>
+  </div>
+</div>

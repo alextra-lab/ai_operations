@@ -1,0 +1,31 @@
+@if (templates.length > 0) {
+  <div class="template-list">
+    <mat-radio-group
+      [value]="selectedTemplateId ?? ''"
+      (change)="onSelectionChange($event.value)"
+      aria-label="Visualization template"
+    >
+      <div class="template-option">
+        <mat-radio-button value="" id="tpl-none">
+          <span class="template-id">None</span>
+        </mat-radio-button>
+        <div class="template-details">
+          <div class="template-description">No visualization template</div>
+        </div>
+      </div>
+      @for (tpl of templates; track tpl.template_id) {
+        <div class="template-option">
+          <mat-radio-button [value]="tpl.template_id" [id]="'tpl-' + tpl.template_id">
+            <span class="template-id">{{ tpl.template_id }}</span>
+          </mat-radio-button>
+          <div class="template-details">
+            <div class="template-name">{{ tpl.name }}</div>
+            <div class="template-description">{{ tpl.description }}</div>
+          </div>
+        </div>
+      }
+    </mat-radio-group>
+  </div>
+} @else {
+  <p class="no-templates">No visualization templates available.</p>
+}

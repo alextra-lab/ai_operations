@@ -1,0 +1,354 @@
+/**
+ * Tool Registration Wizard Styles
+ * ADR-012 Compliant: Material + Tailwind + Component SCSS
+ */
+
+.registration-wizard-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  margin: -24px -32px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.page-header-section {
+  flex: 0 0 auto;
+  z-index: 100;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+
+  .page-title {
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .subtitle {
+      margin: 8px 0 0 0;
+      color: #666;
+      font-size: 14px;
+    }
+  }
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+  min-height: 0;
+  background: #fafafa;
+}
+
+.wizard-card {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.step-title {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.step-description {
+  margin-bottom: 24px;
+  color: #666;
+  font-size: 14px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-field-half {
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.test-button {
+  margin-bottom: 16px;
+}
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.auth-checkbox {
+  margin-bottom: 16px;
+}
+
+.tool-id-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  border-left: 3px solid #1976d2;
+
+  .label {
+    font-weight: 500;
+    color: #666;
+  }
+
+  code {
+    font-family: 'Roboto Mono', monospace;
+    background: #e3f2fd;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #1565c0;
+  }
+
+  .hint {
+    font-size: 12px;
+    color: #999;
+    font-style: italic;
+  }
+}
+
+// Security Classification Styles (ADR-057)
+.security-classification-section,
+.authentication-section {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.section-subtitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: #1976d2;
+    border-radius: 2px;
+  }
+}
+
+.option-with-hint {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+// Security badges in review summary
+.security-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+
+  p {
+    margin: 0;
+    padding: 8px;
+    background: #fafafa;
+    border-radius: 4px;
+  }
+}
+
+.security-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  // Data source types
+  &.internal {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.external {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  &.none {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  &.mixed {
+    background: #fce4ec;
+    color: #c2185b;
+  }
+
+  // Data flow directions
+  &.ingress {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.egress {
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  &.bidirectional {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  // Network access levels
+  &.isolated {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  // &.internal already defined above
+
+  // &.external already defined above
+
+  // Data sensitivity levels
+  &.public {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  // &.internal already defined above
+
+  &.confidential {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  &.restricted {
+    background: #ffebee;
+    color: #c62828;
+  }
+}
+
+.auth-summary {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fff8e1;
+  border-radius: 4px;
+  border-left: 3px solid #ffc107;
+}
+
+.connection-test-content {
+  padding: 16px 0;
+}
+
+.test-result {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 8px;
+
+  .success-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2e7d32;
+    background: #e8f5e9;
+    padding: 12px;
+    border-radius: 4px;
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #c62828;
+    background: #ffebee;
+    padding: 12px;
+    border-radius: 4px;
+  }
+}
+
+.review-summary {
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+
+  h3 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    font-size: 18px;
+    font-weight: 500;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  color: white;
+
+  p {
+    margin-top: 16px;
+  }
+}
+
+.error-message {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #f44336;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}

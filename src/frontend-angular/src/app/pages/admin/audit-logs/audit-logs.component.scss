@@ -1,0 +1,319 @@
+/**
+ * Audit Logs Component Styles
+ * Follows ADR-012 Hybrid CSS Strategy + Layered Page Layout Pattern
+ */
+
+// ============================================================================
+// Layered Page Layout Pattern
+// ============================================================================
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  margin: -24px -32px;
+  padding: 0;
+  overflow: hidden; // CRITICAL: Prevent parent from scrolling
+}
+
+// Layer 2: Page Header + Controls (NEVER SCROLLS)
+.page-header-section {
+  flex: 0 0 auto;
+  z-index: 100;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative; // For absolute positioning of header actions
+}
+
+// Page Title Section (ADR-012 Pattern)
+.page-title {
+  padding: 16px 24px 12px 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 36px;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .subtitle {
+    margin: 4px 0 0 0;
+    color: #666;
+    font-size: 13px;
+  }
+}
+
+// Header Actions (positioned at top right)
+.header-actions {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  display: flex;
+  gap: 12px;
+}
+
+/* Statistics Card */
+.stats-card {
+  margin: 16px 0;
+  background-color: #f5f5f5;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1976d2;
+}
+
+.stats-section {
+  margin-top: 24px;
+}
+
+.stats-section h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stats-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 4px;
+}
+
+.stats-label {
+  font-size: 14px;
+  color: #424242;
+}
+
+.stats-count {
+  font-weight: 600;
+  color: #1976d2;
+}
+
+.loading-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  gap: 16px;
+}
+
+// Page Controls (wrapper with padding)
+.page-controls {
+  padding: 0 24px 16px 24px;
+
+  .controls-container {
+    background: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+}
+
+.search-field {
+  flex: 1;
+  min-width: 250px;
+}
+
+mat-form-field {
+  min-width: 150px;
+}
+
+// Layer 3: Content Area (SCROLLS)
+.content-area {
+  flex: 1; // Take remaining space
+  overflow-y: auto; // Enable vertical scrolling
+  overflow-x: hidden; // Prevent horizontal scroll
+  padding: 24px;
+  min-height: 0; // CRITICAL for flex child to be scrollable
+  background: #fafafa; // Light grey background
+}
+
+// Layer 4: Page Footer (NEVER SCROLLS)
+.page-footer {
+  flex: 0 0 auto; // Don't grow or shrink
+  z-index: 90; // Below header
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+
+  mat-paginator {
+    background-color: transparent;
+  }
+}
+
+/* Error and Loading States */
+.error-message {
+  padding: 16px;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: #666;
+  margin: 0;
+}
+
+/* Table Container */
+.table-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.logs-table {
+  width: 100%;
+}
+
+/* Table Cell Styles */
+.actor-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.username {
+  font-weight: 500;
+}
+
+.roles {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.role-chip {
+  font-size: 11px;
+  min-height: 20px;
+  padding: 2px 8px;
+}
+
+.action-text {
+  display: block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resource-chip {
+  font-size: 12px;
+}
+
+// ============================================================================
+// Responsive Behavior
+// ============================================================================
+
+@media (max-width: 768px) {
+  .page-container {
+    height: calc(100vh - 150px); // Adjust for mobile
+    margin: -16px;
+  }
+
+  .page-title {
+    padding: 16px 16px 12px 16px;
+
+    h1 {
+      font-size: 24px;
+    }
+  }
+
+  .header-actions {
+    position: static;
+    padding: 0 16px 12px 16px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .controls-container {
+    flex-direction: column;
+  }
+
+  .search-field,
+  mat-form-field {
+    width: 100%;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .content-area {
+    padding: 16px;
+  }
+
+  .action-text {
+    max-width: 150px;
+  }
+}
+
+/* WCAG 2.1 AA Compliance */
+.mat-icon[color='warn'] {
+  color: #d32f2f;
+}
+
+.mat-icon[color='primary'] {
+  color: #1976d2;
+}
+
+/* Focus States */
+button:focus,
+input:focus,
+mat-select:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}

@@ -1,0 +1,117 @@
+{
+  "timestamp": "2025-11-30 11:08:55",
+  "config": {
+    "iterations": 5,
+    "concurrency": 2,
+    "orchestrator_url": "http://localhost:8006"
+  },
+  "results": {
+    "database": {
+      "simple_query": {
+        "operation_name": "simple_query",
+        "total_operations": 5,
+        "successful_operations": 5,
+        "failed_operations": 0,
+        "success_rate": 100.0,
+        "latency_ms": {
+          "min": 1.7981250130105764,
+          "max": 19.919499987736344,
+          "mean": 8.027099806349725,
+          "median": 1.877791015431285,
+          "std_dev": 8.664816486819028,
+          "p50": 1.877791015431285,
+          "p95": 18.87144158827141,
+          "p99": 19.709888307843357
+        },
+        "throughput": {
+          "operations_per_second": 245.596648492281,
+          "total_duration_seconds": 0.02035858400631696
+        }
+      },
+      "count_query": {
+        "operation_name": "count_query",
+        "total_operations": 5,
+        "successful_operations": 5,
+        "failed_operations": 0,
+        "success_rate": 100.0,
+        "latency_ms": {
+          "min": 1.4427909918595105,
+          "max": 4.464500001631677,
+          "mean": 2.7274663967546076,
+          "median": 1.7162500007543713,
+          "std_dev": 1.5224394893506508,
+          "p50": 1.7162500007543713,
+          "p95": 4.434700001729652,
+          "p99": 4.458540001651272
+        },
+        "throughput": {
+          "operations_per_second": 653.569825913732,
+          "total_duration_seconds": 0.007650291983736679
+        }
+      },
+      "filtered_query": {
+        "operation_name": "filtered_query",
+        "total_operations": 5,
+        "successful_operations": 5,
+        "failed_operations": 0,
+        "success_rate": 100.0,
+        "latency_ms": {
+          "min": 2.0710829994641244,
+          "max": 18.055459018796682,
+          "mean": 8.540958195226267,
+          "median": 2.275624981848523,
+          "std_dev": 8.67949735725351,
+          "p50": 2.275624981848523,
+          "p95": 18.052658811211586,
+          "p99": 18.054898977279663
+        },
+        "throughput": {
+          "operations_per_second": 222.31608894790034,
+          "total_duration_seconds": 0.022490500006824732
+        }
+      },
+      "join_query": {
+        "operation_name": "join_query",
+        "total_operations": 5,
+        "successful_operations": 5,
+        "failed_operations": 0,
+        "success_rate": 100.0,
+        "latency_ms": {
+          "min": 1.8824160215444863,
+          "max": 4.94679098483175,
+          "mean": 3.1481164041906595,
+          "median": 2.1647500107064843,
+          "std_dev": 1.496776931182136,
+          "p50": 2.1647500107064843,
+          "p95": 4.87930778763257,
+          "p99": 4.933294345391914
+        },
+        "throughput": {
+          "operations_per_second": 561.895105427582,
+          "total_duration_seconds": 0.008898458007024601
+        }
+      },
+      "transaction": {
+        "operation_name": "transaction",
+        "total_operations": 5,
+        "successful_operations": 5,
+        "failed_operations": 0,
+        "success_rate": 100.0,
+        "latency_ms": {
+          "min": 3.1807079794816673,
+          "max": 6.943667016457766,
+          "mean": 4.817374999402091,
+          "median": 3.8290000229608268,
+          "std_dev": 1.718821309902711,
+          "p50": 3.8290000229608268,
+          "p95": 6.833475211169571,
+          "p99": 6.921628655400127
+        },
+        "throughput": {
+          "operations_per_second": 372.64766208262665,
+          "total_duration_seconds": 0.01341749998391606
+        }
+      }
+    }
+  }
+}

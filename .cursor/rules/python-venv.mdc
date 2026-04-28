@@ -1,0 +1,8 @@
+---
+description: Use the project virtual environment for all Python commands; never use system python.
+globs: **/*.py, ops/**/*, tests/**/*
+---
+
+- **Always use the project virtual environment** for any Python command (scripts, tests, pytest, pip). Never use system `python` or `python3`.
+- From project root use: **`venv/bin/python`** (e.g. `venv/bin/python ops/testing/run_all_tests.py`, `venv/bin/python -m pytest ...`).
+- When invoking a script, use the venv interpreter so the same venv is used for subprocesses: `venv/bin/python path/to/script.py`.

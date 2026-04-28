@@ -1,0 +1,460 @@
+// Use Case Menu Component Styles
+// LAYERED_PAGE_LAYOUT_PATTERN + December 2025 Controls Container Standard
+
+// ============================================================================
+// Layered Page Layout Pattern
+// ============================================================================
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  margin: -24px -32px;
+  padding: 0;
+  overflow: hidden;
+}
+
+// Layer 2: Page Header + Controls (NEVER SCROLLS)
+.page-header-section {
+  flex: 0 0 auto;
+  z-index: 100;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .page-title {
+    padding: 16px 24px 12px 24px;
+
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+      height: 36px;
+
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+        color: #1976d2;
+      }
+    }
+
+    .subtitle {
+      margin: 4px 0 0 0;
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 13px;
+    }
+  }
+
+  .page-controls {
+    padding: 0 24px 12px 24px;
+
+    .controls-container {
+      background: #f5f5f5;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      padding: 8px 16px 8px 16px;
+
+      h3 {
+        margin: 0 !important;
+        font-size: 20px !important;
+        font-weight: 500;
+      }
+
+      // Hide Material form field subscript for tighter spacing
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+
+      // View Controls
+      .view-controls {
+        display: flex;
+        gap: 0;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #e0e0e0;
+        height: 40px;
+
+        button {
+          border-radius: 0;
+          border: none;
+          background: white;
+          transition: all 0.2s ease;
+          width: 40px;
+          height: 40px;
+
+          &:hover {
+            background: #f5f5f5;
+          }
+
+          &.active {
+            background: #1976d2;
+            color: white;
+
+            mat-icon {
+              color: white;
+            }
+          }
+
+          mat-icon {
+            color: rgba(0, 0, 0, 0.6);
+            transition: color 0.2s ease;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Layer 3: Content Area (SCROLLS)
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+  min-height: 0;
+  background: #fafafa;
+}
+
+// Layer 4: Page Footer (NEVER SCROLLS)
+.page-footer {
+  flex: 0 0 auto;
+  z-index: 90;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.08);
+
+  mat-paginator {
+    background-color: transparent;
+  }
+}
+
+// ============================================================================
+// Loading, Error, Empty States
+// ============================================================================
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+
+  .loading-text {
+    margin-top: 16px;
+    color: #666;
+    font-size: 1.1rem;
+  }
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+
+  .error-icon {
+    font-size: 4rem;
+    color: #f44336;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #666;
+    margin-bottom: 24px;
+  }
+}
+
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #666;
+    margin-bottom: 24px;
+  }
+}
+
+// ============================================================================
+// Use Cases Grid (inside content-area)
+// ============================================================================
+
+.use-cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+
+  .use-case-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .use-case-avatar {
+      background-color: #f5f5f5;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .use-case-description {
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .use-case-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: #666;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+
+    .use-case-tags {
+      margin-bottom: 16px;
+
+      mat-chip-listbox {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+
+        mat-chip {
+          font-size: 0.8rem;
+          height: 24px;
+
+          &.more-chip {
+            background-color: #e0e0e0;
+            color: #666;
+          }
+        }
+      }
+    }
+
+    mat-card-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+
+      button[mat-button] {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// Use Cases List (inside content-area)
+// ============================================================================
+
+.use-cases-list {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 32px;
+  overflow: hidden;
+
+  .use-case-list-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .list-avatar {
+      background-color: #f5f5f5;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .list-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .list-subtitle {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .list-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+
+      .meta-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+
+        .category-badge {
+          padding: 2px 8px;
+          border-radius: 12px;
+          color: white;
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+
+        .tags-count {
+          font-size: 0.8rem;
+          color: #666;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// Responsive Design
+// ============================================================================
+
+@media (max-width: 1200px) {
+  .page-header-section {
+    .page-controls {
+      .controls-container {
+        form>div {
+          flex-wrap: wrap;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    height: calc(100vh - 150px);
+    margin: -16px;
+  }
+
+  .page-header-section {
+    .page-title {
+      padding: 12px 16px 8px 16px;
+
+      h1 {
+        font-size: 20px;
+        height: 32px;
+
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .subtitle {
+        font-size: 12px;
+      }
+    }
+
+    .page-controls {
+      padding: 0 16px 12px 16px;
+
+      .controls-container {
+        padding: 8px 12px;
+
+        form>div {
+          flex-direction: column;
+          align-items: stretch;
+
+          mat-form-field {
+            width: 100% !important;
+            min-width: 100% !important;
+          }
+
+          .view-controls {
+            align-self: flex-start;
+          }
+        }
+      }
+    }
+  }
+
+  .content-area {
+    padding: 16px;
+  }
+
+  .use-cases-grid {
+    grid-template-columns: 1fr;
+  }
+}

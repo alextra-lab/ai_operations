@@ -1,0 +1,9 @@
+{
+    "default": true,
+    "MD060": false,
+    "MD013": {
+        "line_length": 130,
+        "enabled": false
+    },
+    "MD036": false
+}

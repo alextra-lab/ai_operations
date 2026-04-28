@@ -1,0 +1,281 @@
+<!-- Use Case Menu Component - LAYERED_PAGE_LAYOUT_PATTERN -->
+<!-- ADR-012 Compliant: Material + Tailwind utilities -->
+<div class="page-container">
+  <!-- Layer 2: Page Header + Controls (NEVER SCROLLS) -->
+  <div class="page-header-section">
+    <div class="page-title">
+      <h1>
+        <mat-icon>psychology</mat-icon>
+        AIOps Library
+      </h1>
+      <p class="subtitle">
+        Select and execute AI-powered use cases for your SOC operations
+      </p>
+    </div>
+
+    <!-- Page Controls - December 2025 Standard -->
+    <div class="page-controls">
+      <div class="controls-container">
+        <!-- Row 1: Title + Description (inline) -->
+        <div class="flex items-center gap-2 mb-1">
+          <h3 class="!m-0 text-base font-medium">Search & Filter</h3>
+          <span class="text-xs text-gray-500">
+            Find use cases by name, category, or tags
+          </span>
+        </div>
+
+        <!-- Row 2: Search + Category + Sort -->
+        <form [formGroup]="searchForm" class="flex flex-col gap-2">
+          <div class="flex gap-3 items-center">
+            <!-- Search (flexible width) -->
+            <mat-form-field appearance="outline" class="flex-1 min-w-[200px]">
+              <mat-label>Search use cases</mat-label>
+              <input matInput formControlName="search" placeholder="Search by name, description, or tags" />
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <!-- Category (fixed width) -->
+            <mat-form-field appearance="outline" class="w-40 shrink-0">
+              <mat-label>Category</mat-label>
+              <mat-select formControlName="category">
+                <mat-option value="all">All Categories</mat-option>
+                <mat-option *ngFor="let category of availableCategories" [value]="category">
+                  {{ getCategoryDisplayName(category) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Sort by (fixed width) -->
+            <mat-form-field appearance="outline" class="w-32 shrink-0">
+              <mat-label>Sort by</mat-label>
+              <mat-select formControlName="sortBy">
+                <mat-option value="name">Name</mat-option>
+                <mat-option value="category">Category</mat-option>
+                <mat-option value="created_at">Date</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Sort Order Button -->
+            <button mat-icon-button [matMenuTriggerFor]="sortMenu" class="shrink-0" matTooltip="Sort order">
+              <mat-icon>{{
+                sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward'
+                }}</mat-icon>
+            </button>
+            <mat-menu #sortMenu="matMenu">
+              <button mat-menu-item (click)="onSortChange(sortBy, 'asc')">
+                <mat-icon>arrow_upward</mat-icon>
+                <span>Ascending</span>
+              </button>
+              <button mat-menu-item (click)="onSortChange(sortBy, 'desc')">
+                <mat-icon>arrow_downward</mat-icon>
+                <span>Descending</span>
+              </button>
+            </mat-menu>
+          </div>
+
+          <!-- Row 3: View toggle + Per page + Clear + Results -->
+          <div class="flex gap-3 items-center">
+            <!-- View Mode Toggle -->
+            <div class="view-controls">
+              <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="onViewModeChange('grid')"
+                matTooltip="Grid View">
+                <mat-icon>grid_view</mat-icon>
+              </button>
+              <button mat-icon-button [class.active]="viewMode === 'list'" (click)="onViewModeChange('list')"
+                matTooltip="List View">
+                <mat-icon>view_list</mat-icon>
+              </button>
+            </div>
+
+            <!-- Items Per Page -->
+            <mat-form-field appearance="outline" class="w-24 shrink-0">
+              <mat-label>Per page</mat-label>
+              <mat-select [value]="itemsPerPage" (selectionChange)="onItemsPerPageChange($event.value)">
+                <mat-option value="6">6</mat-option>
+                <mat-option value="12">12</mat-option>
+                <mat-option value="24">24</mat-option>
+                <mat-option value="48">48</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Clear Filters -->
+            <button mat-button type="button" (click)="searchForm.reset()" *ngIf="hasFilters">
+              <mat-icon>clear</mat-icon>
+              Clear Filters
+            </button>
+
+            <!-- Refresh -->
+            <button mat-button type="button" (click)="refresh()" [disabled]="isLoading">
+              <mat-icon>refresh</mat-icon>
+              Refresh
+            </button>
+
+            <!-- Spacer -->
+            <div class="flex-1"></div>
+
+            <!-- Results summary -->
+            <div class="text-sm text-gray-600" *ngIf="!isLoading">
+              Found <strong class="text-blue-600">{{ totalItems }}</strong> use case{{
+              totalItems !== 1 ? 's' : ''
+              }}
+              <span *ngIf="hasFilters" class="text-blue-500">(filtered)</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 3: Content Area (SCROLLS) -->
+  <div class="content-area">
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p class="loading-text">Loading use cases...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !isLoading">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3>Error Loading Use Cases</h3>
+      <p>{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="refresh()">
+        Try Again
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-container" *ngIf="isEmpty && !isLoading && !error">
+      <mat-icon class="empty-icon">inbox</mat-icon>
+      <h3>No Use Cases Found</h3>
+      <p *ngIf="!hasFilters">No use cases are available for your role.</p>
+      <p *ngIf="hasFilters">No use cases match your current filters.</p>
+      <button *ngIf="hasFilters" mat-raised-button color="primary" (click)="searchForm.reset()">
+        Clear Filters
+      </button>
+    </div>
+
+    <!-- Use Cases Grid -->
+    <div class="use-cases-grid" *ngIf="hasUseCases && viewMode === 'grid' && !isLoading">
+      <mat-card *ngFor="let useCase of paginatedUseCases" class="use-case-card" (click)="openUseCase(useCase)"
+        [style.border-left-color]="getUseCaseColor(useCase.category)">
+        <mat-card-header>
+          <div mat-card-avatar class="use-case-avatar">
+            <mat-icon [style.color]="getUseCaseColor(useCase.category)">
+              {{ getUseCaseIcon(useCase.category) }}
+            </mat-icon>
+          </div>
+          <mat-card-title>{{ useCase.name }}</mat-card-title>
+          <mat-card-subtitle>{{
+            getCategoryDisplayName(useCase.category)
+            }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <p class="use-case-description">{{ useCase.description }}</p>
+
+          <div class="use-case-meta">
+            <div class="meta-item">
+              <mat-icon>category</mat-icon>
+              <span>{{ getCategoryDisplayName(useCase.category) }}</span>
+            </div>
+            <div class="meta-item" *ngIf="useCase.tags?.length">
+              <mat-icon>label</mat-icon>
+              <span>{{ useCase.tags?.length }} tag{{
+                useCase.tags?.length !== 1 ? 's' : ''
+                }}</span>
+            </div>
+          </div>
+
+          <div class="use-case-tags" *ngIf="useCase.tags?.length">
+            <mat-chip-listbox>
+              <mat-chip *ngFor="let tag of useCase.tags?.slice(0, 3)">
+                {{ tag }}
+              </mat-chip>
+              <mat-chip *ngIf="(useCase.tags?.length ?? 0) > 3" class="more-chip">
+                +{{ (useCase.tags?.length ?? 0) - 3 }}
+              </mat-chip>
+            </mat-chip-listbox>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-button color="primary">
+            <mat-icon>play_arrow</mat-icon>
+            Execute
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="cardMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #cardMenu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>info</mat-icon>
+              <span>Details</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>history</mat-icon>
+              <span>History</span>
+            </button>
+          </mat-menu>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- Use Cases List -->
+    <div class="use-cases-list" *ngIf="hasUseCases && viewMode === 'list' && !isLoading">
+      <mat-list>
+        <mat-list-item *ngFor="let useCase of paginatedUseCases" class="use-case-list-item"
+          (click)="openUseCase(useCase)">
+          <div matListItemAvatar class="list-avatar">
+            <mat-icon [style.color]="getUseCaseColor(useCase.category)">
+              {{ getUseCaseIcon(useCase.category) }}
+            </mat-icon>
+          </div>
+
+          <div matListItemTitle class="list-title">{{ useCase.name }}</div>
+          <div matListItemLine class="list-subtitle">
+            {{ getCategoryDisplayName(useCase.category) }} •
+            {{ useCase.description }}
+          </div>
+          <div matListItemMeta class="list-meta">
+            <div class="meta-info">
+              <span class="category-badge" [style.background-color]="getUseCaseColor(useCase.category)">
+                {{ getCategoryDisplayName(useCase.category) }}
+              </span>
+              <span class="tags-count" *ngIf="useCase.tags?.length">
+                {{ useCase.tags?.length }} tag{{
+                useCase.tags?.length !== 1 ? 's' : ''
+                }}
+              </span>
+            </div>
+            <button mat-icon-button [matMenuTriggerFor]="listMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #listMenu="matMenu">
+              <button mat-menu-item>
+                <mat-icon>play_arrow</mat-icon>
+                <span>Execute</span>
+              </button>
+              <button mat-menu-item>
+                <mat-icon>info</mat-icon>
+                <span>Details</span>
+              </button>
+              <button mat-menu-item>
+                <mat-icon>history</mat-icon>
+                <span>History</span>
+              </button>
+            </mat-menu>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+  </div>
+
+  <!-- Layer 4: Page Footer (NEVER SCROLLS) -->
+  <div class="page-footer" *ngIf="showPagination">
+    <mat-paginator [length]="totalItems" [pageSize]="itemsPerPage" [pageIndex]="currentPage - 1"
+      [pageSizeOptions]="[6, 12, 24, 48]" (page)="onPageChange($event.pageIndex + 1)" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

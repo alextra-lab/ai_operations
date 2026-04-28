@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+
+# Build outputs
+dist/
+build/
+
+# Archive
+docs/archive/
+
+# Data and logs
+data/
+logs/

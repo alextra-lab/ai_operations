@@ -1,0 +1,233 @@
+.intent-model-config-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header-card {
+  margin-bottom: 24px;
+
+  mat-card-header {
+    margin-bottom: 16px;
+  }
+
+  mat-icon[mat-card-avatar] {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.summary-stats {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 16px;
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+
+      &.configured {
+        color: #4caf50;
+      }
+
+      &.unconfigured {
+        color: #ff9800;
+      }
+    }
+  }
+}
+
+.warning-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #fff3e0;
+  border-left: 4px solid #ff9800;
+  border-radius: 4px;
+  color: #e65100;
+
+  mat-icon {
+    color: #ff9800;
+  }
+}
+
+.config-card {
+  mat-card-content {
+    padding: 0;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  gap: 16px;
+
+  p {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.intent-table {
+  width: 100%;
+
+  th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 16px;
+  }
+
+  th.mat-column-current_model,
+  td.mat-column-current_model {
+    min-width: 240px;
+  }
+
+  td {
+    padding: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  tr.editing {
+    background-color: #e3f2fd;
+  }
+
+  tr.unconfigured {
+    background-color: #fff3e0;
+  }
+
+  .intent-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .intent-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    strong {
+      font-size: 14px;
+    }
+
+    .intent-description {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    .intent-code {
+      font-size: 11px;
+      font-family: monospace;
+      color: rgba(0, 0, 0, 0.4);
+      text-transform: uppercase;
+    }
+  }
+
+  .model-id {
+    font-family: monospace;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .not-configured {
+    color: #ff9800;
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  .model-select,
+  .temperature-input,
+  .notes-input {
+    width: 100%;
+    min-width: 180px;
+    margin-top: 8px;
+  }
+
+  .temperature-input mat-form-field,
+  .model-select mat-form-field,
+  .notes-input mat-form-field {
+    width: 100%;
+  }
+
+  .model-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .provider-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+      width: fit-content;
+    }
+
+    .capabilities-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+
+      .capability-chip {
+        height: 24px;
+        font-size: 11px;
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+
+    button {
+      mat-icon {
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+/* Responsive design */
+@media (max-width: 960px) {
+  .intent-model-config-container {
+    padding: 16px;
+  }
+
+  .summary-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .intent-table {
+    font-size: 12px;
+
+    th,
+    td {
+      padding: 12px 8px;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+  }
+}

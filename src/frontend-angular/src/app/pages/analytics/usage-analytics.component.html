@@ -1,0 +1,209 @@
+<div class="usage-analytics-container">
+  <!-- Header -->
+  <div class="analytics-header">
+    <h1>
+      <mat-icon>insights</mat-icon>
+      Corpus Usage
+    </h1>
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="time-range-selector">
+        <mat-label>Time Range</mat-label>
+        <mat-select
+          [(ngModel)]="selectedTimeRange"
+          (selectionChange)="onTimeRangeChange()"
+        >
+          <mat-option *ngFor="let range of timeRanges" [value]="range.value">
+            {{ range.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="refreshData()"
+        [disabled]="isLoading"
+      >
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading analytics...</p>
+  </div>
+
+  <!-- Error Message -->
+  <mat-card *ngIf="errorMessage && !isLoading" class="error-card">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ errorMessage }}</p>
+    <button mat-button (click)="refreshData()">Retry</button>
+  </mat-card>
+
+  <!-- Analytics Content -->
+  <div *ngIf="!isLoading && !errorMessage" class="analytics-content">
+    <!-- Summary Stats -->
+    <div class="stats-grid" *ngIf="usageStats">
+      <mat-card class="stat-card">
+        <div class="stat-icon" style="background-color: #e3f2fd">
+          <mat-icon style="color: #1976d2">search</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>{{ formatNumber(usageStats.total_retrievals) }}</h3>
+          <p>Total Retrievals</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon" style="background-color: #f3e5f5">
+          <mat-icon style="color: #7b1fa2">description</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>{{ usageStats.unique_documents_accessed }}</h3>
+          <p>Unique Documents</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon" style="background-color: #e8f5e9">
+          <mat-icon style="color: #388e3c">people</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>{{ usageStats.unique_users }}</h3>
+          <p>Active Users</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon" style="background-color: #fff3e0">
+          <mat-icon style="color: #f57c00">trending_up</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>{{ formatPercent(usageStats.avg_relevancy_score) }}</h3>
+          <p>Avg Relevancy</p>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+      <!-- Daily Trends Chart -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Daily Query Trends</mat-card-title>
+          <mat-card-subtitle
+            >Query volume and average relevancy over time</mat-card-subtitle
+          >
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container" *ngIf="dailyTrendsChartData">
+            <canvas
+              baseChart
+              [data]="dailyTrendsChartData"
+              [options]="dailyTrendsChartOptions"
+              [type]="'line'"
+            >
+            </canvas>
+          </div>
+          <div *ngIf="!dailyTrendsChartData" class="no-data">
+            <mat-icon>info</mat-icon>
+            <p>No trend data available</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Top Documents Chart -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Top Documents by Relevancy</mat-card-title>
+          <mat-card-subtitle
+            >Most relevant documents based on search results</mat-card-subtitle
+          >
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container" *ngIf="topDocumentsChartData">
+            <canvas
+              baseChart
+              [data]="topDocumentsChartData"
+              [options]="topDocumentsChartOptions"
+              [type]="'bar'"
+            >
+            </canvas>
+          </div>
+          <div *ngIf="!topDocumentsChartData" class="no-data">
+            <mat-icon>info</mat-icon>
+            <p>No document data available</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Hot Documents Table -->
+    <mat-card class="table-card" *ngIf="hotDocuments">
+      <mat-card-header>
+        <mat-card-title>Hot Documents</mat-card-title>
+        <mat-card-subtitle
+          >Most frequently accessed documents ({{
+            hotDocuments.total
+          }}
+          total)</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content>
+        <table
+          mat-table
+          [dataSource]="hotDocuments.documents"
+          class="hot-docs-table"
+        >
+          <!-- Title Column -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Document</th>
+            <td mat-cell *matCellDef="let doc">
+              <div class="doc-title">
+                <mat-icon>description</mat-icon>
+                <span>{{ doc.title }}</span>
+              </div>
+              <div class="doc-meta">{{ doc.classification }}</div>
+            </td>
+          </ng-container>
+
+          <!-- Access Count Column -->
+          <ng-container matColumnDef="access_count">
+            <th mat-header-cell *matHeaderCellDef>Access Count</th>
+            <td mat-cell *matCellDef="let doc">
+              <mat-icon class="metric-icon">visibility</mat-icon>
+              {{ doc.access_count }}
+            </td>
+          </ng-container>
+
+          <!-- Unique Users Column -->
+          <ng-container matColumnDef="unique_users">
+            <th mat-header-cell *matHeaderCellDef>Unique Users</th>
+            <td mat-cell *matCellDef="let doc">
+              <mat-icon class="metric-icon">people</mat-icon>
+              {{ doc.unique_users }}
+            </td>
+          </ng-container>
+
+          <!-- Last Accessed Column -->
+          <ng-container matColumnDef="last_accessed">
+            <th mat-header-cell *matHeaderCellDef>Last Accessed</th>
+            <td mat-cell *matCellDef="let doc">
+              {{ formatDate(doc.last_accessed) }}
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="hotDocsColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: hotDocsColumns"></tr>
+        </table>
+
+        <div *ngIf="!hotDocuments.documents.length" class="no-data">
+          <mat-icon>info</mat-icon>
+          <p>No hot documents found</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

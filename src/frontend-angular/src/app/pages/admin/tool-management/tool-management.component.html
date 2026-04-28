@@ -1,0 +1,258 @@
+<!-- Tool Management Page -->
+<!-- Follows ADR-012 Layered Page Layout Pattern -->
+
+<div class="page-container">
+  <!-- Layer 2: Page Header (Fixed) -->
+  <div class="page-header-layer">
+    <div class="page-header-controls">
+      <div class="header-left">
+        <h1 class="page-title">Tool Management</h1>
+        <p class="page-subtitle">Manage MCP tools and their configuration</p>
+      </div>
+
+      <div class="header-actions">
+        <button
+          mat-icon-button
+          (click)="refreshTools()"
+          matTooltip="Refresh tools list"
+          class="refresh-button"
+        >
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <a
+          mat-stroked-button
+          routerLink="/admin/tools/health"
+          matTooltip="View Health Dashboard"
+          class="health-button"
+        >
+          <mat-icon>monitor_heart</mat-icon>
+          Health Dashboard
+        </a>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="navigateToRegistration()"
+          class="create-button"
+        >
+          <mat-icon>add</mat-icon>
+          Register New Tool
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search by name or ID</mat-label>
+        <input
+          matInput
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          placeholder="Search tools..."
+        />
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="category-field">
+        <mat-label>Category</mat-label>
+        <mat-select
+          [(ngModel)]="filters.category"
+          (selectionChange)="onFilterChange()"
+        >
+          <mat-option [value]="undefined">All Categories</mat-option>
+          <mat-option *ngFor="let cat of categories" [value]="cat">
+            {{ cat }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-slide-toggle
+        [(ngModel)]="filters.enabled_only"
+        (change)="onFilterChange()"
+        class="filter-toggle"
+      >
+        Show enabled only
+      </mat-slide-toggle>
+
+      <mat-slide-toggle
+        [(ngModel)]="filters.healthy_only"
+        (change)="onFilterChange()"
+        class="filter-toggle"
+      >
+        Show healthy only
+      </mat-slide-toggle>
+
+      <span class="tool-count">
+        {{ filteredTools.length }} of {{ tools.length }} tool{{
+          tools.length !== 1 ? 's' : ''
+        }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Layer 3: Content Area (Scrollable) -->
+  <div class="page-content-layer">
+    <div class="content-card">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p class="loading-text">Loading tools...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error && !isLoading" class="error-container">
+        <mat-icon class="error-icon">error</mat-icon>
+        <p class="error-text">{{ error }}</p>
+        <button mat-raised-button color="primary" (click)="loadTools()">
+          Retry
+        </button>
+      </div>
+
+      <!-- Empty State -->
+      <div
+        *ngIf="!isLoading && !error && filteredTools.length === 0"
+        class="empty-container"
+      >
+        <mat-icon class="empty-icon">build</mat-icon>
+        <p class="empty-text">No tools found</p>
+        <p class="empty-subtext" *ngIf="tools.length === 0">
+          Get started by registering your first MCP tool.
+        </p>
+        <p class="empty-subtext" *ngIf="tools.length > 0">
+          No tools match your current filters.
+        </p>
+        <button
+          *ngIf="tools.length === 0"
+          mat-raised-button
+          color="primary"
+          (click)="navigateToRegistration()"
+        >
+          <mat-icon>add</mat-icon>
+          Register Tool
+        </button>
+      </div>
+
+      <!-- Tool Table -->
+      <div
+        *ngIf="!isLoading && !error && filteredTools.length > 0"
+        class="table-container"
+      >
+        <table mat-table [dataSource]="filteredTools" class="tools-table">
+          <!-- Tool ID Column -->
+          <ng-container matColumnDef="tool_id">
+            <th mat-header-cell *matHeaderCellDef>Tool ID</th>
+            <td mat-cell *matCellDef="let tool">
+              <code class="tool-id">{{ tool.tool_id }}</code>
+            </td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let tool">
+              <div class="tool-name-cell">
+                <strong>{{ tool.name }}</strong>
+                <span *ngIf="tool.description" class="tool-description">
+                  {{ tool.description }}
+                </span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Category Column -->
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef>Category</th>
+            <td mat-cell *matCellDef="let tool">
+              <mat-chip [ngClass]="getCategoryClass(tool.category)">
+                {{ tool.category }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Provider Column -->
+          <ng-container matColumnDef="provider">
+            <th mat-header-cell *matHeaderCellDef>Provider</th>
+            <td mat-cell *matCellDef="let tool">
+              <span *ngIf="tool.requires_authentication" class="auth-badge">
+                <mat-icon>lock</mat-icon>
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let tool">
+              <mat-slide-toggle
+                [checked]="tool.is_enabled"
+                (change)="toggleTool(tool)"
+                [color]="'primary'"
+                [matTooltip]="tool.is_enabled ? 'Disable tool' : 'Enable tool'"
+              >
+              </mat-slide-toggle>
+            </td>
+          </ng-container>
+
+          <!-- Health Column -->
+          <ng-container matColumnDef="health">
+            <th mat-header-cell *matHeaderCellDef>Health</th>
+            <td mat-cell *matCellDef="let tool">
+              <mat-icon
+                [ngClass]="getHealthClass(tool)"
+                [matTooltip]="
+                  tool.is_healthy ? 'Tool is healthy' : 'Tool is unhealthy'
+                "
+                class="health-icon"
+              >
+                {{ getHealthIcon(tool) }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let tool">
+              <button
+                mat-icon-button
+                (click)="triggerHealthCheck(tool)"
+                matTooltip="Check health"
+                class="action-button"
+              >
+                <mat-icon>health_and_safety</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="openDetailsDialog(tool)"
+                matTooltip="View details"
+                class="action-button"
+              >
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="openEditDialog(tool)"
+                matTooltip="Edit tool"
+                class="action-button"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="openDeleteDialog(tool)"
+                matTooltip="Delete tool"
+                class="action-button action-button-danger"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Table Header and Rows -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

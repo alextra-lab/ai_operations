@@ -1,0 +1,225 @@
+<div class="page-container">
+  <div class="page-header-section">
+    <div class="title-row">
+      <mat-icon aria-hidden="true">psychology</mat-icon>
+      <h1>AI Operations Manager</h1>
+    </div>
+    <p class="subtitle">
+      Manage use cases across lifecycle stages with team visibility and
+      collaboration.
+    </p>
+  </div>
+
+  <div class="content-area">
+    <mat-tab-group
+      [(selectedIndex)]="activeTab"
+      class="tab-group"
+      mat-stretch-tabs="false"
+    >
+      <mat-tab label="My Drafts ({{ myDrafts.data.length }})">
+        <ng-template matTabContent>
+          <ng-container *ngIf="!myDrafts.isLoading; else loadingTpl">
+            <div *ngIf="myDrafts.error" class="error">
+              {{ myDrafts.error }}
+            </div>
+            <mat-card class="content-card">
+              <div
+                *ngIf="!myDrafts.error && !myDrafts.data.length"
+                class="empty"
+              >
+                No drafts yet. Create a draft to get started.
+              </div>
+              <mat-list *ngIf="myDrafts.data.length">
+                <mat-list-item
+                  *ngFor="
+                    let useCase of myDrafts.data;
+                    trackBy: trackByUseCaseId
+                  "
+                >
+                  <div class="item">
+                    <div class="item-header">
+                      <span class="name">{{ useCase.name }}</span>
+                      <mat-chip
+                        *ngIf="useCase.team_id"
+                        color="primary"
+                        selected
+                      >
+                        {{ useCase.team_id }}
+                      </mat-chip>
+                    </div>
+                    <div class="meta">
+                      ID {{ useCase.use_case_id }} • Updated
+                      {{ useCase.updated_at | date: 'medium' }}
+                    </div>
+                  </div>
+                  <button
+                    mat-stroked-button
+                    color="primary"
+                    (click)="openUseCase(useCase.id, 'edit')"
+                    [attr.aria-label]="'Edit ' + useCase.name"
+                  >
+                    Edit
+                  </button>
+                </mat-list-item>
+              </mat-list>
+            </mat-card>
+          </ng-container>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab
+        label="Team Drafts ({{ teamDrafts.data.length }})"
+        *ngIf="hasTeams"
+      >
+        <ng-template matTabContent>
+          <ng-container *ngIf="!teamDrafts.isLoading; else loadingTpl">
+            <div *ngIf="teamDrafts.error" class="error">
+              {{ teamDrafts.error }}
+            </div>
+            <mat-card class="content-card">
+              <div class="team-filters" *ngIf="teams.length">
+                <span class="filter-label">Filter by team:</span>
+                <mat-chip-listbox aria-label="Team filter">
+                  <mat-chip-option
+                    *ngFor="let team of teams"
+                    [selected]="selectedTeam === team"
+                    (click)="selectTeam(team)"
+                  >
+                    {{ team }}
+                  </mat-chip-option>
+                </mat-chip-listbox>
+              </div>
+              <div
+                *ngIf="!teamDrafts.error && !filteredTeamDrafts().length"
+                class="empty"
+              >
+                No team drafts available.
+              </div>
+              <mat-list *ngIf="filteredTeamDrafts().length">
+                <mat-list-item
+                  *ngFor="
+                    let useCase of filteredTeamDrafts();
+                    trackBy: trackByUseCaseId
+                  "
+                >
+                  <div class="item">
+                    <div class="item-header">
+                      <span class="name">{{ useCase.name }}</span>
+                      <mat-chip color="accent" selected>
+                        {{ useCase.team_id || 'team' }}
+                      </mat-chip>
+                    </div>
+                    <div class="meta">
+                      ID {{ useCase.use_case_id }} • Updated
+                      {{ useCase.updated_at | date: 'medium' }}
+                    </div>
+                  </div>
+                  <button
+                    mat-stroked-button
+                    (click)="openUseCase(useCase.id, 'view')"
+                    [attr.aria-label]="'View ' + useCase.name"
+                  >
+                    View
+                  </button>
+                </mat-list-item>
+              </mat-list>
+            </mat-card>
+          </ng-container>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab label="In Review ({{ reviewTab.data.length }})">
+        <ng-template matTabContent>
+          <ng-container *ngIf="!reviewTab.isLoading; else loadingTpl">
+            <div *ngIf="reviewTab.error" class="error">
+              {{ reviewTab.error }}
+            </div>
+            <mat-card class="content-card">
+              <div
+                *ngIf="!reviewTab.error && !reviewTab.data.length"
+                class="empty"
+              >
+                No use cases are currently in review.
+              </div>
+              <mat-list *ngIf="reviewTab.data.length">
+                <mat-list-item
+                  *ngFor="
+                    let useCase of reviewTab.data;
+                    trackBy: trackByUseCaseId
+                  "
+                >
+                  <div class="item">
+                    <div class="item-header">
+                      <span class="name">{{ useCase.name }}</span>
+                    </div>
+                    <div class="meta">
+                      ID {{ useCase.use_case_id }} • Updated
+                      {{ useCase.updated_at | date: 'medium' }}
+                    </div>
+                  </div>
+                  <button
+                    mat-stroked-button
+                    (click)="openUseCase(useCase.id, 'view')"
+                    [attr.aria-label]="'View ' + useCase.name"
+                  >
+                    View
+                  </button>
+                </mat-list-item>
+              </mat-list>
+            </mat-card>
+          </ng-container>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab label="Published ({{ publishedTab.data.length }})">
+        <ng-template matTabContent>
+          <ng-container *ngIf="!publishedTab.isLoading; else loadingTpl">
+            <div *ngIf="publishedTab.error" class="error">
+              {{ publishedTab.error }}
+            </div>
+            <mat-card class="content-card">
+              <div
+                *ngIf="!publishedTab.error && !publishedTab.data.length"
+                class="empty"
+              >
+                No published use cases available.
+              </div>
+              <mat-list *ngIf="publishedTab.data.length">
+                <mat-list-item
+                  *ngFor="
+                    let useCase of publishedTab.data;
+                    trackBy: trackByUseCaseId
+                  "
+                >
+                  <div class="item">
+                    <div class="item-header">
+                      <span class="name">{{ useCase.name }}</span>
+                    </div>
+                    <div class="meta">
+                      ID {{ useCase.use_case_id }} • Updated
+                      {{ useCase.updated_at | date: 'medium' }}
+                    </div>
+                  </div>
+                  <button
+                    mat-stroked-button
+                    (click)="openUseCase(useCase.id, 'view')"
+                    [attr.aria-label]="'View ' + useCase.name"
+                  >
+                    View
+                  </button>
+                </mat-list-item>
+              </mat-list>
+            </mat-card>
+          </ng-container>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">
+    <mat-spinner diameter="32" aria-label="Loading use cases"></mat-spinner>
+    <span>Loading use cases...</span>
+  </div>
+</ng-template>

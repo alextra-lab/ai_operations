@@ -1,0 +1,61 @@
+# Example Use Case Validation Test Suite
+# Validates threat triage use case against quality SLOs
+
+id: "uc-threat-triage-validation"
+name: "Threat Triage Use Case Validation"
+description: "Validates threat triage use case for schema compliance, conformance, and latency SLOs"
+
+# Number of runs per test case for statistical validity
+n_runs: 10
+
+# Expected SLO thresholds
+expect:
+  svr_min: 0.995              # Schema Validity Rate >= 99.5%
+  conformance_min: 0.98       # Conformance Score >= 0.98
+  tool_stability_min: 0.99    # Tool Selection Stability >= 0.99
+  p95_latency_max: 2500       # p95 latency <= 2.5s
+  idempotence_violations_max: 0  # Zero idempotence violations
+
+# Test cases
+cases:
+  - name: "Basic Threat Alert Triage"
+    use_case_id: "threat-triage-v1"
+    input_prompt: |
+      Alert: Suspicious PowerShell execution detected on workstation WS-0142.
+      Process: powershell.exe -encodedCommand <base64_payload>
+      User: jdoe@example.com
+      Time: 2025-11-01 14:23:45 UTC
+
+      Triage this alert and provide severity classification.
+    context_refs: []
+    expected_tools: ["semantic_search"]
+    min_conformance: 0.95
+    max_latency_ms: 5000
+
+  - name: "Multi-IOC Correlation"
+    use_case_id: "threat-triage-v1"
+    input_prompt: |
+      Multiple alerts detected:
+      1. Outbound connection to 192.0.2.123:443 (unknown IP)
+      2. New scheduled task created: "SystemUpdate"
+      3. Unusual file write to C:\\Windows\\Temp\\update.exe
+
+      Correlate these IOCs and assess threat level.
+    context_refs: []
+    expected_tools: ["semantic_search"]
+    min_conformance: 0.95
+    max_latency_ms: 6000
+
+  - name: "False Positive Assessment"
+    use_case_id: "threat-triage-v1"
+    input_prompt: |
+      Alert: Windows Defender SmartScreen blocked download
+      File: microsoft_office_installer.exe
+      User: helpdesk@example.com
+      URL: download.microsoft.com
+
+      Assess if this is a false positive.
+    context_refs: []
+    expected_tools: []
+    min_conformance: 0.95
+    max_latency_ms: 4000

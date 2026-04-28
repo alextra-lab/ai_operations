@@ -1,0 +1,154 @@
+<!-- Use Case Selector Dialog -->
+<h2 mat-dialog-title class="flex items-center gap-3">
+  <mat-icon>{{ data.mode === 'update' ? 'edit' : 'content_copy' }}</mat-icon>
+  {{
+    data.mode === 'update'
+      ? 'Select Draft Use Case'
+      : 'Select Use Case to Clone'
+  }}
+</h2>
+
+<mat-dialog-content class="overflow-auto">
+  <!-- Loading Spinner -->
+  <div
+    *ngIf="isLoading"
+    class="flex flex-col items-center justify-center py-10 gap-4"
+  >
+    <mat-spinner diameter="40"></mat-spinner>
+    <p class="m-0 text-gray-600">Loading use cases...</p>
+  </div>
+
+  <!-- Search Filter -->
+  <mat-form-field appearance="outline" class="w-full mb-4" *ngIf="!isLoading">
+    <mat-label>Search Use Cases</mat-label>
+    <input
+      matInput
+      [formControl]="searchControl"
+      placeholder="Filter by name, ID, or category..."
+      aria-label="Search use cases"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <!-- Use Case List -->
+  <mat-selection-list
+    *ngIf="!isLoading"
+    [(ngModel)]="selectedUseCase"
+    [multiple]="false"
+    class="use-case-list"
+    aria-label="Available use cases"
+  >
+    <mat-list-option
+      *ngFor="let uc of useCases$ | async"
+      [value]="uc"
+      (click)="selectUseCase(uc)"
+      [selected]="selectedUseCase?.id === uc.id"
+    >
+      <div class="use-case-item">
+        <div class="uc-header">
+          <span class="uc-name">{{ uc.name }}</span>
+          <mat-chip
+            [class]="'lifecycle-' + uc.lifecycle_state"
+            [attr.aria-label]="'Status: ' + uc.lifecycle_state"
+          >
+            {{ uc.lifecycle_state }}
+          </mat-chip>
+        </div>
+        <div class="uc-meta">
+          <span class="uc-category" *ngIf="uc.category">
+            <mat-icon>category</mat-icon>
+            {{ uc.category }}
+          </span>
+          <span class="uc-id">
+            <mat-icon>label</mat-icon>
+            {{ uc.use_case_id }}
+          </span>
+          <span class="uc-modified">
+            <mat-icon>schedule</mat-icon>
+            Modified: {{ uc.updated_at | date: 'short' }}
+          </span>
+        </div>
+        <div class="uc-description" *ngIf="uc.description">
+          {{ uc.description }}
+        </div>
+      </div>
+    </mat-list-option>
+  </mat-selection-list>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!isLoading && (useCases$ | async)?.length === 0"
+    class="flex flex-col items-center justify-center py-15 text-center text-gray-400"
+  >
+    <mat-icon class="text-6xl w-16 h-16 mb-4 text-gray-300">inbox</mat-icon>
+    <p
+      class="m-0 text-sm text-gray-500 max-w-md"
+      *ngIf="data.mode === 'update'"
+    >
+      No draft use cases found. Create a new use case or clone an existing one.
+    </p>
+    <p class="m-0 text-sm text-gray-500 max-w-md" *ngIf="data.mode === 'clone'">
+      No published use cases available to clone.
+    </p>
+  </div>
+
+  <!-- Parameter Preview Card -->
+  <mat-card
+    *ngIf="selectedUseCase && !isLoading"
+    class="mt-4 border border-gray-200 shadow-none"
+  >
+    <mat-card-header class="px-4 pt-4 pb-0">
+      <mat-card-title class="flex items-center gap-2 text-sm font-medium m-0">
+        <mat-icon class="text-blue-600">tune</mat-icon>
+        Parameters to Apply
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="p-4">
+      <div class="flex flex-col gap-2">
+        <div
+          class="flex justify-between items-center px-3 py-2 bg-gray-100 rounded text-sm"
+          *ngFor="let param of getParameterChanges()"
+        >
+          <span class="font-medium text-gray-700">{{ param.label }}:</span>
+          <span class="text-blue-600 font-medium font-mono">{{
+            param.value
+          }}</span>
+        </div>
+        <div
+          *ngIf="getParameterChanges().length === 0"
+          class="p-3 text-center text-gray-500 text-sm italic"
+        >
+          No configuration changes detected.
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="flex gap-2 px-6 py-4 m-0">
+  <button
+    mat-button
+    (click)="onCancel()"
+    [disabled]="isLoading"
+    aria-label="Cancel"
+    class="min-w-[100px]"
+  >
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onConfirm()"
+    [disabled]="!selectedUseCase || isLoading"
+    [attr.aria-label]="
+      data.mode === 'update' ? 'Apply parameters' : 'Clone and apply parameters'
+    "
+    class="min-w-[100px]"
+  >
+    <mat-icon *ngIf="!isLoading" class="mr-1">
+      {{ data.mode === 'update' ? 'check' : 'content_copy' }}
+    </mat-icon>
+    <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+    {{ data.mode === 'update' ? 'Apply Parameters' : 'Clone & Apply' }}
+  </button>
+</mat-dialog-actions>

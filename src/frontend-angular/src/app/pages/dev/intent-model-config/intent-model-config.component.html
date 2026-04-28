@@ -1,0 +1,234 @@
+<div class="intent-model-config-container">
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>tune</mat-icon>
+      <mat-card-title>Intent Model Configuration</mat-card-title>
+      <mat-card-subtitle>
+        Configure which models are used for each intent type (ADR-069) - Developer Tool
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="summary-stats">
+        <div class="stat">
+          <span class="stat-label">Total Intents:</span>
+          <span class="stat-value">{{ intents.length }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Configured:</span>
+          <span class="stat-value configured">{{ configuredCount }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Unconfigured:</span>
+          <span class="stat-value unconfigured">{{ unconfiguredCount }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="!allConfigured" class="warning-message">
+        <mat-icon>warning</mat-icon>
+        <span
+          >Some intents do not have configured defaults. They will fall back
+          to the QUERY model.</span
+        >
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="config-card">
+    <mat-card-content>
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Loading configuration...</p>
+      </div>
+
+      <table
+        mat-table
+        [dataSource]="intents"
+        class="intent-table"
+        *ngIf="!loading"
+      >
+        <!-- Icon Column -->
+        <ng-container matColumnDef="icon">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let intent">
+            <mat-icon [style.color]="intent.color" class="intent-icon">
+              {{ intent.icon }}
+            </mat-icon>
+          </td>
+        </ng-container>
+
+        <!-- Display Name Column -->
+        <ng-container matColumnDef="display_name">
+          <th mat-header-cell *matHeaderCellDef>Intent Type</th>
+          <td mat-cell *matCellDef="let intent">
+            <div class="intent-name">
+              <strong>{{ intent.display_name }}</strong>
+              <span class="intent-description">{{ intent.description }}</span>
+              <span class="intent-code">{{ intent.intent_code }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Current Model Column -->
+        <ng-container matColumnDef="current_model">
+          <th mat-header-cell *matHeaderCellDef>Current Model</th>
+          <td mat-cell *matCellDef="let intent">
+            <div *ngIf="!intent.isEditing">
+              <span *ngIf="intent.current_model_id" class="model-id">
+                {{ intent.current_model_id }}
+              </span>
+              <span
+                *ngIf="intent.current_model_id && intent.current_temperature != null"
+                class="temperature-badge"
+              >
+                temp: {{ intent.current_temperature }}
+              </span>
+              <span *ngIf="!intent.current_model_id" class="not-configured">
+                Not Configured
+              </span>
+            </div>
+
+            <mat-form-field *ngIf="intent.isEditing" class="model-select">
+              <mat-label>Select Model</mat-label>
+              <mat-select [(ngModel)]="intent.selectedModel">
+                <mat-option
+                  *ngFor="let model of availableModels"
+                  [value]="model.model_id"
+                >
+                  {{ model.model_id }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="intent.isEditing" class="temperature-input">
+              <mat-label>Temperature (optional)</mat-label>
+              <input
+                matInput
+                type="number"
+                min="0"
+                max="1"
+                step="0.1"
+                [(ngModel)]="intent.selectedTemperature"
+                placeholder="Use ModelType default"
+              />
+              <mat-hint>0.0–1.0. Leave empty for default.</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="intent.isEditing" class="notes-input">
+              <mat-label>Notes (optional)</mat-label>
+              <input
+                matInput
+                [(ngModel)]="intent.notes"
+                placeholder="Why this model?"
+              />
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Model Details Column -->
+        <ng-container matColumnDef="model_details">
+          <th mat-header-cell *matHeaderCellDef>Details</th>
+          <td mat-cell *matCellDef="let intent">
+            <div
+              *ngIf="intent.current_model_id && !intent.isEditing"
+              class="model-details"
+            >
+              <span class="provider-badge">
+                {{ getModelProvider(intent.current_model_id) }}
+              </span>
+              <mat-chip-set class="capabilities-chips">
+                <mat-chip
+                  *ngFor="
+                    let cap of getModelCapabilities(intent.current_model_id)
+                  "
+                  class="capability-chip"
+                >
+                  {{ cap }}
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+
+            <div
+              *ngIf="intent.selectedModel && intent.isEditing"
+              class="model-details"
+            >
+              <span class="provider-badge">
+                {{ getModelProvider(intent.selectedModel) }}
+              </span>
+              <mat-chip-set class="capabilities-chips">
+                <mat-chip
+                  *ngFor="let cap of getModelCapabilities(intent.selectedModel)"
+                  class="capability-chip"
+                >
+                  {{ cap }}
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let intent">
+            <div class="action-buttons">
+              <!-- View Mode Actions -->
+              <button
+                *ngIf="!intent.isEditing"
+                mat-button
+                color="primary"
+                (click)="startEdit(intent)"
+                matTooltip="Configure model"
+              >
+                <mat-icon>edit</mat-icon>
+                {{
+                  intent.has_default ? "Change" : "Configure"
+                }}
+              </button>
+
+              <button
+                *ngIf="!intent.isEditing && intent.has_default"
+                mat-button
+                (click)="viewHistory(intent)"
+                matTooltip="View configuration history"
+              >
+                <mat-icon>history</mat-icon>
+                History
+              </button>
+
+              <!-- Edit Mode Actions -->
+              <button
+                *ngIf="intent.isEditing"
+                mat-raised-button
+                color="primary"
+                (click)="saveConfiguration(intent)"
+                matTooltip="Save configuration"
+              >
+                <mat-icon>save</mat-icon>
+                Save
+              </button>
+
+              <button
+                *ngIf="intent.isEditing"
+                mat-button
+                (click)="cancelEdit(intent)"
+                matTooltip="Cancel changes"
+              >
+                <mat-icon>cancel</mat-icon>
+                Cancel
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          [class.editing]="row.isEditing"
+          [class.unconfigured]="!row.has_default"
+        ></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>

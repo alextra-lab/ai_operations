@@ -1,0 +1,164 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Brussels
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - python
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
+  - package-ecosystem: pip
+    directory: "/src/corpus_svc"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - python
+      - corpus_svc
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
+  - package-ecosystem: pip
+    directory: "/src/embedding"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - python
+      - embedding
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
+  - package-ecosystem: pip
+    directory: "/src/inference-gateway"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - python
+      - inference-gateway
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
+  - package-ecosystem: pip
+    directory: "/src/llm_guard_svc"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - python
+      - llm_guard_svc
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
+  - package-ecosystem: pip
+    directory: "/src/orchestrator"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - python
+      - orchestrator
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
+  - package-ecosystem: pip
+    directory: "/src/shared"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - python
+      - shared
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
+  - package-ecosystem: npm
+    directory: "/src/frontend-angular"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - frontend
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
+  - package-ecosystem: docker
+    directory: "/src/corpus_svc"
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies
+      - docker
+
+  - package-ecosystem: docker
+    directory: "/src/embedding"
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies
+      - docker
+
+  - package-ecosystem: docker
+    directory: "/src/inference-gateway"
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies
+      - docker
+
+  - package-ecosystem: docker
+    directory: "/src/llm_guard_svc"
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies
+      - docker
+
+  - package-ecosystem: docker
+    directory: "/src/orchestrator"
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies
+      - docker
+
+  - package-ecosystem: docker
+    directory: "/src/frontend-angular"
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies
+      - docker
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: "chore(deps)"

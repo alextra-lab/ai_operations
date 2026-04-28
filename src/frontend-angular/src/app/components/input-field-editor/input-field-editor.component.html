@@ -1,0 +1,165 @@
+<form [formGroup]="form" *ngIf="form" class="field-editor">
+  <div class="flex flex-wrap items-center gap-2 mb-3">
+    <span class="font-medium text-gray-700">{{ field.name || 'New field' }}</span>
+    <div class="flex gap-1 ml-auto">
+      <button
+        mat-icon-button
+        type="button"
+        (click)="moveUp.emit()"
+        aria-label="Move up"
+      >
+        <mat-icon>arrow_upward</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
+        (click)="moveDown.emit()"
+        aria-label="Move down"
+      >
+        <mat-icon>arrow_downward</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
+        color="warn"
+        (click)="remove.emit()"
+        aria-label="Remove field"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Field name (ID)</mat-label>
+      <input matInput formControlName="name" placeholder="e.g. incident_id" />
+      <mat-hint>Lowercase letters, numbers, underscores only</mat-hint>
+      <mat-error *ngIf="form.get('name')?.hasError('pattern')">
+        Use only a-z, 0-9, underscore; must start with letter or underscore
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type">
+        <mat-option
+          *ngFor="let t of fieldTypes"
+          [value]="t.value"
+        >
+          {{ t.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="w-full mb-4">
+    <mat-label>Label</mat-label>
+    <input matInput formControlName="label" placeholder="Display label" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-full mb-4">
+    <mat-label>Description</mat-label>
+    <textarea
+      matInput
+      formControlName="description"
+      rows="2"
+      placeholder="Help text for users"
+    ></textarea>
+  </mat-form-field>
+
+  <div class="flex flex-wrap gap-4 mb-4">
+    <mat-form-field appearance="outline" class="flex-1 min-w-[200px]">
+      <mat-label>Placeholder</mat-label>
+      <input matInput formControlName="placeholder" />
+    </mat-form-field>
+    <mat-form-field
+      appearance="outline"
+      class="flex-1 min-w-[200px]"
+      *ngIf="form.get('type')?.value !== 'checkbox'"
+    >
+      <mat-label>Default value</mat-label>
+      <input matInput formControlName="default_value" />
+    </mat-form-field>
+    <mat-slide-toggle formControlName="required" class="mt-2">
+      Required
+    </mat-slide-toggle>
+  </div>
+
+  <!-- Options for select -->
+  <div *ngIf="isSelect" class="options-section mb-4 p-4 bg-gray-50 rounded">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-sm font-medium text-gray-700">Options (value → label)</span>
+      <button mat-button type="button" (click)="addOption()">
+        <mat-icon>add</mat-icon>
+        Add option
+      </button>
+    </div>
+    <div
+      *ngFor="let opt of options; let i = index"
+      class="flex items-center gap-2 mb-2"
+    >
+      <input
+        type="text"
+        class="flex-1 border rounded px-2 py-1 text-sm"
+        [value]="opt.value"
+        (input)="onOptionChange(i, 'value', $any($event.target).value)"
+        placeholder="value"
+      />
+      <span class="text-gray-500">→</span>
+      <input
+        type="text"
+        class="flex-1 border rounded px-2 py-1 text-sm"
+        [value]="opt.label"
+        (input)="onOptionChange(i, 'label', $any($event.target).value)"
+        placeholder="label"
+      />
+      <button
+        mat-icon-button
+        type="button"
+        (click)="removeOption(i)"
+        aria-label="Remove option"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Advanced validation -->
+  <div class="validation-section">
+    <button
+      mat-button
+      type="button"
+      (click)="showAdvancedValidation = !showAdvancedValidation"
+    >
+      <mat-icon>{{ showAdvancedValidation ? 'expand_less' : 'expand_more' }}</mat-icon>
+      Advanced validation
+    </button>
+    <div *ngIf="showAdvancedValidation" formGroupName="validation" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 p-4 bg-gray-50 rounded">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Min length</mat-label>
+        <input matInput type="number" formControlName="min_length" min="0" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Max length</mat-label>
+        <input matInput type="number" formControlName="max_length" min="0" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Min value</mat-label>
+        <input matInput type="number" formControlName="min_value" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Max value</mat-label>
+        <input matInput type="number" formControlName="max_value" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full md:col-span-2">
+        <mat-label>Pattern (regex)</mat-label>
+        <input matInput formControlName="pattern" placeholder="e.g. ^[A-Z]+$" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full md:col-span-2">
+        <mat-label>Pattern error message</mat-label>
+        <input matInput formControlName="pattern_message" />
+      </mat-form-field>
+    </div>
+  </div>
+</form>

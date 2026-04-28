@@ -1,0 +1,161 @@
+<h2 mat-dialog-title>
+  <div class="dialog-title">
+    <div class="category-badge" [style.background-color]="categoryInfo.color">
+      <mat-icon>{{ categoryInfo.icon }}</mat-icon>
+      <span>{{ categoryInfo.label }}</span>
+    </div>
+    <div class="title-text">
+      {{ pattern.name }}
+    </div>
+  </div>
+</h2>
+
+<mat-dialog-content>
+  <div class="pattern-detail-content">
+    <!-- Description -->
+    <section class="section">
+      <h3>Description</h3>
+      <p>{{ pattern.description }}</p>
+    </section>
+
+    <!-- Tags -->
+    <section class="section" *ngIf="pattern.tags && pattern.tags.length > 0">
+      <h3>Tags</h3>
+      <mat-chip-set>
+        <mat-chip *ngFor="let tag of pattern.tags">{{ tag }}</mat-chip>
+      </mat-chip-set>
+    </section>
+
+    <!-- System Prompt Template -->
+    <section class="section" *ngIf="pattern.system_prompt_template">
+      <div class="section-header">
+        <h3>System Prompt</h3>
+        <button
+          mat-icon-button
+          (click)="
+            copyToClipboard(pattern.system_prompt_template!, 'System prompt')
+          "
+          matTooltip="Copy to clipboard"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </div>
+      <div class="prompt-box system-prompt">
+        <pre>{{ pattern.system_prompt_template }}</pre>
+      </div>
+    </section>
+
+    <!-- Developer Prompt Template -->
+    <section class="section" *ngIf="pattern.developer_prompt_template">
+      <div class="section-header">
+        <h3>Developer Prompt</h3>
+        <button
+          mat-icon-button
+          (click)="
+            copyToClipboard(
+              pattern.developer_prompt_template!,
+              'Developer prompt'
+            )
+          "
+          matTooltip="Copy to clipboard"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </div>
+      <div class="prompt-box developer-prompt">
+        <pre>{{ pattern.developer_prompt_template }}</pre>
+      </div>
+    </section>
+
+    <!-- Few-Shot Examples -->
+    <section
+      class="section"
+      *ngIf="pattern.fewshots_template && pattern.fewshots_template.length > 0"
+    >
+      <h3>Few-Shot Examples</h3>
+      <div class="fewshots-container">
+        <div
+          *ngFor="let example of pattern.fewshots_template; let i = index"
+          class="fewshot-example"
+        >
+          <div class="example-header">Example {{ i + 1 }}</div>
+          <div class="example-pair">
+            <div class="user-message">
+              <strong>User:</strong>
+              <pre>{{ example.user }}</pre>
+            </div>
+            <div class="assistant-message">
+              <strong>Assistant:</strong>
+              <pre>{{ example.assistant }}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Variables -->
+    <section
+      class="section"
+      *ngIf="pattern.variables && pattern.variables.length > 0"
+    >
+      <h3>Template Variables</h3>
+      <div class="variables-container">
+        <div *ngFor="let variable of pattern.variables" class="variable-item">
+          <div class="variable-name">{{ '{{' + variable.name + '}}' }}</div>
+          <div class="variable-description">{{ variable.description }}</div>
+          <div class="variable-default" *ngIf="variable.default">
+            Default: <code>{{ variable.default }}</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Metadata -->
+    <section class="section metadata-section">
+      <div class="metadata-grid">
+        <div class="metadata-item">
+          <mat-icon>trending_up</mat-icon>
+          <div>
+            <div class="metadata-label">Usage Count</div>
+            <div class="metadata-value">{{ pattern.use_count }}</div>
+          </div>
+        </div>
+        <div class="metadata-item" *ngIf="pattern.source_url">
+          <mat-icon>link</mat-icon>
+          <div>
+            <div class="metadata-label">Source</div>
+            <div class="metadata-value">
+              <a [href]="pattern.source_url" target="_blank">{{
+                pattern.source_url
+              }}</a>
+            </div>
+          </div>
+        </div>
+        <div class="metadata-item">
+          <mat-icon>schedule</mat-icon>
+          <div>
+            <div class="metadata-label">Created</div>
+            <div class="metadata-value">
+              {{ pattern.created_at | date: 'medium' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+  <button
+    mat-raised-button
+    color="primary"
+    *ngIf="pattern.source_url"
+    (click)="$event.stopPropagation()"
+    [attr.href]="pattern.source_url"
+    target="_blank"
+  >
+    <mat-icon>open_in_new</mat-icon>
+    View Source
+  </button>
+</mat-dialog-actions>

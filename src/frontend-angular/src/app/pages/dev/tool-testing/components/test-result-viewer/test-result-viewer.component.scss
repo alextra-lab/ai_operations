@@ -1,0 +1,145 @@
+/**
+ * Test Result Viewer Styles
+ *
+ * T6-F4: Follows ADR-012 Hybrid CSS Strategy
+ */
+
+.result-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// Status Header
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 500;
+
+  mat-icon {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  &.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+
+    mat-icon {
+      color: #4caf50;
+    }
+  }
+
+  &.error {
+    background: #ffebee;
+    color: #c62828;
+
+    mat-icon {
+      color: #f44336;
+    }
+  }
+}
+
+.result-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+
+  .duration,
+  .timestamp {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--mat-secondary-text-color, rgba(0, 0, 0, 0.6));
+
+    mat-icon {
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+}
+
+.result-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+// Result Content
+.result-content {
+  transition:
+    max-height 0.3s ease,
+    opacity 0.2s ease;
+  overflow: hidden;
+
+  &.collapsed {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+.content-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-secondary-text-color, rgba(0, 0, 0, 0.6));
+  margin-bottom: 0.5rem;
+}
+
+.json-content {
+  background: var(--mat-code-background, #f5f5f5);
+  border: 1px solid var(--mat-divider-color, rgba(0, 0, 0, 0.12));
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin: 0;
+  font-family: 'Roboto Mono', 'Monaco', 'Consolas', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+
+  &.small {
+    max-height: 150px;
+    font-size: 0.75rem;
+  }
+}
+
+// Error Content
+.error-content {
+  .error-message {
+    background: #ffebee;
+    border: 1px solid #ffcdd2;
+    border-radius: 4px;
+    padding: 0.75rem;
+    color: #c62828;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .partial-result {
+    margin-top: 1rem;
+  }
+}
+
+// History Context
+.history-context {
+  border-top: 1px solid var(--mat-divider-color, rgba(0, 0, 0, 0.12));
+  padding-top: 1rem;
+}

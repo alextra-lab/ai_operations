@@ -1,0 +1,184 @@
+<!-- Source Citation Component -->
+<mat-card class="source-citation-card">
+  <!-- Header -->
+  <mat-card-header>
+    <div
+      mat-card-avatar
+      class="document-icon"
+      [style.color]="classificationColor"
+    >
+      <mat-icon>{{ documentTypeIcon }}</mat-icon>
+    </div>
+
+    <mat-card-title class="document-title">
+      {{ source.title }}
+    </mat-card-title>
+
+    <mat-card-subtitle class="document-meta">
+      <div class="meta-row">
+        <span class="source-info">
+          <mat-icon class="meta-icon">source</mat-icon>
+          {{ source.source }}
+        </span>
+
+        <span class="similarity-score" [style.color]="confidenceColor">
+          <mat-icon class="meta-icon">trending_up</mat-icon>
+          {{ formatSimilarityScore(source.similarity_score) }}
+        </span>
+      </div>
+
+      <div class="meta-row" *ngIf="hasAuthor || hasPageNumber">
+        <span *ngIf="hasAuthor" class="author-info">
+          <mat-icon class="meta-icon">person</mat-icon>
+          {{ source.author }}
+        </span>
+
+        <span *ngIf="hasPageNumber" class="page-info">
+          <mat-icon class="meta-icon">pages</mat-icon>
+          Page {{ source.page_number }}
+        </span>
+      </div>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <!-- Content -->
+  <mat-card-content>
+    <!-- Classification Badge -->
+    <div class="classification-section" *ngIf="hasClassification">
+      <div
+        class="classification-badge"
+        [style.background-color]="classificationColor"
+      >
+        <mat-icon class="classification-icon">{{
+          getClassificationIcon()
+        }}</mat-icon>
+        <span class="classification-label">{{ getClassificationLabel() }}</span>
+      </div>
+    </div>
+
+    <!-- Chunk Text -->
+    <div class="chunk-section">
+      <div class="chunk-header">
+        <h4 class="chunk-title">Relevant Content</h4>
+        <div class="chunk-actions">
+          <button
+            mat-icon-button
+            (click)="copyToClipboard(source.chunk_text || source.content || '')"
+            matTooltip="Copy text"
+            class="copy-button"
+          >
+            <mat-icon>content_copy</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            (click)="toggleExpanded()"
+            *ngIf="shouldTruncate"
+            matTooltip="{{ isExpanded ? 'Show less' : 'Show more' }}"
+            class="expand-button"
+          >
+            <mat-icon>{{
+              isExpanded ? 'expand_less' : 'expand_more'
+            }}</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="chunk-text" [class.expanded]="isExpanded">
+        <pre class="chunk-content">{{
+          isExpanded ? getFullChunkText() : getTruncatedChunkText()
+        }}</pre>
+      </div>
+    </div>
+
+    <!-- Document Details -->
+    <div class="document-details">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <mat-icon class="detail-icon">description</mat-icon>
+          <div class="detail-info">
+            <div class="detail-label">Document Type</div>
+            <div class="detail-value">
+              {{
+                source.document_type
+                  ? source.document_type.toUpperCase()
+                  : 'N/A'
+              }}
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <mat-icon class="detail-icon">code</mat-icon>
+          <div class="detail-info">
+            <div class="detail-label">Chunk Index</div>
+            <div class="detail-value">{{ source.chunk_index }}</div>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <mat-icon class="detail-icon">schedule</mat-icon>
+          <div class="detail-info">
+            <div class="detail-label">Created</div>
+            <div class="detail-value">{{ formatDate(source.created_at) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Relevance Indicator -->
+    <div class="relevance-section">
+      <div class="relevance-indicator">
+        <div class="relevance-bar">
+          <div
+            class="relevance-fill"
+            [style.width.%]="relevanceScore * 100"
+            [style.background-color]="relevanceColor"
+          ></div>
+        </div>
+        <div class="relevance-label">
+          Relevance: {{ formatSimilarityScore(source.similarity_score) }}
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <!-- Actions -->
+  <mat-card-actions>
+    <button mat-button color="primary" (click)="openDocument()">
+      <mat-icon>visibility</mat-icon>
+      View Document
+    </button>
+
+    <button mat-button (click)="downloadDocument()">
+      <mat-icon>download</mat-icon>
+      Download
+    </button>
+
+    <button mat-icon-button [matMenuTriggerFor]="moreMenu" class="more-menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #moreMenu="matMenu">
+      <button
+        mat-menu-item
+        (click)="copyToClipboard(source.chunk_text || source.content || '')"
+      >
+        <mat-icon>content_copy</mat-icon>
+        <span>Copy Text</span>
+      </button>
+      <button mat-menu-item (click)="copyToClipboard(source.document_id)">
+        <mat-icon>link</mat-icon>
+        <span>Copy Document ID</span>
+      </button>
+      <button
+        mat-menu-item
+        *ngIf="hasUrl"
+        (click)="copyToClipboard(source.url!)"
+      >
+        <mat-icon>link</mat-icon>
+        <span>Copy URL</span>
+      </button>
+    </mat-menu>
+  </mat-card-actions>
+</mat-card>

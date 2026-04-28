@@ -1,0 +1,29 @@
+/**
+ * Prompt Template Editor Component Styles
+ * Following ADR-012: Minimal custom SCSS, rely on Tailwind + Material
+ */
+
+.template-editor-container {
+  min-height: calc(100vh - 200px);
+}
+
+// Material form field customizations
+::ng-deep {
+  textarea.mat-mdc-input-element {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+  }
+}
+
+// Error snackbar
+::ng-deep .error-snackbar {
+  .mdc-snackbar__surface {
+    background-color: #f44336 !important;
+  }
+}

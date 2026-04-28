@@ -1,0 +1,246 @@
+<!-- Tool Details Dialog -->
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>Tool Details</h2>
+    <button mat-icon-button (click)="onClose()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading tool details...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="error-container">
+      <mat-icon class="error-icon">error</mat-icon>
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Tool Details -->
+    <div *ngIf="tool && !isLoading" class="tool-details">
+      <mat-tab-group>
+        <!-- Basic Information Tab -->
+        <mat-tab label="Basic Information">
+          <div class="tab-content">
+            <div class="detail-row">
+              <span class="label">Tool ID:</span>
+              <code class="value">{{ tool.tool_id }}</code>
+            </div>
+            <div class="detail-row">
+              <span class="label">Name:</span>
+              <span class="value">{{ tool.name }}</span>
+            </div>
+            <div class="detail-row" *ngIf="tool.description">
+              <span class="label">Description:</span>
+              <span class="value">{{ tool.description }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Category:</span>
+              <mat-chip>{{ tool.category }}</mat-chip>
+            </div>
+            <div class="detail-row" *ngIf="tool.provider">
+              <span class="label">Provider:</span>
+              <span class="value">{{ tool.provider }}</span>
+            </div>
+            <div class="detail-row" *ngIf="tool.version">
+              <span class="label">Version:</span>
+              <span class="value">{{ tool.version }}</span>
+            </div>
+            <div class="detail-row" *ngIf="tool.documentation_url">
+              <span class="label">Documentation:</span>
+              <a [href]="tool.documentation_url" target="_blank" class="value">
+                {{ tool.documentation_url }}
+              </a>
+            </div>
+            <div class="detail-row" *ngIf="tool.tags.length > 0">
+              <span class="label">Tags:</span>
+              <div class="tags-container">
+                <mat-chip *ngFor="let tag of tool.tags">{{ tag }}</mat-chip>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Security Classification Tab (ADR-057) -->
+        <mat-tab label="Security">
+          <div class="tab-content">
+            <div class="security-section">
+              <h4 class="section-title">Data Classification</h4>
+              <div class="detail-row">
+                <span class="label">Data Source:</span>
+                <mat-chip [ngClass]="getDataSourceClass(tool.data_source_type)">
+                  {{ getDataSourceLabel(tool.data_source_type) }}
+                </mat-chip>
+              </div>
+              <div class="detail-row">
+                <span class="label">Data Flow:</span>
+                <mat-chip
+                  [ngClass]="getDataFlowClass(tool.data_flow_direction)"
+                >
+                  {{ getDataFlowLabel(tool.data_flow_direction) }}
+                </mat-chip>
+              </div>
+            </div>
+
+            <div class="security-section">
+              <h4 class="section-title">Access Controls</h4>
+              <div class="detail-row">
+                <span class="label">Network Access:</span>
+                <mat-chip
+                  [ngClass]="getNetworkAccessClass(tool.network_access_level)"
+                >
+                  {{ getNetworkAccessLabel(tool.network_access_level) }}
+                </mat-chip>
+              </div>
+              <div class="detail-row">
+                <span class="label">Max Data Sensitivity:</span>
+                <mat-chip
+                  [ngClass]="getSensitivityClass(tool.max_data_sensitivity)"
+                >
+                  {{ getSensitivityLabel(tool.max_data_sensitivity) }}
+                </mat-chip>
+              </div>
+            </div>
+
+            <div class="security-info">
+              <mat-icon class="info-icon">info</mat-icon>
+              <span class="info-text">
+                Security classification determines which Use Cases can access
+                this tool based on their tool restriction policies.
+              </span>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- MCP Configuration Tab -->
+        <mat-tab label="MCP Configuration">
+          <div class="tab-content">
+            <div class="detail-row">
+              <span class="label">Server Type:</span>
+              <span class="value">{{ tool.mcp_server_type }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Protocol Version:</span>
+              <span class="value">{{ tool.mcp_protocol_version }}</span>
+            </div>
+            <div class="detail-row" *ngIf="tool.mcp_endpoint">
+              <span class="label">Endpoint:</span>
+              <code class="value">{{ tool.mcp_endpoint }}</code>
+            </div>
+            <div class="detail-row" *ngIf="tool.mcp_command">
+              <span class="label">Command:</span>
+              <code class="value">{{ tool.mcp_command.join(' ') }}</code>
+            </div>
+            <div class="detail-row">
+              <span class="label">Timeout:</span>
+              <span class="value">{{ tool.timeout_seconds }}s</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Service Location:</span>
+              <span class="value">{{ tool.service_location }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Tool Purpose:</span>
+              <span class="value">{{ tool.tool_purpose }}</span>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Capabilities Tab -->
+        <mat-tab label="Capabilities" *ngIf="tool.capabilities">
+          <div class="tab-content">
+            <pre class="json-viewer">{{ getCapabilitiesJson() }}</pre>
+          </div>
+        </mat-tab>
+
+        <!-- Parameters Schema Tab -->
+        <mat-tab label="Parameters Schema" *ngIf="tool.parameters_schema">
+          <div class="tab-content">
+            <pre class="json-viewer">{{ getParametersJson() }}</pre>
+          </div>
+        </mat-tab>
+
+        <!-- Limits & Configuration Tab -->
+        <mat-tab label="Limits & Configuration">
+          <div class="tab-content">
+            <div class="detail-row">
+              <span class="label">Rate Limit:</span>
+              <span class="value">
+                {{ tool.rate_limit_per_minute || 'Unlimited' }} per minute
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Max Concurrent Calls:</span>
+              <span class="value">{{ tool.max_concurrent_calls }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Health Check Interval:</span>
+              <span class="value"
+                >{{ tool.health_check_interval_seconds }}s</span
+              >
+            </div>
+            <div class="detail-row">
+              <span class="label">Requires Authentication:</span>
+              <span class="value">
+                {{ tool.requires_authentication ? 'Yes' : 'No' }}
+              </span>
+            </div>
+            <div class="detail-row" *ngIf="tool.requires_authentication">
+              <span class="label">Authentication Type:</span>
+              <span class="value">{{ tool.authentication_type || 'N/A' }}</span>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Health & Status Tab -->
+        <mat-tab label="Health & Status">
+          <div class="tab-content">
+            <div class="detail-row">
+              <span class="label">Status:</span>
+              <mat-chip
+                [ngClass]="
+                  tool.is_enabled ? 'status-enabled' : 'status-disabled'
+                "
+              >
+                {{ tool.is_enabled ? 'Enabled' : 'Disabled' }}
+              </mat-chip>
+            </div>
+            <div class="detail-row">
+              <span class="label">Health:</span>
+              <mat-chip
+                [ngClass]="tool.is_healthy ? 'health-ok' : 'health-error'"
+              >
+                {{ tool.is_healthy ? 'Healthy' : 'Unhealthy' }}
+              </mat-chip>
+            </div>
+            <div class="detail-row" *ngIf="tool.last_health_check">
+              <span class="label">Last Health Check:</span>
+              <span class="value">{{
+                tool.last_health_check | date: 'short'
+              }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Created:</span>
+              <span class="value">{{ tool.created_at | date: 'short' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Updated:</span>
+              <span class="value">{{ tool.updated_at | date: 'short' }}</span>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onClose()">Close</button>
+    <button *ngIf="tool" mat-raised-button color="primary" (click)="onEdit()">
+      Edit
+    </button>
+  </mat-dialog-actions>
+</div>

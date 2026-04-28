@@ -1,0 +1,126 @@
+<!-- Usage By Tool Table -->
+<!-- Displays per-tool usage statistics with sorting -->
+
+<div class="table-container" *ngIf="data.length > 0">
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    matSort
+    (matSortChange)="onSortChange($event)"
+    class="usage-table"
+    aria-label="Tool usage statistics"
+  >
+    <!-- Tool Name Column -->
+    <ng-container matColumnDef="tool_name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">
+        Tool Name
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <div class="tool-name-cell">
+          <span class="tool-name">{{ getToolName(row) }}</span>
+          <span
+            class="tool-id"
+            [matTooltip]="row.tool_id"
+            matTooltipPosition="above"
+          >
+            {{ getToolIdShort(row.tool_id) }}
+          </span>
+        </div>
+      </td>
+    </ng-container>
+
+    <!-- Total Calls Column -->
+    <ng-container matColumnDef="total_calls">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        scope="col"
+        class="numeric-header"
+      >
+        Total Calls
+      </th>
+      <td mat-cell *matCellDef="let row" class="numeric-cell">
+        {{ formatNumber(row.total_calls) }}
+      </td>
+    </ng-container>
+
+    <!-- Successful Calls Column -->
+    <ng-container matColumnDef="successful_calls">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        scope="col"
+        class="numeric-header"
+      >
+        Successful
+      </th>
+      <td mat-cell *matCellDef="let row" class="numeric-cell">
+        {{ formatNumber(row.successful_calls) }}
+      </td>
+    </ng-container>
+
+    <!-- Success Rate Column -->
+    <ng-container matColumnDef="success_rate">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        scope="col"
+        class="numeric-header"
+      >
+        Success Rate
+      </th>
+      <td mat-cell *matCellDef="let row" class="numeric-cell">
+        <span
+          class="success-badge"
+          [ngClass]="getSuccessClass(row.success_rate)"
+        >
+          {{ formatPercent(row.success_rate) }}
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Avg Duration Column -->
+    <ng-container matColumnDef="avg_duration_ms">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        scope="col"
+        class="numeric-header"
+      >
+        Avg Duration
+      </th>
+      <td mat-cell *matCellDef="let row" class="numeric-cell">
+        {{ formatDurationValue(row.avg_duration_ms) }}
+      </td>
+    </ng-container>
+
+    <!-- Total Cost Column -->
+    <ng-container matColumnDef="total_cost">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        scope="col"
+        class="numeric-header"
+      >
+        Total Cost
+      </th>
+      <td mat-cell *matCellDef="let row" class="numeric-cell cost-cell">
+        {{ formatCostValue(row.total_cost) }}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>
+
+<!-- Empty State -->
+<div class="empty-state" *ngIf="data.length === 0">
+  <mat-icon aria-hidden="true">table_chart</mat-icon>
+  <p>No tool usage data available for the selected period</p>
+</div>

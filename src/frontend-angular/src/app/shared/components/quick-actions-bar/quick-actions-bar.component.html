@@ -1,0 +1,28 @@
+<!-- Quick Actions Bar -->
+@if (quickActions.length > 0) {
+  <div class="quick-actions-bar">
+    <div class="quick-actions-container">
+      <div class="quick-actions-title">
+        <mat-icon class="title-icon">flash_on</mat-icon>
+        <span class="title-text">Quick Actions</span>
+      </div>
+
+      <div class="quick-actions-list">
+        <button
+          *ngFor="let action of quickActions; trackBy: trackByActionId"
+          mat-button
+          class="quick-action-button"
+          [class.disabled]="isActionDisabled(action)"
+          [disabled]="isActionDisabled(action)"
+          [matTooltip]="getActionTooltip(action)"
+          [attr.aria-label]="getActionLabel(action)"
+          (click)="onActionClick(action)"
+          type="button"
+        >
+          <mat-icon class="action-icon">{{ getActionIcon(action) }}</mat-icon>
+          <span class="action-label">{{ getActionLabel(action) }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+}

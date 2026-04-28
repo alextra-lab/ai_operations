@@ -1,0 +1,6 @@
+-r ./src/orchestrator/requirements.txt
+-r ./src/embedding/requirements.txt
+-r ./src/llm_guard_svc/requirements.txt
+-r ./src/corpus_svc/requirements.txt
+-r ./src/inference-gateway/requirements.txt
+-r ./src/shared/requirements.txt

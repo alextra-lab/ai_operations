@@ -1,0 +1,289 @@
+<!-- Tool Testing Component - T6-F4 -->
+<!-- Follows ADR-012 Layered Page Layout Pattern -->
+
+<div class="page-container">
+  <!-- Layer 2: Page Header -->
+  <div class="page-header-section">
+    <div class="page-title">
+      <h1>
+        <mat-icon aria-hidden="true">science</mat-icon>
+        Tool Testing
+      </h1>
+      <p class="subtitle">
+        Execute test calls and validate parameters for MCP tools
+      </p>
+    </div>
+
+    <div class="page-controls">
+      <div class="controls-row">
+        <!-- Clear history button -->
+        <button
+          mat-stroked-button
+          (click)="clearHistory()"
+          [disabled]="testHistory().length === 0"
+          aria-label="Clear test history"
+        >
+          <mat-icon>delete_sweep</mat-icon>
+          Clear History
+        </button>
+
+        <!-- Back to tool management -->
+        <a
+          mat-stroked-button
+          routerLink="/admin/tools"
+          aria-label="Back to Tool Management"
+        >
+          <mat-icon>build</mat-icon>
+          Tool Management
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 3: Content Area (Split View) -->
+  <div class="content-area">
+    <!-- Left Panel: Test Configuration -->
+    <div class="config-panel">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Test Configuration</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- Loading state -->
+          <div *ngIf="isLoadingTools" class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p>Loading tools...</p>
+          </div>
+
+          <!-- No tools available -->
+          <div
+            *ngIf="!isLoadingTools && tools().length === 0"
+            class="empty-state"
+          >
+            <mat-icon class="empty-icon">build_circle</mat-icon>
+            <h3>No enabled tools</h3>
+            <p>Enable tools in Tool Management to test them.</p>
+            <a mat-raised-button color="primary" routerLink="/admin/tools">
+              <mat-icon>settings</mat-icon>
+              Manage Tools
+            </a>
+          </div>
+
+          <!-- Tool Selection Form -->
+          <div *ngIf="!isLoadingTools && tools().length > 0" class="form-area">
+            <!-- Tool Selector -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Select Tool</mat-label>
+              <mat-select
+                [value]="selectedTool()"
+                (selectionChange)="onToolSelect($event.value)"
+                aria-label="Select a tool to test"
+              >
+                <mat-option *ngFor="let tool of tools()" [value]="tool">
+                  <div class="tool-option">
+                    <span class="tool-name">{{ tool.name }}</span>
+                    <span class="tool-id">({{ tool.tool_id }})</span>
+                    <mat-icon
+                      *ngIf="!tool.is_healthy"
+                      class="unhealthy-icon"
+                      matTooltip="Tool is unhealthy"
+                    >
+                      warning
+                    </mat-icon>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-hint *ngIf="selectedTool()">
+                {{ selectedTool()?.description }}
+              </mat-hint>
+            </mat-form-field>
+
+            <!-- Tool Name Override -->
+            <mat-form-field
+              *ngIf="selectedTool()"
+              appearance="outline"
+              class="full-width"
+            >
+              <mat-label>Tool Name (for MCP call)</mat-label>
+              <input
+                matInput
+                [(ngModel)]="toolName"
+                placeholder="Enter specific tool name"
+                aria-label="Tool name for MCP call"
+              />
+              <mat-hint>
+                Override the tool name sent to the MCP server
+              </mat-hint>
+            </mat-form-field>
+
+            <!-- Parameters Editor -->
+            <div *ngIf="selectedTool()" class="parameters-section">
+              <div class="parameters-header">
+                <label id="params-label">Parameters (JSON)</label>
+                <div class="parameters-actions">
+                  <button
+                    mat-icon-button
+                    matTooltip="Load example"
+                    (click)="loadExample()"
+                    aria-label="Load example parameters"
+                  >
+                    <mat-icon>lightbulb</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    matTooltip="Clear"
+                    (click)="clearParameters()"
+                    aria-label="Clear parameters"
+                  >
+                    <mat-icon>clear</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              <div
+                class="json-editor"
+                [class.invalid]="jsonValidationStatus === 'invalid'"
+                [class.valid]="jsonValidationStatus === 'valid'"
+              >
+                <textarea
+                  [(ngModel)]="parametersJson"
+                  (ngModelChange)="onParametersChange()"
+                  rows="12"
+                  spellcheck="false"
+                  aria-labelledby="params-label"
+                  aria-describedby="json-error"
+                ></textarea>
+                <div
+                  *ngIf="jsonError"
+                  id="json-error"
+                  class="json-error"
+                  role="alert"
+                >
+                  {{ jsonError }}
+                </div>
+              </div>
+
+              <!-- Validation Message -->
+              <div
+                *ngIf="validationMessage()"
+                class="validation-message"
+                [class.success]="validationSuccess()"
+                [class.error]="validationSuccess() === false"
+                role="status"
+              >
+                <mat-icon>
+                  {{ validationSuccess() ? 'check_circle' : 'error' }}
+                </mat-icon>
+                {{ validationMessage() }}
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div *ngIf="selectedTool()" class="action-buttons">
+              <button
+                mat-stroked-button
+                (click)="validateParameters()"
+                [disabled]="isValidateDisabled"
+                aria-label="Validate parameters against schema"
+              >
+                <mat-spinner *ngIf="isValidating" diameter="18"></mat-spinner>
+                <mat-icon *ngIf="!isValidating">rule</mat-icon>
+                Validate
+              </button>
+
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="executeTest()"
+                [disabled]="isExecuteDisabled"
+                aria-label="Execute test call"
+              >
+                <mat-spinner *ngIf="isExecuting" diameter="18"></mat-spinner>
+                <mat-icon *ngIf="!isExecuting">play_arrow</mat-icon>
+                Execute Test
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Right Panel: Results -->
+    <div class="results-panel">
+      <!-- Current Result -->
+      <mat-card class="result-card">
+        <mat-card-header>
+          <mat-card-title>
+            <ng-container *ngIf="selectedHistoryEntry(); else currentTitle">
+              Test Result (from history)
+            </ng-container>
+            <ng-template #currentTitle>Test Result</ng-template>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- No result yet -->
+          <div *ngIf="!currentResult()" class="empty-state small">
+            <mat-icon class="empty-icon">science</mat-icon>
+            <p>Execute a test to see results</p>
+          </div>
+
+          <!-- Result viewer -->
+          <app-test-result-viewer
+            *ngIf="currentResult()"
+            [result]="currentResult()!"
+            [historyEntry]="selectedHistoryEntry()"
+          ></app-test-result-viewer>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Test History -->
+      <mat-card class="history-card">
+        <mat-card-header>
+          <mat-card-title>Test History</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- Empty history -->
+          <div *ngIf="testHistory().length === 0" class="empty-state small">
+            <mat-icon class="empty-icon">history</mat-icon>
+            <p>Your test history will appear here</p>
+          </div>
+
+          <!-- History list -->
+          <div *ngIf="testHistory().length > 0" class="history-list">
+            <div
+              *ngFor="let entry of testHistory()"
+              class="history-entry"
+              [class.selected]="selectedHistoryEntry()?.id === entry.id"
+              (click)="viewHistoryEntry(entry)"
+              (keydown.enter)="viewHistoryEntry(entry)"
+              (keydown.space)="viewHistoryEntry(entry)"
+              tabindex="0"
+              role="button"
+              [attr.aria-label]="
+                'View test for ' +
+                entry.tool_display_name +
+                ', ' +
+                (entry.result.success ? 'success' : 'failed')
+              "
+            >
+              <div class="entry-status">
+                <mat-icon
+                  [class]="getStatusClass(entry)"
+                  [fontIcon]="getStatusIcon(entry)"
+                  aria-hidden="true"
+                ></mat-icon>
+              </div>
+              <div class="entry-details">
+                <span class="entry-tool">{{ entry.tool_display_name }}</span>
+                <span class="entry-meta">
+                  {{ formatTimestamp(entry.timestamp) }} ·
+                  {{ formatDuration(entry.result.duration_ms) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

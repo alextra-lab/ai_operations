@@ -1,0 +1,136 @@
+<mat-card class="test-panel">
+  <mat-card-header>
+    <mat-card-title class="flex items-center gap-2">
+      <mat-icon>science</mat-icon>
+      <span>Test Use Case</span>
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="mt-4 space-y-4">
+    <!-- Test Query Input -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Test Query</mat-label>
+      <textarea
+        matInput
+        [(ngModel)]="testQuery"
+        placeholder="Enter a test query..."
+        rows="3"
+      ></textarea>
+    </mat-form-field>
+
+    <!-- Expected Output (Optional) -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Expected Output (Optional)</mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-form-field appearance="outline" class="w-full mt-2">
+        <mat-label>Expected Output JSON</mat-label>
+        <textarea
+          matInput
+          [(ngModel)]="expectedOutputJson"
+          placeholder='{"format": "json", "required_fields": ["threat_level"]}'
+          rows="5"
+        ></textarea>
+      </mat-form-field>
+    </mat-expansion-panel>
+
+    <!-- Execute Button -->
+    <div class="actions flex gap-2">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="executeTest()"
+        [disabled]="!testQuery || isExecuting"
+      >
+        <mat-icon>play_arrow</mat-icon>
+        Run Test
+      </button>
+    </div>
+
+    <!-- Results -->
+    @if (testResult) {
+      <div class="test-result mt-4">
+        <h4 class="flex items-center gap-2 text-lg font-medium mb-2">
+          <mat-icon
+            [class.text-green-600]="testResult.success"
+            [class.text-red-600]="!testResult.success"
+          >
+            {{ testResult.success ? 'check_circle' : 'error' }}
+          </mat-icon>
+          <span>Test Result</span>
+          <span class="execution-time text-sm text-gray-600">
+            {{ testResult.execution_time_ms }}ms
+          </span>
+        </h4>
+
+        <!-- Validation Status -->
+        @if (
+          testResult.validation_passed !== undefined &&
+          testResult.validation_passed !== null
+        ) {
+          <mat-chip-set class="mb-2">
+            <mat-chip
+              [class.bg-green-100]="testResult.validation_passed"
+              [class.text-green-800]="testResult.validation_passed"
+              [class.bg-red-100]="!testResult.validation_passed"
+              [class.text-red-800]="!testResult.validation_passed"
+            >
+              {{
+                testResult.validation_passed
+                  ? '✓ Validation Passed'
+                  : '✗ Validation Failed'
+              }}
+            </mat-chip>
+          </mat-chip-set>
+        }
+        @if (!testResult.validation_passed && testResult.validation_message) {
+          <div
+            class="validation-message bg-red-50 p-3 rounded text-sm text-red-700 mb-2"
+          >
+            {{ testResult.validation_message }}
+          </div>
+        }
+
+        <!-- Response Preview -->
+        @if (testResult.response) {
+          <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Response</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="response-content p-4">
+              @if (testResult.response['answer']) {
+                <div class="answer mb-4">
+                  <strong class="block mb-2">Answer:</strong>
+                  <div class="text-gray-800">
+                    {{ testResult.response['answer'] }}
+                  </div>
+                </div>
+              }
+            </div>
+          </mat-expansion-panel>
+        }
+
+        <!-- Full Response JSON -->
+        @if (testResult.response) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Full Response JSON</mat-panel-title>
+            </mat-expansion-panel-header>
+            <pre class="response-json">{{ testResult.response | json }}</pre>
+          </mat-expansion-panel>
+        }
+
+        <!-- Error -->
+        @if (testResult.error) {
+          <div
+            class="error-message bg-red-50 p-4 rounded border-l-4 border-red-500"
+          >
+            <strong class="text-red-800">Error:</strong>
+            <p class="text-red-700 mt-1">{{ testResult.error }}</p>
+          </div>
+        }
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

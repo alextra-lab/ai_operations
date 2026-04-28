@@ -1,0 +1,117 @@
+.schema-tabs {
+  margin-bottom: 1rem;
+}
+
+.schema-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.schema-textarea {
+  min-height: 200px;
+  resize: vertical;
+  font-family: var(--mat-font-family-mono, monospace);
+  font-size: 0.875rem;
+}
+
+.schema-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.validation-errors {
+  color: var(--mat-sys-error, #b00020);
+  font-size: 0.875rem;
+}
+
+.validation-error {
+  margin-top: 0.25rem;
+}
+
+.validation-ok {
+  color: var(--mat-sys-primary, #1976d2);
+  font-size: 0.875rem;
+}
+
+.import-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.import-hint {
+  font-size: 0.875rem;
+  color: var(--mat-sys-outline, #666);
+  margin: 0;
+}
+
+.presets-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--mat-sys-outline-variant, #e0e0e0);
+}
+
+.presets-label {
+  display: block;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.preset-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+// Compatibility status (ADR-063 amendment)
+// Colors use Material system tokens with hardcoded fallbacks (ADR-012)
+.compatibility-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &.compat-full {
+    background: var(--mat-sys-success-container, #e8f5e9);
+    color: var(--mat-sys-on-success-container, #2e7d32);
+  }
+
+  &.compat-partial {
+    background: var(--mat-sys-warning-container, #fff3e0);
+    color: var(--mat-sys-on-warning-container, #e65100);
+  }
+
+  &.compat-none {
+    background: var(--mat-sys-error-container, #fce4ec);
+    color: var(--mat-sys-on-error-container, #c62828);
+  }
+}
+
+// Domain-grouped presets (Phase 4bis)
+.preset-group {
+  margin-bottom: 0.75rem;
+}
+
+.preset-group-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--mat-sys-outline, #666);
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// .w-full removed — use Tailwind's w-full class in templates (ADR-012)

@@ -1,0 +1,451 @@
+<!-- Use Case Execution Component - Layered Layout Pattern -->
+@if (!isLoading && useCase && useCaseConfig) {
+  <div class="page-container">
+    <!-- Layer 2: Page Header + Controls (Collapsible) -->
+    <div class="page-header-section">
+      <!-- Page Title -->
+      <div class="page-title">
+        <div class="title-row">
+          <button
+            mat-icon-button
+            (click)="navigateToUseCases()"
+            class="back-button"
+            aria-label="Back to Use Cases"
+          >
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <h1>
+            <mat-icon [class]="'category-icon category-' + useCase.category"
+              >play_circle</mat-icon
+            >
+            {{ useCase.name }}
+          </h1>
+        </div>
+        <p class="subtitle">{{ useCase.description }}</p>
+        <div class="use-case-meta">
+          <span class="category-badge" [class]="'category-' + useCase.category">
+            {{ getCategoryDisplayName(useCase.category) }}
+          </span>
+          <span class="intent-type">{{ useCase.intent_type }}</span>
+        </div>
+      </div>
+
+      <!-- Input Parameters Panel (Collapsible) -->
+      <mat-expansion-panel class="input-panel" [expanded]="inputPanelExpanded">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>input</mat-icon>
+            Input Parameters
+          </mat-panel-title>
+          @if (!inputPanelExpanded) {
+            <mat-panel-description>
+              {{
+                hasInputFields
+                  ? inputFieldsCount + ' fields'
+                  : 'No input required'
+              }}
+            </mat-panel-description>
+          }
+        </mat-expansion-panel-header>
+
+        <!-- Input Form -->
+        <form [formGroup]="executionForm" class="execution-form">
+          @if (hasInputFields) {
+            <div class="form-fields">
+              <div
+                *ngFor="let field of useCaseConfig.template_config.input_fields"
+                class="form-field"
+                [class.full-width]="field.type === 'textarea'"
+              >
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>{{ field.label }}</mat-label>
+
+                  @if (field.type === 'text') {
+                    <input
+                      matInput
+                      [formControlName]="field.name"
+                      [placeholder]="field.placeholder || ''"
+                    />
+                  }
+
+                  @if (field.type === 'textarea') {
+                    <textarea
+                      matInput
+                      [formControlName]="field.name"
+                      [placeholder]="field.placeholder || ''"
+                      rows="4"
+                      class="query-textarea"
+                    >
+                    </textarea>
+                  }
+
+                  @if (field.type === 'number') {
+                    <input
+                      matInput
+                      type="number"
+                      [formControlName]="field.name"
+                      [placeholder]="field.placeholder || ''"
+                    />
+                  }
+
+                  @if (field.type === 'select') {
+                    <mat-select
+                      [formControlName]="field.name"
+                      [placeholder]="field.placeholder || 'Select an option'"
+                    >
+                      <mat-option
+                        *ngFor="let option of getFieldOptions(field.name)"
+                        [value]="option.value"
+                      >
+                        {{ option.label }}
+                      </mat-option>
+                    </mat-select>
+                  }
+
+                  @if (field.type === 'multiselect') {
+                    <mat-select
+                      [formControlName]="field.name"
+                      multiple
+                      [placeholder]="field.placeholder || 'Select options'"
+                    >
+                      <mat-option
+                        *ngFor="let option of getFieldOptions(field.name)"
+                        [value]="option.value"
+                      >
+                        {{ option.label }}
+                      </mat-option>
+                    </mat-select>
+                  }
+
+                  @if (field.type === 'boolean') {
+                    <mat-checkbox [formControlName]="field.name">
+                      {{ field.label }}
+                    </mat-checkbox>
+                  }
+
+                  @if (field.description) {
+                    <mat-hint>{{ field.description }}</mat-hint>
+                  }
+                  @if (getFieldValidationMessage(field.name)) {
+                    <mat-error>{{
+                      getFieldValidationMessage(field.name)
+                    }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            </div>
+          }
+
+          @if (!hasInputFields) {
+            <div class="no-fields">
+              <mat-icon class="no-fields-icon">info</mat-icon>
+              <p>This use case doesn't require any input parameters.</p>
+            </div>
+          }
+        </form>
+
+        <!-- Execution Overrides (Advanced) -->
+        @if (showOverrides) {
+          <mat-expansion-panel class="overrides-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>tune</mat-icon>
+                Advanced Overrides
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <form [formGroup]="overridesForm" class="overrides-form">
+              <div class="override-fields">
+                <mat-form-field appearance="outline">
+                  <mat-label>Temperature</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="temperature"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                  />
+                  <mat-hint>Controls randomness (0.0 - 2.0)</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Top K</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="top_k"
+                    min="1"
+                    max="100"
+                  />
+                  <mat-hint>Number of documents to retrieve</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Similarity Threshold</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="similarity_threshold"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                  />
+                  <mat-hint>Minimum similarity score (0.0 - 1.0)</mat-hint>
+                </mat-form-field>
+
+                @if (supportsStreaming) {
+                  <mat-form-field appearance="outline">
+                    <mat-label>Max Tokens</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      formControlName="max_tokens"
+                      min="1"
+                      max="4000"
+                    />
+                    <mat-hint>Maximum response tokens</mat-hint>
+                  </mat-form-field>
+                }
+              </div>
+            </form>
+          </mat-expansion-panel>
+        }
+      </mat-expansion-panel>
+    </div>
+
+    <!-- Progress Bar (when executing) -->
+    @if (showProgress) {
+      <div class="progress-container">
+        <mat-progress-bar
+          mode="determinate"
+          [value]="executionProgress"
+          [color]="hasError ? 'warn' : 'primary'"
+        >
+        </mat-progress-bar>
+        <div class="progress-info">
+          <span class="current-step">{{ currentStep }}</span>
+          <span class="progress-percentage">{{ executionProgress }}%</span>
+        </div>
+      </div>
+    }
+
+    <!-- Layer 3: Content Area (Scrollable Results) -->
+    <div class="content-area">
+      @if (!hasResults && !hasError) {
+        <div class="empty-state">
+          <mat-icon class="empty-icon">play_circle_outline</mat-icon>
+          <h3>Ready to Execute</h3>
+          <p>
+            Fill in the input parameters above and click Execute to run this use
+            case.
+          </p>
+        </div>
+      }
+
+      @if (hasError) {
+        <div class="error-state">
+          <mat-icon class="error-icon">error_outline</mat-icon>
+          <h3>Execution Failed</h3>
+          <p class="error-message">{{ executionError }}</p>
+          <button mat-raised-button color="primary" (click)="resetExecution()">
+            Try Again
+          </button>
+        </div>
+      }
+
+      @if (hasResults && !hasError) {
+        <div class="results-container">
+          <!-- Query Results Panel (Conversation Style) -->
+          <app-query-results-panel
+            [messages]="conversationMessages"
+            [sources]="[]"
+            [metrics]="null"
+            [isStreaming]="isStreaming"
+            [streamingContent]="streamingResponse"
+            [autoScrollEnabled]="true"
+          >
+          </app-query-results-panel>
+
+          @if (executionResult?.metrics) {
+            <mat-card class="metrics-card">
+              <mat-card-header>
+                <div mat-card-avatar class="metrics-icon">
+                  <mat-icon>insights</mat-icon>
+                </div>
+                <mat-card-title>Execution Metrics</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <app-execution-metrics
+                  [metrics]="executionResult!.metrics"
+                ></app-execution-metrics>
+              </mat-card-content>
+            </mat-card>
+          }
+
+          @if (
+            executionResult?.sources &&
+            (executionResult?.sources?.length || 0) > 0
+          ) {
+            <mat-card class="sources-card">
+              <mat-card-header>
+                <div mat-card-avatar class="sources-icon">
+                  <mat-icon>source</mat-icon>
+                </div>
+                <mat-card-title>Source Documents</mat-card-title>
+                <mat-card-subtitle
+                  >{{ executionResult!.sources.length }} documents</mat-card-subtitle
+                >
+              </mat-card-header>
+              <mat-card-content>
+                <div class="sources-grid">
+                  <div
+                    *ngFor="let source of executionResult!.sources"
+                    class="source-item"
+                  >
+                    <app-source-citation [source]="source"></app-source-citation>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+
+          @if (hasStructuredOutput) {
+            <div class="structured-output-section">
+              <mat-card class="structured-output-card">
+                <mat-card-header>
+                  <div mat-card-avatar class="output-icon">
+                    <mat-icon>dashboard</mat-icon>
+                  </div>
+                  <mat-card-title>Structured Output</mat-card-title>
+                  <mat-card-subtitle>Formatted Results</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  @if (formattedOutput) {
+                    <app-structured-output-renderer
+                      [formattedOutput]="formattedOutput"
+                    >
+                    </app-structured-output-renderer>
+                  }
+                </mat-card-content>
+              </mat-card>
+            </div>
+          }
+
+          @if (canRefineSchema) {
+            <div class="refine-schema-section">
+              <button
+                mat-stroked-button
+                color="accent"
+                (click)="openRefineSchemaDialog()"
+                aria-label="Generate schema from this output"
+              >
+                <mat-icon>auto_fix_high</mat-icon>
+                Generate Schema from This Output
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Layer 4: Page Footer (Fixed Actions) -->
+    <div class="page-footer">
+      <div class="footer-content">
+        <!-- Left: Status Info -->
+        <div class="footer-status">
+          @if (executionResult && !isExecuting) {
+            <span class="status-text">
+              <mat-icon class="status-icon">check_circle</mat-icon>
+              Execution completed
+              @if (executionResult.metrics && executionResult.metrics.model) {
+                <span class="metrics-summary">
+                  •
+                  {{
+                    formatDuration(
+                      executionResult.metrics.model.processing_time * 1000
+                    )
+                  }}
+                  •
+                  {{ formatTokens(executionResult.metrics.model.total_tokens) }}
+                  tokens
+                </span>
+              }
+            </span>
+          }
+          @if (isExecuting) {
+            <span class="status-text">
+              <mat-spinner diameter="16" class="inline-spinner"></mat-spinner>
+              Executing...
+            </span>
+          }
+        </div>
+
+        <!-- Right: Actions -->
+        <div class="footer-actions">
+          <button
+            mat-button
+            (click)="resetExecution()"
+            [disabled]="isExecuting"
+            aria-label="Reset execution"
+          >
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+
+          <button
+            mat-button
+            (click)="toggleOverrides()"
+            [disabled]="isExecuting"
+            aria-label="Toggle advanced settings"
+          >
+            <mat-icon>tune</mat-icon>
+            {{ showOverrides ? 'Hide' : 'Show' }} Overrides
+          </button>
+
+          <!-- Export Toolbar -->
+          <app-export-toolbar
+            [sessionId]="currentSessionId"
+            [sessionTitle]="useCase.name || null"
+            [showSessionInfo]="false"
+            (exportComplete)="onExportComplete($event)"
+            (summaryGenerated)="onSummaryGenerated($event)"
+          >
+          </app-export-toolbar>
+
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="execute()"
+            [disabled]="!canExecute"
+            class="execute-button"
+            aria-label="Execute use case"
+          >
+            <mat-icon>play_arrow</mat-icon>
+            Execute
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (isLoading) {
+  <!-- Loading State -->
+  <div class="loading-container">
+    <mat-spinner diameter="60"></mat-spinner>
+    <p class="loading-text">Loading use case...</p>
+  </div>
+}
+
+@if (error && !isLoading) {
+  <!-- Error Loading State -->
+  <div class="error-container">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h3>Error Loading Use Case</h3>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="navigateToUseCases()">
+      Back to Use Cases
+    </button>
+  </div>
+}

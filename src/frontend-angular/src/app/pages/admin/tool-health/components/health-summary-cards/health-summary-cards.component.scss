@@ -1,0 +1,122 @@
+/**
+ * Health Summary Cards Styles
+ * Follows ADR-012 Hybrid CSS Strategy
+ */
+
+.summary-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.summary-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.12),
+      0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0;
+  }
+
+  .card-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+
+    &.total {
+      color: #1976d2;
+    }
+
+    &.online {
+      color: #4caf50;
+    }
+
+    &.offline {
+      color: #f44336;
+    }
+
+    &.health {
+      color: #ff9800;
+    }
+  }
+
+  .card-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .card-value {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #212121;
+  }
+
+  .card-label {
+    font-size: 13px;
+    color: #757575;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  // Health card color variations
+  &.healthy .card-icon.health {
+    color: #4caf50;
+  }
+
+  &.warning .card-icon.health {
+    color: #ff9800;
+  }
+
+  &.critical .card-icon.health {
+    color: #f44336;
+  }
+}
+
+.last-check-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #757575;
+  font-size: 13px;
+  padding: 8px 0;
+
+  .timestamp-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #9e9e9e;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .summary-cards-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .summary-card {
+    .card-content {
+      flex-direction: column;
+      text-align: center;
+      gap: 8px;
+    }
+
+    .card-value {
+      font-size: 24px;
+    }
+  }
+}

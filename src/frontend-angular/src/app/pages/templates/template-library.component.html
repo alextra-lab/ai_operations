@@ -1,0 +1,237 @@
+<div class="template-library-container p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        Template Library
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">
+        Manage prompt templates with version control and approval workflows
+      </p>
+    </div>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="createNewTemplate()"
+      class="flex items-center gap-2"
+    >
+      <mat-icon>add</mat-icon>
+      Create Template
+    </button>
+  </div>
+
+  <!-- Filters Card -->
+  <mat-card class="mb-6">
+    <mat-card-content>
+      <form
+        [formGroup]="filterForm"
+        class="grid grid-cols-1 md:grid-cols-3 gap-4"
+      >
+        <!-- Search by Template ID -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Search Template ID</mat-label>
+          <input
+            matInput
+            formControlName="searchTerm"
+            placeholder="Enter template ID"
+          />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <!-- Deployment Status Filter -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Deployment Status</mat-label>
+          <mat-select formControlName="deploymentStatus">
+            <mat-option
+              *ngFor="let status of deploymentStatuses"
+              [value]="status.value"
+            >
+              {{ status.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Active Only Toggle -->
+        <div class="flex items-center">
+          <mat-checkbox formControlName="activeOnly" class="w-full">
+            Show Active Versions Only
+          </mat-checkbox>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <!-- Templates Table -->
+  <mat-card *ngIf="!isLoading">
+    <mat-card-content class="p-0">
+      <div class="overflow-x-auto">
+        <table mat-table [dataSource]="templates" class="w-full">
+          <!-- Template ID Column -->
+          <ng-container matColumnDef="template_id">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold">
+              Template ID
+            </th>
+            <td mat-cell *matCellDef="let template">
+              <div class="font-mono text-sm">{{ template.template_id }}</div>
+            </td>
+          </ng-container>
+
+          <!-- Prompt Type Column -->
+          <ng-container matColumnDef="prompt_type">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold">
+              Type
+            </th>
+            <td mat-cell *matCellDef="let template">
+              <mat-chip class="capitalize">
+                {{ template.prompt_type }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Version Number Column -->
+          <ng-container matColumnDef="version_number">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold">
+              Version
+            </th>
+            <td mat-cell *matCellDef="let template">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold"
+                  >v{{ template.version_number }}</span
+                >
+                <mat-icon
+                  *ngIf="template.is_active_version"
+                  class="text-green-600 text-base"
+                  matTooltip="Active Version"
+                >
+                  check_circle
+                </mat-icon>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Deployment Status Column -->
+          <ng-container matColumnDef="deployment_status">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold">
+              Status
+            </th>
+            <td mat-cell *matCellDef="let template">
+              <span
+                [class]="getStatusClass(template.deployment_status)"
+                class="px-3 py-1 rounded-full text-xs font-medium"
+              >
+                {{ getStatusName(template.deployment_status) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Updated At Column -->
+          <ng-container matColumnDef="updated_at">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold">
+              Last Updated
+            </th>
+            <td mat-cell *matCellDef="let template">
+              <div class="text-sm text-gray-600 dark:text-gray-400">
+                {{ formatDate(template.updated_at) }}
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold">
+              Actions
+            </th>
+            <td mat-cell *matCellDef="let template">
+              <div class="flex gap-2">
+                <button
+                  mat-icon-button
+                  (click)="viewTemplate(template)"
+                  matTooltip="View Details"
+                  color="primary"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  (click)="editTemplate(template)"
+                  matTooltip="Edit Template"
+                  color="accent"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  *ngIf="canApprove(template)"
+                  (click)="approveTemplate(template)"
+                  matTooltip="Approve Template"
+                  class="text-green-600"
+                >
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  *ngIf="canReject(template)"
+                  (click)="rejectTemplate(template)"
+                  matTooltip="Reject Template"
+                  class="text-yellow-600"
+                >
+                  <mat-icon>cancel</mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  (click)="deleteTemplate(template)"
+                  matTooltip="Delete Template"
+                  color="warn"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- No Data Row -->
+          <tr class="mat-row" *matNoDataRow>
+            <td
+              [attr.colspan]="displayedColumns.length"
+              class="text-center py-8"
+            >
+              <div class="text-gray-500 dark:text-gray-400">
+                <mat-icon class="text-4xl mb-2">inbox</mat-icon>
+                <p>No templates found</p>
+                <p class="text-sm mt-2">Create a new template to get started</p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <mat-paginator
+        [length]="totalCount"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [pageIndex]="currentPage - 1"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      >
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Summary Stats -->
+  <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+    Showing {{ templates.length }} of {{ totalCount }} templates
+  </div>
+</div>

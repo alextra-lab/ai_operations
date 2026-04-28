@@ -1,0 +1,134 @@
+# Model Metadata Configuration Template
+#
+# Copy this file to model_metadata.yaml (gitignored) and update with your models.
+#
+# This file provides metadata for models when the inference server doesn't
+# provide complete information via /v1/models endpoint.
+#
+# Priority: Database overrides (admin API) → YAML config → Extended API → Pattern inference
+# Update this file and restart service to apply changes
+# Version: 1.1
+#
+# Field Definitions:
+#   provider_type: API protocol type (openai, anthropic, local)
+#     - "openai" = OpenAI-compatible API (e.g. LMStudio gateway)
+#     - "local" = Built-in local model (not via gateway)
+#   provider: Gateway provider name - auto-assigned during sync (do not set here)
+
+# =============================================================================
+# MODEL DEFINITIONS
+# =============================================================================
+
+models:
+  # Example LLM Model Configuration
+  your-model-id:
+    context_window: 8192 # Maximum context window in tokens
+    max_output_tokens: 4096 # Maximum output tokens
+    provider_type: local # openai, anthropic, local
+    model_type: llm # llm, embedding, reasoning, vision, audio
+    specialization: general # Optional: coding, security_analysis, etc.
+    description: "Description of your model"
+    supports_tools: false # Optional: supports function calling
+    supports_vision: false # Optional: supports image input
+    supports_audio: false # Optional: supports audio input
+    is_reasoning_model: false # Optional: reasoning-capable model
+    recommended_use_cases: # Optional: list of use case types
+      - query
+      - analysis
+
+  # Example Embedding Model Configuration
+  your-embedding-model:
+    context_window: 512 # Maximum input length
+    embedding_dimensions: 384 # Vector dimensions (384, 768, 1024, 1536, etc.)
+    provider_type: local
+    model_type: embedding
+    description: "Description of your embedding model"
+
+# =============================================================================
+# PROVIDER DEFAULTS
+# =============================================================================
+
+# These defaults apply to models from specific providers
+# when model-specific config is not found
+
+provider_defaults:
+  local:
+    context_window: 8192
+    max_output_tokens: 4096
+    embedding_dimensions: 768
+
+  openai:
+    context_window: 128000
+    max_output_tokens: 4096
+    supports_tools: true
+
+  anthropic:
+    context_window: 200000
+    max_output_tokens: 4096
+    supports_vision: true
+
+  other:
+    context_window: 8192
+    max_output_tokens: 4096
+
+# =============================================================================
+# MODEL TYPE DEFAULTS
+# =============================================================================
+
+# These defaults apply based on model type
+# when provider defaults and model config not found
+
+model_type_defaults:
+  llm:
+    context_window: 8192
+    max_output_tokens: 4096
+
+  embedding:
+    context_window: 512
+    embedding_dimensions: 384
+    max_output_tokens: 0
+
+  vision:
+    context_window: 8192
+    max_output_tokens: 4096
+    supports_vision: true
+
+  audio:
+    context_window: 4096
+    max_output_tokens: 4096
+    supports_audio: true
+
+  reasoning:
+    context_window: 32000
+    max_output_tokens: 8192
+    is_reasoning_model: true
+# =============================================================================
+# USAGE NOTES
+# =============================================================================
+
+# Metadata Priority (highest to lowest):
+# 1. Database admin overrides (via PATCH /api/v1/models/{model_id}/metadata)
+# 2. This YAML config file
+# 3. Extended metadata from /v1/models/{model_id} endpoint (if available)
+# 4. Pattern-based inference from model ID
+
+# To use this file:
+# 1. Copy to model_metadata.yaml (model_metadata.yaml is gitignored)
+# 2. Add your model configurations under "models:"
+# 3. Restart the orchestrator service
+# 4. Run model sync: POST /api/v1/models/sync
+#
+# Provider: "provider" is auto-assigned during sync from gateway_providers; use provider_type here.
+
+# To update a model at runtime (without restart):
+# Use admin API:
+# PATCH /api/v1/models/{model_id}/metadata
+# {
+#   "context_window": 16384,
+#   "embedding_dimensions": 768,
+#   "description": "Updated description"
+# }
+
+# Note: Pricing is managed via environment variables:
+# PRICING_DEFAULT_INPUT_PER_MILLION=0.0
+# PRICING_DEFAULT_OUTPUT_PER_MILLION=0.0

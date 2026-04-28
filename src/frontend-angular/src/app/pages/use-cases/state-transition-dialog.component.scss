@@ -1,0 +1,38 @@
+/**
+ * State Transition Dialog Styles
+ *
+ * ADR-012 Compliant:
+ * - Material components for UI primitives
+ * - Tailwind utilities for layout/spacing (via classes in template)
+ * - Component SCSS only for complex states/animations
+ */
+
+// Dialog sizing
+:host {
+  display: block;
+  min-width: 500px;
+  max-width: 600px;
+}
+
+// Responsive behavior
+@media (max-width: 768px) {
+  :host {
+    min-width: 90vw;
+  }
+}
+
+// Material dialog overrides (minimal)
+::ng-deep {
+  .mat-mdc-dialog-title {
+    padding-top: 16px;
+  }
+
+  .mat-mdc-dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .mat-mdc-dialog-actions {
+    padding: 12px 24px 16px;
+  }
+}

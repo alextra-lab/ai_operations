@@ -1,0 +1,281 @@
+// Layer 1: Page Container (CRITICAL: overflow hidden, fixed height)
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  margin: -24px -32px;
+  padding: 0;
+  overflow: hidden; // CRITICAL: Prevents parent from scrolling
+  background: #fafafa;
+}
+
+// Layer 2: Page Header (NEVER SCROLLS)
+// Updated December 2025 - Controls Container Standard
+.page-header-section {
+  flex: 0 0 auto;
+  z-index: 100;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px 8px 24px;
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 36px;
+
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+        color: #1976d2;
+      }
+    }
+  }
+
+  .subtitle {
+    margin: 4px 0 0 0;
+    padding: 0 24px 12px 24px;
+    color: #666;
+    font-size: 13px;
+  }
+}
+
+// Layer 3: Content Area (FLEX CONTAINER - does NOT scroll)
+.content-area {
+  flex: 1; // Take remaining space
+  display: flex; // CRITICAL: Make it a flex container
+  flex-direction: column; // Stack children vertically
+  overflow: hidden; // CRITICAL: Prevent scrolling here
+  padding: 0; // Remove padding - tabs will handle their own spacing
+  min-height: 0; // **CRITICAL** for flex child to be scrollable
+  background: #fafafa; // Light grey background
+}
+
+.tab-group {
+  background: transparent;
+  width: 100%;
+  flex: 1 1 auto; // Grow, shrink, auto basis
+  display: flex; // CRITICAL: Make it a flex container
+  flex-direction: column; // Stack tab labels and body vertically
+  min-height: 0; // CRITICAL: Allow flex shrinking
+}
+
+// Material Tabs styling - target the actual mat-tab-group element
+::ng-deep .tab-group {
+
+  // Make the mat-tab-group itself a flex container
+  &.mat-mdc-tab-group {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important; // Grow, shrink, auto basis
+    min-height: 0 !important;
+  }
+
+  // Tab labels container
+  .mat-mdc-tab-header {
+    flex: 0 0 auto !important; // Don't grow or shrink
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .mat-mdc-tab-labels {
+    padding: 0 24px;
+  }
+
+  // Tab body wrapper - takes remaining space
+  .mat-mdc-tab-body-wrapper {
+    flex: 1 1 auto !important; // Grow, shrink, auto basis
+    display: flex !important; // CRITICAL: Make it a flex container
+    flex-direction: column !important;
+    min-height: 0 !important; // CRITICAL: Allow flex shrinking
+    overflow: hidden !important; // Prevent scrolling at wrapper level
+  }
+
+  // Tab body - fills wrapper
+  .mat-mdc-tab-body {
+    flex: 1 1 auto !important; // Grow, shrink, auto basis
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    width: 100% !important; // Full width
+  }
+
+  // Tab body content - this is what scrolls
+  .mat-mdc-tab-body-content {
+    flex: 1 1 auto !important; // Grow, shrink, auto basis
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important; // Enable scrolling here
+    overflow-x: hidden !important;
+    padding: 24px; // Add padding for content spacing
+    min-height: 0 !important; // CRITICAL: Allow flex shrinking
+  }
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1; // Take available space
+  min-width: 0; // Allow text truncation if needed
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1f2937;
+  word-break: break-word; // Allow long names to wrap
+}
+
+.meta {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.team-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 8px;
+}
+
+.filter-label {
+  font-size: 13px;
+  color: #374151;
+}
+
+.loading,
+.empty,
+.error {
+  padding: 24px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  min-height: 100px;
+}
+
+.loading {
+  color: #2563eb;
+}
+
+.empty {
+  color: #6b7280;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+.content-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 8px 0; // Match original padding
+  margin: 0; // Remove bottom margin since it's the only card per tab
+  flex: 1; // Take available space
+  display: flex; // Make it a flex container
+  flex-direction: column; // Stack children vertically
+  min-height: 300px; // Minimum height to prevent collapse
+
+  // Ensure mat-list displays properly
+  ::ng-deep .mat-mdc-list {
+    padding: 0;
+    flex: 1; // Allow list to grow
+  }
+
+  // Ensure buttons in list items don't shrink
+  button {
+    flex-shrink: 0; // Don't allow button to shrink
+    white-space: nowrap; // Keep button text on one line
+  }
+
+  ::ng-deep .mat-mdc-list-item {
+    padding: 12px 16px !important;
+    border-bottom: 1px solid #f0f0f0;
+    height: auto !important; // Allow variable height
+    min-height: 72px; // Minimum height for readability
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    // Make the list item content area flex
+    .mdc-list-item__content {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 16px !important;
+      width: 100% !important;
+    }
+
+    // Primary text area should grow
+    .mat-mdc-list-item-unscoped-content {
+      flex: 1 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 16px !important;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .page-container {
+    height: calc(100vh - 150px);
+    margin: -16px;
+  }
+
+  .page-header-section {
+    .title-row {
+      padding: 12px 16px 6px 16px;
+
+      h1 {
+        font-size: 20px;
+        height: 32px;
+
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+
+    .subtitle {
+      padding: 0 16px 10px 16px;
+      font-size: 12px;
+    }
+  }
+
+  .content-area {
+    padding: 0; // Tabs handle their own spacing
+  }
+
+  // Adjust tab body content padding on mobile
+  ::ng-deep .tab-group {
+    .mat-mdc-tab-body-content {
+      padding: 16px !important;
+    }
+  }
+}

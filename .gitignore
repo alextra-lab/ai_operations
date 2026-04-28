@@ -1,0 +1,126 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+env/
+venv/
+venv_*
+ENV/
+.venv/
+!config/env/
+!config/env/*.template
+config/env/env.test
+config/env/env.test.local
+config/env/env.test.bak
+
+# Private model metadata (copy from model_metadata.template.yaml)
+config/models/model_metadata.yaml
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.coverage
+coverage.xml
+coverage.json
+tests/coverage_results/
+
+# Cypress E2E artifacts
+src/frontend-angular/cypress/screenshots/
+src/frontend-angular/cypress/videos/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff (if applicable)
+*.log
+
+# Flask stuff (if applicable)
+instance/
+.webassets-cache
+
+# PyBuilder
+target/
+
+# VSCode settings
+.vscode/
+
+# Cursor IDE - ignore user-specific files but track project configuration
+.cursor/sessions/
+.cursor/cache/
+.cursor/logs/
+.cursor/settings/
+
+# Mac OS specific files
+.DS_Store
+
+# Environment files (credentials only in env files; do not commit)
+.env
+*.env.*
+!config/env/env.template
+!config/env/env.test.template
+tests/.env.test
+.env.test
+
+# Docker-related files
+docker-compose.override.yml
+.docker/
+
+# Log files
+*.log
+
+# Data directories (PostgreSQL, Qdrant, etc.)
+data/
+data/postgres/
+data/qdrant/
+
+# Temporary files
+tmp/
+temp/
+temp_scripts/
+
+# Local development database
+dev.db
+*.db
+*.sqlite
+*.sqlite3
+
+# pip wheelhouse repository faster build in dev
+src/wheelhouse
+
+# npm cache for faster frontend builds
+src/npm_cache
+
+scratchpad.md
+corpus_docs/
+docs/development/temp_orchestrator_refactoring/
+temp_scripts/
+config/env/env.test.bak.20251211_210006

@@ -1,0 +1,130 @@
+/**
+ * Configuration Editor Component Styles
+ */
+
+.loading-message {
+  padding: 16px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.config-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.checkbox-field {
+  margin: 8px 0;
+}
+
+.field-hint {
+  margin-left: 32px;
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+.nested-object {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  background: #f9f9f9;
+
+  .nested-title {
+    margin: 0 0 16px 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1a1a1a;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #1976d2;
+  }
+
+  mat-form-field {
+    margin-bottom: 12px;
+  }
+}
+
+/* Model Dropdown Styling */
+.model-option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+  position: relative;
+
+  .model-name {
+    font-weight: 500;
+    font-size: 14px;
+    color: #1a1a1a;
+  }
+
+  .model-details {
+    font-size: 12px;
+    color: #757575;
+  }
+
+  .unavailable-icon {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #f44336;
+  }
+}
+
+/* Material Form Field Customization */
+::ng-deep {
+  .config-form {
+    mat-form-field {
+      .mat-mdc-form-field-hint {
+        font-size: 11px;
+        color: #757575;
+      }
+
+      .mat-mdc-form-field-error {
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+
+    mat-checkbox {
+      .mdc-label {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nested-object {
+    padding: 16px;
+
+    .nested-title {
+      font-size: 14px;
+    }
+  }
+}

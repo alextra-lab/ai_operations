@@ -1,0 +1,158 @@
+<!-- Sidebar Container -->
+<div class="sidebar-container" [class.collapsed]="isCollapsed">
+  <!-- Sidebar Header -->
+  <div class="sidebar-header">
+    <div class="app-logo" *ngIf="!isCollapsed">
+      <mat-icon class="logo-icon">security</mat-icon>
+      <span class="app-name">AI Operations</span>
+    </div>
+
+    <div class="app-logo-collapsed" *ngIf="isCollapsed">
+      <mat-icon class="logo-icon">security</mat-icon>
+    </div>
+
+    <!-- Collapse Toggle Button -->
+    <button
+      mat-icon-button
+      (click)="onToggleCollapse()"
+      [attr.aria-label]="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+      class="collapse-toggle"
+    >
+      <mat-icon>{{ isCollapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    </button>
+  </div>
+
+  <!-- User Info Section -->
+  <div class="user-section" *ngIf="currentUser">
+    <div class="user-avatar">
+      <mat-icon>account_circle</mat-icon>
+    </div>
+    <div class="user-details" *ngIf="!isCollapsed">
+      <div class="user-name">
+        {{ currentUser.full_name || currentUser.username }}
+      </div>
+      <div class="user-roles">{{ currentUser.roles.join(', ') }}</div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Navigation Menu -->
+  <div class="navigation-menu">
+    <mat-list class="menu-list" role="navigation" aria-label="Main navigation">
+      <!-- Menu Items -->
+      <ng-container
+        *ngFor="let menuItem of menuItems; trackBy: trackByMenuItemId"
+      >
+        <!-- Menu Item with Children (Expandable) -->
+        <div *ngIf="hasChildren(menuItem)">
+          <mat-expansion-panel
+            class="menu-expansion-panel"
+            [expanded]="isPanelExpanded(menuItem.id)"
+            (opened)="onMenuItemClick(menuItem)"
+            [attr.aria-label]="menuItem.label"
+          >
+            <mat-expansion-panel-header class="menu-panel-header">
+              <mat-icon
+                class="menu-icon"
+                [matTooltip]="getTooltipText(menuItem)"
+                [matTooltipDisabled]="!isCollapsed"
+                [attr.aria-hidden]="true"
+              >
+                {{ getMenuItemIcon(menuItem) }}
+              </mat-icon>
+              <span class="menu-label" *ngIf="!isCollapsed">{{
+                getMenuItemLabel(menuItem)
+              }}</span>
+
+              <!-- Badge -->
+              <div
+                class="menu-badge"
+                *ngIf="hasBadge(menuItem) && !isCollapsed"
+                [class]="'badge-' + getBadgeColor(menuItem)"
+              >
+                {{ getBadgeText(menuItem) }}
+              </div>
+            </mat-expansion-panel-header>
+
+            <!-- Sub-menu Items -->
+            <mat-list class="submenu-list">
+              <mat-list-item
+                *ngFor="
+                  let child of menuItem.children;
+                  trackBy: trackByMenuItemId
+                "
+                class="submenu-item"
+                [class.disabled]="isMenuItemDisabled(child)"
+                [attr.aria-label]="child.label"
+                (click)="!isMenuItemDisabled(child) && onMenuItemClick(child)"
+                role="menuitem"
+              >
+                <mat-icon
+                  matListItemIcon
+                  class="submenu-icon"
+                  [attr.aria-hidden]="true"
+                >
+                  {{ getMenuItemIcon(child) }}
+                </mat-icon>
+
+                <span matListItemTitle class="submenu-label">{{
+                  getMenuItemLabel(child)
+                }}</span>
+
+                <!-- Sub-menu Badge -->
+                <div
+                  class="submenu-badge"
+                  *ngIf="hasBadge(child)"
+                  [class]="'badge-' + getBadgeColor(child)"
+                >
+                  {{ getBadgeText(child) }}
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </mat-expansion-panel>
+        </div>
+
+        <!-- Menu Item without Children (Direct Link) -->
+        <mat-list-item
+          *ngIf="!hasChildren(menuItem)"
+          class="menu-item"
+          [class.disabled]="isMenuItemDisabled(menuItem)"
+          [attr.aria-label]="menuItem.label"
+          (click)="!isMenuItemDisabled(menuItem) && onMenuItemClick(menuItem)"
+          role="menuitem"
+        >
+          <mat-icon
+            matListItemIcon
+            class="menu-icon"
+            [matTooltip]="getTooltipText(menuItem)"
+            [matTooltipDisabled]="!isCollapsed"
+            [attr.aria-hidden]="true"
+          >
+            {{ getMenuItemIcon(menuItem) }}
+          </mat-icon>
+
+          <span matListItemTitle class="menu-label" *ngIf="!isCollapsed">{{
+            getMenuItemLabel(menuItem)
+          }}</span>
+
+          <!-- Badge -->
+          <div
+            class="menu-badge"
+            *ngIf="hasBadge(menuItem) && !isCollapsed"
+            [class]="'badge-' + getBadgeColor(menuItem)"
+          >
+            {{ getBadgeText(menuItem) }}
+          </div>
+        </mat-list-item>
+      </ng-container>
+    </mat-list>
+  </div>
+
+  <!-- Sidebar Footer -->
+  <div class="sidebar-footer" *ngIf="!isCollapsed">
+    <div class="footer-text">
+      <small>AI Operations Platform v1.0</small>
+    </div>
+  </div>
+</div>

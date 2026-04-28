@@ -1,0 +1,203 @@
+## Project Overview
+
+AI Operations Platform is a container-packaged SOC AI Assistant serving both SOC analysts (web UI) and automation engines (API) through a unified, secure interface.
+
+## Current Status (October 2025)
+
+- **Phase:** Phase 2 - Advanced Features (68% complete)
+- **Database:** UUID-based schema implemented and committed
+- **Authentication:** System designed and documented
+- **Recent:** P2-FIX-09 (Execution Metrics) completed Oct 8, 2025
+- **Next:** Continue from `docs/development/plans/` (e.g. MASTER_ROADMAP_V2.md or active phase plan)
+
+## Technology Stack
+
+- **Frontend:** Angular
+- **Backend:** FastAPI with JWT authentication
+- **Database:** PostgreSQL with UUID schema
+- **Vector Store:** Qdrant for RAG functionality
+- **Deployment:** Docker containers
+
+## Core Development Rules
+
+### Security & Data Protection
+
+- **NEVER read or modify:**
+  - `.env` files anywhere in the project
+  - Files matching `**/config/secrets.*`
+  - Any file containing API keys, passwords, or credentials
+  - `/data` directory contents (PostgreSQL, Qdrant volumes)
+- **Always validate input** and use LLM-Guard for external-facing APIs
+- **Implement proper error handling** without leaking sensitive information
+
+### Code Standards
+
+- **Python 3.12** syntax and features only
+- **Type hints mandatory** for all function signatures, variables, and class attributes
+- **Structured JSON logging** with context (request IDs, user info, module/function names)
+- **PEP 8 compliance** with Black/Ruff formatting
+- **Modular design** with reusable components
+
+### Code Documentation
+
+- **Python:** Add docstrings to all public modules, classes, and functions (PEP 257). Use one-line summary for simple cases; multi-line with Args/Returns/Raises for non-obvious APIs. Temporary scripts must include a module docstring (goals, inputs/outputs, side effects).
+- **Angular/TypeScript:** Add JSDoc (or TSDoc) for public APIs: services, component public methods, and exported symbols. Document parameters and return types when not obvious from types. Keep existing JSDoc when refactoring.
+- **Comments:** Add brief comments for non-obvious logic; prefer clear names and small functions over comment-heavy code.
+
+### File Organization
+
+- **Frontend:** Place pages in `/pages`, components in `/components`, handlers in `/handlers`
+- **Backend:** Follow `src/{service}/app/{module}` pattern
+- **Tests:** Each service has `tests/unit` and `tests/integration` subdirectories
+- **Temporary scripts:** MUST go in `/temp_scripts/` with descriptive names and documentation
+
+### Scripts Organization
+
+- **Scripts Structure:**
+  - `ops/bootstrap/` - System initialization and setup
+  - `ops/ci/` - CI/CD and deployment scripts
+  - `ops/cli/` - Command-line utilities
+  - `ops/operations/` - Operational and maintenance scripts
+  - `ops/testing/` - Test execution and analysis utilities
+  - `ops/database/` - Database migration and schema scripts
+  - `temp_scripts/` - Temporary scripts (gitignored)
+
+- **Script Usage:**
+  - **Test execution:** Use centralized runners when possible (e.g. `python ops/testing/run_all_tests.py`)
+  - **Service management:** Use `ops/operations/` for service control
+  - **Development setup:** Use `ops/bootstrap/` for environment setup
+  - **Temporary work:** Use `temp_scripts/` for throwaway scripts
+
+- **Script Documentation:**
+  - All scripts documented in `docs/testing/SCRIPT_INDEX.md`
+  - Scripts must include usage examples and dependencies
+  - New scripts must be added to the script index
+
+### Testing Requirements
+
+- **80%+ coverage** for critical components
+- **Unit and integration tests** for new features
+- **Use absolute imports:** `from src.{service}.app.X import Y`
+- **Mock external dependencies** to avoid test flakiness
+- **Test Pydantic schema validation** and edge cases
+
+### Testing Structure & Execution
+
+- **Test Organization:**
+  - Unit tests: `src/<service>/tests/unit/` (service-specific)
+  - Integration tests: `src/<service>/tests/integration/` (service-internal)
+  - Cross-service tests: `tests/integration/` (multi-service)
+  - E2E tests: `tests/e2e/` (full user workflows)
+  - Test fixtures: `tests/fixtures/` (shared test data)
+
+- **Test Execution:**
+  - **Centralized runner (recommended):** `python ops/testing/run_all_tests.py`
+  - **Service-specific runner:** `python ops/testing/run_service_tests.py <service>`
+  - **Individual service runners:** `bash src/<service>/run_tests.sh` (backward compatible)
+  - **Integration tests:** `pytest tests/integration/`
+  - **E2E tests:** `pytest tests/e2e/`
+
+- **Test Documentation:**
+  - Main guide: `docs/testing/TESTING_GUIDE.md`
+  - Troubleshooting: `docs/testing/TROUBLESHOOTING.md`
+  - Script reference: `docs/testing/SCRIPT_INDEX.md`
+
+### Database & Migrations
+
+- **UUID-based schema** for all entities
+- **Sequential migration numbering:** 001, 002, etc.
+- **Review before execution** for all migration files
+- **Backward compatibility** for schema changes when possible
+
+### Documentation
+
+- **docs/ folder is single source of truth** - Update with every code change
+- **Memory bank files are minimal context only**
+- **Update architecture diagrams** when relevant code changes are made
+
+#### Documentation Organization (Industry Standard)
+
+**Core Principle:** `docs/development/` = BUILD the app | Other folders = USE the app
+
+**When creating documentation:**
+- **Architecture decision?** → `docs/development/adrs/NNN-title.md` (use ADR template)
+- **Implementation plan?** → `docs/development/plans/[NAME]_PLAN.md`
+- **Daily work summary?** → `docs/development/sessions/YYYY-MM-DD-description.md`
+- **Task specification?** → `docs/development/tasks/P2_FIX_XX_DESCRIPTION.md`
+- **Technical investigation?** → `docs/development/analysis/descriptive-name.md`
+- **How-to guide?** → `docs/development/guides/topic-guide.md`
+- **Development pattern?** → `docs/development/guidelines/PATTERN_NAME.md`
+- **Requirements/specs?** → `docs/development/specs/feature-spec.md`
+
+**When completing work:**
+- Move task from `development/tasks/` → `development/completed/tasks/`
+- Update task header with: `Status: ✅ COMPLETED (YYYY-MM-DD)`
+- Create brief session log in `development/sessions/` (not verbose summaries)
+
+**DO NOT create:**
+- ❌ Verbose summary documents about work just completed
+- ❌ Multiple meta-documents about the same topic
+- ❌ Documents at docs/ root (only README.md should be there)
+- ❌ Documents outside the proper category folders
+
+**DO create (sparingly):**
+- ✅ ONE concise session log per work session
+- ✅ ADRs for significant architecture decisions (use template)
+- ✅ Updates to existing docs rather than new documents
+
+### Dependencies
+
+- **Follow dependency management guidelines** in `docs/dependency_management.md`
+- **Add new dependencies** to appropriate `requirements.txt` with reasoning
+- **Use standardized versions** across services (Pydantic >=2.7.4,<3.0.0)
+
+## Key Architecture Patterns
+
+- **Service isolation** with strict boundaries
+- **JWT authentication** with session state management
+- **Template-driven use cases** for dynamic functionality
+- **Air-gapped deployment** ready for enterprise environments
+
+## Current Implementation Status
+
+- **Authentication system:** `src/shared/auth/` - designed and documented
+- **Database schema:** Implemented and committed
+- **UI development plan:** `docs/development/plans/` (see MASTER_ROADMAP_V2.md and active phase) - finalized
+- **API documentation:** `docs/api/authentication.md` - current
+
+## Development Workflow
+
+1. **Always check current status** in memory bank files
+2. **Update documentation** with code changes
+3. **Run tests** before committing changes
+4. **Follow sequential phases** from UI_DEVELOPMENT_PLAN.md
+5. **Maintain service boundaries** and avoid cross-service imports
+
+## Important Notes
+
+- **This project migrated from Cline to Cursor** - focus on current architecture
+- **Frontend:** Angular (no Streamlit); backend FastAPI
+- **Enterprise air-gapped deployment** ready
+- **All sensitive data remains local** - no external data exfiltration
+
+# Angular TypeScript Cursor Rules
+
+# Based on awesome-cursorrules repository
+
+# <https://github.com/PatrickJS/awesome-cursorrules/tree/main/rules/angular-typescript-cursorrules-prompt-file>
+
+#
+
+# Modular rules are located in .cursor/rules/ directory
+
+# - angular-general.mdc: General Angular component rules
+
+# - accessibility-guidelines.mdc: WCAG compliance guidelines
+
+# - performance-optimization.mdc: Performance best practices
+
+# - angular-template-hints.mdc: Template-specific rules
+
+# - general-reasoning.mdc: Reasoning and accuracy rules
+
+You are an expert Angular programmer using TypeScript, Angular 21 and Jest that focuses on producing clear, readable code. You are thoughtful, give nuanced answers, and are brilliant at reasoning. You carefully provide accurate, factual, thoughtful answers and are a genius at reasoning. Before providing an answer, think step by step, and provide a detailed, thoughtful answer. If you need more information, ask for it. Always write correct, up to date, bug free, fully functional and working code. Focus on performance, readability, and maintainability. Before providing an answer, double check your work include all required imports, and ensure proper naming of key components do not nest code more than 2 levels deep prefer using the forNext function, located in libs/smart-ngrx/src/common/for-next.function.ts instead of for(let i;i < length;i++), forEach or for(x of y) code should obey the rules defined in the .eslintrc.json, .prettierrc, .htmlhintrc, and .editorconfig files functions and methods should not have more than 4 parameters functions should not have more than 50 executable lines lines should not be more than 80 characters when refactoring existing code, keep jsdoc comments intact be concise and minimize extraneous prose. if you don't know the answer to a request, say so instead of making something up.

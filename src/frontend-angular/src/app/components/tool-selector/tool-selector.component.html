@@ -1,0 +1,163 @@
+<div class="tool-selector-container">
+  <!-- Filters -->
+  <div class="filters-bar flex gap-4 mb-4">
+    <mat-form-field appearance="outline" class="flex-1">
+      <mat-label>Search Tools</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="filterTools()"
+        placeholder="Search by name or description"
+      />
+      <mat-icon matPrefix>search</mat-icon>
+      <button
+        *ngIf="searchTerm"
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="searchTerm = ''; filterTools()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-48">
+      <mat-label>Category</mat-label>
+      <mat-select
+        [(ngModel)]="selectedCategory"
+        (selectionChange)="filterTools()"
+      >
+        <mat-option [value]="null">All Categories</mat-option>
+        <mat-option *ngFor="let cat of availableCategories" [value]="cat">
+          {{ getCategoryLabel(cat) }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- Error State -->
+  <div
+    *ngIf="error"
+    class="p-4 bg-red-50 text-red-700 rounded border border-red-200 mb-4 flex items-center gap-2"
+  >
+    <mat-icon>error</mat-icon>
+    {{ error }}
+    <button mat-button color="warn" (click)="loadTools()">Retry</button>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!isLoading && !error && filteredTools.length === 0"
+    class="text-center py-12 bg-gray-50 rounded border border-gray-200 border-dashed"
+  >
+    <mat-icon class="text-gray-400 text-4xl mb-2">build_circle</mat-icon>
+    <p class="text-gray-600">No tools found matching your filters.</p>
+    <button
+      *ngIf="searchTerm || selectedCategory"
+      mat-button
+      color="primary"
+      (click)="searchTerm = ''; selectedCategory = null; filterTools()"
+    >
+      Clear Filters
+    </button>
+  </div>
+
+  <!-- Tool Grid -->
+  <div
+    *ngIf="!isLoading && filteredTools.length > 0"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+  >
+    <mat-card
+      *ngFor="let tool of filteredTools"
+      class="tool-card cursor-pointer transition-all duration-200 hover:shadow-md border-2"
+      [class.border-blue-500]="isSelected(tool.id)"
+      [class.bg-blue-50]="isSelected(tool.id)"
+      [class.border-transparent]="!isSelected(tool.id)"
+      (click)="toggleTool(tool.id)"
+    >
+      <div class="p-4 h-full flex flex-col">
+        <div class="flex justify-between items-start mb-2">
+          <div class="flex items-center gap-2">
+            <div class="p-1.5 rounded bg-gray-100 text-gray-600">
+              <mat-icon class="text-xl w-[20px] h-[20px]">{{
+                getCategoryIcon(tool.category)
+              }}</mat-icon>
+            </div>
+            <div class="flex flex-col">
+              <h3 class="m-0 text-base font-medium leading-tight">
+                {{ tool.name }}
+              </h3>
+              <span class="text-xs text-gray-500">{{
+                getCategoryLabel(tool.category)
+              }}</span>
+            </div>
+          </div>
+          <mat-checkbox
+            [checked]="isSelected(tool.id)"
+            (click)="$event.stopPropagation()"
+            (change)="toggleTool(tool.id)"
+            color="primary"
+          >
+          </mat-checkbox>
+        </div>
+
+        <p
+          class="text-sm text-gray-600 mb-3 line-clamp-2 flex-1"
+          [matTooltip]="tool.description || ''"
+        >
+          {{ tool.description || 'No description available.' }}
+        </p>
+
+        <div
+          class="flex items-center justify-between mt-auto pt-3 border-t border-gray-200/50"
+        >
+          <!-- Health Status -->
+          <div
+            class="flex items-center gap-1.5 text-xs"
+            [ngClass]="{
+              'text-green-600': tool.is_healthy,
+              'text-red-600': !tool.is_healthy,
+            }"
+          >
+            <span
+              class="w-2 h-2 rounded-full"
+              [ngClass]="{
+                'bg-green-500': tool.is_healthy,
+                'bg-red-500': !tool.is_healthy,
+              }"
+            ></span>
+            {{ tool.is_healthy ? 'Online' : 'Offline' }}
+          </div>
+
+          <!-- Auth Badge -->
+          <mat-icon
+            *ngIf="tool.requires_authentication"
+            class="text-gray-400 text-sm w-[14px] h-[14px]"
+            matTooltip="Requires Authentication"
+            >lock</mat-icon
+          >
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Selection Summary -->
+  <div
+    class="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center text-sm text-gray-600"
+  >
+    <span>{{ selectedToolIds.length }} tools selected</span>
+    <button
+      mat-button
+      color="warn"
+      *ngIf="selectedToolIds.length > 0"
+      (click)="selectedToolIds = []; selectionChange.emit([])"
+    >
+      Clear Selection
+    </button>
+  </div>
+</div>

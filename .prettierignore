@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Caches
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+__pycache__/
+
+# Archive
+docs/archive/
+
+# Data and logs
+data/
+logs/

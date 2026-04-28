@@ -1,0 +1,29 @@
+<div class="input-field-builder">
+  <p class="text-sm text-gray-600 mb-4">
+    Define the input fields that users will fill in when executing this use case.
+    Fields are displayed in order.
+  </p>
+
+  <div class="field-list space-y-4 mb-4">
+    <div *ngFor="let f of fields; let i = index" class="field-item">
+      <app-input-field-editor
+        [field]="f"
+        (fieldChange)="onFieldChange(i, $event)"
+        (remove)="removeField(i)"
+        (moveUp)="moveField(i, i - 1)"
+        (moveDown)="moveField(i, i + 1)"
+      ></app-input-field-editor>
+    </div>
+  </div>
+
+  <button mat-stroked-button type="button" (click)="addField()">
+    <mat-icon>add</mat-icon>
+    Add input field
+  </button>
+
+  <div *ngIf="fields.length === 0" class="empty-hint mt-4 p-4 bg-gray-50 rounded text-sm text-gray-600">
+    No input fields yet. Add at least one so users can provide parameters when
+    running this use case. If you leave this empty, a default "Query" field will
+    be used on save.
+  </div>
+</div>

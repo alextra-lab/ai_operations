@@ -1,0 +1,149 @@
+<div class="template-editor-container">
+  <!-- Page Header -->
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>edit_note</mat-icon>
+        Use Case Template Editor
+      </mat-card-title>
+      <mat-card-subtitle>
+        Create and configure use case templates with model selection
+      </mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <!-- Template Configuration -->
+  <mat-card class="config-card">
+    <mat-card-header>
+      <mat-card-title>Template Configuration</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="templateForm" class="template-form">
+        <!-- Basic Information -->
+        <div class="form-section">
+          <h3>Basic Information</h3>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Use Case ID</mat-label>
+            <input
+              matInput
+              formControlName="useCaseId"
+              placeholder="e.g., threat_intel_analysis"
+            />
+            <mat-hint>Unique identifier for this use case</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Name</mat-label>
+            <input
+              matInput
+              formControlName="name"
+              placeholder="e.g., Threat Intelligence Analysis"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea
+              matInput
+              formControlName="description"
+              rows="3"
+              placeholder="Describe the purpose of this use case"
+            ></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Intent Type</mat-label>
+            <mat-select formControlName="intentType">
+              <mat-option value="query">Query</mat-option>
+              <mat-option value="rule_generation">Rule Generation</mat-option>
+              <mat-option value="summarization">Summarization</mat-option>
+              <mat-option value="enrichment">Enrichment</mat-option>
+              <mat-option value="threat_intel">Threat Intelligence</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Model Selection -->
+        <div class="form-section">
+          <h3>Model Configuration</h3>
+
+          <mat-card class="model-selector-card">
+            <mat-card-subtitle>LLM Model</mat-card-subtitle>
+            <mat-card-content>
+              <app-model-selector
+                [useCaseType]="templateForm.get('intentType')?.value"
+                [preselectedModelId]="selectedLLMModelId"
+                (modelSelected)="onLLMModelSelected($event)"
+              >
+              </app-model-selector>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Model Parameters -->
+          <div class="model-params" *ngIf="selectedLLMModel">
+            <mat-form-field appearance="outline">
+              <mat-label>Temperature</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="temperature"
+                min="0"
+                max="2"
+                step="0.1"
+              />
+              <mat-hint
+                >0.0 = high consistency, 2.0 = high variance/creative</mat-hint
+              >
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Max Tokens</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="maxTokens"
+                min="100"
+                [max]="selectedLLMModel.max_output_tokens || 16384"
+              />
+              <mat-hint
+                >Maximum:
+                {{ selectedLLMModel.max_output_tokens || 'N/A' }}</mat-hint
+              >
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-buttons">
+          <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            (click)="saveTemplate()"
+            [disabled]="templateForm.invalid || saving"
+          >
+            <mat-icon>save</mat-icon>
+            <span *ngIf="!saving">Save Template</span>
+            <span *ngIf="saving">Saving...</span>
+          </button>
+
+          <button mat-button type="button" (click)="resetForm()">
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Template Preview -->
+  <mat-card class="preview-card" *ngIf="selectedLLMModel">
+    <mat-card-header>
+      <mat-card-title>Configuration Preview</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <pre class="config-preview">{{ getConfigPreview() }}</pre>
+    </mat-card-content>
+  </mat-card>
+</div>

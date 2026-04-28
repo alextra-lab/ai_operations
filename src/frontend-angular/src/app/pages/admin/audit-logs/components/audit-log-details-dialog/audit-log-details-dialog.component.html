@@ -1,0 +1,105 @@
+<h2 mat-dialog-title>Audit Log Details</h2>
+
+<mat-dialog-content>
+  <div class="details-grid">
+    <!-- Event Time -->
+    <div class="detail-row">
+      <span class="detail-label">Event Time:</span>
+      <span class="detail-value">{{ formatDate(data.log.event_time) }}</span>
+    </div>
+
+    <!-- Actor -->
+    <div class="detail-row">
+      <span class="detail-label">User:</span>
+      <span class="detail-value">{{
+        data.log.actor_username || 'System'
+      }}</span>
+    </div>
+
+    <!-- Roles -->
+    <div class="detail-row" *ngIf="data.log.actor_roles.length > 0">
+      <span class="detail-label">Roles:</span>
+      <div class="detail-value">
+        <mat-chip *ngFor="let role of data.log.actor_roles">{{
+          role
+        }}</mat-chip>
+      </div>
+    </div>
+
+    <!-- Action -->
+    <div class="detail-row">
+      <span class="detail-label">Action:</span>
+      <span class="detail-value">{{ data.log.action }}</span>
+    </div>
+
+    <!-- Resource Type -->
+    <div class="detail-row">
+      <span class="detail-label">Resource Type:</span>
+      <span class="detail-value">
+        <mat-chip>{{ data.log.resource_type }}</mat-chip>
+      </span>
+    </div>
+
+    <!-- Resource ID -->
+    <div class="detail-row" *ngIf="data.log.resource_id">
+      <span class="detail-label">Resource ID:</span>
+      <span class="detail-value monospace">{{ data.log.resource_id }}</span>
+    </div>
+
+    <!-- Use Case -->
+    <div class="detail-row" *ngIf="data.log.use_case_name">
+      <span class="detail-label">Use Case:</span>
+      <span class="detail-value">{{ data.log.use_case_name }}</span>
+    </div>
+
+    <!-- Request ID -->
+    <div class="detail-row" *ngIf="data.log.request_id">
+      <span class="detail-label">Request ID:</span>
+      <span class="detail-value monospace">{{ data.log.request_id }}</span>
+    </div>
+
+    <!-- Client IP -->
+    <div class="detail-row" *ngIf="data.log.client_ip">
+      <span class="detail-label">Client IP:</span>
+      <span class="detail-value monospace">{{ data.log.client_ip }}</span>
+    </div>
+
+    <!-- User Agent -->
+    <div class="detail-row" *ngIf="data.log.user_agent">
+      <span class="detail-label">User Agent:</span>
+      <span class="detail-value">{{ data.log.user_agent }}</span>
+    </div>
+
+    <!-- Success Status -->
+    <div class="detail-row">
+      <span class="detail-label">Status:</span>
+      <span class="detail-value">
+        <mat-icon
+          [class.success]="data.log.success"
+          [class.failure]="!data.log.success"
+        >
+          {{ data.log.success ? 'check_circle' : 'error' }}
+        </mat-icon>
+        {{ data.log.success ? 'Success' : 'Failure' }}
+      </span>
+    </div>
+
+    <!-- Created At -->
+    <div class="detail-row">
+      <span class="detail-label">Created At:</span>
+      <span class="detail-value">{{ formatDate(data.log.created_at) }}</span>
+    </div>
+  </div>
+
+  <!-- Additional Details -->
+  <div class="additional-details" *ngIf="getDetailsKeys().length > 0">
+    <h3>Additional Details</h3>
+    <div class="details-json">
+      <pre>{{ formatValue(data.log.details) }}</pre>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

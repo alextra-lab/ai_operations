@@ -1,0 +1,60 @@
+# Multi-stage build for embedding service
+# Stage 1: Build image
+FROM python:3.11-slim AS build
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY embedding/requirements.txt .
+
+# Create virtual environment and install dependencies
+RUN python -m venv /venv
+ENV PATH="/venv/bin:$PATH"
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Stage 2: Runtime image
+FROM python:3.11-slim
+
+# Create non-root user
+RUN groupadd -g 1000 appuser && \
+    useradd -u 1000 -g appuser -s /bin/bash appuser
+
+# Set working directory
+WORKDIR /app
+
+# Copy virtual environment from build stage
+COPY --from=build /venv /venv
+ENV PATH="/venv/bin:$PATH"
+
+# Copy embedding service code
+COPY embedding/app /app/app
+
+# Copy shared code
+COPY shared /app/shared
+
+# Create model directory
+RUN mkdir -p /opt/models && chown -R appuser:appuser /opt/models
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
+EXPOSE 8000
+
+# Set environment variables
+ENV PYTHONPATH="/app" \
+    PYTHONUNBUFFERED=1
+
+# Run service
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1

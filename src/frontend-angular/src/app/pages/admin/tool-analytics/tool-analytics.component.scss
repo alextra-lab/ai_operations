@@ -1,0 +1,257 @@
+/**
+ * Tool Analytics Dashboard Styles
+ * T6-F3: ADR-012 compliant Layered Page Layout
+ */
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px); // Account for main toolbar
+  overflow: hidden;
+}
+
+/* Layer 2: Page Header */
+.page-header-layer {
+  flex: 0 0 auto;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.page-header-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  flex: 1;
+  min-width: 200px;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #333;
+
+  mat-icon {
+    color: #1976d2;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.page-subtitle {
+  margin: 4px 0 0 40px;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.time-range-selector {
+  width: 180px;
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+/* Layer 3: Content Area */
+.page-content-layer {
+  flex: 1;
+  overflow-y: auto;
+  background: #fafafa;
+  padding: 24px;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+
+  .loading-text {
+    margin-top: 16px;
+    font-size: 1rem;
+    color: #666;
+  }
+}
+
+/* Error State */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .error-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #f44336;
+    margin-bottom: 16px;
+  }
+
+  .error-text {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 16px;
+  }
+}
+
+/* Analytics Content */
+.analytics-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Tabs */
+.analytics-tabs {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  .tab-icon {
+    margin-right: 8px;
+  }
+
+  ::ng-deep .mat-mdc-tab-header {
+    background: #fafafa;
+    border-bottom: 1px solid #e0e0e0;
+  }
+}
+
+.tab-content {
+  padding: 24px;
+}
+
+.content-card {
+  background: transparent;
+  box-shadow: none;
+
+  mat-card-header {
+    margin-bottom: 16px;
+  }
+
+  mat-card-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+  }
+
+  mat-card-subtitle {
+    font-size: 0.875rem;
+    color: #666;
+  }
+
+  mat-card-content {
+    padding: 0;
+  }
+}
+
+/* No Data Card */
+.no-data-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  text-align: center;
+
+  .no-data-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #2196f3;
+    margin-bottom: 16px;
+  }
+
+  .no-data-text {
+    font-size: 1.125rem;
+    color: #333;
+    margin: 0 0 8px 0;
+  }
+
+  .no-data-hint {
+    font-size: 0.875rem;
+    color: #666;
+    margin: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .page-header-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header-controls {
+    padding: 16px;
+  }
+
+  .page-content-layer {
+    padding: 16px;
+  }
+
+  .tab-content {
+    padding: 16px;
+  }
+
+  .page-title {
+    font-size: 1.25rem;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .page-subtitle {
+    margin-left: 36px;
+    font-size: 0.8rem;
+  }
+
+  .header-actions {
+    gap: 8px;
+
+    button,
+    a {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  .time-range-selector {
+    width: 100%;
+  }
+}

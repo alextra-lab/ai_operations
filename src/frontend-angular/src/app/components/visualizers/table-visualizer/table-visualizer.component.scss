@@ -1,0 +1,124 @@
+/**
+ * Table Visualizer Styles
+ *
+ * ADR-012 Compliant:
+ * - Material components for table/buttons
+ * - Tailwind utilities would go in HTML (minimal here)
+ * - Component SCSS for complex states
+ */
+
+.table-visualizer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.visualizer-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.filter-field {
+  width: 100%;
+  max-width: 400px;
+}
+
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.data-table {
+  width: 100%;
+
+  th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  td,
+  th {
+    padding: 12px 16px;
+  }
+
+  tr:hover {
+    background-color: #fafafa;
+  }
+}
+
+.copyable {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  .copy-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  &:hover .copy-icon {
+    opacity: 1;
+  }
+}
+
+.no-data-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: rgba(0, 0, 0, 0.6);
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.export-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  button {
+    gap: 8px;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: scroll;
+  }
+
+  .data-table {
+    min-width: 600px;
+  }
+
+  .export-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}

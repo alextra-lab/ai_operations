@@ -1,0 +1,75 @@
+<div class="model-selector">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Select Model</mat-label>
+    <mat-select
+      [(value)]="selectedModelId"
+      (selectionChange)="onModelChange($any($event).value)"
+      [disabled]="loading"
+    >
+      <mat-option *ngFor="let model of models" [value]="model.model_id">
+        <div class="model-option">
+          <span class="model-name">{{ model.name }}</span>
+          <mat-chip-set
+            *ngIf="
+              model.supports_tools ||
+              model.supports_vision ||
+              model.is_reasoning_model
+            "
+          >
+            <mat-chip *ngIf="model.supports_tools">Tools</mat-chip>
+            <mat-chip *ngIf="model.supports_vision">Vision</mat-chip>
+            <mat-chip *ngIf="model.is_reasoning_model">Reasoning</mat-chip>
+          </mat-chip-set>
+        </div>
+        <div class="model-description" *ngIf="model.description">
+          {{ model.description }}
+        </div>
+      </mat-option>
+    </mat-select>
+
+    <mat-spinner *ngIf="loading" diameter="20" matSuffix></mat-spinner>
+  </mat-form-field>
+
+  <mat-card *ngIf="selectedModel" class="model-info">
+    <mat-card-header>
+      <mat-card-title>Model Information</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Provider:</span>
+          <span class="value">{{ selectedModel.provider }}</span>
+        </div>
+        <div class="info-item" *ngIf="selectedModel.context_window">
+          <span class="label">Context Window:</span>
+          <span class="value"
+            >{{ formatNumber(selectedModel.context_window) }} tokens</span
+          >
+        </div>
+        <div
+          class="info-item"
+          *ngIf="selectedModel.estimated_cost_per_1k_tokens"
+        >
+          <span class="label">Cost (per 1K tokens):</span>
+          <span class="value">{{
+            formatCost(selectedModel.estimated_cost_per_1k_tokens)
+          }}</span>
+        </div>
+        <div class="info-item" *ngIf="selectedModel.typical_latency_ms">
+          <span class="label">Typical Latency:</span>
+          <span class="value">{{ selectedModel.typical_latency_ms }}ms</span>
+        </div>
+        <div class="info-item" *ngIf="selectedModel.max_output_tokens">
+          <span class="label">Max Output Tokens:</span>
+          <span class="value">{{
+            formatNumber(selectedModel.max_output_tokens)
+          }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Model Type:</span>
+          <span class="value">{{ selectedModel.model_type }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

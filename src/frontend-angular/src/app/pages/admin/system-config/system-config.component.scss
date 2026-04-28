@@ -1,0 +1,250 @@
+/**
+ * System Configuration Component Styles
+ *
+ * ADR-012 Layered Page Layout Pattern
+ * - Layer 2: Fixed header + controls
+ * - Layer 3: Scrollable content
+ */
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  overflow: hidden;
+}
+
+/* Layer 2: Fixed Page Header + Controls */
+.page-header-section {
+  flex: 0 0 auto;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-title {
+  padding: 16px 24px 12px 24px;
+
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+    height: 36px;
+    color: #1a1a1a;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      color: #1976d2;
+    }
+  }
+
+  .subtitle {
+    margin: 4px 0 0 0;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+  }
+}
+
+.config-health-alert {
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0 24px 16px 24px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  mat-icon {
+    color: #f44336;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .alert-content {
+    flex: 1;
+
+    strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      color: #d32f2f;
+      font-weight: 500;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+
+      li {
+        margin-bottom: 4px;
+        color: #c62828;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+
+.page-controls {
+  padding: 0 24px 12px 24px;
+}
+
+.controls-container {
+  background: #f5f5f5;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  padding: 8px 16px 4px 16px;
+
+  h3 {
+    margin: 0 !important;
+    font-size: 20px !important;
+    font-weight: 500;
+  }
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.restart-warning {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  color: #856404;
+
+  mat-icon {
+    color: #ffc107;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+/* Layer 3: Scrollable Content Area */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  background: #fafafa;
+  padding: 24px;
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 48px 24px;
+  text-align: center;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+  }
+}
+
+.sections-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Material Accordion Customization */
+::ng-deep .mat-accordion {
+  .mat-expansion-panel {
+    margin-bottom: 16px;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+
+    &:first-of-type {
+      border-top-left-radius: 8px !important;
+      border-top-right-radius: 8px !important;
+    }
+
+    &:last-of-type {
+      border-bottom-left-radius: 8px !important;
+      border-bottom-right-radius: 8px !important;
+    }
+  }
+
+  .mat-expansion-panel-header {
+    padding: 0 24px;
+    height: 64px;
+    font-size: 16px;
+    font-weight: 500;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.02) !important;
+    }
+  }
+
+  .mat-expansion-panel-body {
+    padding: 16px 24px 24px 24px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-title h1 {
+    font-size: 24px;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .button-group {
+    flex-direction: column;
+    width: 100%;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .content-area {
+    padding: 16px;
+  }
+}

@@ -1,0 +1,264 @@
+/**
+ * CostChartComponent
+ *
+ * Area chart showing cost trends over time using lazy-loaded Chart.js.
+ *
+ * Features:
+ * - Lazy loads Chart.js on first render
+ * - Updates in real-time as metrics arrive
+ * - Cumulative cost tracking
+ * - Responsive canvas sizing
+ *
+ * Related: P4-TOOLS-07, P3-PERF-01 (lazy loading pattern)
+ */
+
+import { CommonModule } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { ExecutionMetrics } from '../../../api/models/query-config.models';
+import { LibraryLoaderService } from '../../../services/library-loader.service';
+
+@Component({
+  selector: 'app-cost-chart',
+  standalone: true,
+  imports: [CommonModule, MatProgressSpinnerModule],
+  template: `
+    <div class="chart-container">
+      <div *ngIf="isLoading" class="loading-overlay">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p class="text-sm text-gray-600 mt-2">Loading chart...</p>
+      </div>
+      <canvas
+        #chartCanvas
+        [hidden]="isLoading"
+        [attr.aria-label]="'Cost trends over time chart'"
+      >
+      </canvas>
+    </div>
+  `,
+  styles: [
+    `
+      .chart-container {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        min-height: 250px;
+      }
+
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 10;
+      }
+
+      canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+    `,
+  ],
+})
+export class CostChartComponent implements AfterViewInit, OnChanges, OnDestroy {
+  @ViewChild('chartCanvas')
+  canvasRef!: ElementRef<HTMLCanvasElement>;
+
+  @Input() executionHistory: ExecutionMetrics[] = [];
+
+  private chart: any;
+  isLoading = true;
+
+  constructor(private readonly libraryLoader: LibraryLoaderService) {}
+
+  async ngAfterViewInit(): Promise<void> {
+    await this.initializeChart();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      changes['executionHistory'] &&
+      !changes['executionHistory'].firstChange
+    ) {
+      this.updateChart();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+  }
+
+  private async initializeChart(): Promise<void> {
+    try {
+      // Lazy load Chart.js
+      await this.libraryLoader.loadChartJS();
+
+      const Chart = (window as any).Chart;
+      if (!Chart) {
+        console.error('Chart.js failed to load');
+        return;
+      }
+
+      const canvas = this.canvasRef.nativeElement;
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        console.error('Failed to get canvas context');
+        return;
+      }
+
+      // Create chart
+      this.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Per Query Cost',
+              data: [],
+              borderColor: '#9c27b0',
+              backgroundColor: 'rgba(156, 39, 176, 0.1)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              yAxisID: 'y',
+            },
+            {
+              label: 'Cumulative Cost',
+              data: [],
+              borderColor: '#ff9800',
+              backgroundColor: 'rgba(255, 152, 0, 0.05)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4,
+              pointRadius: 3,
+              pointHoverRadius: 5,
+              borderDash: [5, 5],
+              yAxisID: 'y1',
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              callbacks: {
+                label: (context: any) => {
+                  const label = context.dataset.label || '';
+                  const value = context.parsed.y.toFixed(4);
+                  return `${label}: $${value}`;
+                },
+              },
+            },
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Per Query Cost (USD)',
+              },
+              ticks: {
+                callback: (value: any) => {
+                  return '$' + value.toFixed(4);
+                },
+              },
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Cumulative Cost (USD)',
+              },
+              ticks: {
+                callback: (value: any) => {
+                  return '$' + value.toFixed(4);
+                },
+              },
+              grid: {
+                drawOnChartArea: false,
+              },
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Execution',
+              },
+            },
+          },
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+        },
+      });
+
+      this.isLoading = false;
+
+      // Initial data update
+      this.updateChart();
+    } catch (error) {
+      console.error('Failed to initialize chart:', error);
+      this.isLoading = false;
+    }
+  }
+
+  private updateChart(): void {
+    if (!this.chart || !this.executionHistory.length) {
+      return;
+    }
+
+    // Prepare data
+    const labels = this.executionHistory.map((_, i) => `#${i + 1}`);
+    const perQueryCosts = this.executionHistory.map(
+      (m) => m.cost?.total_cost || 0
+    );
+
+    // Calculate cumulative costs
+    const cumulativeCosts: number[] = [];
+    let cumulative = 0;
+    for (const cost of perQueryCosts) {
+      cumulative += cost;
+      cumulativeCosts.push(cumulative);
+    }
+
+    // Update chart
+    this.chart.data.labels = labels;
+    this.chart.data.datasets[0].data = perQueryCosts;
+    this.chart.data.datasets[1].data = cumulativeCosts;
+    this.chart.update('none'); // Update without animation for performance
+  }
+}

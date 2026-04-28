@@ -1,0 +1,102 @@
+<!-- Structured Output Renderer -->
+<div class="structured-output-renderer">
+  <!-- Render each section -->
+  <div class="sections-grid">
+    <div
+      *ngFor="let section of visibleSections; trackBy: trackBySection"
+      [ngClass]="getSectionWidthClass(section)"
+      class="output-section"
+    >
+      <!-- Section Header -->
+      <div class="section-header">
+        <mat-icon [attr.aria-hidden]="true">{{
+          getComponentIcon(section.component_type)
+        }}</mat-icon>
+        <h3>{{ section.title }}</h3>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Table Visualizer -->
+      <app-table-visualizer
+        *ngIf="section.component_type === 'table'"
+        [data]="asDataArray(section.data)"
+        [config]="asTableConfig(section.config)"
+        [title]="section.title"
+        (actionClick)="onActionClick($event)"
+      >
+      </app-table-visualizer>
+
+      <!-- Chart Visualizer -->
+      <app-chart-visualizer
+        *ngIf="section.component_type === 'chart'"
+        [data]="asDataArray(section.data)"
+        [config]="asChartConfig(section.config)"
+        [title]="section.title"
+      >
+      </app-chart-visualizer>
+
+      <!-- Gauge Visualizer -->
+      <app-gauge-visualizer
+        *ngIf="section.component_type === 'gauge'"
+        [value]="asGaugeValue(section.data)"
+        [config]="asGaugeConfig(section.config)"
+        [title]="section.title"
+      >
+      </app-gauge-visualizer>
+
+      <!-- Timeline Visualizer -->
+      <app-timeline-visualizer
+        *ngIf="section.component_type === 'timeline'"
+        [events]="asDataArray(section.data)"
+        [config]="asTimelineConfig(section.config)"
+        [title]="section.title"
+      >
+      </app-timeline-visualizer>
+
+      <!-- Text / Panel (comparison-grid, kv-summary) -->
+      <div
+        *ngIf="section.component_type === 'text'"
+        class="text-visualizer"
+        [ngClass]="{
+          'text-panel': isTextPanel(section),
+          'text-kv-grid': isTextKeyValueGrid(section)
+        }"
+      >
+        <ng-container *ngIf="isTextPanel(section)">
+          <h4 class="text-panel-title">{{ getTextPanelTitle(section) }}</h4>
+          <pre class="text-panel-content">{{ getTextPanelContent(section) }}</pre>
+        </ng-container>
+        <ng-container *ngIf="isTextKeyValueGrid(section)">
+          <dl class="text-kv-list">
+            <ng-container
+              *ngFor="let item of getKeyValuePairs(section.data)"
+            >
+              <dt>{{ item.key }}</dt>
+              <dd>{{ item.value }}</dd>
+            </ng-container>
+          </dl>
+        </ng-container>
+      </div>
+
+      <!-- Unsupported Component Type -->
+      <div
+        *ngIf="
+          !['table', 'chart', 'gauge', 'timeline', 'text'].includes(
+            section.component_type
+          )
+        "
+        class="unsupported-type"
+      >
+        <mat-icon>warning</mat-icon>
+        <p>Unsupported visualization type: {{ section.component_type }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Data -->
+  <div *ngIf="visibleSections.length === 0" class="no-data">
+    <mat-icon>info</mat-icon>
+    <p>No structured output data available.</p>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+/**
+ * Provider Edit Dialog Styles
+ * Follows ADR-012 Hybrid CSS Strategy
+ */
+
+.provider-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 500px;
+  padding: 1rem 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.toggle-field {
+  padding: 0.5rem 0;
+}
+
+.error-message {
+  padding: 0.75rem;
+  background-color: #ffebee;
+  border-left: 4px solid #d32f2f;
+  color: #c62828;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.provider-info {
+  padding: 0.75rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #616161;
+}
+
+.info-value {
+  color: #212121;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+// Metadata section
+.metadata-section {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+
+  h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #424242;
+    text-transform: uppercase;
+  }
+}
+
+.metadata-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.metadata-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metadata-label {
+  font-size: 0.75rem;
+  color: #757575;
+  font-weight: 500;
+}
+
+.metadata-value {
+  font-size: 0.875rem;
+  color: #212121;
+  font-weight: 500;
+}
+
+// Make dialog content scrollable if needed
+::ng-deep mat-dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}

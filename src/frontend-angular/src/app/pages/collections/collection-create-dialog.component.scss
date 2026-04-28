@@ -1,0 +1,142 @@
+// ADR-012 Compliant: Minimal SCSS, Tailwind for layout/spacing, Material for components
+
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px 0;
+  font-size: 24px;
+  font-weight: 500;
+
+  mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+mat-dialog-content {
+  max-width: 600px;
+  min-height: 400px;
+
+  .create-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .full-width {
+      width: 100%;
+    }
+
+    // Model dropdown option styling
+    .model-option {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 4px 0;
+
+      .model-option-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+
+        .model-name {
+          font-weight: 500;
+          font-size: 14px;
+          color: #1a1a1a;
+        }
+
+        .built-in-badge {
+          padding: 2px 6px;
+          border-radius: 3px;
+          font-size: 10px;
+          font-weight: 600;
+          background-color: #4caf50;
+          color: white;
+          text-transform: uppercase;
+        }
+      }
+
+      .model-option-details {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #757575;
+
+        .provider-badge {
+          padding: 2px 6px;
+          border-radius: 3px;
+          background-color: #e3f2fd;
+          color: #1976d2;
+          font-weight: 500;
+        }
+
+        .dims-badge {
+          padding: 2px 6px;
+          border-radius: 3px;
+          background-color: #f5f5f5;
+          color: #616161;
+          font-weight: 500;
+        }
+
+        .unavailable-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          color: #f44336;
+        }
+      }
+    }
+
+    // Loading state
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 24px;
+      text-align: center;
+
+      p {
+        margin: 0;
+        color: #757575;
+        font-size: 14px;
+      }
+    }
+
+    // Error message styling (complex state not easily done with Tailwind alone)
+    .error-message {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      background-color: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #d32f2f;
+      border-radius: 4px;
+      font-size: 14px;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0;
+
+  button {
+    margin-left: 8px;
+
+    .button-spinner {
+      margin-right: 8px;
+    }
+  }
+}

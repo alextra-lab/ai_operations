@@ -1,0 +1,120 @@
+<h2 mat-dialog-title>
+  Role: {{ data.role.display_name }}
+  <small class="role-name-code">{{ data.role.role_name }}</small>
+</h2>
+
+<mat-dialog-content>
+  <div class="role-description">
+    {{ data.role.description }}
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message" role="alert">
+    {{ error }}
+  </div>
+
+  <!-- Loading Spinner -->
+  <div
+    *ngIf="isLoading"
+    class="loading-container"
+    role="status"
+    aria-live="polite"
+  >
+    <mat-icon class="spinner">refresh</mat-icon>
+    <p>Loading assignments...</p>
+  </div>
+
+  <!-- Assignments Table -->
+  <div *ngIf="!isLoading && !error" class="assignments-container">
+    <h3>Use Case Assignments ({{ assignments.length }})</h3>
+
+    <table
+      mat-table
+      [dataSource]="assignments"
+      class="assignments-table"
+      *ngIf="assignments.length > 0"
+    >
+      <!-- Use Case Name -->
+      <ng-container matColumnDef="use_case_name">
+        <th mat-header-cell *matHeaderCellDef>Use Case</th>
+        <td mat-cell *matCellDef="let assignment">
+          {{ assignment.use_case_name }}
+        </td>
+      </ng-container>
+
+      <!-- Granted At -->
+      <ng-container matColumnDef="granted_at">
+        <th mat-header-cell *matHeaderCellDef>Granted</th>
+        <td mat-cell *matCellDef="let assignment">
+          {{ assignment.granted_at | date: 'short' }}
+        </td>
+      </ng-container>
+
+      <!-- Expires At -->
+      <ng-container matColumnDef="expires_at">
+        <th mat-header-cell *matHeaderCellDef>Expires</th>
+        <td mat-cell *matCellDef="let assignment">
+          <span
+            *ngIf="assignment.expires_at"
+            [class.expired]="isExpired(assignment)"
+          >
+            {{ assignment.expires_at | date: 'short' }}
+            <mat-icon
+              *ngIf="isExpired(assignment)"
+              class="expired-icon"
+              inline="true"
+            >
+              warning
+            </mat-icon>
+          </span>
+          <span *ngIf="!assignment.expires_at" class="permanent">
+            Permanent
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let assignment">
+          <mat-chip
+            [class.active]="assignment.is_active"
+            [class.inactive]="!assignment.is_active"
+          >
+            {{ assignment.is_active ? 'Active' : 'Inactive' }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let assignment">
+          <button
+            mat-icon-button
+            [matTooltip]="'Revoke access to ' + assignment.use_case_name"
+            (click)="revokeAssignment(assignment)"
+            *ngIf="assignment.is_active"
+            [attr.aria-label]="'Revoke access to ' + assignment.use_case_name"
+          >
+            <mat-icon>block</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <!-- Empty State -->
+    <div *ngIf="assignments.length === 0" class="empty-state">
+      <mat-icon>assignment</mat-icon>
+      <h3>No Use Cases Assigned</h3>
+      <p>This role has no use case assignments yet.</p>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="onClose()">Close</button>
+</mat-dialog-actions>

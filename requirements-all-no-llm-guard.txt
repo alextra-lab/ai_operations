@@ -1,0 +1,7 @@
+# All services except llm_guard_svc (used with constraints.txt for secure transformers).
+# llm_guard_svc is built separately so it can use its pinned transformers==4.51.3.
+-r ./src/orchestrator/requirements.txt
+-r ./src/embedding/requirements.txt
+-r ./src/corpus_svc/requirements.txt
+-r ./src/inference-gateway/requirements.txt
+-r ./src/shared/requirements.txt

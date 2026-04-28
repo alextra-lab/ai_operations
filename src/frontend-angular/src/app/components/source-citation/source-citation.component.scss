@@ -1,0 +1,409 @@
+// Source Citation Component Styles
+.source-citation-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  // Header
+  mat-card-header {
+    padding: 16px 16px 8px 16px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+
+    .document-icon {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .document-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .document-meta {
+      margin: 0;
+
+      .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 4px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .source-info,
+        .similarity-score,
+        .author-info,
+        .page-info {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.85rem;
+          color: #666;
+
+          .meta-icon {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+          }
+        }
+
+        .similarity-score {
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  // Content
+  mat-card-content {
+    padding: 16px;
+
+    // Classification Section
+    .classification-section {
+      margin-bottom: 16px;
+
+      .classification-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 16px;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 500;
+
+        .classification-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+        }
+
+        .classification-label {
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+    }
+
+    // Chunk Section
+    .chunk-section {
+      margin-bottom: 20px;
+
+      .chunk-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+
+        .chunk-title {
+          font-size: 1rem;
+          font-weight: 500;
+          color: #333;
+          margin: 0;
+        }
+
+        .chunk-actions {
+          display: flex;
+          gap: 4px;
+
+          button {
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+
+            mat-icon {
+              font-size: 16px;
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+      }
+
+      .chunk-text {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 12px;
+        transition: all 0.3s ease;
+
+        &.expanded {
+          max-height: none;
+        }
+
+        .chunk-content {
+          margin: 0;
+          font-family: 'Roboto', sans-serif;
+          font-size: 0.9rem;
+          line-height: 1.5;
+          color: #333;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+      }
+    }
+
+    // Document Details
+    .document-details {
+      margin-bottom: 16px;
+      padding: 12px;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+
+        .detail-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .detail-icon {
+            color: #666;
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+
+          .detail-info {
+            flex: 1;
+
+            .detail-label {
+              font-size: 0.75rem;
+              color: #666;
+              font-weight: 500;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              margin-bottom: 2px;
+            }
+
+            .detail-value {
+              font-size: 0.9rem;
+              color: #333;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+    }
+
+    // Relevance Section
+    .relevance-section {
+      .relevance-indicator {
+        .relevance-bar {
+          width: 100%;
+          height: 8px;
+          background-color: #e0e0e0;
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 8px;
+
+          .relevance-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+          }
+        }
+
+        .relevance-label {
+          font-size: 0.85rem;
+          color: #666;
+          font-weight: 500;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  // Actions
+  mat-card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+
+    button[mat-button] {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .more-menu {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  }
+}
+
+// Confidence Level Classes
+.high-confidence {
+  .similarity-score {
+    color: #4caf50 !important;
+  }
+
+  .relevance-fill {
+    background-color: #4caf50 !important;
+  }
+}
+
+.medium-confidence {
+  .similarity-score {
+    color: #ff9800 !important;
+  }
+
+  .relevance-fill {
+    background-color: #ff9800 !important;
+  }
+}
+
+.low-confidence {
+  .similarity-score {
+    color: #f44336 !important;
+  }
+
+  .relevance-fill {
+    background-color: #f44336 !important;
+  }
+}
+
+// Document Type Specific Styles
+.document-pdf {
+  .document-icon {
+    background-color: #f44336 !important;
+    color: white !important;
+  }
+}
+
+.document-doc {
+  .document-icon {
+    background-color: #2196f3 !important;
+    color: white !important;
+  }
+}
+
+.document-txt {
+  .document-icon {
+    background-color: #4caf50 !important;
+    color: white !important;
+  }
+}
+
+.document-html {
+  .document-icon {
+    background-color: #ff9800 !important;
+    color: white !important;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .source-citation-card {
+    margin-bottom: 12px;
+
+    mat-card-header {
+      padding: 12px 12px 8px 12px;
+
+      .document-title {
+        font-size: 1rem;
+      }
+
+      .document-meta .meta-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+    }
+
+    mat-card-content {
+      padding: 12px;
+
+      .document-details .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    mat-card-actions {
+      padding: 12px;
+      flex-direction: column;
+      gap: 8px;
+      align-items: stretch;
+
+      button[mat-button] {
+        justify-content: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .source-citation-card {
+    mat-card-header {
+      padding: 8px 8px 6px 8px;
+
+      .document-icon {
+        width: 40px;
+        height: 40px;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .document-title {
+        font-size: 0.95rem;
+      }
+    }
+
+    mat-card-content {
+      padding: 8px;
+
+      .chunk-section .chunk-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+
+    mat-card-actions {
+      padding: 8px;
+    }
+  }
+}

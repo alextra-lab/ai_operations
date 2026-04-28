@@ -1,0 +1,369 @@
+/**
+ * Collection List Component Styles
+ * ADR-012 Compliant: Material + Tailwind + Component SCSS
+ * LAYERED_PAGE_LAYOUT_PATTERN Applied
+ */
+
+// ============================================================================
+// Layered Page Layout Pattern (Following LAYERED_PAGE_LAYOUT_PATTERN.md)
+// ============================================================================
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  margin: -24px -32px;
+  padding: 0;
+  overflow: hidden; // CRITICAL: Prevent parent from scrolling
+}
+
+// Layer 2: Page Header + Controls (NEVER SCROLLS)
+.page-header-section {
+  flex: 0 0 auto;
+  z-index: 100;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .page-title {
+    padding: 16px 24px 12px 24px;
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 36px;
+
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .subtitle {
+      margin: 4px 0 0 0;
+      color: #666;
+      font-size: 13px;
+    }
+  }
+
+  .page-controls {
+    padding: 0 24px 12px 24px;
+
+    .controls-container {
+      background: #f5f5f5;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      padding: 8px 16px 4px 16px;
+
+      h3 {
+        margin: 0 !important;
+        font-size: 20px !important;
+        font-weight: 500;
+      }
+
+      // Hide Material form field subscript for tighter spacing
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+
+      .filters-form {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: 16px;
+        align-items: start;
+
+        @media (max-width: 1200px) {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        @media (max-width: 768px) {
+          grid-template-columns: 1fr;
+        }
+
+        .filter-field {
+          min-width: 200px;
+
+          &.search-field {
+            min-width: 300px;
+          }
+        }
+
+        .filter-actions {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+
+          .clear-btn {
+            color: #666;
+          }
+
+          .create-btn {
+            mat-icon {
+              margin-right: 8px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Layer 3: Content Area (SCROLLS)
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+  min-height: 0; // **CRITICAL** for flex child to be scrollable
+  background: #fafafa;
+}
+
+// Loading State
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  flex: 1;
+}
+
+// ============================================================================
+// Filter Card Styles (Material + Tailwind utilities)
+// ============================================================================
+
+.filters-card {
+  background: white;
+  border-radius: 4px;
+
+  .filters-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 16px;
+    align-items: start;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .filter-field {
+    width: 100%;
+  }
+
+  .search-field {
+    grid-column: span 1;
+
+    @media (max-width: 1200px) {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 768px) {
+      grid-column: span 1;
+    }
+  }
+
+  .clear-filters-btn {
+    align-self: center;
+    white-space: nowrap;
+
+    mat-icon {
+      margin-right: 4px;
+    }
+  }
+}
+
+// ============================================================================
+// Table Styles (Material components)
+// ============================================================================
+
+.table-card {
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.collections-table {
+  width: 100%;
+
+  th {
+    font-weight: 600;
+    background: #f5f5f5;
+  }
+
+  td,
+  th {
+    padding: 12px 16px;
+  }
+}
+
+.results-info {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+}
+
+.collection-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  strong {
+    font-size: 14px;
+  }
+
+  .system-chip {
+    font-size: 10px;
+    min-height: 20px;
+    height: 20px;
+    padding: 0 6px;
+  }
+}
+
+.collection-description {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 4px;
+}
+
+.embedding-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .model-details {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .model-name {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .model-dimensions {
+      font-size: 11px;
+      color: #666;
+    }
+  }
+}
+
+.document-count {
+  font-weight: 600;
+  color: #1976d2;
+}
+
+// ============================================================================
+// Empty State
+// ============================================================================
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  gap: 16px;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: rgba(0, 0, 0, 0.3);
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+// ============================================================================
+// Info Panel
+// ============================================================================
+
+.info-panel {
+  mat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    mat-icon {
+      color: #2196f3;
+    }
+
+    mat-card-title {
+      margin: 0;
+    }
+  }
+
+  ul {
+    margin: 8px 0;
+    padding-left: 20px;
+
+    li {
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  p {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+  }
+}
+
+// ============================================================================
+// Responsive Design (Mobile-first)
+// ============================================================================
+
+@media (max-width: 768px) {
+  .page-container {
+    height: calc(100vh - 150px);
+    margin: -16px;
+  }
+
+  .page-header-section {
+    .page-title {
+      padding: 16px 16px 12px 16px;
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+
+    .page-controls {
+      padding: 0 16px 12px 16px;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  .content-area {
+    padding: 16px;
+  }
+
+  // Hide less important columns on mobile
+  .collections-table {
+
+    th:nth-child(2),
+    td:nth-child(2),
+    th:nth-child(6),
+    td:nth-child(6) {
+      display: none;
+    }
+  }
+}

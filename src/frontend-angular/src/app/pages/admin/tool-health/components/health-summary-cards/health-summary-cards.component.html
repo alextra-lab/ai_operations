@@ -1,0 +1,92 @@
+<!-- Health Summary Cards -->
+<div
+  class="summary-cards-container"
+  role="region"
+  aria-label="Tool Health Summary"
+>
+  <!-- Total Tools Card -->
+  <mat-card class="summary-card">
+    <mat-card-content>
+      <div class="card-content">
+        <mat-icon class="card-icon total">build</mat-icon>
+        <div class="card-info">
+          <span class="card-value" *ngIf="!isLoading">
+            {{ summary?.total_tools ?? 0 }}
+          </span>
+          <mat-spinner
+            *ngIf="isLoading"
+            diameter="24"
+            aria-label="Loading"
+          ></mat-spinner>
+          <span class="card-label">Total Tools</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Online Tools Card -->
+  <mat-card class="summary-card online">
+    <mat-card-content>
+      <div class="card-content">
+        <mat-icon class="card-icon online">check_circle</mat-icon>
+        <div class="card-info">
+          <span class="card-value" *ngIf="!isLoading">
+            {{ summary?.online ?? 0 }}
+          </span>
+          <mat-spinner
+            *ngIf="isLoading"
+            diameter="24"
+            aria-label="Loading"
+          ></mat-spinner>
+          <span class="card-label">Online</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Offline Tools Card -->
+  <mat-card class="summary-card offline">
+    <mat-card-content>
+      <div class="card-content">
+        <mat-icon class="card-icon offline">error</mat-icon>
+        <div class="card-info">
+          <span class="card-value" *ngIf="!isLoading">
+            {{ summary?.offline ?? 0 }}
+          </span>
+          <mat-spinner
+            *ngIf="isLoading"
+            diameter="24"
+            aria-label="Loading"
+          ></mat-spinner>
+          <span class="card-label">Offline</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Health Percentage Card -->
+  <mat-card class="summary-card health" [ngClass]="getHealthColor()">
+    <mat-card-content>
+      <div class="card-content">
+        <mat-icon class="card-icon health">speed</mat-icon>
+        <div class="card-info">
+          <span class="card-value" *ngIf="!isLoading">
+            {{ summary?.health_percentage ?? 0 | number: '1.0-1' }}%
+          </span>
+          <mat-spinner
+            *ngIf="isLoading"
+            diameter="24"
+            aria-label="Loading"
+          ></mat-spinner>
+          <span class="card-label">Health</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Last Check Timestamp -->
+<div class="last-check-info" *ngIf="!isLoading">
+  <mat-icon class="timestamp-icon">schedule</mat-icon>
+  <span class="timestamp-text">Last health check: {{ formatLastCheck() }}</span>
+</div>

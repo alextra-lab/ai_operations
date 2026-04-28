@@ -1,0 +1,153 @@
+<!-- Tool Edit Dialog -->
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>Edit Tool</h2>
+    <button mat-icon-button (click)="onCancel()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading tool...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="error-container">
+      <mat-icon class="error-icon">error</mat-icon>
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Edit Form -->
+    <form [formGroup]="form" *ngIf="tool && !isLoading">
+      <!-- Read-only fields -->
+      <div class="read-only-section">
+        <h3>Tool Information (Read-only)</h3>
+        <div class="read-only-field">
+          <span class="label">Tool ID:</span>
+          <code>{{ tool.tool_id }}</code>
+        </div>
+        <div class="read-only-field">
+          <span class="label">Category:</span>
+          <span>{{ tool.category }}</span>
+        </div>
+        <div class="read-only-field">
+          <span class="label">MCP Server Type:</span>
+          <span>{{ tool.mcp_server_type }}</span>
+        </div>
+      </div>
+
+      <!-- Editable fields -->
+      <div class="editable-section">
+        <h3>Editable Configuration</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" required />
+          <mat-error *ngIf="form.get('name')?.hasError('required')">
+            Name is required
+          </mat-error>
+          <mat-error *ngIf="form.get('name')?.hasError('maxlength')">
+            Name must be 255 characters or less
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Timeout (seconds)</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="timeout_seconds"
+            min="1"
+            max="300"
+            required
+          />
+          <mat-error *ngIf="form.get('timeout_seconds')?.hasError('required')">
+            Timeout is required
+          </mat-error>
+          <mat-error *ngIf="form.get('timeout_seconds')?.hasError('min')">
+            Timeout must be at least 1 second
+          </mat-error>
+          <mat-error *ngIf="form.get('timeout_seconds')?.hasError('max')">
+            Timeout must be 300 seconds or less
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Rate Limit (per minute)</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="rate_limit_per_minute"
+            min="1"
+            placeholder="Unlimited"
+          />
+          <mat-hint>Leave empty for unlimited</mat-hint>
+          <mat-error *ngIf="form.get('rate_limit_per_minute')?.hasError('min')">
+            Rate limit must be at least 1
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Health Check Interval (seconds)</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="health_check_interval_seconds"
+            min="60"
+          />
+          <mat-error
+            *ngIf="form.get('health_check_interval_seconds')?.hasError('min')"
+          >
+            Interval must be at least 60 seconds
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tags (comma-separated)</mat-label>
+          <input
+            matInput
+            [(ngModel)]="tagsInput"
+            (input)="onTagsInputChange()"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="tag1, tag2, tag3"
+          />
+          <mat-hint>Separate tags with commas</mat-hint>
+        </mat-form-field>
+
+        <div *ngIf="form.get('tags')?.value?.length > 0" class="tags-preview">
+          <mat-chip *ngFor="let tag of form.get('tags')?.value">
+            {{ tag }}
+          </mat-chip>
+        </div>
+      </div>
+
+      <!-- Error message -->
+      <div *ngIf="error" class="error-message">
+        <mat-icon>error</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()" [disabled]="isSubmitting">
+      Cancel
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSubmit()"
+      [disabled]="form.invalid || isSubmitting || isLoading"
+    >
+      Save
+    </button>
+  </mat-dialog-actions>
+</div>

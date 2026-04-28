@@ -1,0 +1,110 @@
+<h2 mat-dialog-title>Create Provider</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="provider-form">
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Name -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Provider Name</mat-label>
+      <input
+        matInput
+        formControlName="name"
+        placeholder="e.g., OpenAI Production"
+      />
+      <mat-error *ngIf="form.get('name')?.hasError('required')">
+        Name is required
+      </mat-error>
+      <mat-error *ngIf="form.get('name')?.hasError('maxlength')">
+        Name must be less than 255 characters
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Provider Type -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Provider Type</mat-label>
+      <mat-select formControlName="provider_type">
+        <mat-option *ngFor="let type of providerTypes" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('provider_type')?.hasError('required')">
+        Provider type is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Base URL -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Base URL</mat-label>
+      <input
+        matInput
+        formControlName="base_url"
+        placeholder="https://api.openai.com/v1"
+      />
+      <mat-error *ngIf="form.get('base_url')?.hasError('required')">
+        Base URL is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- API Key -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>API Key (optional)</mat-label>
+      <input matInput type="password" formControlName="api_key" />
+      <mat-hint>Leave empty if using environment variables</mat-hint>
+    </mat-form-field>
+
+    <!-- Status -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option *ngFor="let status of statuses" [value]="status">
+          {{ status }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Priority -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Priority</mat-label>
+      <input matInput type="number" formControlName="priority" />
+      <mat-hint>Lower value = higher priority (0-1000)</mat-hint>
+      <mat-error *ngIf="form.get('priority')?.hasError('min')">
+        Priority must be 0 or greater
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Health Check URL -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Health Check URL (optional)</mat-label>
+      <input
+        matInput
+        formControlName="health_check_url"
+        placeholder="https://api.openai.com/v1/models"
+      />
+    </mat-form-field>
+
+    <!-- Enabled Toggle -->
+    <div class="toggle-field">
+      <mat-slide-toggle formControlName="is_enabled" color="primary">
+        Enable provider
+      </mat-slide-toggle>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="isSubmitting">
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="isSubmitting || form.invalid"
+  >
+    {{ isSubmitting ? 'Creating...' : 'Create Provider' }}
+  </button>
+</mat-dialog-actions>

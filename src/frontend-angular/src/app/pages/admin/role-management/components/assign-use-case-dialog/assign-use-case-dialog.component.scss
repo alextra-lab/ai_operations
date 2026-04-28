@@ -1,0 +1,46 @@
+/**
+ * Assign Use Case Dialog Styles
+ * WCAG 2.1 AA compliant
+ */
+
+.assign-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+  min-width: 500px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.use-case-option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+
+  strong {
+    font-size: 14px;
+    color: #333;
+  }
+
+  small {
+    font-size: 12px;
+    color: #666;
+  }
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0;
+}

@@ -1,0 +1,40 @@
+/**
+ * Template Library Component Styles
+ * Following ADR-012 Hybrid CSS Strategy:
+ * - Material components for complex widgets
+ * - Tailwind utilities for layout/spacing
+ * - Minimal custom SCSS for Material overrides only
+ */
+
+.template-library-container {
+  min-height: calc(100vh - 200px);
+}
+
+// Material table customizations
+::ng-deep {
+  .mat-mdc-table {
+    width: 100%;
+
+    .mat-mdc-header-cell {
+      font-weight: 600;
+      color: var(--mdc-theme-on-surface);
+    }
+
+    .mat-mdc-cell {
+      padding: 12px 16px;
+    }
+  }
+
+  // Paginator styling
+  .mat-mdc-paginator {
+    background: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+  }
+}
+
+// Error snackbar styling
+::ng-deep .error-snackbar {
+  .mdc-snackbar__surface {
+    background-color: #f44336 !important;
+  }
+}

@@ -1,0 +1,129 @@
+/**
+ * Usage By Tool Table Styles
+ * ADR-012 compliant
+ */
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.usage-table {
+  width: 100%;
+  min-width: 600px;
+
+  th.mat-mdc-header-cell {
+    font-weight: 600;
+    color: #333;
+    background: #fafafa;
+    border-bottom: 2px solid #e0e0e0;
+    padding: 12px 16px;
+  }
+
+  td.mat-mdc-cell {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  tr.mat-mdc-row {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+
+  tr.mat-mdc-row:last-child td.mat-mdc-cell {
+    border-bottom: none;
+  }
+}
+
+.numeric-header,
+.numeric-cell {
+  text-align: right;
+}
+
+.tool-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .tool-name {
+    font-weight: 500;
+    color: #333;
+  }
+
+  .tool-id {
+    font-size: 0.75rem;
+    color: #999;
+    font-family: monospace;
+    cursor: help;
+  }
+}
+
+.success-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.875rem;
+
+  &.success-high {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.success-medium {
+    background-color: #fff3e0;
+    color: #ef6c00;
+  }
+
+  &.success-low {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+}
+
+.cost-cell {
+  font-family: monospace;
+  color: #7b1fa2;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: #999;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 1rem;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .usage-table {
+    th.mat-mdc-header-cell,
+    td.mat-mdc-cell {
+      padding: 8px 12px;
+      font-size: 0.875rem;
+    }
+  }
+}

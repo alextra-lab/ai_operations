@@ -1,0 +1,43 @@
+<!-- Configuration Section Expansion Panel -->
+<mat-expansion-panel [(expanded)]="isExpanded" [disabled]="isLoading">
+  <!-- Panel Header -->
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <div class="section-header">
+        <mat-icon [class.restart-required]="metadata.restart_required">
+          {{ metadata.icon }}
+        </mat-icon>
+        <div class="section-info">
+          <span class="section-title">{{ metadata.title }}</span>
+          <span class="section-description">{{ metadata.description }}</span>
+        </div>
+      </div>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <!-- Panel Content -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner diameter="32"></mat-spinner>
+      <span>Loading configuration...</span>
+    </div>
+  } @else if (error) {
+    <div class="error-message">
+      <mat-icon color="warn">error</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+  } @else if (config) {
+    <app-config-editor
+      [section]="section"
+      [config]="config"
+      (configChange)="onConfigChange($event)"
+    ></app-config-editor>
+
+    @if (metadata.restart_required) {
+      <div class="restart-notice">
+        <mat-icon>info</mat-icon>
+        <span>Changes to this section require a service restart</span>
+      </div>
+    }
+  }
+</mat-expansion-panel>

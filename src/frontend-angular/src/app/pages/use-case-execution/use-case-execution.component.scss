@@ -1,0 +1,605 @@
+// ============================================================================
+// Use Case Execution Component - Layered Layout Pattern
+// Following ADR-012: Hybrid Material + Tailwind + Component SCSS
+// Related: P4-TOOLS-06, ADR-045
+// ============================================================================
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  margin: -24px -32px;
+  padding: 0;
+  overflow: hidden; // CRITICAL: Prevent parent from scrolling
+}
+
+// ============================================================================
+// Layer 2: Page Header + Controls (NEVER SCROLLS)
+// ============================================================================
+
+.page-header-section {
+  flex: 0 0 auto;
+  z-index: 100;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .page-title {
+    padding: 24px 24px 16px 24px;
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+
+      .back-button {
+        margin-right: 8px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        mat-icon {
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+
+          // Category icon colors (ADR-012 compliant)
+          &.category-icon {
+            &.category-threat_analysis {
+              color: #f44336;
+            }
+
+            &.category-incident_response {
+              color: #ff9800;
+            }
+
+            &.category-vulnerability_assessment {
+              color: #ff5722;
+            }
+
+            &.category-compliance_check {
+              color: #4caf50;
+            }
+
+            &.category-data_analysis {
+              color: #2196f3;
+            }
+
+            &.category-report_generation {
+              color: #9c27b0;
+            }
+
+            &.category-network_monitoring {
+              color: #00bcd4;
+            }
+
+            &.category-user_behavior {
+              color: #795548;
+            }
+
+            // Default fallback
+            &:not([class*='category-']) {
+              color: #607d8b;
+            }
+          }
+        }
+      }
+    }
+
+    .subtitle {
+      margin: 8px 0 16px 0;
+      color: #666;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .use-case-meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      .category-badge {
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 12px;
+        font-weight: 500;
+        color: white;
+
+        // Category-specific colors (ADR-012 compliant - no inline styles)
+        &.category-threat_analysis {
+          background-color: #f44336;
+        }
+
+        &.category-incident_response {
+          background-color: #ff9800;
+        }
+
+        &.category-vulnerability_assessment {
+          background-color: #ff5722;
+        }
+
+        &.category-compliance_check {
+          background-color: #4caf50;
+        }
+
+        &.category-data_analysis {
+          background-color: #2196f3;
+        }
+
+        &.category-report_generation {
+          background-color: #9c27b0;
+        }
+
+        &.category-network_monitoring {
+          background-color: #00bcd4;
+        }
+
+        &.category-user_behavior {
+          background-color: #795548;
+        }
+
+        // Default fallback
+        &:not([class*='category-']) {
+          background-color: #607d8b;
+        }
+      }
+
+      .intent-type {
+        color: #666;
+        font-size: 13px;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Input Panel
+  .input-panel {
+    margin: 0 24px 16px 24px;
+    box-shadow: none;
+    border: 1px solid #e0e0e0;
+
+    ::ng-deep .mat-expansion-panel-header {
+      padding: 0 16px;
+      height: 56px;
+
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+
+    .execution-form {
+      padding: 16px 0;
+
+      .form-fields {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+
+        .form-field {
+          &.full-width {
+            grid-column: 1 / -1;
+          }
+        }
+
+        mat-form-field {
+          width: 100%;
+
+          &.full-width {
+            width: 100%;
+          }
+        }
+
+        // Minimal starting size, user-expandable - similar to RAG Q&A interface
+        .query-textarea {
+          min-height: 80px;
+          line-height: 1.6;
+          font-size: 15px;
+          font-family:
+            -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+            Ubuntu, Cantarell, sans-serif;
+          resize: vertical;
+          padding: 8px 12px;
+        }
+      }
+
+      .no-fields {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        background: #f5f5f5;
+        border-radius: 4px;
+        color: #666;
+
+        .no-fields-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+
+        p {
+          margin: 0;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .overrides-panel {
+      margin-top: 16px;
+      border: 1px solid #e0e0e0;
+
+      .overrides-form {
+        padding: 16px 0;
+
+        .override-fields {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 16px;
+
+          mat-form-field {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Progress Bar
+.progress-container {
+  flex: 0 0 auto;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 8px 24px;
+
+  mat-progress-bar {
+    margin-bottom: 8px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #666;
+
+    .current-step {
+      font-weight: 500;
+    }
+
+    .progress-percentage {
+      color: #1976d2;
+    }
+  }
+}
+
+// ============================================================================
+// Layer 3: Content Area (SCROLLS)
+// ============================================================================
+
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+  min-height: 0; // **CRITICAL** for flex child to be scrollable
+  background: #fafafa;
+
+  // Empty State
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #666;
+    padding: 48px 24px;
+
+    .empty-icon {
+      font-size: 96px;
+      width: 96px;
+      height: 96px;
+      color: #ccc;
+      margin-bottom: 24px;
+    }
+
+    h3 {
+      margin: 0 0 12px 0;
+      font-size: 24px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+      max-width: 500px;
+    }
+  }
+
+  // Error State
+  .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 48px 24px;
+
+    .error-icon {
+      font-size: 96px;
+      width: 96px;
+      height: 96px;
+      color: #f44336;
+      margin-bottom: 24px;
+    }
+
+    h3 {
+      margin: 0 0 12px 0;
+      font-size: 24px;
+      font-weight: 500;
+      color: #f44336;
+    }
+
+    .error-message {
+      margin: 0 0 24px 0;
+      font-size: 16px;
+      color: #666;
+      max-width: 600px;
+    }
+  }
+
+  // Results Container
+  .results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .structured-output-section {
+      .structured-output-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        .output-icon {
+          background: #1976d2;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          mat-icon {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// Layer 4: Page Footer (NEVER SCROLLS)
+// ============================================================================
+
+.page-footer {
+  flex: 0 0 auto;
+  z-index: 90;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  padding: 12px 24px;
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+
+    .footer-status {
+      flex: 1;
+      min-width: 0;
+
+      .status-text {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #666;
+
+        .status-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          color: #4caf50;
+        }
+
+        .inline-spinner {
+          display: inline-block;
+          vertical-align: middle;
+        }
+
+        .metrics-summary {
+          color: #999;
+          font-size: 13px;
+        }
+      }
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+      .execute-button {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// Loading & Error States (Full Page)
+// ============================================================================
+
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 200px);
+  text-align: center;
+  padding: 48px 24px;
+
+  .error-icon {
+    font-size: 96px;
+    width: 96px;
+    height: 96px;
+    color: #f44336;
+    margin-bottom: 24px;
+  }
+
+  .loading-text,
+  h3 {
+    margin: 24px 0 12px 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #666;
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    color: #999;
+  }
+}
+
+// ============================================================================
+// Responsive Design
+// ============================================================================
+
+@media (max-width: 768px) {
+  .page-container {
+    height: calc(100vh - 150px);
+    margin: -16px;
+  }
+
+  .page-header-section {
+    .page-title {
+      padding: 16px 16px 12px 16px;
+
+      .title-row {
+        h1 {
+          font-size: 24px;
+
+          mat-icon {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+          }
+        }
+      }
+
+      .subtitle {
+        font-size: 13px;
+      }
+
+      .use-case-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+
+    .input-panel {
+      margin: 0 16px 12px 16px;
+
+      .execution-form .form-fields {
+        grid-template-columns: 1fr;
+      }
+
+      .overrides-panel .overrides-form .override-fields {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  .content-area {
+    padding: 16px;
+  }
+
+  .page-footer {
+    padding: 12px 16px;
+
+    .footer-content {
+      flex-direction: column;
+      gap: 12px;
+
+      .footer-status {
+        order: 2;
+        text-align: center;
+      }
+
+      .footer-actions {
+        order: 1;
+        width: 100%;
+        justify-content: stretch;
+        flex-wrap: wrap;
+
+        button {
+          flex: 1;
+        }
+
+        .execute-button {
+          width: 100%;
+          order: -1;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// Accessibility
+// ============================================================================
+
+// Ensure focus indicators are visible
+button:focus-visible,
+.mat-mdc-button:focus-visible {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .page-header-section,
+  .page-footer {
+    border-width: 2px;
+  }
+
+  .category-badge {
+    border: 2px solid currentColor;
+  }
+}
+
+// Refine Schema from Output (ADR-063 Amendment 2)
+.refine-schema-section {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

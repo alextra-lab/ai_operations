@@ -1,0 +1,195 @@
+<div
+  class="results-container"
+  #resultsContainer
+  role="log"
+  aria-live="polite"
+  aria-relevant="additions"
+>
+  <!-- Previous messages -->
+  <div
+    *ngFor="let message of messages; trackBy: trackByMessage"
+    class="message-wrapper"
+    [class.user-message]="message.role === 'user'"
+    [class.assistant-message]="message.role === 'assistant'"
+    [class.system-message]="message.role === 'system'"
+  >
+    <div class="message-bubble">
+      <div class="message-header">
+        <mat-icon [attr.aria-label]="getRoleName(message.role)">
+          {{ getRoleIcon(message.role) }}
+        </mat-icon>
+        <span class="role-name">{{ getRoleName(message.role) }}</span>
+        <span class="timestamp">{{ message.created_at | date: 'short' }}</span>
+      </div>
+      <div class="message-content">
+        <app-llm-content-renderer [content]="message.content">
+        </app-llm-content-renderer>
+      </div>
+      <div class="message-footer" *ngIf="message.token_count">
+        <span class="token-count" role="status">
+          {{ formatTokens(message.token_count) }} tokens
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Streaming message -->
+  <div
+    *ngIf="isStreaming"
+    class="message-wrapper assistant-message streaming"
+    role="status"
+    aria-live="polite"
+  >
+    <div class="message-bubble">
+      <div class="message-header">
+        <mat-icon aria-label="Assistant">smart_toy</mat-icon>
+        <span class="role-name">Assistant</span>
+        <mat-spinner
+          diameter="16"
+          class="streaming-indicator"
+          aria-label="Generating response"
+        >
+        </mat-spinner>
+      </div>
+      <div class="message-content">
+        <app-llm-content-renderer [content]="streamingContent">
+        </app-llm-content-renderer>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sources (if provided) -->
+  <div *ngIf="sources.length > 0" class="sources-section">
+    <h4 id="sources-heading">
+      <mat-icon aria-hidden="true">source</mat-icon>
+      Sources ({{ sources.length }})
+    </h4>
+    <div class="sources-list" role="list" aria-labelledby="sources-heading">
+      <mat-card
+        *ngFor="let source of sources; trackBy: trackBySource"
+        class="source-card"
+        role="listitem"
+        tabindex="0"
+        [attr.aria-label]="
+          'Source: ' +
+          source.title +
+          ', ' +
+          formatPercentage(source.relevance_score) +
+          ' relevant'
+        "
+        (click)="onSourceClick(source)"
+        (keydown.enter)="onSourceClick(source)"
+        (keydown.space)="onSourceClick(source)"
+      >
+        <mat-card-header>
+          <mat-card-title>{{ source.title }}</mat-card-title>
+          <mat-card-subtitle>
+            {{ formatPercentage(source.relevance_score) }} relevant
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="source-snippet">{{ source.content_snippet }}</p>
+          <div class="source-meta" *ngIf="source.metadata">
+            <span *ngIf="source.metadata['author']" class="meta-item">
+              <mat-icon aria-hidden="true">person</mat-icon>
+              {{ source.metadata['author'] }}
+            </span>
+            <span *ngIf="source.page_number" class="meta-item">
+              <mat-icon aria-hidden="true">book</mat-icon>
+              Page {{ source.page_number }}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Metrics (if provided) -->
+  <mat-card
+    *ngIf="metrics"
+    class="metrics-card"
+    role="region"
+    aria-label="Execution metrics"
+  >
+    <mat-card-content>
+      <h4 class="metrics-title">
+        <mat-icon aria-hidden="true">analytics</mat-icon>
+        Execution Metrics
+      </h4>
+      <div class="metrics-grid">
+        <div class="metric" *ngIf="metrics.timing.retrieval_time_ms">
+          <span class="label">Retrieval</span>
+          <span class="value">{{
+            formatDuration(metrics.timing.retrieval_time_ms)
+          }}</span>
+        </div>
+        <div class="metric" *ngIf="metrics.timing.generation_time_ms">
+          <span class="label">Generation</span>
+          <span class="value">{{
+            formatDuration(metrics.timing.generation_time_ms)
+          }}</span>
+        </div>
+        <div class="metric">
+          <span class="label">Total</span>
+          <span class="value">{{
+            formatDuration(metrics.timing.total_time_ms)
+          }}</span>
+        </div>
+        <div class="metric">
+          <span class="label">Tokens</span>
+          <span class="value">{{
+            formatTokens(metrics.tokens.total_tokens)
+          }}</span>
+        </div>
+        <div class="metric" *ngIf="metrics.confidence_score">
+          <span class="label">Confidence</span>
+          <span class="value">{{
+            formatPercentage(metrics.confidence_score)
+          }}</span>
+        </div>
+        <div class="metric" *ngIf="metrics.cost">
+          <span class="label">Cost</span>
+          <span class="value">{{ formatCost(metrics.cost.total_cost) }}</span>
+        </div>
+      </div>
+
+      <!-- Additional metrics details -->
+      <div class="metrics-details" *ngIf="metrics.retrieval || metrics.guard">
+        <div class="detail-row" *ngIf="metrics.retrieval">
+          <span class="detail-label">
+            <mat-icon aria-hidden="true">search</mat-icon>
+            Chunks Retrieved:
+          </span>
+          <span class="detail-value">{{
+            metrics.retrieval.chunks_retrieved
+          }}</span>
+        </div>
+        <div class="detail-row" *ngIf="metrics.retrieval">
+          <span class="detail-label">
+            <mat-icon aria-hidden="true">percent</mat-icon>
+            Avg Similarity:
+          </span>
+          <span class="detail-value">{{
+            formatPercentage(metrics.retrieval.avg_similarity)
+          }}</span>
+        </div>
+        <div class="detail-row" *ngIf="metrics.guard">
+          <span class="detail-label">
+            <mat-icon aria-hidden="true">security</mat-icon>
+            Risk Score:
+          </span>
+          <span
+            class="detail-value"
+            [class.risk-low]="metrics.guard.risk_score <= 0.3"
+            [class.risk-medium]="
+              metrics.guard.risk_score > 0.3 && metrics.guard.risk_score <= 0.6
+            "
+            [class.risk-high]="metrics.guard.risk_score > 0.6"
+          >
+            {{ formatPercentage(metrics.guard.risk_score) }}
+          </span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

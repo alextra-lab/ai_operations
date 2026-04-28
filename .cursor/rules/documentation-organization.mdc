@@ -1,0 +1,155 @@
+---
+alwaysApply: false
+---
+## Document Creation Rules
+
+### When Creating New Documentation
+
+**ALWAYS ask yourself:** "Is this for BUILDING or USING the application?"
+
+**For BUILDING (development work):**
+
+| Situation | Folder | Naming Convention |
+|-----------|--------|-------------------|
+| Making architecture decision | `docs/development/adrs/` | `NNN-kebab-case-title.md` |
+| Planning implementation | `docs/development/plans/` | `[TRACK]_PLAN.md` |
+| Creating task/fix | `docs/development/tasks/` | `P2_FIX_XX_DESCRIPTION.md` |
+| Daily work summary | `docs/development/sessions/` | `YYYY-MM-DD-brief-description.md` |
+| Technical investigation | `docs/development/analysis/` | `descriptive-name.md` |
+| How-to guide | `docs/development/guides/` | `topic-guide.md` |
+| Development pattern | `docs/development/guidelines/` | `PATTERN_NAME.md` |
+| Requirements/specs | `docs/development/specs/` | `feature-spec.md` |
+
+**For USING (product documentation):**
+- API contracts → `docs/api/`
+- Architecture diagrams → `docs/architecture/`
+- Setup and deployment → `docs/deployment/`, `docs/operations/`
+- Test procedures → `docs/testing/`
+
+---
+
+## What NOT to Create
+
+**❌ NEVER create these without explicit user request:**
+
+1. **Verbose summary documents** - Use brief session logs instead
+2. **Multiple meta-documents** about the same topic (like 3 migration docs)
+3. **Documents at `docs/` root** - Only README.md belongs there
+4. **"Summary" or "Overview" docs** after completing work - Information belongs IN the code/tests
+5. **Duplicate information** across multiple files
+
+**✅ Instead:**
+- Update existing documents
+- Add to session log
+- Update README.md navigation
+- Extract to product docs when feature is stable
+
+---
+
+## Task Completion Workflow
+
+When a task is completed:
+
+1. **Update the task file header:**
+   ```markdown
+   **Status:** ✅ COMPLETED (YYYY-MM-DD)
+   ```
+
+2. **Move to completed:**
+   ```
+   docs/development/tasks/P2_FIX_XX.md
+   → docs/development/completed/tasks/P2_FIX_XX.md
+   ```
+
+3. **Add brief entry to session log:**
+   ```markdown
+   ## 2025-10-10-feature-work.md
+   - Completed P2-FIX-XX
+   - Files modified: [list]
+   - Tests: XX/XX passing
+   ```
+
+4. **DO NOT create:**
+   - ❌ Separate verification report
+   - ❌ Completion summary document
+   - ❌ Implementation summary
+   - ❌ Migration log
+
+---
+
+## ADR (Architecture Decision Record) Usage
+
+**Only create ADRs for significant architecture decisions:**
+- Hybrid vs centralized architecture
+- Technology selection (PostgreSQL vs MongoDB)
+- Security pattern adoption
+- Major refactoring approach
+
+**Use the template:** `docs/development/adrs/template.md`
+
+**Naming:** Sequential numbers with kebab-case title:
+- `001-hybrid-tools-architecture.md`
+- `002-authentication-strategy.md`
+- `003-metrics-consolidation-pattern.md`
+
+---
+
+## Session Logs Best Practices
+
+**Format:** Brief, scannable, date-stamped
+
+```markdown
+# Development Session - October 10, 2025
+
+**Focus:** Feature X implementation
+**Duration:** ~2 hours
+**Status:** ✅ Complete
+
+## Work Completed
+- Task 1 (files: a.py, b.py)
+- Task 2 (files: c.ts)
+- Tests: 10/10 passing
+
+## Key Decisions
+- Chose approach X over Y because Z
+
+## Next Steps
+- Continue with Task 3
+```
+
+**Keep it under 50 lines** unless documenting major milestone session.
+
+---
+
+## File References
+
+**When referencing moved files in prompts:**
+
+Use the @ symbol with current path:
+- ✅ `@docs/development/plans/UI_DEVELOPMENT_PLAN.md`
+- ✅ `@docs/development/adrs/001-hybrid-tools-architecture.md`
+- ❌ Old paths that no longer exist
+
+**Before implementation, always check:**
+```
+@docs/development/plans/ROADMAP.md
+@docs/development/plans/[TRACK]_PLAN.md
+@docs/development/specs/clarifications-summary.md
+@docs/development/adrs/
+```
+
+---
+
+## Enforcement
+
+**AI Assistant must:**
+1. Check document purpose before creating
+2. Use existing folders, not create new ones
+3. Preserve original filenames unless explicitly asked
+4. Keep session logs brief (< 50 lines)
+5. Never create documents at `docs/` root
+
+**If unsure where a document belongs:**
+1. Read similar existing documents
+2. Check `docs/README.md` for taxonomy
+3. Ask user before creating in new location

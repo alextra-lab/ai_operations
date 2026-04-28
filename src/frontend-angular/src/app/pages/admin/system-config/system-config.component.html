@@ -1,0 +1,129 @@
+<!-- System Configuration Page -->
+<!-- ADR-012 Layered Page Layout Pattern -->
+
+<div class="page-container">
+  <!-- Layer 2: Fixed Page Header + Controls -->
+  <div class="page-header-section">
+    <!-- Page Title -->
+    <div class="page-title">
+      <h1>
+        <mat-icon>settings</mat-icon>
+        System Configuration
+      </h1>
+      <p class="subtitle">Manage system-wide configuration settings</p>
+    </div>
+
+    <!-- Configuration Health Alert -->
+    @if (!configHealth.isHealthy) {
+      <div class="config-health-alert">
+        <mat-icon>error</mat-icon>
+        <div class="alert-content">
+          <strong>Configuration Health Issue</strong>
+          <ul>
+            @for (issue of configHealth.issues; track issue) {
+              <li>{{ issue }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    }
+
+    <!-- Page Controls -->
+    <div class="page-controls">
+      <div class="controls-container">
+        <div class="button-group">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="saveAll()"
+            [disabled]="!hasChanges() || isLoading"
+            matTooltip="Save all modified sections"
+          >
+            <mat-icon>save</mat-icon>
+            Save All
+          </button>
+
+          <button
+            mat-raised-button
+            (click)="resetAll()"
+            [disabled]="!hasChanges() || isLoading"
+            matTooltip="Discard all changes"
+          >
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+
+          <button
+            mat-raised-button
+            (click)="openExportDialog()"
+            [disabled]="isLoading"
+            matTooltip="Export configuration as YAML"
+          >
+            <mat-icon>download</mat-icon>
+            Export
+          </button>
+
+          <button
+            mat-raised-button
+            (click)="openImportDialog()"
+            [disabled]="isLoading"
+            matTooltip="Import configuration from YAML"
+          >
+            <mat-icon>upload</mat-icon>
+            Import
+          </button>
+        </div>
+
+        <!-- Restart Required Warning -->
+        @if (restartRequired) {
+          <div class="restart-warning">
+            <mat-icon>warning</mat-icon>
+            <span>
+              Configuration saved. Service restart required for changes to take
+              effect.
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 3: Scrollable Content Area -->
+  <div class="content-area">
+    <!-- Loading Spinner -->
+    @if (isLoading) {
+      <div class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Loading configuration...</p>
+      </div>
+    }
+
+    <!-- Error Message -->
+    @else if (error) {
+      <div class="error-container">
+        <mat-icon color="warn">error</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-raised-button color="primary" (click)="loadConfig()">
+          <mat-icon>refresh</mat-icon>
+          Retry
+        </button>
+      </div>
+    }
+
+    <!-- Configuration Sections -->
+    @else if (config) {
+      <div class="sections-container">
+        <mat-accordion multi>
+          @for (sectionMeta of sections; track sectionMeta.section) {
+            <app-config-section
+              [section]="sectionMeta.section"
+              [metadata]="sectionMeta"
+              [config]="getSectionConfig(sectionMeta.section)"
+              (configChange)="onSectionChange(sectionMeta.section, $event)"
+            ></app-config-section>
+          }
+        </mat-accordion>
+      </div>
+    }
+  </div>
+</div>

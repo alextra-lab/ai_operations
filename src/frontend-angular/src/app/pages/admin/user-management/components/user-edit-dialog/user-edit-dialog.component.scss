@@ -1,0 +1,44 @@
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 400px;
+  padding: 8px 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.status-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+
+  label {
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+.audit-info {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 8px;
+
+  p {
+    margin: 4px 0;
+    font-size: 0.875rem;
+    color: #666;
+  }
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 8px;
+}

@@ -1,0 +1,96 @@
+/**
+ * Configuration Section Component Styles
+ */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+
+  mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: #1976d2;
+
+    &.restart-required {
+      color: #ff9800;
+    }
+  }
+}
+
+.section-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.section-description {
+  font-size: 13px;
+  color: #666;
+  font-weight: 400;
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+
+  span {
+    font-size: 14px;
+    color: #666;
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #ffebee;
+  border: 1px solid #ef5350;
+  border-radius: 4px;
+  color: #c62828;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  span {
+    font-size: 14px;
+  }
+}
+
+.restart-notice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 4px;
+  color: #1565c0;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #2196f3;
+  }
+
+  span {
+    font-size: 13px;
+    font-weight: 500;
+  }
+}

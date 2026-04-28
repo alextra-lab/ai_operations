@@ -1,0 +1,239 @@
+/**
+ * Timeline Visualizer Styles
+ *
+ * ADR-012 Compliant:
+ * - Material icons
+ * - Component SCSS for timeline-specific styling
+ * - Responsive design with proper spacing
+ */
+
+.timeline-visualizer-container {
+  width: 100%;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.visualizer-title {
+  margin: 0 0 24px 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.timeline {
+  position: relative;
+  padding: 0;
+}
+
+.timeline-event {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.timeline-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.marker-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #2196f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  mat-icon {
+    color: white;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.marker-line {
+  width: 2px;
+  flex: 1;
+  background: #e0e0e0;
+  min-height: 40px;
+  margin-top: 4px;
+}
+
+.timeline-content {
+  flex: 1;
+  background: #fafafa;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 3px solid #2196f3;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f5f5f5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.event-time {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.event-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.87);
+  margin-bottom: 8px;
+}
+
+.event-details {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.7);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.event-severity {
+  margin-top: 8px;
+}
+
+.severity-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.08);
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Severity-specific styling */
+.severity-low {
+  .marker-icon {
+    background: #4caf50;
+  }
+
+  .timeline-content {
+    border-left-color: #4caf50;
+  }
+
+  .severity-badge {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+}
+
+.severity-medium {
+  .marker-icon {
+    background: #ff9800;
+  }
+
+  .timeline-content {
+    border-left-color: #ff9800;
+  }
+
+  .severity-badge {
+    background: #fff3e0;
+    color: #ef6c00;
+  }
+}
+
+.severity-high {
+  .marker-icon {
+    background: #f57c00;
+  }
+
+  .timeline-content {
+    border-left-color: #f57c00;
+  }
+
+  .severity-badge {
+    background: #fbe9e7;
+    color: #d84315;
+  }
+}
+
+.severity-critical {
+  .marker-icon {
+    background: #f44336;
+    animation: pulse 2s infinite;
+  }
+
+  .timeline-content {
+    border-left-color: #f44336;
+  }
+
+  .severity-badge {
+    background: #ffebee;
+    color: #c62828;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 2px 12px rgba(244, 67, 54, 0.6);
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: rgba(0, 0, 0, 0.6);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .timeline-event {
+    gap: 12px;
+  }
+
+  .marker-icon {
+    width: 32px;
+    height: 32px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .timeline-content {
+    padding: 12px;
+  }
+}

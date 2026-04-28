@@ -1,0 +1,324 @@
+<!-- Tool Health Dashboard - T6-F2 -->
+<!-- Follows ADR-012 Layered Page Layout Pattern -->
+
+<div class="page-container">
+  <!-- Layer 2: Page Header -->
+  <div class="page-header-section">
+    <div class="page-title">
+      <h1>
+        <mat-icon aria-hidden="true">monitor_heart</mat-icon>
+        Tool Health
+      </h1>
+      <p class="subtitle">Monitor MCP tool availability and performance</p>
+    </div>
+
+    <div class="page-controls">
+      <div class="controls-container">
+        <div class="controls-row">
+          <!-- Auto-refresh toggle -->
+          <mat-slide-toggle
+            [(ngModel)]="autoRefreshEnabled"
+            (change)="onAutoRefreshChange()"
+            aria-label="Auto-refresh every 30 seconds"
+          >
+            Auto-refresh (30s)
+          </mat-slide-toggle>
+
+          <!-- Manual refresh button -->
+          <button
+            mat-stroked-button
+            (click)="onRefresh()"
+            [disabled]="isLoading"
+            aria-label="Refresh health data"
+          >
+            <mat-icon>refresh</mat-icon>
+            Refresh
+          </button>
+
+          <!-- Back to tool management -->
+          <a
+            mat-stroked-button
+            routerLink="/admin/tools"
+            aria-label="Back to Tool Management"
+          >
+            <mat-icon>arrow_back</mat-icon>
+            Tool Management
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-section">
+    <app-health-summary-cards
+      [summary]="summary()"
+      [isLoading]="isLoading"
+    ></app-health-summary-cards>
+  </div>
+
+  <!-- Layer 3: Content Area (Split View) -->
+  <div class="content-area">
+    <!-- Left Panel: Health Status Table -->
+    <div class="table-panel">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Tool Status</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- Loading state -->
+          <div *ngIf="isLoading" class="loading-container">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p>Loading tools...</p>
+          </div>
+
+          <!-- Empty state -->
+          <div
+            *ngIf="!isLoading && sortedTools().length === 0"
+            class="empty-state"
+          >
+            <mat-icon class="empty-icon">build</mat-icon>
+            <h3>No tools registered</h3>
+            <p>Register your first tool to start monitoring health.</p>
+            <a
+              mat-raised-button
+              color="primary"
+              routerLink="/admin/tools/register"
+            >
+              <mat-icon>add_circle</mat-icon>
+              Register Tool
+            </a>
+          </div>
+
+          <!-- Health table -->
+          <table
+            mat-table
+            [dataSource]="sortedTools()"
+            matSort
+            (matSortChange)="onSort($event)"
+            *ngIf="!isLoading && sortedTools().length > 0"
+            class="health-table"
+            aria-label="Tool health status table"
+          >
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">
+                Tool Name
+              </th>
+              <td mat-cell *matCellDef="let tool">
+                <div class="tool-name-cell">
+                  <span class="tool-name">{{ tool.name }}</span>
+                  <span class="tool-id" [matTooltip]="tool.tool_id">
+                    {{ tool.tool_id }}
+                  </span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">
+                Status
+              </th>
+              <td mat-cell *matCellDef="let tool">
+                <div
+                  class="status-badge"
+                  [ngClass]="getStatusClass(tool)"
+                  [attr.aria-label]="getStatus(tool)"
+                >
+                  <mat-icon
+                    [fontIcon]="getStatusIcon(tool)"
+                    aria-hidden="true"
+                  ></mat-icon>
+                  <span class="status-text">{{
+                    getStatus(tool) | titlecase
+                  }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Last Check Column -->
+            <ng-container matColumnDef="lastCheck">
+              <th mat-header-cell *matHeaderCellDef scope="col">Last Check</th>
+              <td mat-cell *matCellDef="let tool">
+                {{ formatLastCheck(tool.last_health_check) }}
+              </td>
+            </ng-container>
+
+            <!-- Response Time Column -->
+            <ng-container matColumnDef="responseTime">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">
+                Response Time
+              </th>
+              <td mat-cell *matCellDef="let tool">
+                <span *ngIf="tool.response_time_ms !== null">
+                  {{ tool.response_time_ms }}ms
+                </span>
+                <span *ngIf="tool.response_time_ms === null" class="no-data">
+                  —
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef scope="col">Actions</th>
+              <td mat-cell *matCellDef="let tool">
+                <button
+                  mat-icon-button
+                  [matTooltip]="'Trigger health check'"
+                  (click)="onTriggerCheck(tool, $event)"
+                  [disabled]="isChecking(tool.id) || !tool.is_enabled"
+                  aria-label="Trigger health check"
+                >
+                  <mat-spinner
+                    *ngIf="isChecking(tool.id)"
+                    diameter="20"
+                  ></mat-spinner>
+                  <mat-icon *ngIf="!isChecking(tool.id)">
+                    health_and_safety
+                  </mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  [matTooltip]="'View history'"
+                  (click)="onToolSelect(tool)"
+                  aria-label="View health history"
+                >
+                  <mat-icon>history</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              [class.selected]="selectedTool()?.id === row.id"
+              (click)="onToolSelect(row)"
+              class="clickable-row"
+            ></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Right Panel: Health History -->
+    <div class="history-panel">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <ng-container *ngIf="selectedTool(); else noToolSelected">
+              Health History: {{ selectedTool()?.name }}
+            </ng-container>
+            <ng-template #noToolSelected>Health History</ng-template>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- No tool selected -->
+          <div *ngIf="!selectedTool()" class="empty-state">
+            <mat-icon class="empty-icon">timeline</mat-icon>
+            <p>Select a tool to view health history</p>
+          </div>
+
+          <!-- Tool selected -->
+          <div *ngIf="selectedTool()" class="history-content">
+            <!-- Time range selector -->
+            <div class="time-range-selector">
+              <mat-select
+                [(value)]="selectedTimeRange"
+                (selectionChange)="onTimeRangeChange()"
+                aria-label="Select time range"
+              >
+                <mat-option
+                  *ngFor="let option of timeRangeOptions"
+                  [value]="option.value"
+                >
+                  {{ option.label }}
+                </mat-option>
+              </mat-select>
+            </div>
+
+            <!-- Loading state -->
+            <div *ngIf="isLoadingHistory" class="loading-container small">
+              <mat-spinner diameter="32"></mat-spinner>
+            </div>
+
+            <!-- Chart -->
+            <app-health-history-chart
+              *ngIf="!isLoadingHistory"
+              [data]="healthHistory()"
+              [toolName]="selectedTool()?.name || ''"
+            ></app-health-history-chart>
+
+            <!-- Latest check details -->
+            <div *ngIf="getLatestCheck() as latestCheck" class="latest-check">
+              <h4>Latest Check Details</h4>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="detail-label">Status</span>
+                  <span class="detail-value" [ngClass]="latestCheck.status">
+                    {{ latestCheck.status | titlecase }}
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Response Time</span>
+                  <span class="detail-value">
+                    {{ latestCheck.response_time_ms ?? 'N/A' }}
+                    <ng-container *ngIf="latestCheck.response_time_ms">
+                      ms
+                    </ng-container>
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Checked At</span>
+                  <span class="detail-value">
+                    {{ latestCheck.checked_at | date: 'medium' }}
+                  </span>
+                </div>
+                <div
+                  class="detail-item error"
+                  *ngIf="latestCheck.error_message"
+                >
+                  <span class="detail-label">Error</span>
+                  <span class="detail-value">
+                    {{ latestCheck.error_message }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="history-actions">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="onTriggerCheck(selectedTool()!, $event)"
+                [disabled]="
+                  isChecking(selectedTool()!.id) || !selectedTool()?.is_enabled
+                "
+              >
+                <mat-spinner
+                  *ngIf="isChecking(selectedTool()!.id)"
+                  diameter="18"
+                ></mat-spinner>
+                <mat-icon *ngIf="!isChecking(selectedTool()!.id)">
+                  health_and_safety
+                </mat-icon>
+                Trigger Health Check
+              </button>
+              <a
+                mat-stroked-button
+                [routerLink]="['/admin/tools/analytics']"
+                [queryParams]="{ tool_id: selectedTool()?.id }"
+              >
+                <mat-icon>analytics</mat-icon>
+                View Full Analytics
+              </a>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

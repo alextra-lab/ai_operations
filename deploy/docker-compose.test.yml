@@ -1,0 +1,392 @@
+# Test stack: load credentials from env only. Example:
+#   set -a && source config/env/env.test && set +a
+#   docker-compose -f deploy/docker-compose.test.yml up -d
+# Ensure config/env/env.test exists (copy from config/env/env.test.template).
+
+services:
+  postgres-db:
+    image: postgres:17-alpine
+    container_name: postgres-test
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB:-aio-test}
+    ports:
+      - "5433:5432"
+    volumes:
+      - ../data/postgres-test:/var/lib/postgresql/data
+    networks: [test-network]
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-aio-test}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+  qdrant-db:
+    image: qdrant/qdrant:v1.16.0
+    container_name: qdrant-test
+    environment:
+      - QDRANT_HOST=${QDRANT_HOST:-qdrant-test}
+      - QDRANT_PORT=${QDRANT_PORT:-6333}
+      - QDRANT_URL=${QDRANT_URL:-http://qdrant-test:6333}
+      - QDRANT_COLLECTION=${QDRANT_COLLECTION:-documents_test}
+    ports:
+      - "6335:6333" # REST API port
+      - "6336:6334" # gRPC port
+    volumes:
+      #  - ../data/qdrant-test:/qdrant/storage
+      - qdrant_test_data_:/qdrant/storage
+
+    networks: [test-network]
+    healthcheck:
+      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/localhost/6333"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  redis-cache:
+    image: redis:7-alpine
+    container_name: redis-test
+    networks: [test-network]
+    ports:
+      - "6380:6379" # 6380 external to avoid conflicts with local Redis
+    volumes:
+      - ../data/redis-test:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    platform: linux/arm64
+
+  orchestrator-api:
+    build:
+      context: ../src
+      dockerfile: orchestrator/Dockerfile
+    container_name: orchestrator-api-test
+    # Run as root for Docker socket access (required for MCP STDIO like docker mcp gateway run)
+    # In production, consider a sidecar approach for better security isolation (see ADR-058)
+    user: root
+    volumes:
+      - ../config/models:/app/config/models:ro
+      # Mount Docker socket for MCP STDIO support (e.g., docker mcp gateway run)
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ENV=${ENV}
+      - TESTING=${TESTING}
+      - DEVELOPMENT=${DEVELOPMENT}
+      - SERVICE_VERSION=${SERVICE_VERSION}
+      # Database Configuration
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      # Vector Database Configuration
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_PORT=${QDRANT_PORT}
+      - QDRANT_URL=${QDRANT_URL}
+      - QDRANT_COLLECTION=${QDRANT_COLLECTION}
+      # Authentication Configuration
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_ISSUER=${JWT_ISSUER}
+      - TOOL_SECRETS_KEY=${TOOL_SECRETS_KEY}
+      # LLM Configuration
+      - LLM_LOCAL_BASE_URL=${LLM_LOCAL_BASE_URL}
+      - LLM_LOCAL_API_KEY=${LLM_LOCAL_API_KEY}
+      - LLM_REMOTE_BASE_URL=${LLM_REMOTE_BASE_URL}
+      - LLM_REMOTE_API_KEY=${LLM_REMOTE_API_KEY}
+      - LLMAAS_BASE_URL=${LLMAAS_BASE_URL}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # Service Dependencies
+      - CORPUS_SVC_URL=${CORPUS_SVC_URL}
+      - EMBEDDING_SERVICE_URL=${EMBEDDING_SERVICE_URL}
+      - LLM_GUARD_SERVICE_URL=${LLM_GUARD_SERVICE_URL}
+      - GATEWAY_URL=http://inference-gateway-test:8002
+      # Inference Gateway Configuration
+      - INFERENCE_GATEWAY_URL=http://inference-gateway-test:8002/v1
+      # Secure Logging Configuration (v1)
+      - REDACT_LOGS=${REDACT_LOGS:-false} # Set to 'true' for production
+      - LOG_REDACTION_LEVEL=${LOG_REDACTION_LEVEL:-partial} # none|partial|full
+      # Pipeline Configuration (P4-F11 - ADR-036)
+      - USECASE_RUNNER_ENABLED=${USECASE_RUNNER_ENABLED:-false}
+      # Pricing Configuration
+      - PRICING_DEFAULT_INPUT_PER_MILLION=${PRICING_DEFAULT_INPUT_PER_MILLION:-0.0}
+      - PRICING_DEFAULT_OUTPUT_PER_MILLION=${PRICING_DEFAULT_OUTPUT_PER_MILLION:-0.0}
+      # Dashboard Health Monitoring
+      - DASHBOARD_HEALTH_ENDPOINTS=${DASHBOARD_HEALTH_ENDPOINTS:-}
+      - REDIS_URL=${REDIS_URL:-redis://redis-test:6379}
+    ports:
+      - "8006:8000"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      qdrant-db:
+        condition: service_healthy
+    networks: [test-network]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: always
+
+  corpus-service:
+    build:
+      context: ../src
+      dockerfile: corpus_svc/Dockerfile
+    container_name: corpus-service-test
+    volumes:
+      - ../data/retrieval-test/tmp:/data/tmp
+    environment:
+      - ENV=${ENV:-testing}
+      - TESTING=${TESTING:-1}
+      - SERVICE_VERSION=v1 # API version prefix - hardcoded to match expected /api/v1 routes
+      # Authentication Configuration
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM:-HS256}
+      - JWT_ISSUER=${JWT_ISSUER:-ai-operations-platform}
+      # Logging Configuration
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      # Database Configuration
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB:-aio-test}
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgres-test}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - DATABASE_URL=${DATABASE_URL}
+      # Vector Database Configuration
+      - QDRANT_HOST=${QDRANT_HOST:-qdrant-test}
+      - QDRANT_PORT=${QDRANT_PORT:-6333}
+      - QDRANT_URL=${QDRANT_URL:-http://qdrant-test:6333}
+      - QDRANT_COLLECTION=${QDRANT_COLLECTION:-documents_test}
+      - QDRANT_VECTOR_SIZE=${QDRANT_VECTOR_SIZE:-384}
+      - QDRANT_HNSW_M=${QDRANT_HNSW_M:-16}
+      - QDRANT_HNSW_EF_CONSTRUCT=${QDRANT_HNSW_EF_CONSTRUCT:-100}
+      # Corpus Service Configuration
+      - CORPUS_HOST=${CORPUS_HOST:-0.0.0.0}
+      - CORPUS_PORT=${CORPUS_PORT:-8001}
+      - CORPUS_DEBUG=${CORPUS_DEBUG:-true}
+      - CORPUS_ENABLE_CORS=${CORPUS_ENABLE_CORS:-true}
+      - CORPUS_CORS_ORIGINS=${CORPUS_CORS_ORIGINS:-*}
+      - CORPUS_EMBEDDING_SERVICE_TOKEN=${CORPUS_EMBEDDING_SERVICE_TOKEN}
+      - CORPUS_DOCUMENTS_PATH=${CORPUS_DOCUMENTS_PATH:-/tmp/test_documents}
+      - CORPUS_TEMP_PATH=${CORPUS_TEMP_PATH:-/data/tmp}
+      - CORPUS_CHUNK_SIZE=${CORPUS_CHUNK_SIZE:-1000}
+      - CORPUS_CHUNK_OVERLAP=${CORPUS_CHUNK_OVERLAP:-200}
+      - CORPUS_MAX_CHUNKS_PER_DOCUMENT=${CORPUS_MAX_CHUNKS_PER_DOCUMENT:-1000}
+      - CORPUS_SERVICE_URL=${CORPUS_SERVICE_URL}
+      # Service Dependencies
+      - EMBEDDING_SERVICE_URL=${EMBEDDING_SERVICE_URL:-http://embedding-service-test:8000}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-all-minilm-l6-v2}
+    ports:
+      - "8004:8001"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      qdrant-db:
+        condition: service_healthy
+    networks: [test-network]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: always
+
+  embedding-service:
+    build:
+      context: ../src
+      dockerfile: embedding/Dockerfile
+    container_name: embedding-service-test
+    environment:
+      - ENV=${ENV:-testing}
+      - TESTING=${TESTING:-1}
+      - SERVICE_VERSION=${SERVICE_VERSION}
+      # Authentication Configuration
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM:-HS256}
+      - JWT_ISSUER=${JWT_ISSUER:-ai-operations-platform}
+      # Logging Configuration
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      # Vector Database Configuration
+      - QDRANT_HOST=${QDRANT_HOST:-qdrant-test}
+      - QDRANT_PORT=${QDRANT_PORT:-6333}
+      - QDRANT_URL=${QDRANT_URL:-http://qdrant-test:6333}
+      - QDRANT_COLLECTION=${QDRANT_COLLECTION:-documents_test}
+      # Embedding Service Configuration
+      - EMBEDDING_HOST=${EMBEDDING_HOST:-0.0.0.0}
+      - EMBEDDING_PORT=${EMBEDDING_PORT:-8000}
+      - EMBEDDING_DEBUG=${EMBEDDING_DEBUG:-true}
+      - EMBEDDING_ENABLE_CORS=${EMBEDDING_ENABLE_CORS:-true}
+      - EMBEDDING_CORS_ORIGINS=${EMBEDDING_CORS_ORIGINS:-*}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-all-minilm-l6-v2}
+      - EMBEDDING_DIMENSIONS=${EMBEDDING_DIMENSIONS:-384}
+      - EMBEDDING_MODEL_CACHE_DIR=${EMBEDDING_MODEL_CACHE_DIR:-/tmp/test_models}
+      - EMBEDDING_ENABLE_MODEL_CACHING=${EMBEDDING_ENABLE_MODEL_CACHING:-true}
+      - EMBEDDING_BATCH_SIZE=${EMBEDDING_BATCH_SIZE:-16}
+      - EMBEDDING_CLIENT_TIMEOUT_SECONDS=${EMBEDDING_CLIENT_TIMEOUT_SECONDS:-30}
+      - EMBEDDING_CLIENT_MAX_RETRIES=${EMBEDDING_CLIENT_MAX_RETRIES:-3}
+      - EMBEDDING_SERVICE_URL=${EMBEDDING_SERVICE_URL}
+      # OpenAI-compatible provider (LMStudio)
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "8005:8000"
+    volumes:
+      - ../data/models:/opt/models:cached
+    depends_on:
+      qdrant-db:
+        condition: service_healthy
+    networks: [test-network]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: always
+
+  llm-guard-svc:
+    build:
+      context: ../src
+      dockerfile: llm_guard_svc/Dockerfile
+    container_name: llm-guard-svc-test
+    environment:
+      - ENV=${ENV:-testing}
+      - TESTING=${TESTING:-1}
+      - SERVICE_VERSION=${SERVICE_VERSION}
+      # Logging Configuration
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      # LLM Guard Service Configuration
+      - LLM_GUARD_ENABLED=${LLM_GUARD_ENABLED:-false}
+      - LLM_GUARD_HOST=${LLM_GUARD_HOST:-0.0.0.0}
+      - LLM_GUARD_PORT=${LLM_GUARD_PORT:-8081}
+      - LLM_GUARD_DEBUG=${LLM_GUARD_DEBUG:-true}
+      - LLM_GUARD_ENABLE_CORS=${LLM_GUARD_ENABLE_CORS:-true}
+      - LLM_GUARD_CORS_ORIGINS=${LLM_GUARD_CORS_ORIGINS:-*}
+      - LLM_GUARD_FAIL_FAST=${LLM_GUARD_FAIL_FAST:-false}
+      - LLM_GUARD_CACHE_ENABLED=${LLM_GUARD_CACHE_ENABLED:-false}
+      - LLM_GUARD_CACHE_MAX_SIZE=${LLM_GUARD_CACHE_MAX_SIZE:-100}
+      - LLM_GUARD_CACHE_TTL_SECONDS=${LLM_GUARD_CACHE_TTL_SECONDS:-60}
+      - LLM_GUARD_MODELS_PATH=${LLM_GUARD_MODELS_PATH:-/tmp/test_models}
+      - LLM_GUARD_SERVICE_URL=${LLM_GUARD_SERVICE_URL}
+      # HuggingFace Configuration
+      - HF_HUB_DISABLE_PROGRESS_BARS=1
+      - TRANSFORMERS_VERBOSITY=error
+    ports:
+      - "8082:8081"
+    volumes:
+      # Use project-relative path (run from repo root: docker-compose -f deploy/docker-compose.test.yml)
+      - ${PROJECT_ROOT:-..}/data/llm-guard-models:/app/models:cached
+    networks: [test-network]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: always
+
+  ui-webapp:
+    build:
+      context: ../src
+      dockerfile: frontend-angular/Dockerfile
+    container_name: ui-webapp-test
+    networks: [test-network]
+    ports:
+      - "4201:80"
+    depends_on:
+      orchestrator-api:
+        condition: service_healthy
+    environment:
+      - ENV=${ENV:-testing}
+      - TESTING=${TESTING:-1}
+      - SERVICE_VERSION=${SERVICE_VERSION}
+      - API_BASE_URL=http://orchestrator-api-test:8000
+      - NGINX_HOST=localhost
+      - BACKEND_HOST=orchestrator-api-test
+      - BACKEND_PORT=8000
+      - NGINX_PORT=80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    restart: always
+    platform: linux/arm64
+
+  inference-gateway:
+    build:
+      context: ../src
+      dockerfile: inference-gateway/Dockerfile
+    container_name: inference-gateway-test
+    networks: [test-network]
+    ports:
+      - "8007:8002" # External:Internal - 8007 to avoid conflicts with existing services
+    environment:
+      - ENV=${ENV:-testing}
+      - TESTING=${TESTING:-1}
+      - SERVICE_VERSION=${SERVICE_VERSION}
+      # Database Configuration
+      - DATABASE_URL=${DATABASE_URL}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB:-aio-test}
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgres-test}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      # Authentication Configuration
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM:-HS256}
+      - JWT_ISSUER=${JWT_ISSUER:-ai-operations-platform}
+      # Logging Configuration
+      - LOG_LEVEL=${LOG_LEVEL:-DEBUG}
+      - REDACT_LOGS=${REDACT_LOGS:-false}
+      - LOG_REDACTION_LEVEL=${LOG_REDACTION_LEVEL:-partial}
+      # Gateway Configuration
+      - GATEWAY_HOST=${GATEWAY_HOST:-0.0.0.0}
+      - GATEWAY_PORT=${GATEWAY_PORT:-8002}
+      - GATEWAY_DEBUG=${GATEWAY_DEBUG:-true}
+      - GATEWAY_ENABLE_CORS=${GATEWAY_ENABLE_CORS:-true}
+      - GATEWAY_CORS_ORIGINS=${GATEWAY_CORS_ORIGINS:-*}
+      # Redis Configuration (P2-T4)
+      - REDIS_URL=${REDIS_URL:-redis://redis-test:6379}
+      - REDIS_ENABLED=${REDIS_ENABLED:-true}
+      - REDIS_MAX_CONNECTIONS=${REDIS_MAX_CONNECTIONS:-50}
+      - REDIS_SOCKET_TIMEOUT=${REDIS_SOCKET_TIMEOUT:-5}
+      - REDIS_SOCKET_CONNECT_TIMEOUT=${REDIS_SOCKET_CONNECT_TIMEOUT:-5}
+      # Rate Limiting Configuration (P2-T5)
+      - GATEWAY_RATE_LIMITING_ENABLED=${GATEWAY_RATE_LIMITING_ENABLED:-true}
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: always
+    platform: linux/arm64
+
+networks:
+  test-network:
+    driver: bridge
+    name: aio-test-network
+
+volumes:
+  qdrant_test_data_:

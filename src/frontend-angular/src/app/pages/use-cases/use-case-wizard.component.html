@@ -1,0 +1,1874 @@
+<!-- LAYERED_PAGE_LAYOUT_PATTERN Applied -->
+<!-- ADR-012 Compliant: Material + Tailwind utilities -->
+<div class="page-container">
+  <!-- Layer 2: Page Header + Controls (NEVER SCROLLS) -->
+  <div class="page-header-section">
+    <div class="page-title">
+      <h1>
+        <mat-icon>{{
+          isViewMode ? 'visibility' : isEditMode ? 'edit' : 'add_box'
+        }}</mat-icon>
+        <span>
+          {{
+            isViewMode
+              ? 'View AI Operation'
+              : isEditMode
+                ? 'Edit AI Operation'
+                : 'Create New AI Operation'
+          }}
+          <span
+            *ngIf="(isViewMode || isEditMode) && currentUseCase?.name"
+            class="use-case-name"
+          >
+            : {{ currentUseCase?.name }}
+          </span>
+        </span>
+      </h1>
+    </div>
+    <div class="page-controls">
+      <button
+        mat-icon-button
+        (click)="cancel()"
+        aria-label="Cancel"
+        class="close-btn"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Layer 3: Content Area (SCROLLS) -->
+  <div class="content-area">
+    <!-- Progress Indicator -->
+    <mat-card class="mb-6 p-6">
+      <div class="flex justify-between mb-4 relative">
+        <div
+          *ngFor="let step of getVisibleSteps()"
+          class="progress-step flex flex-col items-center flex-1 relative"
+          [class.active]="currentStep === step"
+          [class.completed]="currentStep > step"
+        >
+          <div
+            class="step-circle w-10 h-10 rounded-full flex items-center justify-center font-medium mb-2"
+            [class.bg-gray-300]="currentStep < step"
+            [class.bg-blue-500]="currentStep === step"
+            [class.bg-green-500]="currentStep > step"
+            [class.text-white]="currentStep >= step"
+            [class.active]="currentStep === step"
+          >
+            <mat-icon *ngIf="currentStep > step" class="text-xl w-5 h-5"
+              >check</mat-icon
+            >
+            <span *ngIf="currentStep <= step">{{ getStepNumber(step) }}</span>
+          </div>
+          <div
+            class="text-sm"
+            [class.text-gray-600]="currentStep !== step && currentStep <= step"
+            [class.text-blue-500]="currentStep === step"
+            [class.text-green-500]="currentStep > step"
+            [class.font-medium]="currentStep === step || currentStep > step"
+          >
+            <span *ngIf="step === 1">Identity</span>
+            <span *ngIf="step === 2 && !isEditMode">Starting Point</span>
+            <span *ngIf="step === 3">User Experience</span>
+            <span *ngIf="step === 4">AI Engine</span>
+            <span *ngIf="step === 5">Review & Publish</span>
+          </div>
+        </div>
+      </div>
+      <mat-progress-bar mode="determinate" [value]="getProgress()">
+      </mat-progress-bar>
+    </mat-card>
+
+    <!-- Step Content -->
+    <mat-card class="min-h-[600px] p-8 mb-6 flex-1">
+      <!-- Step 1: Basic Info -->
+      <div *ngIf="currentStep === 1">
+        <h2 class="mt-0 mb-2 text-2xl font-medium">
+          Step {{ getStepNumber(1) }}: Identity
+        </h2>
+        <p class="mb-8 text-base text-gray-600">
+          What is this AI operation? Provide name, purpose, and classification.
+        </p>
+
+        <form [formGroup]="basicInfoForm">
+          <mat-form-field appearance="outline" class="w-full mb-4">
+            <mat-label>AI Operation Name *</mat-label>
+            <input
+              matInput
+              formControlName="name"
+              placeholder="Threat Intelligence Analysis"
+            />
+            <mat-hint
+              >Primary identifier - must be unique (case-insensitive)</mat-hint
+            >
+            <mat-error *ngIf="basicInfoForm.get('name')?.hasError('required')">
+              AI Operation Name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full mb-4">
+            <mat-label>Description</mat-label>
+            <textarea
+              matInput
+              formControlName="description"
+              rows="3"
+              placeholder="Describe the purpose and functionality of this use case"
+            ></textarea>
+          </mat-form-field>
+
+          <!-- ADR-067: Dynamic categories and intent types -->
+          <div class="flex gap-4 mb-4">
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Category</mat-label>
+              <mat-select formControlName="category">
+                <mat-option
+                  *ngFor="let cat of categories"
+                  [value]="cat.category_code"
+                >
+                  <div class="flex items-center gap-2">
+                    <mat-icon
+                      class="text-base"
+                      [style.color]="cat.color"
+                      >{{ cat.icon }}</mat-icon
+                    >
+                    <span>{{ cat.display_name }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Intent Type</mat-label>
+              <mat-select formControlName="intent_type">
+                <mat-option
+                  *ngFor="let intent of intentTypes"
+                  [value]="intent.intent_code"
+                >
+                  <div class="flex items-center gap-2">
+                    <mat-icon
+                      class="text-base"
+                      [style.color]="intent.color"
+                      >{{ intent.icon }}</mat-icon
+                    >
+                    <span>{{ intent.display_name }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-hint
+                *ngIf="getSelectedIntentProfile() as profile"
+              >
+                {{ profile.description }}
+              </mat-hint>
+            </mat-form-field>
+          </div>
+        </form>
+      </div>
+
+      <!-- Step 2: Choose Starting Point -->
+      <div *ngIf="currentStep === 2 && !isEditMode">
+        <h2 class="mt-0 mb-2 text-2xl font-medium">
+          Step {{ getStepNumber(2) }}: Starting Point
+        </h2>
+        <p class="mb-8 text-base text-gray-600">
+          Where do you start? Choose blank, a pattern, or clone an existing operation.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <!-- Blank Option -->
+          <mat-card
+            class="p-6 text-center cursor-pointer transition-all border-2"
+            [class.border-blue-500]="startingPoint === 'blank'"
+            [class.bg-blue-50]="startingPoint === 'blank'"
+            [class.border-transparent]="startingPoint !== 'blank'"
+            (click)="selectStartingPoint('blank')"
+          >
+            <mat-icon class="text-6xl w-12 h-12 text-blue-500 mb-4"
+              >note_add</mat-icon
+            >
+            <h3 class="mb-2 text-lg font-medium">Start from Blank</h3>
+            <p class="m-0 text-sm text-gray-600">
+              Create a new use case from scratch with default settings
+            </p>
+          </mat-card>
+
+          <!-- Pattern Option -->
+          <mat-card
+            class="p-6 text-center cursor-pointer transition-all border-2"
+            [class.border-blue-500]="startingPoint === 'pattern'"
+            [class.bg-blue-50]="startingPoint === 'pattern'"
+            [class.border-transparent]="startingPoint !== 'pattern'"
+            (click)="selectStartingPoint('pattern')"
+          >
+            <mat-icon class="text-6xl w-12 h-12 text-blue-500 mb-4"
+              >library_books</mat-icon
+            >
+            <h3 class="mb-2 text-lg font-medium">Use a Pattern</h3>
+            <p class="m-0 text-sm text-gray-600">
+              Start with a prompt engineering pattern
+            </p>
+          </mat-card>
+
+          <!-- Clone Option -->
+          <mat-card
+            class="p-6 text-center cursor-pointer transition-all border-2"
+            [class.border-blue-500]="startingPoint === 'clone'"
+            [class.bg-blue-50]="startingPoint === 'clone'"
+            [class.border-transparent]="startingPoint !== 'clone'"
+            (click)="selectStartingPoint('clone')"
+          >
+            <mat-icon class="text-6xl w-12 h-12 text-blue-500 mb-4"
+              >content_copy</mat-icon
+            >
+            <h3 class="mb-2 text-lg font-medium">Clone Existing</h3>
+            <p class="m-0 text-sm text-gray-600">
+              Clone and modify an existing use case
+            </p>
+          </mat-card>
+        </div>
+
+        <!-- Clone Selection -->
+        <div
+          class="mt-6 p-6 bg-gray-50 rounded-lg"
+          *ngIf="startingPoint === 'clone'"
+        >
+          <h3 class="mt-0 mb-4 text-lg">Select Use Case to Clone</h3>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Use Case</mat-label>
+            <mat-select
+              [(value)]="selectedUseCase"
+              placeholder="Select a use case"
+            >
+              <mat-option *ngFor="let uc of availableUseCases" [value]="uc">
+                {{ uc.name }} ({{ uc.category }})
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div
+            class="mt-6 p-4 bg-white rounded border border-gray-200"
+            *ngIf="selectedUseCase"
+          >
+            <h4 class="m-0 mb-3 text-base font-medium">Selected Use Case</h4>
+            <div class="flex flex-col gap-2">
+              <div class="flex gap-3">
+                <strong class="min-w-[100px] text-gray-600 font-medium"
+                  >Name:</strong
+                >
+                <span class="text-gray-900">{{ selectedUseCase.name }}</span>
+              </div>
+              <div class="flex gap-3">
+                <strong class="min-w-[100px] text-gray-600 font-medium"
+                  >Category:</strong
+                >
+                <span class="text-gray-900">{{
+                  selectedUseCase.category
+                }}</span>
+              </div>
+              <div class="flex gap-3">
+                <strong class="min-w-[100px] text-gray-600 font-medium"
+                  >Intent:</strong
+                >
+                <span class="text-gray-900">{{
+                  selectedUseCase.intent_type
+                }}</span>
+              </div>
+              <div class="flex gap-3" *ngIf="selectedUseCase.description">
+                <strong class="min-w-[100px] text-gray-600 font-medium"
+                  >Description:</strong
+                >
+                <span class="text-gray-900">{{
+                  selectedUseCase.description
+                }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pattern Selection -->
+        <div
+          class="mt-6 p-6 bg-gray-50 rounded-lg"
+          *ngIf="startingPoint === 'pattern'"
+        >
+          <h3 class="mt-0 mb-4 text-lg">Select a Prompt Engineering Pattern</h3>
+
+          <!-- Filters -->
+          <div class="flex gap-4 mb-6">
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Search Patterns</mat-label>
+              <input
+                matInput
+                [(ngModel)]="patternSearchTerm"
+                (ngModelChange)="filterPatterns()"
+                placeholder="Search by name or description"
+              />
+              <mat-icon matPrefix>search</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Category</mat-label>
+              <mat-select
+                [(ngModel)]="selectedCategory"
+                (ngModelChange)="filterPatterns()"
+              >
+                <mat-option [value]="null">All Categories</mat-option>
+                <mat-option *ngFor="let cat of patternCategories" [value]="cat">
+                  {{ cat }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Pattern Grid -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto p-1"
+            *ngIf="!isLoading"
+          >
+            <mat-card
+              *ngFor="let pattern of filteredPatterns"
+              class="cursor-pointer transition-all duration-200 border-2 flex flex-col h-full p-0 overflow-hidden hover:-translate-y-1 hover:shadow-lg"
+              [class.border-green-500]="
+                selectedPattern?.pattern_id === pattern.pattern_id
+              "
+              [class.bg-green-50]="
+                selectedPattern?.pattern_id === pattern.pattern_id
+              "
+              [class.border-transparent]="
+                selectedPattern?.pattern_id !== pattern.pattern_id
+              "
+              (click)="selectPattern(pattern)"
+            >
+              <!-- Category badge -->
+              <div
+                class="flex items-center gap-2 px-4 py-2 text-white font-medium text-xs uppercase tracking-wide"
+                [style.background-color]="
+                  getCategoryInfo(pattern.category).color
+                "
+              >
+                <mat-icon class="text-lg w-[18px] h-[18px]">{{
+                  getCategoryInfo(pattern.category).icon
+                }}</mat-icon>
+                <span>{{ getCategoryInfo(pattern.category).label }}</span>
+              </div>
+
+              <!-- Pattern name and description -->
+              <div class="px-5 py-4 flex-1">
+                <h3
+                  class="mt-0 mb-2 text-lg font-medium text-gray-900 leading-tight"
+                >
+                  {{ pattern.name }}
+                </h3>
+                <p
+                  class="m-0 text-sm text-gray-600 leading-relaxed line-clamp-3"
+                >
+                  {{ pattern.description }}
+                </p>
+              </div>
+
+              <!-- Tags -->
+              <div
+                class="px-5 pb-3"
+                *ngIf="pattern.tags && pattern.tags.length > 0"
+              >
+                <mat-chip-set class="m-0">
+                  <mat-chip
+                    *ngFor="let tag of pattern.tags.slice(0, 3)"
+                    class="text-xs min-h-6"
+                  >
+                    {{ tag }}
+                  </mat-chip>
+                </mat-chip-set>
+              </div>
+
+              <!-- Footer -->
+              <div
+                class="flex justify-between items-center px-5 py-3 border-t border-gray-200 bg-gray-50"
+              >
+                <div
+                  class="flex items-center gap-1.5 text-gray-600 text-sm"
+                  matTooltip="Times used"
+                >
+                  <mat-icon class="text-lg w-[18px] h-[18px]"
+                    >trending_up</mat-icon
+                  >
+                  <span>{{ pattern.use_count || 0 }}</span>
+                </div>
+
+                <button
+                  mat-icon-button
+                  (click)="selectPattern(pattern); $event.stopPropagation()"
+                  matTooltip="Select pattern"
+                  class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                >
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+              </div>
+            </mat-card>
+          </div>
+
+          <!-- Selected Pattern Preview -->
+          <div
+            class="mt-6 p-4 bg-white rounded border border-gray-200"
+            *ngIf="selectedPattern"
+          >
+            <h4>Selected Pattern</h4>
+            <div class="preview-info">
+              <div class="info-row">
+                <strong>Name:</strong>
+                <span>{{ selectedPattern.name }}</span>
+              </div>
+              <div class="info-row">
+                <strong>Category:</strong>
+                <span>{{ selectedPattern.category }}</span>
+              </div>
+              <div class="info-row" *ngIf="selectedPattern.description">
+                <strong>Description:</strong>
+                <span>{{ selectedPattern.description }}</span>
+              </div>
+              <div class="info-row" *ngIf="selectedPattern.source_url">
+                <strong>Source:</strong>
+                <a
+                  [href]="selectedPattern.source_url"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Learn more <mat-icon inline>open_in_new</mat-icon>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading Spinner -->
+          <div class="loading-patterns" *ngIf="isLoading">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Loading patterns...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: User Experience (ADR-065) -->
+      <div class="step-container" *ngIf="currentStep === 3">
+        <h2>Step {{ getStepNumber(3) }}: User Experience</h2>
+        <p class="step-description">
+          What does the end user see? Define the input form and
+          how results are displayed.
+          <span *ngIf="appliedPatternName" class="pattern-badge">
+            <mat-icon inline>auto_awesome</mat-icon>
+            Pattern: {{ appliedPatternName }}
+          </span>
+        </p>
+
+        <!-- Panel A: User Interaction (ADR-064) — expanded by default -->
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>input</mat-icon>
+              User Interaction
+            </mat-panel-title>
+            <mat-panel-description>
+              Input fields and user prompt template
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <app-user-interaction-config
+            [inputFields]="inputFields"
+            (inputFieldsChange)="inputFields = $event"
+            [userPromptTemplate]="userPromptTemplate"
+            (userPromptTemplateChange)="userPromptTemplate = $event"
+            (validationChange)="onUserInteractionValidationChange($event)"
+          ></app-user-interaction-config>
+        </mat-expansion-panel>
+
+        <!-- Contextual description (ADR-065) -->
+        <div class="audience-banner">
+          <mat-icon>info_outline</mat-icon>
+          <p>
+            This step defines what end users see: the input form
+            they fill in and how results are displayed. For API
+            consumers, the Output Schema is the contract;
+            visualization templates apply only to the browser UI.
+          </p>
+        </div>
+
+        <!-- Panel B: Output Configuration — collapsed by default -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>output</mat-icon>
+              Output Configuration
+            </mat-panel-title>
+            <mat-panel-description>
+              Output format, schema, and visualization
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="configForm">
+            <mat-form-field appearance="outline" class="w-full mb-4">
+              <mat-label>Output Format</mat-label>
+              <mat-select formControlName="output_format">
+                <mat-option
+                  *ngFor="let format of outputFormatOptions"
+                  [value]="format.value"
+                >
+                  <div class="option-content">
+                    <span class="option-label">{{ format.label }}</span>
+                    <span class="option-description">{{
+                      format.description
+                    }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-hint>Expected output format for responses</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full mb-4">
+              <mat-label>Validation Mode</mat-label>
+              <mat-select formControlName="validation_mode">
+                <mat-option
+                  *ngFor="let mode of validationModeOptions"
+                  [value]="mode.value"
+                >
+                  <div class="option-content">
+                    <span class="option-label">{{ mode.label }}</span>
+                    <span class="option-description">{{
+                      mode.description
+                    }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-hint>How strictly to validate output format</mat-hint>
+            </mat-form-field>
+
+            @if (
+              configForm.value.output_format === 'json' ||
+              configForm.value.output_format === 'structured'
+            ) {
+              <div class="output-contract-structured">
+                <h4 class="subsection-label">
+                  Visualization Template (optional, UI only)
+                </h4>
+                <app-output-template-selector
+                  [selectedTemplateId]="configForm.get('output_template_id')?.value"
+                  (templateChange)="
+                    configForm.patchValue({ output_template_id: $event });
+                    updateSchemaCompatibility()
+                  "
+                >
+                </app-output-template-selector>
+
+                <h4 class="subsection-label">Output Schema</h4>
+                <app-schema-editor
+                  [schema]="getOutputSchemaForEditor()"
+                  [presetSchemas]="outputSchemaPresets"
+                  [compatibility]="schemaCompatibility"
+                  (schemaChange)="onOutputSchemaChange($event)"
+                  (presetApplied)="onSchemaPresetApplied($event)"
+                >
+                </app-schema-editor>
+
+                <div class="visualization-preview mt-4">
+                  <h4 class="subsection-label">Visualization Preview</h4>
+                  <button
+                    type="button"
+                    mat-stroked-button
+                    (click)="loadOutputPreview()"
+                    [disabled]="
+                      !configForm.get('output_template_id')?.value ||
+                      isLoadingOutputPreview
+                    "
+                  >
+                    {{ showOutputPreview ? 'Hide Preview' : 'Show Preview' }}
+                  </button>
+                  @if (isLoadingOutputPreview) {
+                    <mat-spinner diameter="24" class="inline-spinner"></mat-spinner>
+                  }
+                  @if (showOutputPreview && formattedPreview) {
+                    <div class="preview-container mt-2">
+                      <app-structured-output-renderer
+                        [formattedOutput]="formattedPreview"
+                      >
+                      </app-structured-output-renderer>
+                      <p class="preview-note text-sm text-gray-600 mt-2">
+                        Sample data — actual output will vary based on LLM
+                        response.
+                      </p>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </form>
+        </mat-expansion-panel>
+      </div>
+
+      <!-- Step 4: AI Engine (ADR-065) -->
+      <div class="step-container" *ngIf="currentStep === 4">
+        <h2>Step {{ getStepNumber(4) }}: AI Engine</h2>
+        <p class="step-description">
+          How does the AI work? Configure prompts, model,
+          retrieval, tools, and policies.
+        </p>
+
+        <!-- Prompt Engineering Section -->
+        <form [formGroup]="promptsForm">
+          <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>edit_note</mat-icon>
+                Prompt Engineering
+              </mat-panel-title>
+              <mat-panel-description>
+                System prompt, developer prompt, and few-shot examples
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <!-- System Prompt -->
+            <h4 class="mt-0 mb-3 text-base font-medium text-gray-700">
+              <mat-icon class="text-lg align-middle mr-1">person</mat-icon>
+              System Prompt (Hidden)
+            </h4>
+            <mat-form-field appearance="outline" class="w-full mb-4">
+              <mat-label>System Prompt</mat-label>
+              <textarea
+                matInput
+                formControlName="system_prompt"
+                rows="8"
+                placeholder="You are a cybersecurity AI assistant..."
+                style="min-height: 160px; resize: vertical"
+              >
+              </textarea>
+              <mat-hint>
+                Hidden system instructions defining persona and task
+              </mat-hint>
+            </mat-form-field>
+
+            <!-- Developer Prompt -->
+            <h4 class="mt-4 mb-3 text-base font-medium text-gray-700">
+              <mat-icon class="text-lg align-middle mr-1">code</mat-icon>
+              Developer Prompt (Hidden)
+            </h4>
+            <mat-form-field appearance="outline" class="w-full mb-4">
+              <mat-label>Developer Prompt</mat-label>
+              <textarea
+                matInput
+                formControlName="developer_prompt"
+                rows="8"
+                placeholder="IMPORTANT: Always cite sources..."
+                style="min-height: 160px; resize: vertical"
+              >
+              </textarea>
+              <mat-hint>
+                Hidden technical instructions (citations, format, etc.)
+              </mat-hint>
+            </mat-form-field>
+
+            <!-- Few-Shot Examples -->
+            <h4 class="mt-4 mb-3 text-base font-medium text-gray-700">
+              <mat-icon class="text-lg align-middle mr-1">school</mat-icon>
+              Few-Shot Examples
+              ({{ getFewshotsArray().length }})
+            </h4>
+            <div formArrayName="fewshots">
+              <div
+                *ngFor="let pair of getFewshotsArray().controls; let i = index"
+                [formGroupName]="i"
+                class="fewshot-pair"
+              >
+                <div class="fewshot-header">
+                  <h4>Example {{ i + 1 }}</h4>
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="removeFewshotPair(i)"
+                    type="button"
+                    matTooltip="Remove example"
+                    aria-label="Remove example"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>User Query</mat-label>
+                  <textarea
+                    matInput
+                    formControlName="user"
+                    rows="4"
+                    placeholder="Example user question..."
+                    style="min-height: 100px; resize: vertical"
+                  >
+                  </textarea>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Assistant Response</mat-label>
+                  <textarea
+                    matInput
+                    formControlName="assistant"
+                    rows="6"
+                    placeholder="Example assistant response..."
+                    style="min-height: 120px; resize: vertical"
+                  >
+                  </textarea>
+                </mat-form-field>
+              </div>
+
+              <button
+                mat-stroked-button
+                color="primary"
+                (click)="addFewshotPair()"
+                type="button"
+              >
+                <mat-icon>add</mat-icon>
+                Add Few-Shot Example
+              </button>
+            </div>
+
+            <!-- Prompt Preview Toggle -->
+            <div class="preview-toggle mt-4">
+              <button
+                mat-raised-button
+                color="accent"
+                (click)="togglePromptPreview()"
+                type="button"
+              >
+                <mat-icon>{{
+                  showPromptPreview ? 'visibility_off' : 'visibility'
+                }}</mat-icon>
+                {{ showPromptPreview ? 'Hide' : 'Show' }} Message Assembly Preview
+              </button>
+            </div>
+
+            <!-- Prompt Preview -->
+            <mat-card class="prompt-preview mt-4" *ngIf="showPromptPreview">
+              <h4>Prompt Preview (Message Assembly)</h4>
+              <div class="preview-content">
+                <div
+                  class="message-block"
+                  *ngIf="promptsForm.value.system_prompt"
+                >
+                  <div class="message-role">
+                    <mat-icon>person</mat-icon> System
+                  </div>
+                  <div class="message-content">
+                    {{ promptsForm.value.system_prompt }}
+                  </div>
+                </div>
+
+                <div
+                  class="message-block"
+                  *ngIf="promptsForm.value.developer_prompt"
+                >
+                  <div class="message-role">
+                    <mat-icon>code</mat-icon> Developer
+                  </div>
+                  <div class="message-content">
+                    {{ promptsForm.value.developer_prompt }}
+                  </div>
+                </div>
+
+                <ng-container *ngFor="let pair of promptsForm.value.fewshots">
+                  <div class="message-block">
+                    <div class="message-role">
+                      <mat-icon>question_answer</mat-icon> User
+                    </div>
+                    <div class="message-content">
+                      {{ pair.user }}
+                    </div>
+                  </div>
+                  <div class="message-block">
+                    <div class="message-role">
+                      <mat-icon>smart_toy</mat-icon> Assistant
+                    </div>
+                    <div class="message-content">
+                      {{ pair.assistant }}
+                    </div>
+                  </div>
+                </ng-container>
+
+                <div class="message-block user-query-placeholder">
+                  <div class="message-role">
+                    <mat-icon>question_answer</mat-icon> User
+                  </div>
+                  <div class="message-content">
+                    <em>[User's actual query will appear here]</em>
+                  </div>
+                </div>
+              </div>
+            </mat-card>
+          </mat-expansion-panel>
+        </form>
+
+        <!-- Model, RAG, Tools, Policies -->
+        <form [formGroup]="configForm">
+          <!-- Model Selection & Sampling -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>psychology</mat-icon>
+                Model Selection & Sampling
+              </mat-panel-title>
+              <mat-panel-description>
+                Choose LLM model and configure generation
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-form-field appearance="outline" class="w-full mb-4">
+              <mat-label>LLM Model</mat-label>
+              <mat-select formControlName="llm_model">
+                <mat-option *ngIf="isLoadingModels" disabled>
+                  Loading models...
+                </mat-option>
+                <mat-option
+                  *ngFor="let model of llmModels"
+                  [value]="model.model_id"
+                  [disabled]="!model.is_available"
+                >
+                  <div class="model-option">
+                    <span class="model-label">{{ model.name }}</span>
+                    <span class="model-description">{{
+                      getModelDescription(model)
+                    }}</span>
+                    <mat-icon *ngIf="!model.is_available" class="text-sm"
+                      >warning</mat-icon
+                    >
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-hint>Primary language model for generation</mat-hint>
+            </mat-form-field>
+
+            <!-- System Embedding Model Info -->
+            <div class="bg-blue-50 border border-blue-200 rounded p-4 mb-4">
+              <div class="flex items-start gap-2">
+                <mat-icon class="text-blue-600 mt-0.5">info</mat-icon>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-blue-900 mb-1">
+                    System Embedding Model
+                  </p>
+                  <p class="text-sm text-blue-800 mb-2">
+                    {{ systemEmbeddingModel }}
+                  </p>
+                  <p class="text-xs text-blue-700">
+                    All collections use the same embedding model for vector
+                    space consistency and multi-collection search capability.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Generation Parameters -->
+            <h4 class="mt-6 mb-4 text-base font-medium text-gray-700">
+              Generation Parameters
+            </h4>
+
+            <!-- Sampling Preset Selector (ADR-023) -->
+            <mat-form-field appearance="outline" class="w-full mb-4">
+              <mat-label>Sampling Preset</mat-label>
+              <mat-select formControlName="sampling_preset">
+                <mat-option value="strict">
+                  <div class="py-2">
+                    <div class="font-medium">Strict</div>
+                    <div class="text-sm text-gray-600">
+                      High consistency, low variance (temp: 0.15, top_p: 0.90,
+                      max: 1024)
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                      Best for: Threat triage, IOC extraction, classification
+                    </div>
+                  </div>
+                </mat-option>
+                <mat-option value="balanced">
+                  <div class="py-2">
+                    <div class="font-medium">Balanced</div>
+                    <div class="text-sm text-gray-600">
+                      Good general-purpose default (temp: 0.65, top_p: 0.95,
+                      max: 2048)
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                      Best for: General Q&A, summarization, RAG queries
+                    </div>
+                  </div>
+                </mat-option>
+                <mat-option value="creative">
+                  <div class="py-2">
+                    <div class="font-medium">Creative</div>
+                    <div class="text-sm text-gray-600">
+                      Exploratory, varied outputs (temp: 0.85, top_p: 0.97, max:
+                      4096)
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                      Best for: Playbook drafting, scenario generation
+                    </div>
+                  </div>
+                </mat-option>
+                <mat-option value="custom">
+                  <div class="py-2">
+                    <div class="font-medium">Custom</div>
+                    <div class="text-sm text-gray-600">
+                      Advanced: Define your own parameters
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                      Requires override permission
+                    </div>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-hint>
+                Choose a preset for variance control or select Custom for
+                advanced tuning
+              </mat-hint>
+            </mat-form-field>
+
+            <!-- Preset Parameters Display (Read-only) -->
+            <div
+              *ngIf="configForm.value.sampling_preset !== 'custom'"
+              class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded"
+            >
+              <div class="flex items-center gap-2 mb-2">
+                <mat-icon class="text-blue-600">info</mat-icon>
+                <span class="font-medium text-blue-900"
+                  >Active Preset Parameters</span
+                >
+              </div>
+              <div class="grid grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span class="text-gray-600">Temperature:</span>
+                  <span class="ml-2 font-medium">
+                    {{
+                      getPresetParams(configForm.value.sampling_preset)
+                        .temperature
+                    }}
+                  </span>
+                </div>
+                <div>
+                  <span class="text-gray-600">Top-P:</span>
+                  <span class="ml-2 font-medium">
+                    {{
+                      getPresetParams(configForm.value.sampling_preset).top_p
+                    }}
+                  </span>
+                </div>
+                <div>
+                  <span class="text-gray-600">Max Tokens:</span>
+                  <span class="ml-2 font-medium">
+                    {{
+                      getPresetParams(configForm.value.sampling_preset)
+                        .max_tokens
+                    }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- High-Entropy Warning (ADR-023) -->
+            <div
+              *ngIf="isHighEntropyConfig()"
+              class="mb-4 p-4 bg-red-50 border border-red-300 rounded"
+            >
+              <div class="flex items-center gap-2 mb-2">
+                <mat-icon class="text-red-600">warning</mat-icon>
+                <span class="font-medium text-red-900"
+                  >High-Entropy Configuration Detected</span
+                >
+              </div>
+              <p class="text-sm text-red-800">
+                Your current parameters (temperature &gt; 0.9 and top_p &gt;
+                0.97) may cause repetition loops or inconsistent outputs.
+                Consider using a lower preset or reducing these values.
+              </p>
+            </div>
+
+            <!-- Custom Parameters (Only visible when CUSTOM preset selected) -->
+            <div
+              *ngIf="configForm.value.sampling_preset === 'custom'"
+              class="mb-4"
+            >
+              <div class="flex gap-4 mb-4">
+                <mat-form-field appearance="outline" class="flex-1">
+                  <mat-label>Temperature</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="temperature"
+                    step="0.1"
+                    min="0"
+                    max="2"
+                  />
+                  <mat-hint>Randomness: 0 (focused) to 2 (creative)</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="flex-1">
+                  <mat-label>Max Tokens</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="max_tokens"
+                    step="128"
+                    min="1"
+                    max="16384"
+                  />
+                  <mat-hint>Maximum response length</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="flex-1">
+                  <mat-label>Top P</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="top_p"
+                    step="0.05"
+                    min="0"
+                    max="1"
+                  />
+                  <mat-hint>Nucleus sampling: 0.0-1.0</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Penalty Parameters (Always visible) -->
+            <div class="flex gap-4 mb-4">
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Frequency Penalty</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="frequency_penalty"
+                  step="0.1"
+                  min="-2"
+                  max="2"
+                />
+                <mat-hint>Penalize frequent tokens (-2.0 to 2.0)</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Presence Penalty</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="presence_penalty"
+                  step="0.1"
+                  min="-2"
+                  max="2"
+                />
+                <mat-hint>Penalize new tokens (-2.0 to 2.0)</mat-hint>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+
+          <!-- RAG Settings Section -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>search</mat-icon>
+                RAG Settings
+              </mat-panel-title>
+              <mat-panel-description>
+                Configure retrieval-augmented generation
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-slide-toggle formControlName="rag_enabled" class="w-full mb-4">
+              Enable RAG (Retrieval-Augmented Generation)
+            </mat-slide-toggle>
+
+            <div class="mt-4" *ngIf="configForm.value.rag_enabled">
+              <mat-form-field appearance="outline" class="w-full mb-4">
+                <mat-label>Vector Collections</mat-label>
+                <mat-select formControlName="rag_vector_collections" multiple>
+                  <mat-option
+                    *ngFor="let collection of availableCollections"
+                    [value]="collection"
+                  >
+                    {{ collection }}
+                  </mat-option>
+                  <!-- Fallback: Show collections from form value if not in availableCollections (view mode) -->
+                  <mat-option
+                    *ngFor="
+                      let collection of getFormCollectionsNotInAvailable()
+                    "
+                    [value]="collection"
+                  >
+                    {{ collection }}
+                  </mat-option>
+                </mat-select>
+                <mat-hint
+                  >Select collections to search (must use same embedding
+                  model)</mat-hint
+                >
+              </mat-form-field>
+
+              <div class="flex gap-4 mb-4">
+                <mat-form-field appearance="outline" class="flex-1">
+                  <mat-label>Top K Results</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="rag_top_k"
+                    min="1"
+                    max="100"
+                  />
+                  <mat-hint>Number of documents to retrieve (1-100)</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="flex-1">
+                  <mat-label>Similarity Threshold</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="rag_similarity_threshold"
+                    step="0.05"
+                    min="0"
+                    max="1"
+                  />
+                  <mat-hint>Minimum similarity score (0.0-1.0)</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <mat-slide-toggle
+                formControlName="rag_hybrid_bm25"
+                class="w-full mb-2"
+              >
+                Enable Hybrid BM25 Search
+              </mat-slide-toggle>
+              <p class="text-sm text-gray-600 mt-1">
+                Combine vector search with keyword matching for better results
+              </p>
+            </div>
+          </mat-expansion-panel>
+
+          <!-- Tools Section -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>build</mat-icon>
+                Tools Configuration
+              </mat-panel-title>
+              <mat-panel-description>
+                Configure tool access and security restrictions
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <h4 class="mt-0 mb-3 text-base font-medium text-gray-700">
+              <mat-icon class="text-lg align-middle mr-1">checklist</mat-icon>
+              Tools Allowlist
+            </h4>
+            <p class="text-sm text-gray-600 mb-4">
+              Select which tools the model is allowed to use. Only tools you
+              have permission to use are shown.
+            </p>
+
+            <app-tool-selector
+              [selectedToolIds]="getToolsAllowlist()"
+              (selectionChange)="onToolsSelectionChange($event)"
+            >
+            </app-tool-selector>
+
+            <!-- ADR-057: Tool Security Restrictions -->
+            <div class="mt-6 pt-6 border-t border-gray-200">
+              <h4 class="mt-0 mb-3 text-base font-medium text-gray-700">
+                <mat-icon class="text-lg align-middle mr-1">security</mat-icon>
+                Security Restrictions (ADR-057)
+              </h4>
+              <p class="text-sm text-gray-600 mb-4">
+                Define security policies that automatically filter available
+                tools based on their security classification. This provides an
+                additional layer of protection beyond the allowlist.
+              </p>
+
+              <app-tool-restrictions
+                [restrictions]="toolRestrictions"
+                (restrictionsChange)="onToolRestrictionsChange($event)"
+              >
+              </app-tool-restrictions>
+            </div>
+          </mat-expansion-panel>
+
+          <!-- Policies & Security Section -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>policy</mat-icon>
+                Policies & Security
+              </mat-panel-title>
+              <mat-panel-description>
+                Configure streaming, history, and PII handling
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-slide-toggle
+              formControlName="streaming_enabled"
+              class="w-full mb-4"
+            >
+              Enable Streaming Support
+            </mat-slide-toggle>
+            <p class="text-sm text-gray-600 mt-1 mb-4">
+              Allow SSE streaming responses
+            </p>
+
+            <mat-slide-toggle
+              formControlName="streaming_default"
+              class="w-full mb-4"
+              [disabled]="!configForm.value.streaming_enabled"
+            >
+              Stream by Default
+            </mat-slide-toggle>
+            <p class="text-sm text-gray-600 mt-1 mb-4">
+              Use streaming for all requests (if enabled)
+            </p>
+
+            <mat-slide-toggle
+              formControlName="history_persistence"
+              class="w-full mb-4"
+            >
+              Persist Conversation History
+            </mat-slide-toggle>
+            <p class="text-sm text-gray-600 mt-1 mb-4">
+              Save conversation threads to database
+            </p>
+
+            <mat-form-field appearance="outline" class="w-full mb-4">
+              <mat-label>PII Redaction</mat-label>
+              <mat-select formControlName="pii_redaction">
+                <mat-option
+                  *ngFor="let option of piiRedactionOptions"
+                  [value]="option.value"
+                >
+                  <div class="option-content">
+                    <span class="option-label">{{ option.label }}</span>
+                    <span class="option-description">{{
+                      option.description
+                    }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-hint
+                >How to handle personally identifiable information</mat-hint
+              >
+            </mat-form-field>
+          </mat-expansion-panel>
+        </form>
+      </div>
+
+      <!-- Step 5: Review & Publish (ADR-065) -->
+      <div class="step-container" *ngIf="currentStep === 5">
+        <h2>Step {{ getStepNumber(5) }}: Review & Publish</h2>
+        <p class="step-description">
+          Is this ready? Review configuration, fix validation
+          errors, and choose lifecycle state.
+        </p>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <mat-card class="summary-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>info</mat-icon>
+                Basic Information
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-row">
+                <span class="label">Name:</span>
+                <span class="value">{{ basicInfoForm.value.name }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Category:</span>
+                <span class="value">{{
+                  getCategoryDisplayName(
+                    basicInfoForm.value.category
+                  )
+                }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Intent:</span>
+                <span class="value">{{
+                  getIntentDisplayName(
+                    basicInfoForm.value.intent_type
+                  )
+                }}</span>
+              </div>
+              <div class="summary-row" *ngIf="basicInfoForm.value.description">
+                <span class="label">Description:</span>
+                <span class="value">{{ basicInfoForm.value.description }}</span>
+              </div>
+              <div class="summary-row" *ngIf="appliedPatternName">
+                <span class="label">Pattern:</span>
+                <span class="value pattern-badge-small">
+                  <mat-icon inline>auto_awesome</mat-icon>
+                  {{ appliedPatternName }}
+                </span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="summary-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>psychology</mat-icon>
+                Models & Settings
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-row">
+                <span class="label">LLM:</span>
+                <span class="value">{{
+                  getLLMLabel(
+                    configForm.getRawValue().llm_model ||
+                      configForm.get('llm_model')?.value
+                  )
+                }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Embedding:</span>
+                <span class="value"
+                  >{{ systemEmbeddingModel }} (System Default)</span
+                >
+              </div>
+              <div class="summary-row">
+                <span class="label">Temperature:</span>
+                <span class="value">{{ configForm.value.temperature }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Max Tokens:</span>
+                <span class="value">{{ configForm.value.max_tokens }}</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="summary-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>search</mat-icon>
+                RAG Configuration
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-row">
+                <span class="label">Enabled:</span>
+                <span class="value">
+                  <mat-icon
+                    class="status-icon"
+                    [class.enabled]="configForm.value.rag_enabled"
+                  >
+                    {{
+                      configForm.value.rag_enabled ? 'check_circle' : 'cancel'
+                    }}
+                  </mat-icon>
+                </span>
+              </div>
+              <div class="summary-row" *ngIf="configForm.value.rag_enabled">
+                <span class="label">Top K:</span>
+                <span class="value">{{ configForm.value.rag_top_k }}</span>
+              </div>
+              <div class="summary-row" *ngIf="configForm.value.rag_enabled">
+                <span class="label">Similarity:</span>
+                <span class="value">{{
+                  configForm.value.rag_similarity_threshold
+                }}</span>
+              </div>
+              <div class="summary-row" *ngIf="configForm.value.rag_enabled">
+                <span class="label">Hybrid BM25:</span>
+                <span class="value">
+                  <mat-icon
+                    class="status-icon"
+                    [class.enabled]="configForm.value.rag_hybrid_bm25"
+                  >
+                    {{
+                      configForm.value.rag_hybrid_bm25
+                        ? 'check_circle'
+                        : 'cancel'
+                    }}
+                  </mat-icon>
+                </span>
+              </div>
+              <div
+                class="summary-row"
+                *ngIf="
+                  configForm.value.rag_enabled &&
+                  configForm.value.rag_vector_collections?.length > 0
+                "
+              >
+                <span class="label">Collections:</span>
+                <span class="value">
+                  <mat-chip-set>
+                    <mat-chip
+                      *ngFor="
+                        let collection of configForm.value
+                          .rag_vector_collections
+                      "
+                    >
+                      {{ collection }}
+                    </mat-chip>
+                  </mat-chip-set>
+                </span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="summary-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>policy</mat-icon>
+                Policies
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-row">
+                <span class="label">Streaming:</span>
+                <span class="value">
+                  <mat-icon
+                    class="status-icon"
+                    [class.enabled]="configForm.value.streaming_enabled"
+                  >
+                    {{
+                      configForm.value.streaming_enabled
+                        ? 'check_circle'
+                        : 'cancel'
+                    }}
+                  </mat-icon>
+                </span>
+              </div>
+              <div class="summary-row">
+                <span class="label">History:</span>
+                <span class="value">
+                  <mat-icon
+                    class="status-icon"
+                    [class.enabled]="configForm.value.history_persistence"
+                  >
+                    {{
+                      configForm.value.history_persistence
+                        ? 'check_circle'
+                        : 'cancel'
+                    }}
+                  </mat-icon>
+                </span>
+              </div>
+              <div class="summary-row">
+                <span class="label">PII Redaction:</span>
+                <span class="value">{{ configForm.value.pii_redaction }}</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- ADR-057: Tool Restrictions Summary -->
+          <mat-card class="summary-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>security</mat-icon>
+                Tool Restrictions
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-row">
+                <span class="label">Enabled:</span>
+                <span class="value">
+                  <mat-icon
+                    class="status-icon"
+                    [class.enabled]="toolRestrictions !== null"
+                  >
+                    {{ toolRestrictions ? 'check_circle' : 'cancel' }}
+                  </mat-icon>
+                </span>
+              </div>
+              <ng-container *ngIf="toolRestrictions">
+                <div class="summary-row">
+                  <span class="label">Data Sources:</span>
+                  <span class="value">{{
+                    toolRestrictions.allowed_data_sources.join(', ') || 'All'
+                  }}</span>
+                </div>
+                <div class="summary-row">
+                  <span class="label">Data Flows:</span>
+                  <span class="value">{{
+                    toolRestrictions.allowed_data_flows.join(', ') || 'All'
+                  }}</span>
+                </div>
+                <div class="summary-row">
+                  <span class="label">Network:</span>
+                  <span class="value">{{
+                    toolRestrictions.allowed_network_levels.join(', ') || 'All'
+                  }}</span>
+                </div>
+                <div class="summary-row">
+                  <span class="label">Min Sensitivity:</span>
+                  <span class="value">{{
+                    toolRestrictions.required_data_sensitivity || 'internal'
+                  }}</span>
+                </div>
+              </ng-container>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Prompts Preview -->
+        <mat-expansion-panel class="preview-prompts-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>visibility</mat-icon>
+              Preview Prompts
+            </mat-panel-title>
+            <mat-panel-description>
+              View configured multi-role prompts
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="prompts-preview-content">
+            <div class="prompt-section" *ngIf="promptsForm.value.system_prompt">
+              <h4>
+                <mat-icon>person</mat-icon>
+                System Prompt
+              </h4>
+              <div class="prompt-text">
+                {{ promptsForm.value.system_prompt }}
+              </div>
+            </div>
+
+            <div
+              class="prompt-section"
+              *ngIf="promptsForm.value.developer_prompt"
+            >
+              <h4>
+                <mat-icon>code</mat-icon>
+                Developer Prompt
+              </h4>
+              <div class="prompt-text">
+                {{ promptsForm.value.developer_prompt }}
+              </div>
+            </div>
+
+            <div
+              class="prompt-section"
+              *ngIf="
+                promptsForm.value.fewshots &&
+                promptsForm.value.fewshots.length > 0
+              "
+            >
+              <h4>
+                <mat-icon>school</mat-icon>
+                Few-Shot Examples ({{ promptsForm.value.fewshots.length }})
+              </h4>
+              <div
+                class="fewshot-preview"
+                *ngFor="let pair of promptsForm.value.fewshots; let i = index"
+              >
+                <div class="fewshot-label">Example {{ i + 1 }}</div>
+                <div class="fewshot-pair-preview">
+                  <div class="fewshot-user">
+                    <strong>User:</strong> {{ pair.user }}
+                  </div>
+                  <div class="fewshot-assistant">
+                    <strong>Assistant:</strong> {{ pair.assistant }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="no-prompts-message"
+              *ngIf="
+                !promptsForm.value.system_prompt &&
+                !promptsForm.value.developer_prompt &&
+                (!promptsForm.value.fewshots ||
+                  promptsForm.value.fewshots.length === 0)
+              "
+            >
+              <mat-icon>info</mat-icon>
+              <p>No prompts configured. Using defaults.</p>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <!-- Validation Errors (if any) -->
+        <div class="validation-errors" *ngIf="validationErrors.length > 0">
+          <div class="error-title">
+            <mat-icon>error</mat-icon>
+            <span>Validation Errors</span>
+          </div>
+          <ul>
+            <li *ngFor="let error of validationErrors">{{ error }}</li>
+          </ul>
+        </div>
+
+        <!-- Validation Status -->
+        <mat-card class="mb-6">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="success-icon">check_circle</mat-icon>
+              Validation Checks
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="validation-checks">
+              <div
+                class="check-item"
+                [class.passed]="basicInfoForm.valid"
+                [class.failed]="!basicInfoForm.valid"
+              >
+                <mat-icon>{{
+                  basicInfoForm.valid ? 'check' : 'error'
+                }}</mat-icon>
+                <span>Basic information complete</span>
+              </div>
+              <div
+                class="check-item"
+                [class.passed]="configForm.value.llm_model"
+                [class.failed]="!configForm.value.llm_model"
+              >
+                <mat-icon>{{
+                  configForm.value.llm_model ? 'check' : 'error'
+                }}</mat-icon>
+                <span>Model configuration valid</span>
+              </div>
+              <div class="check-item passed">
+                <mat-icon>check</mat-icon>
+                <span>RAG settings within acceptable ranges</span>
+              </div>
+              <div
+                class="check-item"
+                [class.passed]="
+                  promptsForm.value.system_prompt ||
+                  promptsForm.value.developer_prompt
+                "
+                [class.warning]="
+                  !promptsForm.value.system_prompt &&
+                  !promptsForm.value.developer_prompt
+                "
+              >
+                <mat-icon>{{
+                  promptsForm.value.system_prompt ||
+                  promptsForm.value.developer_prompt
+                    ? 'check'
+                    : 'warning'
+                }}</mat-icon>
+                <span>{{
+                  promptsForm.value.system_prompt ||
+                  promptsForm.value.developer_prompt
+                    ? 'Prompts
+                  configured'
+                    : 'No prompts (will use defaults)'
+                }}</span>
+              </div>
+              <div class="check-item passed">
+                <mat-icon>check</mat-icon>
+                <span>Policy configuration valid</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- JSON Configuration Preview (Optional) -->
+        <mat-expansion-panel class="mb-6">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>code</mat-icon>
+              Full Configuration (JSON)
+            </mat-panel-title>
+            <mat-panel-description>
+              View complete use case configuration
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="json-preview">
+            <pre>{{ getConfigPreviewJson() }}</pre>
+          </div>
+        </mat-expansion-panel>
+
+        <!-- Lifecycle State Selection -->
+        <mat-card class="save-options-card" *ngIf="!isViewMode">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>rule</mat-icon>
+              Lifecycle State
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="text-sm text-gray-600 mb-4">
+              Choose the initial lifecycle state for your use case
+            </p>
+
+            <div class="flex flex-col gap-3">
+              <!-- Draft Option -->
+              <div
+                class="lifecycle-option p-3 rounded border cursor-pointer transition-all"
+                [class.border-blue-500]="
+                  targetLifecycleState === LifecycleState.DRAFT
+                "
+                [class.bg-blue-50]="
+                  targetLifecycleState === LifecycleState.DRAFT
+                "
+                [class.border-gray-200]="
+                  targetLifecycleState !== LifecycleState.DRAFT
+                "
+                (click)="targetLifecycleState = LifecycleState.DRAFT"
+              >
+                <div class="flex items-start gap-3">
+                  <input
+                    type="radio"
+                    name="lifecycleState"
+                    [checked]="targetLifecycleState === LifecycleState.DRAFT"
+                    (change)="targetLifecycleState = LifecycleState.DRAFT"
+                    class="mt-1"
+                  />
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                      <mat-icon class="text-gray-600 text-lg"
+                        >edit_note</mat-icon
+                      >
+                      <strong class="text-base">Save as Draft</strong>
+                    </div>
+                    <p class="text-sm text-gray-600 m-0">
+                      Recommended for testing. You can edit and validate before
+                      publishing.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Review Option -->
+              <div
+                class="lifecycle-option p-3 rounded border cursor-pointer transition-all"
+                [class.border-blue-500]="
+                  targetLifecycleState === LifecycleState.REVIEW
+                "
+                [class.bg-blue-50]="
+                  targetLifecycleState === LifecycleState.REVIEW
+                "
+                [class.border-gray-200]="
+                  targetLifecycleState !== LifecycleState.REVIEW
+                "
+                (click)="targetLifecycleState = LifecycleState.REVIEW"
+              >
+                <div class="flex items-start gap-3">
+                  <input
+                    type="radio"
+                    name="lifecycleState"
+                    [checked]="targetLifecycleState === LifecycleState.REVIEW"
+                    (change)="targetLifecycleState = LifecycleState.REVIEW"
+                    class="mt-1"
+                  />
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                      <mat-icon class="text-yellow-600 text-lg"
+                        >rate_review</mat-icon
+                      >
+                      <strong class="text-base">Submit for Review</strong>
+                    </div>
+                    <p class="text-sm text-gray-600 m-0">
+                      Submit for admin approval. Will be reviewed before
+                      publishing.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Published Option -->
+              <div
+                class="lifecycle-option p-3 rounded border cursor-pointer transition-all"
+                [class.border-blue-500]="
+                  targetLifecycleState === LifecycleState.PUBLISHED
+                "
+                [class.bg-blue-50]="
+                  targetLifecycleState === LifecycleState.PUBLISHED
+                "
+                [class.border-gray-200]="
+                  targetLifecycleState !== LifecycleState.PUBLISHED
+                "
+                (click)="targetLifecycleState = LifecycleState.PUBLISHED"
+              >
+                <div class="flex items-start gap-3">
+                  <input
+                    type="radio"
+                    name="lifecycleState"
+                    [checked]="
+                      targetLifecycleState === LifecycleState.PUBLISHED
+                    "
+                    (change)="targetLifecycleState = LifecycleState.PUBLISHED"
+                    class="mt-1"
+                  />
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                      <mat-icon class="text-green-600 text-lg"
+                        >publish</mat-icon
+                      >
+                      <strong class="text-base">Publish Immediately</strong>
+                      <mat-chip
+                        class="text-xs px-2 py-1"
+                        style="height: 20px; min-height: 20px"
+                      >
+                        Admin Only
+                      </mat-chip>
+                    </div>
+                    <p class="text-sm text-gray-600 m-0">
+                      Immediately active and available to all users. Requires
+                      admin role.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="save-info mt-4">
+              <mat-icon>info</mat-icon>
+              <p>
+                {{
+                  targetLifecycleState === LifecycleState.DRAFT
+                    ? 'After creation, you can test with sample inputs and publish when ready.'
+                    : targetLifecycleState === LifecycleState.REVIEW
+                      ? 'An administrator will review your use case before it can be published.'
+                      : 'Use case will be immediately available for execution by all users.'
+                }}
+              </p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-card>
+  </div>
+  <!-- End content-area -->
+
+  <!-- Layer 4: Page Footer / Navigation (NEVER SCROLLS) -->
+  <div class="page-footer">
+    <div class="wizard-actions">
+      <button mat-stroked-button (click)="cancel()" [disabled]="isCreating">
+        Cancel
+      </button>
+
+      <div class="flex gap-3">
+        <button
+          mat-stroked-button
+          (click)="previousStep()"
+          [disabled]="currentStep === 1 || isCreating"
+        >
+          <mat-icon class="mx-1">chevron_left</mat-icon>
+          Previous
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="nextStep()"
+          [disabled]="!canProceed() || isCreating"
+        >
+          {{ getButtonText() }}
+          <mat-icon *ngIf="!isLastStep()" class="mx-1">chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isCreating">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="m-0 text-base text-gray-600">
+      {{
+        isViewMode
+          ? 'Loading AI operation...'
+          : isEditMode
+            ? 'Updating AI operation...'
+            : 'Creating AI operation...'
+      }}
+    </p>
+  </div>
+</div>
+<!-- End page-container -->

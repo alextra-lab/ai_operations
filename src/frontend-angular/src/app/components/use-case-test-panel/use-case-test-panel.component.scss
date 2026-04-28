@@ -1,0 +1,31 @@
+// Test panel component styles
+// Follows ADR-012: Use SCSS only for complex states/animations
+
+.test-panel {
+  // Material elevation shadow
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  mat-card-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .response-json {
+    background-color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    overflow-x: auto;
+    font-family: monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .response-content {
+    background-color: #fafafa;
+  }
+
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

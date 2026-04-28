@@ -1,0 +1,110 @@
+<!-- Main Layout Container - Hybrid CSS: Tailwind for layout, SCSS for transitions -->
+<div
+  class="main-layout flex flex-col h-screen overflow-hidden"
+  [class.sidebar-open]="isSidebarOpen()"
+  [class.sidebar-collapsed]="isSidebarCollapsed()"
+>
+  <!-- Sidebar -->
+  <mat-sidenav-container
+    class="sidenav-container flex-1 h-screen"
+    [class.sidebar-collapsed]="isSidebarCollapsed()"
+  >
+    <mat-sidenav
+      #sidenav
+      mode="side"
+      [opened]="isSidebarOpen()"
+      [style.width]="getSidebarWidth()"
+      [style.min-width]="getSidebarWidth()"
+      [style.max-width]="getSidebarWidth()"
+      class="main-sidenav"
+    >
+      <!-- Sidebar Content -->
+      <app-sidebar
+        [menuItems]="menuItems()"
+        [isCollapsed]="isSidebarCollapsed()"
+        [currentUser]="currentUser()"
+        (menuItemClick)="onMenuItemClick($event)"
+        (toggleCollapse)="onSidebarCollapseToggle()"
+      >
+      </app-sidebar>
+    </mat-sidenav>
+
+    <!-- Main Content Area -->
+    <mat-sidenav-content
+      class="main-content flex flex-col h-screen"
+      [style.margin-left]="getMainContentMarginLeft()"
+    >
+      <!-- Top Toolbar -->
+      <mat-toolbar
+        class="main-toolbar sticky top-0 z-[1000] h-16 min-h-16 flex items-center px-2 sm:px-4 md:px-6"
+        color="primary"
+      >
+        <div class="toolbar-left flex items-center gap-4 flex-1 min-w-0">
+          <!-- Sidebar Toggle Button -->
+          <button
+            mat-icon-button
+            (click)="onSidebarToggle()"
+            [attr.aria-label]="
+              isSidebarOpen() ? 'Close sidebar' : 'Open sidebar'
+            "
+            class="mr-2"
+          >
+            <mat-icon>{{ isSidebarOpen() ? 'menu_open' : 'menu' }}</mat-icon>
+          </button>
+
+          <!-- Breadcrumb Navigation -->
+          <app-breadcrumb
+            class="breadcrumb-container flex-1 min-w-0 hidden md:block"
+          ></app-breadcrumb>
+        </div>
+
+        <div class="toolbar-right flex items-center gap-4">
+          <!-- User Menu and Session Info -->
+          <div
+            class="user-info flex flex-col items-end text-right"
+            *ngIf="currentUser(); else notAuthenticated"
+          >
+            <span
+              class="user-name font-medium text-xs sm:text-sm leading-tight"
+              >{{ currentUser()?.full_name || currentUser()?.username }}</span
+            >
+            <span
+              class="user-roles text-xs opacity-70 leading-tight hidden sm:block"
+              >{{ currentUser()?.roles?.join(', ') }}</span
+            >
+          </div>
+
+          <!-- Logout Button -->
+          <button
+            mat-icon-button
+            (click)="logout()"
+            matTooltip="Logout"
+            *ngIf="currentUser()"
+          >
+            <mat-icon>logout</mat-icon>
+          </button>
+
+          <ng-template #notAuthenticated>
+            <span class="not-authenticated text-sm opacity-70"
+              >Not authenticated</span
+            >
+          </ng-template>
+        </div>
+      </mat-toolbar>
+
+      <!-- Quick Actions Bar -->
+      <app-quick-actions-bar
+        [quickActions]="quickActions()"
+        (actionClick)="onQuickActionClick($event)"
+      >
+      </app-quick-actions-bar>
+
+      <!-- Main Content -->
+      <div class="content-wrapper flex-1 overflow-auto bg-surface">
+        <div class="content-container p-4 sm:p-6 md:p-8">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

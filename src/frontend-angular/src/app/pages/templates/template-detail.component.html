@@ -1,0 +1,387 @@
+<div class="template-detail-container p-6">
+  <!-- Header with Actions -->
+  <div class="flex justify-between items-center mb-6">
+    <div class="flex items-center gap-4">
+      <button
+        mat-icon-button
+        (click)="backToLibrary()"
+        matTooltip="Back to Library"
+      >
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          {{ template?.template_id || 'Loading...' }}
+        </h1>
+        <div *ngIf="template" class="flex items-center gap-2 mt-1">
+          <span
+            [class]="getStatusClass(template.deployment_status)"
+            class="px-3 py-1 rounded-full text-xs font-medium"
+          >
+            {{ getStatusName(template.deployment_status) }}
+          </span>
+          <span class="text-sm text-gray-600 dark:text-gray-400">
+            Version {{ template.version_number }}
+          </span>
+          <mat-icon
+            *ngIf="template.is_active_version"
+            class="text-green-600 text-base"
+            matTooltip="Active Version"
+          >
+            check_circle
+          </mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-2" *ngIf="template && !loading">
+      <button mat-raised-button color="accent" (click)="editTemplate()">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+      <button mat-raised-button color="warn" (click)="deleteTemplate()">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="flex justify-center items-center py-12">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <!-- Main Content -->
+  <div
+    *ngIf="!loading && template"
+    class="grid grid-cols-1 lg:grid-cols-3 gap-6"
+  >
+    <!-- Main Content Area (2/3) -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Template Content Card -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Template Content</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded">
+            <pre class="text-sm font-mono whitespace-pre-wrap break-words">{{
+              template.template_content
+            }}</pre>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Version History & Control -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title
+            >Version History ({{ versions.length }} versions)</mat-card-title
+          >
+        </mat-card-header>
+        <mat-card-content>
+          <!-- Version List -->
+          <div class="space-y-3">
+            <div
+              *ngFor="let version of versions"
+              class="border rounded p-4 hover:bg-gray-50 dark:hover:bg-gray-800"
+            >
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="font-semibold"
+                      >Version {{ version.version_number }}</span
+                    >
+                    <mat-icon
+                      *ngIf="version.is_active_version"
+                      class="text-green-600 text-sm"
+                    >
+                      check_circle
+                    </mat-icon>
+                    <span
+                      [class]="getStatusClass(version.deployment_status)"
+                      class="px-2 py-1 rounded-full text-xs"
+                    >
+                      {{ getStatusName(version.deployment_status) }}
+                    </span>
+                  </div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    <div>Created: {{ formatDate(version.created_at) }}</div>
+                    <div *ngIf="version.approved_at">
+                      Approved: {{ formatDate(version.approved_at) }}
+                    </div>
+                  </div>
+                </div>
+                <div class="flex gap-2">
+                  <button
+                    mat-icon-button
+                    *ngIf="!version.is_active_version"
+                    (click)="activateVersion(version.version_number)"
+                    matTooltip="Activate This Version"
+                    [disabled]="processing"
+                  >
+                    <mat-icon>published_with_changes</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    matTooltip="Select for comparison"
+                    (click)="toggleVersionSelection(1, version.version_number)"
+                  >
+                    <mat-icon>{{
+                      selectedVersion1 === version.version_number
+                        ? 'check_box'
+                        : 'check_box_outline_blank'
+                    }}</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Version Comparison -->
+          <mat-divider class="my-6"></mat-divider>
+          <div class="mt-4">
+            <h3 class="font-semibold mb-3">Compare Versions</h3>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Version 1</mat-label>
+                <mat-select [(ngModel)]="selectedVersion1">
+                  <mat-option
+                    *ngFor="let version of versions"
+                    [value]="version.version_number"
+                  >
+                    Version {{ version.version_number }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Version 2</mat-label>
+                <mat-select [(ngModel)]="selectedVersion2">
+                  <mat-option
+                    *ngFor="let version of versions"
+                    [value]="version.version_number"
+                  >
+                    Version {{ version.version_number }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="compareVersions()"
+              [disabled]="!selectedVersion1 || !selectedVersion2 || processing"
+            >
+              <mat-icon>compare</mat-icon>
+              Compare Versions
+            </button>
+
+            <!-- Diff Result -->
+            <div
+              *ngIf="diffResult"
+              class="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded"
+            >
+              <h4 class="font-semibold mb-2">Differences:</h4>
+
+              <div *ngIf="diffResult.variables_added.length > 0" class="mb-2">
+                <strong class="text-green-600">Variables Added:</strong>
+                <span class="ml-2 font-mono text-sm">
+                  {{ diffResult.variables_added.join(', ') }}
+                </span>
+              </div>
+
+              <div *ngIf="diffResult.variables_removed.length > 0" class="mb-2">
+                <strong class="text-red-600">Variables Removed:</strong>
+                <span class="ml-2 font-mono text-sm">
+                  {{ diffResult.variables_removed.join(', ') }}
+                </span>
+              </div>
+
+              <div class="mt-4">
+                <strong>Content Diff:</strong>
+                <pre
+                  class="mt-2 text-xs font-mono bg-white dark:bg-gray-900 p-3 rounded overflow-x-auto"
+                  >{{ diffResult.content_diff }}</pre
+                >
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Create New Version Card -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Create New Version</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="newVersionForm" class="space-y-4">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>New Template Content</mat-label>
+              <textarea
+                matInput
+                formControlName="template_content"
+                rows="6"
+                placeholder="Enter updated template content..."
+              >
+              </textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Change Notes</mat-label>
+              <textarea
+                matInput
+                formControlName="change_notes"
+                rows="2"
+                placeholder="Describe what changed in this version..."
+              >
+              </textarea>
+            </mat-form-field>
+
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="createNewVersion()"
+              [disabled]="newVersionForm.invalid || processing"
+            >
+              <mat-icon>add</mat-icon>
+              Create New Version
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Sidebar (1/3) -->
+    <div class="space-y-6">
+      <!-- Template Info Card -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Template Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <dl class="space-y-3 text-sm">
+            <div>
+              <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                Prompt Type
+              </dt>
+              <dd class="mt-1 capitalize">{{ template.prompt_type }}</dd>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div>
+              <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                Variables
+              </dt>
+              <dd class="mt-1">
+                <mat-chip-set *ngIf="template.variables.length > 0">
+                  <mat-chip
+                    *ngFor="let variable of template.variables"
+                    class="font-mono text-xs"
+                  >
+                    {{ variable }}
+                  </mat-chip>
+                </mat-chip-set>
+                <span
+                  *ngIf="template.variables.length === 0"
+                  class="text-gray-500"
+                >
+                  No variables
+                </span>
+              </dd>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div>
+              <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                Created
+              </dt>
+              <dd class="mt-1">{{ formatDate(template.created_at) }}</dd>
+            </div>
+
+            <div>
+              <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                Last Updated
+              </dt>
+              <dd class="mt-1">{{ formatDate(template.updated_at) }}</dd>
+            </div>
+
+            <div *ngIf="template.approved_at">
+              <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                Approved At
+              </dt>
+              <dd class="mt-1">{{ formatDate(template.approved_at) }}</dd>
+            </div>
+
+            <div *ngIf="template.metadata_json && hasMetadata()">
+              <mat-divider class="my-3"></mat-divider>
+              <dt class="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Metadata
+              </dt>
+              <dd class="mt-1">
+                <pre
+                  class="text-xs bg-gray-50 dark:bg-gray-800 p-2 rounded overflow-x-auto"
+                  >{{ template.metadata_json | json }}</pre
+                >
+              </dd>
+            </div>
+          </dl>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Approval Workflow Card -->
+      <mat-card *ngIf="canApprove() || canReject()">
+        <mat-card-header>
+          <mat-card-title>Approval Workflow</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="approvalForm" class="space-y-4">
+            <mat-form-field
+              appearance="outline"
+              class="w-full"
+              *ngIf="canApprove()"
+            >
+              <mat-label>Approval Notes (Optional)</mat-label>
+              <textarea
+                matInput
+                formControlName="approval_notes"
+                rows="3"
+                placeholder="Add any notes about this approval..."
+              >
+              </textarea>
+            </mat-form-field>
+
+            <div class="flex gap-2">
+              <button
+                mat-raised-button
+                color="primary"
+                *ngIf="canApprove()"
+                (click)="approveTemplate()"
+                [disabled]="processing"
+                class="flex-1"
+              >
+                <mat-icon>check_circle</mat-icon>
+                Approve
+              </button>
+              <button
+                mat-raised-button
+                color="warn"
+                *ngIf="canReject()"
+                (click)="rejectTemplate()"
+                [disabled]="processing"
+                class="flex-1"
+              >
+                <mat-icon>cancel</mat-icon>
+                Reject
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

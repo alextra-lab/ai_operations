@@ -1,0 +1,138 @@
+<h2 mat-dialog-title>Edit User: {{ data.user.username }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="editForm" class="edit-form">
+    <!-- Full Name -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Full Name</mat-label>
+      <input
+        matInput
+        formControlName="full_name"
+        required
+        aria-label="Full name"
+        aria-required="true"
+      />
+      <mat-error *ngIf="editForm.get('full_name')?.hasError('required')">
+        Full name is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Email -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        type="email"
+        formControlName="email"
+        aria-label="Email address"
+      />
+      <mat-error *ngIf="editForm.get('email')?.hasError('email')">
+        Invalid email address
+      </mat-error>
+    </mat-form-field>
+
+    <!-- System Roles (single-select via checkboxes) -->
+    <section class="role-section">
+      <h3>System Roles</h3>
+      <p class="hint">Select one primary system role.</p>
+      <div class="checkbox-grid" *ngIf="!isLoading; else rolesLoading">
+        <mat-checkbox
+          *ngFor="let role of systemRoles"
+          [checked]="selectedSystemRole === role.role_name"
+          (change)="onSystemRoleChange(role.role_name, $event.checked)"
+          aria-label="System role {{ role.display_name }}"
+        >
+          {{ role.display_name }}
+        </mat-checkbox>
+      </div>
+    </section>
+
+    <!-- Grouping Roles -->
+    <section class="role-section">
+      <h3>Grouping Roles</h3>
+      <p class="hint">Use case access groups (multi-select).</p>
+      <div class="checkbox-grid" *ngIf="!isLoading; else rolesLoading">
+        <mat-checkbox
+          *ngFor="let role of groupingRoles"
+          [checked]="selectedGroupingRoles.has(role.role_name)"
+          (change)="toggleGroupingRole(role.role_name, $event.checked)"
+          aria-label="Grouping role {{ role.role_name }}"
+        >
+          {{ role.display_name || role.role_name }}
+        </mat-checkbox>
+      </div>
+      <div *ngIf="!groupingRoles.length && !isLoading" class="empty-hint">
+        No grouping roles defined yet.
+      </div>
+    </section>
+
+    <!-- Teams -->
+    <section class="role-section">
+      <h3>Teams</h3>
+      <p class="hint">
+        Team membership controls draft visibility ({{
+          canAssignTeams ? 'editable' : 'view-only'
+        }}).
+      </p>
+      <div class="checkbox-grid" *ngIf="!isLoading; else rolesLoading">
+        <mat-checkbox
+          *ngFor="let team of teams"
+          [checked]="selectedTeams.has(team.team_id)"
+          [disabled]="!canAssignTeams"
+          (change)="toggleTeam(team.team_id, $event.checked)"
+          aria-label="Team {{ team.display_name }}"
+        >
+          {{ team.display_name }}
+        </mat-checkbox>
+      </div>
+      <div *ngIf="!teams.length && !isLoading" class="empty-hint">
+        No teams created yet.
+      </div>
+    </section>
+
+    <ng-template #rolesLoading>
+      <div class="loading-hint">Loading roles...</div>
+    </ng-template>
+
+    <!-- Active Status -->
+    <div class="status-toggle">
+      <label for="active-toggle">Account Status</label>
+      <mat-slide-toggle
+        id="active-toggle"
+        formControlName="is_active"
+        aria-label="Account active status"
+      >
+        {{ editForm.get('is_active')?.value ? 'Active' : 'Inactive' }}
+      </mat-slide-toggle>
+    </div>
+
+    <!-- Audit Info -->
+    <div class="audit-info">
+      <p>
+        <strong>Created:</strong> {{ data.user.created_at | date: 'medium' }}
+      </p>
+      <p *ngIf="data.user.last_login">
+        <strong>Last Login:</strong> {{ data.user.last_login | date: 'medium' }}
+      </p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message" role="alert">
+      {{ error }}
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="isSubmitting">
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="editForm.invalid || isSubmitting || isLoading"
+  >
+    {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
+  </button>
+</mat-dialog-actions>

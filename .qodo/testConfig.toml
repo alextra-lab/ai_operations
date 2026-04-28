@@ -1,0 +1,9 @@
+[tests]
+framework = "Unittest"
+use_mocks = true
+num_desired_tests = 2
+reference_test = "import unittest\nfrom unittest import mock\n\n# Assuming Orchestrator and other dependencies are imported elsewhere in your test files\n\nclass TestOrchestrator(unittest.TestCase):\n\n    def test_example_feature(self):\n        \"\"\"Example test based on project style.\"\"\"\n        # Arrange\n        # Set up necessary mocks and test data\n        mock_db = mock.MagicMock()\n        config = {\n            \"openai_api_key\": \"fake_key\",\n            # Include other relevant config defaults or test-specific values\n            \"llm_guard_url\": \"http://test-llm-guard:8081\",\n            \"llm_guard_timeout\": 5.0,\n        }\n        \n        # When initializing Orchestrator or calling a method...\n        orchestrator = Orchestrator(db=mock_db, config=config)\n\n        # Act\n        # Perform the action being tested\n        # result = orchestrator.some_method(...)\n\n        # Assert\n        # Verify the expected outcome\n        # self.assertEqual(result, expected_value)\n        self.assertEqual(orchestrator.llm_guard_url, \"http://test-llm-guard:8081\")\n        # Add more assertions based on the test's purpose\n        \n# To run this specific test file:\n# python -m unittest tests/backend/unit/orchestrator/test_controller.py\n"
+
+[python]
+testingFramework = "pytest"
+mockingFramework = "pytest-mock"

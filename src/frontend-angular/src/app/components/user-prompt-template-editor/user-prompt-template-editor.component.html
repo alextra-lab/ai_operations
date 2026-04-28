@@ -1,0 +1,103 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon>notes</mat-icon>
+      User Prompt Template
+    </mat-panel-title>
+    <mat-panel-description>
+      {{ panelDescriptionText }}
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <p class="template-hint">
+    Define how user inputs are presented to the LLM. Use
+    <code ngNonBindable>{{variable_name}}</code> to insert input field values.
+  </p>
+
+  <div class="variable-chips" *ngIf="variableChips.length > 0">
+    <span class="chip-label">Available variables (from Input Fields):</span>
+    <div class="chips-row">
+      <button
+        *ngFor="let chip of variableChips"
+        mat-stroked-button
+        type="button"
+        class="variable-chip"
+        (click)="insertVariable(chip.placeholder, templateRef)"
+        [matTooltip]="'Insert ' + chip.placeholder"
+        [attr.aria-label]="'Insert ' + chip.placeholder"
+      >
+        {{ chip.placeholder }}
+      </button>
+    </div>
+    <span class="chip-hint">Click to insert</span>
+  </div>
+
+  <mat-form-field appearance="outline" class="w-full template-field">
+    <mat-label>User prompt template</mat-label>
+    <textarea
+      #templateRef
+      matInput
+      [value]="template"
+      (input)="onTemplateInput(templateRef.value)"
+      rows="12"
+      [placeholder]="placeholderExample"
+      style="min-height: 200px; resize: vertical"
+      aria-describedby="template-hint"
+    ></textarea>
+    <mat-hint id="template-hint">
+      Use double curly braces for variables, e.g.
+      <span ngNonBindable>{{incident_id}}</span>
+    </mat-hint>
+  </mat-form-field>
+
+  <div class="fallback-row">
+    <mat-form-field appearance="outline" class="fallback-field">
+      <mat-label>When a variable is missing</mat-label>
+      <mat-select
+        [value]="fallbackMode"
+        (selectionChange)="onFallbackModeChange($event.value)"
+        aria-label="Fallback mode for missing variables"
+      >
+        <mat-option value="concatenate">
+          Show placeholder text (e.g. [name: not provided])
+        </mat-option>
+        <mat-option value="error">Fail with error</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="variable-status" *ngIf="templateVariables.length > 0">
+    <span class="status-label">Variable status:</span>
+    <ul aria-label="Template variable status">
+      <li *ngFor="let s of variableStatus">
+        <mat-icon [class.warn]="!s.defined">{{
+          s.defined ? 'check_circle' : 'warning'
+        }}</mat-icon>
+        {{ s.name }} -
+        {{ s.defined ? 'Defined in Input Fields' : 'Not in Input Fields' }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="preview-section">
+    <button
+      mat-raised-button
+      color="accent"
+      type="button"
+      (click)="togglePreview()"
+      aria-label="Toggle template preview"
+    >
+      <mat-icon>{{ showPreview() ? 'visibility_off' : 'visibility' }}</mat-icon>
+      {{ showPreview() ? 'Hide' : 'Show' }} Preview
+    </button>
+    <mat-card class="preview-card" *ngIf="showPreview() && template">
+      <h4>Template preview (sample data)</h4>
+      <pre class="preview-content">{{ previewText }}</pre>
+    </mat-card>
+  </div>
+
+  <p class="legacy-hint" *ngIf="!template">
+    <mat-icon>info</mat-icon>
+    If no template is defined, inputs are sent as "field: value" (legacy).
+  </p>
+</mat-expansion-panel>

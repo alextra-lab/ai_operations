@@ -1,0 +1,26 @@
+/**
+ * Template Detail Component Styles
+ * Following ADR-012: Minimal custom SCSS, rely on Tailwind + Material
+ */
+
+.template-detail-container {
+  min-height: calc(100vh - 200px);
+}
+
+// Enhance pre/code blocks
+pre,
+code {
+  font-family: 'Courier New', monospace;
+}
+
+// Version card hover effect
+.border:hover {
+  transition: background-color 0.2s ease;
+}
+
+// Error snackbar
+::ng-deep .error-snackbar {
+  .mdc-snackbar__surface {
+    background-color: #f44336 !important;
+  }
+}

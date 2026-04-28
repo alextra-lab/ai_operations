@@ -1,0 +1,74 @@
+<!-- Usage Summary Cards -->
+<!-- Displays key aggregate metrics for tool analytics -->
+
+<div class="metrics-grid" *ngIf="aggregates">
+  <!-- Total Invocations -->
+  <mat-card class="metric-card">
+    <div class="metric-icon-wrapper blue">
+      <mat-icon aria-hidden="true">call_made</mat-icon>
+    </div>
+    <div class="metric-content">
+      <div class="metric-value">
+        {{ formatNumber(aggregates.total_invocations) }}
+      </div>
+      <div class="metric-label">Total Invocations</div>
+      <div class="metric-subtext">In selected period</div>
+    </div>
+  </mat-card>
+
+  <!-- Average Success Rate -->
+  <mat-card class="metric-card">
+    <div class="metric-icon-wrapper" [ngClass]="getSuccessClass()">
+      <mat-icon aria-hidden="true">check_circle</mat-icon>
+    </div>
+    <div class="metric-content">
+      <div class="metric-value" [ngClass]="getSuccessClass()">
+        {{ formatPercent(aggregates.average_success_rate) }}
+      </div>
+      <div class="metric-label">Avg Success Rate</div>
+      <div class="metric-subtext">
+        {{ formatNumber(aggregates.total_successful) }} successful
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Total Cost -->
+  <mat-card class="metric-card">
+    <div class="metric-icon-wrapper purple">
+      <mat-icon aria-hidden="true">euro</mat-icon>
+    </div>
+    <div class="metric-content">
+      <div class="metric-value">
+        {{ formatCostValue(aggregates.total_cost) }}
+      </div>
+      <div class="metric-label">Estimated Cost</div>
+      <div class="metric-subtext">Based on invocations</div>
+    </div>
+  </mat-card>
+
+  <!-- Most Used Tool -->
+  <mat-card
+    class="metric-card"
+    [matTooltip]="getMostUsedToolTooltip()"
+    matTooltipPosition="above"
+  >
+    <div class="metric-icon-wrapper teal">
+      <mat-icon aria-hidden="true">trending_up</mat-icon>
+    </div>
+    <div class="metric-content">
+      <div class="metric-value tool-name">
+        {{ getMostUsedToolText() }}
+      </div>
+      <div class="metric-label">Most Used Tool</div>
+      <div class="metric-subtext" *ngIf="aggregates.most_used_tool_calls > 0">
+        {{ formatNumber(aggregates.most_used_tool_calls) }} invocations
+      </div>
+    </div>
+  </mat-card>
+</div>
+
+<!-- Empty State -->
+<div class="empty-state" *ngIf="!aggregates">
+  <mat-icon>analytics</mat-icon>
+  <p>No analytics data available</p>
+</div>

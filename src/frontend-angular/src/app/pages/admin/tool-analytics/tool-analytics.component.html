@@ -1,0 +1,169 @@
+<!-- Tool Analytics Dashboard -->
+<!-- T6-F3: Follows ADR-012 Layered Page Layout Pattern -->
+
+<div class="page-container">
+  <!-- Layer 2: Page Header (Fixed) -->
+  <div class="page-header-layer">
+    <div class="page-header-controls">
+      <div class="header-left">
+        <h1 class="page-title">
+          <mat-icon aria-hidden="true">analytics</mat-icon>
+          Tool Analytics
+        </h1>
+        <p class="page-subtitle">
+          Usage, reliability, and cost insights for MCP tools
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <mat-form-field class="time-range-selector" appearance="outline">
+          <mat-label>Time Range</mat-label>
+          <mat-select
+            [(ngModel)]="selectedTimeRange"
+            (selectionChange)="onTimeRangeChange()"
+            aria-label="Select time range"
+          >
+            <mat-option
+              *ngFor="let option of timeRangeOptions"
+              [value]="option.value"
+            >
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onRefresh()"
+          [disabled]="isLoading"
+          aria-label="Refresh analytics data"
+        >
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+
+        <button
+          mat-raised-button
+          [matMenuTriggerFor]="exportMenu"
+          [disabled]="isLoading || usageSummary().length === 0"
+          aria-label="Export analytics data"
+        >
+          <mat-icon>download</mat-icon>
+          Export
+        </button>
+
+        <mat-menu #exportMenu="matMenu">
+          <button mat-menu-item (click)="exportCSV()">
+            <mat-icon>table_chart</mat-icon>
+            <span>Export as CSV</span>
+          </button>
+          <button mat-menu-item (click)="exportJSON()">
+            <mat-icon>code</mat-icon>
+            <span>Export as JSON</span>
+          </button>
+        </mat-menu>
+
+        <a
+          mat-stroked-button
+          routerLink="/admin/tools"
+          aria-label="Back to tool management"
+        >
+          <mat-icon>arrow_back</mat-icon>
+          Back to Tools
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 3: Content Area (Scrollable) -->
+  <div class="page-content-layer">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p class="loading-text">Loading analytics...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="error-container">
+      <mat-icon class="error-icon">error</mat-icon>
+      <p class="error-text">{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="onRefresh()">
+        Retry
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!isLoading && !error" class="analytics-content">
+      <!-- Summary Cards -->
+      <section aria-label="Analytics summary">
+        <app-usage-summary-cards
+          [aggregates]="aggregates()"
+        ></app-usage-summary-cards>
+      </section>
+
+      <!-- Tabs for detailed views -->
+      <mat-tab-group class="analytics-tabs" animationDuration="200ms">
+        <!-- Usage by Tool Tab -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">build</mat-icon>
+            Usage by Tool
+          </ng-template>
+          <div class="tab-content">
+            <mat-card class="content-card">
+              <mat-card-header>
+                <mat-card-title>Tool Usage Statistics</mat-card-title>
+                <mat-card-subtitle>
+                  Per-tool invocation counts, success rates, and costs
+                </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <app-usage-by-tool-table
+                  [data]="usageSummary()"
+                ></app-usage-by-tool-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+
+        <!-- Usage by Center Tab -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">business</mat-icon>
+            Usage by Center
+          </ng-template>
+          <div class="tab-content">
+            <mat-card class="content-card">
+              <mat-card-header>
+                <mat-card-title>Center Usage Distribution</mat-card-title>
+                <mat-card-subtitle>
+                  Tool usage aggregated by center for the
+                  {{ getTimeRangeLabel() | lowercase }}
+                </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <app-usage-by-center-chart
+                  [data]="usageByCenter()"
+                  [metric]="chartMetric"
+                  (metricChange)="onChartMetricChange($event)"
+                ></app-usage-by-center-chart>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+
+      <!-- No Data Message -->
+      <mat-card *ngIf="usageSummary().length === 0" class="no-data-card">
+        <mat-icon class="no-data-icon">info</mat-icon>
+        <p class="no-data-text">
+          No tool usage data available for the selected time range.
+        </p>
+        <p class="no-data-hint">
+          Tools must be invoked through use cases to generate analytics data.
+        </p>
+      </mat-card>
+    </div>
+  </div>
+</div>

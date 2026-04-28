@@ -49,7 +49,7 @@
     "marked": "^17.0.0",
     "material-icons": "^1.13.14",
     "mermaid": "^10.9.5",
-    "ng2-charts": "^5.0.4",
+    "ng2-charts": "^10.0.0",
     "ngx-markdown": "^21.0.1",
     "primeicons": "^6.0.1",
     "primeng": "^21.1.1",

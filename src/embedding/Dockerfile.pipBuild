@@ -1,6 +1,6 @@
 # Multi-stage build for embedding service
 # Stage 1: Build image
-FROM python:3.11-slim AS build
+FROM python:3.14-slim AS build
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: Runtime image
-FROM python:3.11-slim
+FROM python:3.14-slim
 
 # Create non-root user
 RUN groupadd -g 1000 appuser && \

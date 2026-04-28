@@ -32,7 +32,7 @@ Changelog = "https://github.com/alextra-lab/ai_operations/blob/main/CHANGELOG.md
 [project.optional-dependencies]
 dev = [
     "pre-commit>=4.0.0",
-    "black>=25.0.0",
+    "black>=26.3.1",
     "ruff>=0.8.0",
     "mypy>=1.13.0",
 ]

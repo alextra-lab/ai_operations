@@ -23,7 +23,7 @@ openai>=2.16.0,<3.0.0
 backoff>=2.2.1
 
 # Redis for rate limiting and circuit breaker - P2-T4
-redis>=5.0.0
+redis>=7.4.0
 
 # Logging (reuses shared.logging_utils)
 structlog>=24.1.0  # Structured logging - version constraint for security

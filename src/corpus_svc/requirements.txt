@@ -32,7 +32,7 @@ langdetect>=1.0.9,<1.1.0 # Language detection
 PyPDF2>=3.0.0,<3.1.0 # PDF manipulation, used by some LangChain loaders
 
 # Authentication
-python-jose>=3.3.0  # JWT validation
+python-jose>=3.5.0  # JWT validation
 passlib[bcrypt]>=1.7.4  # Password hashing
 
 # Instrumentation and Monitoring

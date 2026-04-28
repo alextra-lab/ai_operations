@@ -29,7 +29,7 @@ redis>=5.0.0
 structlog>=24.1.0  # Structured logging - version constraint for security
 
 # Validation - Needed for P2-T2+
-jsonschema>=4.0.0,<5.0.0  # Prevent v5 breaking changes
+jsonschema>=4.26.0,<5.0.0  # Prevent v5 breaking changes
 pyyaml>=6.0.1
 
 # Utilities

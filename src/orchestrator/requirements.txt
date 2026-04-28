@@ -28,7 +28,7 @@ opentelemetry-exporter-otlp==1.37.0
 opentelemetry-instrumentation-fastapi==0.58b0
 opentelemetry-instrumentation-requests==0.58b0
 opentelemetry-instrumentation-sqlalchemy==0.58b0
-prometheus-client==0.23.1
+prometheus-client==0.25.0
 
 asyncpg>=0.31.0
 aiosqlite>=0.22.1

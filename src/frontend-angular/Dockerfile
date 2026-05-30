@@ -1,6 +1,6 @@
 # Multi-stage Docker build for Angular application
 # Build stage
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 
 # Set working directory
 WORKDIR /app

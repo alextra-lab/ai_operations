@@ -202,6 +202,7 @@ def _load_config_yaml(resolved_path: str) -> dict[str, Any]:
     ):
         raise ValueError("Configuration path is not allowed")
 
+    # codeql[py/path-injection]: resolved_path is restricted to known config allowlist
     with open(resolved_path, encoding="utf-8") as config_file:
         loaded = yaml.safe_load(config_file)
 
@@ -237,6 +238,7 @@ def load_config(config_path: str | None = None) -> ServiceConfig:
         search_paths = list(_KNOWN_CONFIG_PATHS)
 
     for safe_path in search_paths:
+        # codeql[py/path-injection]: safe_path is from known allowlist or basename validation
         if not os.path.isfile(safe_path):
             continue
 

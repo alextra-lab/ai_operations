@@ -39,8 +39,8 @@ passlib[bcrypt]>=1.7.4  # Password hashing
 opentelemetry-api==1.37.0
 opentelemetry-sdk==1.37.0
 opentelemetry-exporter-otlp==1.37.0
-opentelemetry-instrumentation-fastapi==0.58b0
-opentelemetry-instrumentation-requests==0.58b0
+opentelemetry-instrumentation-fastapi==0.63b1
+opentelemetry-instrumentation-requests==0.63b1
 opentelemetry-instrumentation-sqlalchemy==0.63b1
 prometheus-client==0.25.0
 

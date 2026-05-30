@@ -1,6 +1,6 @@
 # Core FastAPI stack (matching backend service)
 fastapi>=0.117.1
-uvicorn==0.36.0
+uvicorn==0.48.0
 starlette>=0.48.0
 pydantic>=2.12.5,<3.0.0
 

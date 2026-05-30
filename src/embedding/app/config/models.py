@@ -3,6 +3,7 @@ Configuration models for embedding service providers and models.
 """
 
 import os
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -193,6 +194,26 @@ def _resolve_allowed_config_path(path: str) -> str:
     raise ValueError(f"Configuration path is not allowed: {path}")
 
 
+def _load_config_yaml(resolved_path: str) -> dict[str, Any]:
+    """
+    Load YAML from an absolute path that passed allowlist validation.
+
+    Args:
+        resolved_path: Absolute path previously returned by _resolve_allowed_config_path.
+
+    Returns:
+        Parsed YAML mapping.
+    """
+    _resolve_allowed_config_path(resolved_path)
+    config_file = Path(resolved_path)
+    if not config_file.is_file():
+        raise FileNotFoundError(resolved_path)
+    loaded = yaml.safe_load(config_file.read_text(encoding="utf-8"))
+    if not isinstance(loaded, dict):
+        raise ValueError("Configuration root must be a mapping")
+    return loaded
+
+
 def load_config(config_path: str | None = None) -> ServiceConfig:
     """
     Load service configuration from YAML file.
@@ -216,23 +237,24 @@ def load_config(config_path: str | None = None) -> ServiceConfig:
         try:
             safe_path = _resolve_allowed_config_path(path)
         except ValueError as exc:
-            logger.warning("Skipping disallowed configuration path", extra={"path": path})
+            logger.warning("Skipping disallowed configuration path")
             if config_path:
-                raise ValueError(f"Invalid configuration path: {path}") from exc
+                raise ValueError("Invalid configuration path") from exc
             continue
 
-        if os.path.exists(safe_path):
-            try:
-                with open(safe_path) as f:
-                    config_data = yaml.safe_load(f)
-                    logger.info("Configuration loaded successfully")
-                    return ServiceConfig(**config_data)
-            except Exception as e:
-                logger.error(
-                    "Error loading configuration",
-                    extra={"path": safe_path, "error": str(e)},
-                )
-                raise ValueError(f"Invalid configuration: {e!s}")
+        if not Path(safe_path).is_file():
+            continue
+
+        try:
+            config_data = _load_config_yaml(safe_path)
+            logger.info("Configuration loaded successfully")
+            return ServiceConfig(**config_data)
+        except Exception as e:
+            logger.error(
+                "Error loading configuration",
+                extra={"error": str(e)},
+            )
+            raise ValueError(f"Invalid configuration: {e!s}") from e
 
     # If no explicit path is provided and no default files exist, use environment-based config
     if not config_path:

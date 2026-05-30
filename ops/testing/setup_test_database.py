@@ -228,14 +228,6 @@ async def main():
     args = parser.parse_args()
 
     logger.info("Starting test database setup...")
-    logger.info(
-        "Database target configured",
-        extra={
-            "host": TEST_DB_CONFIG["host"],
-            "port": TEST_DB_CONFIG["port"],
-            "database": TEST_DB_CONFIG["database"],
-        },
-    )
 
     try:
         # Test connection

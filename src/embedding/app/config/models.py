@@ -3,7 +3,8 @@ Configuration models for embedding service providers and models.
 """
 
 import os
-from typing import Any
+from importlib.resources import files
+from typing import Any, Literal
 
 import yaml
 from pydantic import (
@@ -29,14 +30,9 @@ from shared.providers import (
 # Configure structured logger for this module
 logger = configure_logging(service_name="embedding_config")
 
-# Default configuration paths (resolved at import for allowlist checks)
+# Default configuration paths (resolved at import for tests)
 _PACKAGE_CONFIG_DIR = os.path.realpath(os.path.dirname(__file__))
 _BUILTIN_CONFIG_PATH = os.path.realpath(os.path.join(_PACKAGE_CONFIG_DIR, "models.yaml"))
-_CONTAINER_CONFIG_PATHS: tuple[str, ...] = (
-    os.path.realpath("/opt/models/models.yaml"),
-    os.path.realpath("/etc/embedding/models.yaml"),
-)
-_KNOWN_CONFIG_PATHS: tuple[str, ...] = (_BUILTIN_CONFIG_PATH,) + _CONTAINER_CONFIG_PATHS
 
 
 # Re-export shared models for backward compatibility
@@ -162,50 +158,44 @@ class ServiceConfig(BaseModel):
         return v
 
 
-def _resolve_user_config_path(config_path: str) -> str:
-    """
-    Map a user-supplied config path to a basename under the package config dir.
+def _load_yaml_mapping_from_literal(literal_path: Literal[
+    "/opt/models/models.yaml",
+    "/etc/embedding/models.yaml",
+]) -> dict[str, Any] | None:
+    """Load YAML from a fixed container path constant."""
+    if not os.path.isfile(literal_path):
+        return None
 
-    Args:
-        config_path: Relative filename within the package config directory.
+    with open(literal_path, encoding="utf-8") as config_file:
+        loaded = yaml.safe_load(config_file)
 
-    Returns:
-        Absolute resolved path under the package config directory.
+    if not isinstance(loaded, dict):
+        raise ValueError("Configuration root must be a mapping")
+    return loaded
 
-    Raises:
-        ValueError: If the path is not a simple filename.
-    """
+
+def _load_package_yaml_mapping() -> dict[str, Any] | None:
+    """Load the package-bundled models.yaml without filesystem injection."""
+    try:
+        raw = files("app.config").joinpath("models.yaml").read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return None
+
+    loaded = yaml.safe_load(raw)
+    if not isinstance(loaded, dict):
+        raise ValueError("Configuration root must be a mapping")
+    return loaded
+
+
+def _load_user_yaml_mapping(config_path: str) -> dict[str, Any]:
+    """Load YAML for a basename-only config path from the package config dir."""
     basename = os.path.basename(config_path)
     normalized = os.path.normpath(config_path)
     if basename != normalized or basename in {".", ".."} or not basename:
         raise ValueError("Configuration path must be a simple filename")
 
-    candidate = os.path.realpath(os.path.join(_PACKAGE_CONFIG_DIR, basename))
-    if os.path.commonpath([candidate, _PACKAGE_CONFIG_DIR]) != _PACKAGE_CONFIG_DIR:
-        raise ValueError("Configuration path is not allowed")
-
-    return candidate
-
-
-def _load_config_yaml(resolved_path: str) -> dict[str, Any]:
-    """
-    Load YAML from a known-safe absolute config path.
-
-    Args:
-        resolved_path: Absolute path from _KNOWN_CONFIG_PATHS or _resolve_user_config_path.
-
-    Returns:
-        Parsed YAML mapping.
-    """
-    if resolved_path not in _KNOWN_CONFIG_PATHS and not resolved_path.startswith(
-        _PACKAGE_CONFIG_DIR + os.sep
-    ):
-        raise ValueError("Configuration path is not allowed")
-
-    # codeql[py/path-injection]: resolved_path is restricted to known config allowlist
-    with open(resolved_path, encoding="utf-8") as config_file:
-        loaded = yaml.safe_load(config_file)
-
+    raw = files("app.config").joinpath(basename).read_text(encoding="utf-8")
+    loaded = yaml.safe_load(raw)
     if not isinstance(loaded, dict):
         raise ValueError("Configuration root must be a mapping")
     return loaded
@@ -226,32 +216,30 @@ def load_config(config_path: str | None = None) -> ServiceConfig:
         ValueError: If configuration is invalid
     """
     if config_path:
-        resolved = os.path.realpath(os.path.abspath(config_path))
-        if resolved in _KNOWN_CONFIG_PATHS:
-            search_paths = [resolved]
-        else:
-            try:
-                search_paths = [_resolve_user_config_path(config_path)]
-            except ValueError as exc:
-                raise ValueError("Invalid configuration path") from exc
-    else:
-        search_paths = list(_KNOWN_CONFIG_PATHS)
-
-    for safe_path in search_paths:
-        # codeql[py/path-injection]: safe_path is from known allowlist or basename validation
-        if not os.path.isfile(safe_path):
-            continue
-
         try:
-            config_data = _load_config_yaml(safe_path)
+            config_data = _load_user_yaml_mapping(config_path)
             logger.info("Configuration loaded successfully")
             return ServiceConfig(**config_data)
+        except FileNotFoundError as exc:
+            raise ValueError("Invalid configuration path") from exc
         except Exception as e:
-            logger.error(
-                "Error loading configuration",
-                extra={"error": str(e)},
-            )
+            logger.error("Error loading configuration", extra={"error": str(e)})
             raise ValueError(f"Invalid configuration: {e!s}") from e
+
+    for loader in (
+        _load_package_yaml_mapping,
+        lambda: _load_yaml_mapping_from_literal("/opt/models/models.yaml"),
+        lambda: _load_yaml_mapping_from_literal("/etc/embedding/models.yaml"),
+    ):
+        try:
+            config_data = loader()
+        except Exception as e:
+            logger.error("Error loading configuration", extra={"error": str(e)})
+            raise ValueError(f"Invalid configuration: {e!s}") from e
+
+        if config_data is not None:
+            logger.info("Configuration loaded successfully")
+            return ServiceConfig(**config_data)
 
     # If no explicit path is provided and no default files exist, use environment-based config
     if not config_path:

@@ -5,33 +5,24 @@ from pathlib import Path
 
 import pytest
 
-from app.config.models import (
-    _KNOWN_CONFIG_PATHS,
-    _resolve_user_config_path,
-    load_config,
-)
+from app.config.models import _BUILTIN_CONFIG_PATH, _load_user_yaml_mapping, load_config
 
 
-def test_known_config_paths_include_package_default() -> None:
-    """Built-in config path should be part of the allowlist."""
-    package_default = os.path.join(
-        os.path.dirname(__file__), "..", "..", "app", "config", "models.yaml"
-    )
-    resolved = os.path.realpath(package_default)
-    assert resolved in _KNOWN_CONFIG_PATHS
+def test_builtin_config_path_exists_in_package() -> None:
+    """Package default config path should exist in the repository."""
+    assert os.path.isfile(_BUILTIN_CONFIG_PATH)
 
 
-def test_resolve_user_config_path_accepts_basename() -> None:
-    """Basename-only config paths resolve under the package config directory."""
-    resolved = _resolve_user_config_path("models.yaml")
-    assert os.path.isabs(resolved)
-    assert resolved.endswith("models.yaml")
+def test_load_user_yaml_mapping_accepts_basename() -> None:
+    """Basename-only config paths load from the package config directory."""
+    loaded = _load_user_yaml_mapping("models.yaml")
+    assert isinstance(loaded, dict)
 
 
-def test_resolve_user_config_path_rejects_traversal() -> None:
+def test_load_user_yaml_mapping_rejects_traversal() -> None:
     """Path traversal attempts must be rejected."""
-    with pytest.raises(ValueError, match="not allowed|simple filename"):
-        _resolve_user_config_path("../outside.yaml")
+    with pytest.raises(ValueError, match="simple filename"):
+        _load_user_yaml_mapping("../outside.yaml")
 
 
 def test_load_config_rejects_explicit_traversal_path(tmp_path: Path) -> None:

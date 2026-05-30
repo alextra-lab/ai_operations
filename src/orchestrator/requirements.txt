@@ -17,7 +17,7 @@ pandas
 numpy<3.0.0
 structlog>=24.1.0
 httpx>=0.28.1
-openai>=2.16.0,<3.0.0
+openai>=2.38.0,<3.0.0
 tiktoken>=0.5.1
 backoff>=2.2.1
 

@@ -1,7 +1,7 @@
 # Core FastAPI stack (matching backend service)
-fastapi>=0.117.1
-uvicorn==0.36.0
-starlette>=0.48.0
+fastapi>=0.136.3
+uvicorn==0.48.0
+starlette>=1.2.0
 pydantic>=2.13.4,<3.0.0
 
 # Authentication (reuses shared.auth) - Needed for P1-T3
@@ -23,14 +23,14 @@ openai>=2.16.0,<3.0.0
 backoff>=2.2.1
 
 # Redis for rate limiting and circuit breaker - P2-T4
-redis>=5.0.0
+redis>=8.0.0
 
 # Logging (reuses shared.logging_utils)
-structlog>=24.1.0  # Structured logging - version constraint for security
+structlog>=25.5.0  # Structured logging - version constraint for security
 
 # Validation - Needed for P2-T2+
 jsonschema>=4.26.0,<5.0.0  # Prevent v5 breaking changes
 pyyaml>=6.0.1
 
 # Utilities
-python-multipart>=0.0.6
+python-multipart>=0.0.29

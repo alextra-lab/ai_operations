@@ -1,34 +1,34 @@
 fastapi>=0.117.1
-uvicorn==0.46.0
-starlette>=0.48.0
+uvicorn==0.48.0
+starlette>=1.2.0
 pydantic>=2.12.5,<3.0.0
-python-json-logger==2.0.7
+python-json-logger==4.1.0
 
 # Pinning versions based on known compatible set for llm-guard
 torch>=2.12.0 # As per llm-guard's apparent dependency
-transformers[torch]>=4.51.3  # SECURITY NOTE: 4.51.3 has known vulnerabilities, but required by llm-guard 0.3.16
+transformers[torch]>=5.9.0  # SECURITY NOTE: 4.51.3 has known vulnerabilities, but required by llm-guard 0.3.16
 llm-guard>=0.3.16
-onnxruntime>=1.25.1   # or just onnxruntime, if you prefer
-optimum[onnxruntime]>=1.25.2
+onnxruntime>=1.26.0   # or just onnxruntime, if you prefer
+optimum[onnxruntime]>=2.1.0
 typing-extensions>=4.15.0,<5.0.0
-numpy>=1.24.0,<2.0.0 # llm-guard might have its own numpy constraints
-packaging>=23.0,<24.0 # llm-guard might have its own packaging constraints
-opentelemetry-api==1.37.0
-opentelemetry-sdk==1.37.0
-prometheus-client==0.23.1
+numpy>=2.4.6,<3.0.0 # llm-guard might have its own numpy constraints
+packaging>=26.2,<27.0 # llm-guard might have its own packaging constraints
+opentelemetry-api==1.42.1
+opentelemetry-sdk==1.42.1
+prometheus-client==0.25.0
 httpx>=0.28.1
-regex>=2026.4.4
+regex>=2026.5.9
 # spacy version must be compatible with language models (en_core_web_sm-3.7.1, zh_core_web_sm-3.7.0)
 spacy>=3.8.14,<3.9.0
-spacy-pkuseg==0.0.33
+spacy-pkuseg==1.0.1
 bitsandbytes
-cachetools>=4.2.0,<6.0.0
+cachetools>=7.1.4,<8.0.0
 
 # Instrumentation and Monitoring
-opentelemetry-api==1.37.0
-opentelemetry-sdk==1.37.0
-opentelemetry-exporter-otlp==1.37.0
+opentelemetry-api==1.42.1
+opentelemetry-sdk==1.42.1
+opentelemetry-exporter-otlp==1.42.1
 opentelemetry-instrumentation-fastapi==0.63b1
-opentelemetry-instrumentation-requests==0.58b0
+opentelemetry-instrumentation-requests==0.63b1
 opentelemetry-instrumentation-sqlalchemy==0.63b1
-prometheus-client==0.23.1
+prometheus-client==0.25.0

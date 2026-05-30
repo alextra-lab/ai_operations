@@ -3,7 +3,6 @@ Configuration models for embedding service providers and models.
 """
 
 import os
-from pathlib import Path
 from typing import Any
 
 import yaml
@@ -30,12 +29,14 @@ from shared.providers import (
 # Configure structured logger for this module
 logger = configure_logging(service_name="embedding_config")
 
-# Default configuration paths
-DEFAULT_CONFIG_PATHS = [
-    "/opt/models/models.yaml",  # Bind-mounted volume
-    "/etc/embedding/models.yaml",  # Container config path
-    os.path.join(os.path.dirname(__file__), "models.yaml"),  # Package default
-]
+# Default configuration paths (resolved at import for allowlist checks)
+_PACKAGE_CONFIG_DIR = os.path.realpath(os.path.dirname(__file__))
+_BUILTIN_CONFIG_PATH = os.path.realpath(os.path.join(_PACKAGE_CONFIG_DIR, "models.yaml"))
+_CONTAINER_CONFIG_PATHS: tuple[str, ...] = (
+    os.path.realpath("/opt/models/models.yaml"),
+    os.path.realpath("/etc/embedding/models.yaml"),
+)
+_KNOWN_CONFIG_PATHS: tuple[str, ...] = (_BUILTIN_CONFIG_PATH,) + _CONTAINER_CONFIG_PATHS
 
 
 # Re-export shared models for backward compatibility
@@ -161,54 +162,49 @@ class ServiceConfig(BaseModel):
         return v
 
 
-def _resolve_allowed_config_path(path: str) -> str:
+def _resolve_user_config_path(config_path: str) -> str:
     """
-    Resolve and validate a configuration file path against allowed base dirs.
+    Map a user-supplied config path to a basename under the package config dir.
 
     Args:
-        path: Candidate configuration file path.
+        config_path: Relative filename within the package config directory.
 
     Returns:
-        Absolute resolved path safe to open.
+        Absolute resolved path under the package config directory.
 
     Raises:
-        ValueError: If the path is outside allowed directories or invalid.
+        ValueError: If the path is not a simple filename.
     """
-    if not path or not path.strip():
-        raise ValueError("Configuration path must not be empty")
+    basename = os.path.basename(config_path)
+    normalized = os.path.normpath(config_path)
+    if basename != normalized or basename in {".", ".."} or not basename:
+        raise ValueError("Configuration path must be a simple filename")
 
-    resolved = os.path.realpath(os.path.abspath(path))
-    allowed_bases = {
-        os.path.realpath("/opt/models"),
-        os.path.realpath("/etc/embedding"),
-        os.path.realpath(os.path.dirname(__file__)),
-    }
+    candidate = os.path.realpath(os.path.join(_PACKAGE_CONFIG_DIR, basename))
+    if os.path.commonpath([candidate, _PACKAGE_CONFIG_DIR]) != _PACKAGE_CONFIG_DIR:
+        raise ValueError("Configuration path is not allowed")
 
-    for base in allowed_bases:
-        try:
-            if os.path.commonpath([resolved, base]) == base:
-                return resolved
-        except ValueError:
-            continue
-
-    raise ValueError(f"Configuration path is not allowed: {path}")
+    return candidate
 
 
 def _load_config_yaml(resolved_path: str) -> dict[str, Any]:
     """
-    Load YAML from an absolute path that passed allowlist validation.
+    Load YAML from a known-safe absolute config path.
 
     Args:
-        resolved_path: Absolute path previously returned by _resolve_allowed_config_path.
+        resolved_path: Absolute path from _KNOWN_CONFIG_PATHS or _resolve_user_config_path.
 
     Returns:
         Parsed YAML mapping.
     """
-    _resolve_allowed_config_path(resolved_path)
-    config_file = Path(resolved_path)
-    if not config_file.is_file():
-        raise FileNotFoundError(resolved_path)
-    loaded = yaml.safe_load(config_file.read_text(encoding="utf-8"))
+    if resolved_path not in _KNOWN_CONFIG_PATHS and not resolved_path.startswith(
+        _PACKAGE_CONFIG_DIR + os.sep
+    ):
+        raise ValueError("Configuration path is not allowed")
+
+    with open(resolved_path, encoding="utf-8") as config_file:
+        loaded = yaml.safe_load(config_file)
+
     if not isinstance(loaded, dict):
         raise ValueError("Configuration root must be a mapping")
     return loaded
@@ -228,21 +224,20 @@ def load_config(config_path: str | None = None) -> ServiceConfig:
         FileNotFoundError: If no configuration file is found
         ValueError: If configuration is invalid
     """
-    paths_to_try = [config_path] if config_path else []
-    paths_to_try.extend(DEFAULT_CONFIG_PATHS)
-
-    for path in paths_to_try:
-        if not path:
-            continue
-        try:
-            safe_path = _resolve_allowed_config_path(path)
-        except ValueError as exc:
-            logger.warning("Skipping disallowed configuration path")
-            if config_path:
+    if config_path:
+        resolved = os.path.realpath(os.path.abspath(config_path))
+        if resolved in _KNOWN_CONFIG_PATHS:
+            search_paths = [resolved]
+        else:
+            try:
+                search_paths = [_resolve_user_config_path(config_path)]
+            except ValueError as exc:
                 raise ValueError("Invalid configuration path") from exc
-            continue
+    else:
+        search_paths = list(_KNOWN_CONFIG_PATHS)
 
-        if not Path(safe_path).is_file():
+    for safe_path in search_paths:
+        if not os.path.isfile(safe_path):
             continue
 
         try:

@@ -20,7 +20,7 @@ qdrant-client>=1.10.0,<2.0.0  # Qdrant vector database client compatible with se
 beautifulsoup4==4.13.3
 lxml>=4.9.3  # XML processing
 openpyxl==3.1.5
-python-docx>=1.1.2
+python-docx>=1.2.0
 python-dotenv==1.2.2
 python-pptx==1.0.2
 nltk>=3.8.1  # Text segmentation

@@ -62,7 +62,7 @@ jobs:
           echo "OK: no AGPL or GPL deps found."
 
       - name: Upload license report artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: license-report
           path: |

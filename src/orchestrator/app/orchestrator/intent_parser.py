@@ -14,7 +14,7 @@ Future: Will add NLP-based intent detection to analyze query text for intent cla
 import os
 import time
 
-from shared.logging_utils.fastapi import configure_logging, safe_config_summary
+from shared.logging_utils.fastapi import configure_logging
 
 from ..schemas.intent import IntentRequest, IntentResponse, RequestType
 
@@ -51,10 +51,7 @@ class IntentParser:
             logger.info("IntentParser.__init__ START")
         self.config = config or {}
         self.logger = logger
-        self.logger.info(
-            "IntentParser initialized",
-            extra={"config_summary": safe_config_summary(self.config)},
-        )
+        self.logger.info("IntentParser initialized")
         if os.environ.get("PYTEST_CURRENT_TEST"):
             self.logger.info("IntentParser.__init__ END")
 

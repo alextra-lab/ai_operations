@@ -102,10 +102,7 @@ class LLMRouter:
                     self.client.client.read_timeout,  # type: ignore[attr-defined]
                 )
             except (ValueError, TypeError):
-                logger.warning(
-                    "Invalid request_timeout_seconds value: %s",
-                    request_timeout_seconds,
-                )
+                logger.warning("Invalid request_timeout_seconds value provided")
 
         logger.info("LLMRouter initialized with database-driven model selection (ADR-069)")
         if os.environ.get("PYTEST_CURRENT_TEST"):

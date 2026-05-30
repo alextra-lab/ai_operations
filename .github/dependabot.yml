@@ -8,6 +8,10 @@ updates:
       time: "06:00"
       timezone: Europe/Brussels
     open-pull-requests-limit: 5
+    groups:
+      pip-root:
+        patterns:
+          - "*"
     labels:
       - dependencies
       - python
@@ -98,6 +102,19 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      angular:
+        patterns:
+          - "@angular/*"
+          - "angular-*"
+      npm-dev:
+        dependency-type: development
+        patterns:
+          - "*"
+      npm-prod:
+        dependency-type: production
+        patterns:
+          - "*"
     labels:
       - dependencies
       - frontend

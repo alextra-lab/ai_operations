@@ -3,7 +3,8 @@ Configuration models for embedding service providers and models.
 """
 
 import os
-from typing import Any
+from importlib.resources import files
+from typing import Any, Literal
 
 import yaml
 from pydantic import (
@@ -29,12 +30,9 @@ from shared.providers import (
 # Configure structured logger for this module
 logger = configure_logging(service_name="embedding_config")
 
-# Default configuration paths
-DEFAULT_CONFIG_PATHS = [
-    "/opt/models/models.yaml",  # Bind-mounted volume
-    "/etc/embedding/models.yaml",  # Container config path
-    os.path.join(os.path.dirname(__file__), "models.yaml"),  # Package default
-]
+# Default configuration paths (resolved at import for tests)
+_PACKAGE_CONFIG_DIR = os.path.realpath(os.path.dirname(__file__))
+_BUILTIN_CONFIG_PATH = os.path.realpath(os.path.join(_PACKAGE_CONFIG_DIR, "models.yaml"))
 
 
 # Re-export shared models for backward compatibility
@@ -160,6 +158,49 @@ class ServiceConfig(BaseModel):
         return v
 
 
+def _load_yaml_mapping_from_literal(literal_path: Literal[
+    "/opt/models/models.yaml",
+    "/etc/embedding/models.yaml",
+]) -> dict[str, Any] | None:
+    """Load YAML from a fixed container path constant."""
+    if not os.path.isfile(literal_path):
+        return None
+
+    with open(literal_path, encoding="utf-8") as config_file:
+        loaded = yaml.safe_load(config_file)
+
+    if not isinstance(loaded, dict):
+        raise ValueError("Configuration root must be a mapping")
+    return loaded
+
+
+def _load_package_yaml_mapping() -> dict[str, Any] | None:
+    """Load the package-bundled models.yaml without filesystem injection."""
+    try:
+        raw = files("app.config").joinpath("models.yaml").read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return None
+
+    loaded = yaml.safe_load(raw)
+    if not isinstance(loaded, dict):
+        raise ValueError("Configuration root must be a mapping")
+    return loaded
+
+
+def _load_user_yaml_mapping(config_path: str) -> dict[str, Any]:
+    """Load YAML for a basename-only config path from the package config dir."""
+    basename = os.path.basename(config_path)
+    normalized = os.path.normpath(config_path)
+    if basename != normalized or basename in {".", ".."} or not basename:
+        raise ValueError("Configuration path must be a simple filename")
+
+    raw = files("app.config").joinpath(basename).read_text(encoding="utf-8")
+    loaded = yaml.safe_load(raw)
+    if not isinstance(loaded, dict):
+        raise ValueError("Configuration root must be a mapping")
+    return loaded
+
+
 def load_config(config_path: str | None = None) -> ServiceConfig:
     """
     Load service configuration from YAML file.
@@ -174,19 +215,31 @@ def load_config(config_path: str | None = None) -> ServiceConfig:
         FileNotFoundError: If no configuration file is found
         ValueError: If configuration is invalid
     """
-    paths_to_try = [config_path] if config_path else []
-    paths_to_try.extend(DEFAULT_CONFIG_PATHS)
+    if config_path:
+        try:
+            config_data = _load_user_yaml_mapping(config_path)
+            logger.info("Configuration loaded successfully")
+            return ServiceConfig(**config_data)
+        except FileNotFoundError as exc:
+            raise ValueError("Invalid configuration path") from exc
+        except Exception as e:
+            logger.error("Error loading configuration", extra={"error": str(e)})
+            raise ValueError(f"Invalid configuration: {e!s}") from e
 
-    for path in paths_to_try:
-        if path and os.path.exists(path):
-            try:
-                with open(path) as f:
-                    config_data = yaml.safe_load(f)
-                    logger.info("Configuration loaded successfully")
-                    return ServiceConfig(**config_data)
-            except Exception as e:
-                logger.error(f"Error loading configuration from {path}: {e!s}")
-                raise ValueError(f"Invalid configuration: {e!s}")
+    for loader in (
+        _load_package_yaml_mapping,
+        lambda: _load_yaml_mapping_from_literal("/opt/models/models.yaml"),
+        lambda: _load_yaml_mapping_from_literal("/etc/embedding/models.yaml"),
+    ):
+        try:
+            config_data = loader()
+        except Exception as e:
+            logger.error("Error loading configuration", extra={"error": str(e)})
+            raise ValueError(f"Invalid configuration: {e!s}") from e
+
+        if config_data is not None:
+            logger.info("Configuration loaded successfully")
+            return ServiceConfig(**config_data)
 
     # If no explicit path is provided and no default files exist, use environment-based config
     if not config_path:

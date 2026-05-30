@@ -25,6 +25,15 @@ from .base import (
     configure_logging,
     get_logger,
 )
+from .redaction import (
+    GENERIC_CLIENT_ERROR,
+    REDACTED,
+    client_safe_error_message,
+    mask_identifier,
+    redact_mapping,
+    redact_value,
+    safe_config_summary,
+)
 
 MAX_BODY_BYTES = 2048
 SENSITIVE_HEADERS = {"authorization", "x-api-key", "cookie"}
@@ -218,12 +227,19 @@ def _is_sensitive_field(field_name: str) -> bool:
 
 # Re-export for clean imports
 __all__ = [
+    "GENERIC_CLIENT_ERROR",
     "JsonFormatter",
     "LoggingContextAdapter",
+    "REDACTED",
     "RequestIDLoggerMiddleware",
     "RequestLoggingMiddleware",
     "TextFormatter",
+    "client_safe_error_message",
     "configure_logging",
     "get_logger",
     "is_verbose_logging_enabled",
+    "mask_identifier",
+    "redact_mapping",
+    "redact_value",
+    "safe_config_summary",
 ]

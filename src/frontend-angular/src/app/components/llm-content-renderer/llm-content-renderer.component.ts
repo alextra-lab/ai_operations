@@ -762,6 +762,6 @@ export class LLMContentRendererComponent
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
-    return `<div class="render-error"><span class="render-error-header">⚠️ Diagram Error:</span> <span class="render-error-message" title="${escapedError}">${escapedError}</span><div class="render-error-code">${escapedCode}</div></div>`;
+    return `<div class="render-error"><span class="render-error-header">⚠️ Diagram Error:</span> <span class="render-error-message">${escapedError}</span><div class="render-error-code">${escapedCode}</div></div>`;
   }
 }

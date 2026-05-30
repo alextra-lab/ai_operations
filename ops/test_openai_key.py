@@ -53,8 +53,7 @@ def test_openai_api(api_key: str | None = None):
         pytest.skip("No API key provided and OPENAI_API_KEY not set in environment")
 
     # Show redacted key for debugging
-    masked_key = f"...{key[-4:]}" if key else "None"
-    logger.info(f"Testing OpenAI API with key: {masked_key}")
+    logger.info("Testing OpenAI API connectivity")
 
     # Initialize the client
     client = OpenAI(api_key=key)
@@ -131,8 +130,7 @@ def run_openai_test(api_key: str | None = None) -> dict[str, Any]:
         }
 
     # Show redacted key for debugging
-    masked_key = f"...{key[-4:]}" if key else "None"
-    logger.info(f"Testing OpenAI API with key: {masked_key}")
+    logger.info("Testing OpenAI API connectivity")
 
     try:
         # Initialize the client

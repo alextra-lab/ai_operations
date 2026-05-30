@@ -1029,11 +1029,15 @@ async def test_provider(
                     "message": "Request timed out after 5 seconds",
                 }
             except Exception as e:
+                logger.error(
+                    "Provider connectivity test failed",
+                    extra={"provider_id": str(provider_id), "error": str(e)},
+                )
                 return {
                     "success": False,
                     "status_code": None,
                     "latency_ms": None,
-                    "message": f"Connection error: {str(e)}",
+                    "message": "Connection error while testing provider",
                 }
 
     except HTTPException:
@@ -1129,8 +1133,8 @@ async def get_aggregate_metrics(
         async with get_db() as db:
             # Build query with optional provider filter
             # Safe to use f-string for hours since FastAPI validates it as integer
-            where_clause = f"WHERE ts_utc >= NOW() - INTERVAL '{hours} hours'"
-            params = {}
+            where_clause = "WHERE ts_utc >= NOW() - make_interval(hours => :hours)"
+            params: dict[str, Any] = {"hours": hours}
 
             if provider:
                 where_clause += " AND provider_name = :provider"
@@ -1224,8 +1228,8 @@ async def get_timeseries_metrics(
     try:
         async with get_db() as db:
             # Safe to use f-string for hours since FastAPI validates it as integer
-            where_clause = f"WHERE ts_utc >= NOW() - INTERVAL '{hours} hours'"
-            params: dict[str, Any] = {"interval_minutes": interval_minutes}
+            where_clause = "WHERE ts_utc >= NOW() - make_interval(hours => :hours)"
+            params: dict[str, Any] = {"hours": hours, "interval_minutes": interval_minutes}
 
             if provider:
                 where_clause += " AND provider_name = :provider"
@@ -1298,9 +1302,8 @@ async def get_metrics_by_provider(
     """
     try:
         async with get_db() as db:
-            # Safe to use f-string for hours since FastAPI validates it as integer
             query = text(
-                f"""
+                """
                 SELECT
                     COALESCE(provider_name, 'Unknown') as provider_name,
                     COUNT(*) as request_count,
@@ -1309,13 +1312,13 @@ async def get_metrics_by_provider(
                     ROUND(CAST(SUM(COALESCE(cost_eur, 0)) AS NUMERIC), 6) as total_cost_eur,
                     SUM(tokens_in + tokens_out) as total_tokens
                 FROM gateway_usage_log
-                WHERE ts_utc >= NOW() - INTERVAL '{hours} hours'
+                WHERE ts_utc >= NOW() - make_interval(hours => :hours)
                 GROUP BY provider_name
                 ORDER BY request_count DESC
                 """
             )
 
-            result = await db.execute(query)
+            result = await db.execute(query, {"hours": hours})
             rows = result.fetchall()
 
             return [
@@ -1352,9 +1355,8 @@ async def get_metrics_by_model(
     """
     try:
         async with get_db() as db:
-            # Safe to use f-string for hours since FastAPI validates it as integer
             query = text(
-                f"""
+                """
                 SELECT
                     model_requested as model_name,
                     COUNT(*) as request_count,
@@ -1362,13 +1364,13 @@ async def get_metrics_by_model(
                     ROUND(CAST(SUM(COALESCE(cost_eur, 0)) AS NUMERIC), 6) as total_cost_eur,
                     ROUND(AVG(latency_total_ms), 2) as avg_latency_ms
                 FROM gateway_usage_log
-                WHERE ts_utc >= NOW() - INTERVAL '{hours} hours'
+                WHERE ts_utc >= NOW() - make_interval(hours => :hours)
                 GROUP BY model_requested
                 ORDER BY request_count DESC
                 """
             )
 
-            result = await db.execute(query)
+            result = await db.execute(query, {"hours": hours})
             rows = result.fetchall()
 
             return [

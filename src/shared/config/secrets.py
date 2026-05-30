@@ -13,6 +13,8 @@ import os
 from collections.abc import Mapping
 from typing import Protocol
 
+from shared.logging_utils.redaction import REDACTED
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,8 +43,8 @@ def _create_provider() -> SecretProvider:
         return EnvSecretProvider()
 
     logger.warning(
-        "Unknown SECRET_PROVIDER '%s'; falling back to environment provider",
-        provider_name,
+        "Unknown SECRET_PROVIDER; falling back to environment provider",
+        extra={"provider": REDACTED},
     )
     return EnvSecretProvider()
 

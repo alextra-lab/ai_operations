@@ -205,7 +205,7 @@ class RedisClient:
             return {
                 "status": "unhealthy",
                 "connected": False,
-                "message": f"Redis connection lost: {str(e)}",
+                "message": "Redis connection lost",
             }
 
         except RedisError as e:
@@ -213,7 +213,7 @@ class RedisClient:
             return {
                 "status": "error",
                 "connected": True,
-                "message": f"Redis error: {str(e)}",
+                "message": "Redis health check failed",
             }
 
     async def get_info(self) -> dict[str, str | int | bool]:

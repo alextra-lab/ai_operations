@@ -5,7 +5,7 @@ pydantic>=2.12.5,<3.0.0
 python-json-logger==2.0.7
 
 # Pinning versions based on known compatible set for llm-guard
-torch>=2.4.0 # As per llm-guard's apparent dependency
+torch>=2.12.0 # As per llm-guard's apparent dependency
 transformers[torch]>=4.51.3  # SECURITY NOTE: 4.51.3 has known vulnerabilities, but required by llm-guard 0.3.16
 llm-guard>=0.3.16
 onnxruntime>=1.25.1   # or just onnxruntime, if you prefer

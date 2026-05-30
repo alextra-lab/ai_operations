@@ -122,7 +122,7 @@ jobs:
 
       - name: Run pip-audit
         run: |
-          pip-audit -r requirements-all-no-llm-guard.txt || pip-audit -r requirements-all.txt
+          pip-audit -r requirements-all-no-llm-guard.txt
 
       - name: Install frontend dependencies
         working-directory: src/frontend-angular

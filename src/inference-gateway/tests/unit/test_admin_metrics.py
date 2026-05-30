@@ -128,6 +128,11 @@ async def test_get_metrics_by_provider():
         assert result[1].provider_name == "Mistral"
         assert result[2].provider_name == "Local"
 
+        execute_call = mock_db.execute.await_args
+        assert execute_call is not None
+        assert execute_call.args[1] == {"hours": 24}
+        assert ":hours" in str(execute_call.args[0])
+
 
 @pytest.mark.asyncio
 async def test_get_metrics_by_model():
@@ -155,6 +160,11 @@ async def test_get_metrics_by_model():
         assert result[0].total_tokens == 30000
         assert result[1].model_name == "mistral-large"
         assert result[2].model_name == "llama2-70b"
+
+        execute_call = mock_db.execute.await_args
+        assert execute_call is not None
+        assert execute_call.args[1] == {"hours": 24}
+        assert ":hours" in str(execute_call.args[0])
 
 
 @pytest.mark.asyncio

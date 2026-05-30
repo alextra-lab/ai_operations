@@ -160,6 +160,39 @@ class ServiceConfig(BaseModel):
         return v
 
 
+def _resolve_allowed_config_path(path: str) -> str:
+    """
+    Resolve and validate a configuration file path against allowed base dirs.
+
+    Args:
+        path: Candidate configuration file path.
+
+    Returns:
+        Absolute resolved path safe to open.
+
+    Raises:
+        ValueError: If the path is outside allowed directories or invalid.
+    """
+    if not path or not path.strip():
+        raise ValueError("Configuration path must not be empty")
+
+    resolved = os.path.realpath(os.path.abspath(path))
+    allowed_bases = {
+        os.path.realpath("/opt/models"),
+        os.path.realpath("/etc/embedding"),
+        os.path.realpath(os.path.dirname(__file__)),
+    }
+
+    for base in allowed_bases:
+        try:
+            if os.path.commonpath([resolved, base]) == base:
+                return resolved
+        except ValueError:
+            continue
+
+    raise ValueError(f"Configuration path is not allowed: {path}")
+
+
 def load_config(config_path: str | None = None) -> ServiceConfig:
     """
     Load service configuration from YAML file.
@@ -178,14 +211,27 @@ def load_config(config_path: str | None = None) -> ServiceConfig:
     paths_to_try.extend(DEFAULT_CONFIG_PATHS)
 
     for path in paths_to_try:
-        if path and os.path.exists(path):
+        if not path:
+            continue
+        try:
+            safe_path = _resolve_allowed_config_path(path)
+        except ValueError as exc:
+            logger.warning("Skipping disallowed configuration path", extra={"path": path})
+            if config_path:
+                raise ValueError(f"Invalid configuration path: {path}") from exc
+            continue
+
+        if os.path.exists(safe_path):
             try:
-                with open(path) as f:
+                with open(safe_path) as f:
                     config_data = yaml.safe_load(f)
                     logger.info("Configuration loaded successfully")
                     return ServiceConfig(**config_data)
             except Exception as e:
-                logger.error(f"Error loading configuration from {path}: {e!s}")
+                logger.error(
+                    "Error loading configuration",
+                    extra={"path": safe_path, "error": str(e)},
+                )
                 raise ValueError(f"Invalid configuration: {e!s}")
 
     # If no explicit path is provided and no default files exist, use environment-based config

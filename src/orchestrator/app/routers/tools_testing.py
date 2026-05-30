@@ -17,7 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.auth import get_current_user
 from shared.auth.models import TokenPayload
-from shared.logging_utils.fastapi import get_logger
+from shared.logging_utils.fastapi import GENERIC_CLIENT_ERROR, get_logger
 
 from ..db.database import get_async_db
 from ..db.models import Tool
@@ -197,7 +197,7 @@ async def test_tool_execution(
         return {
             "success": False,
             "status": "error",
-            "error": error_msg,
+            "error": GENERIC_CLIENT_ERROR,
             "duration_ms": round(duration_ms, 2),
         }
 
@@ -240,7 +240,7 @@ async def test_tool_execution(
         return {
             "success": False,
             "status": "error",
-            "error": f"Tool execution failed: {error_msg}",
+            "error": GENERIC_CLIENT_ERROR,
             "duration_ms": round(duration_ms, 2),
         }
 
@@ -344,4 +344,4 @@ async def validate_tool_parameters(
             },
             exc_info=True,
         )
-        return {"valid": False, "error": f"Validation error: {error_msg}"}
+        return {"valid": False, "error": GENERIC_CLIENT_ERROR}

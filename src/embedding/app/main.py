@@ -140,7 +140,7 @@ async def health_check() -> dict[str, Any]:
         provider_health = await provider_factory.get_provider_health()
     except Exception as e:
         logger.error(f"Error checking provider health: {e!s}")
-        provider_health = {"error": {"available": False, "error": str(e)}}
+        provider_health = {"error": {"available": False, "error": "Provider health check failed"}}
 
     # Overall service health
     providers_available = False

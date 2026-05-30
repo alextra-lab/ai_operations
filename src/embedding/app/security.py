@@ -35,8 +35,7 @@ async def verify_client_api_key(
 
     if not expected_api_key:
         logger.error(
-            "Client API key not configured in environment variable '%s'.",
-            EMBEDDING_SERVICE_CLIENT_API_KEY_ENV,
+            "Client API key not configured in environment",
             extra={"request_id": "startup"},
         )
         raise HTTPException(

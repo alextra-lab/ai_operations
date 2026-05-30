@@ -70,10 +70,9 @@ class OpenAIProvider:
         api_key_env = self.connection_config.api_key_env or "OPENAI_API_KEY"
         api_key_present = bool(self._api_key_override) or bool(resolve_secret(api_key_env))
         logger.info(
-            "Initialized OpenAI provider %s with %d models (api_key_env=%s, api_key_set=%s)",
+            "Initialized OpenAI provider %s with %d models (api_key_configured=%s)",
             name,
             len(models),
-            api_key_env,
             "yes" if api_key_present else "no",
         )
         # Never log the actual API key value

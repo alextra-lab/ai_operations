@@ -19,7 +19,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.auth.models import TokenPayload
 from shared.config.schemas import OrchestratorConfig
-from shared.logging_utils.fastapi import configure_logging
+from shared.logging_utils.fastapi import GENERIC_CLIENT_ERROR, configure_logging
 
 from ..config.runtime import build_runtime_config
 from ..db.database import get_async_db
@@ -490,8 +490,8 @@ async def process_request(
                         exc_info=True,
                     )
                     error_data = {
-                        "error": str(e),
-                        "message": "Streaming failed",
+                        "error": "Streaming failed",
+                        "message": GENERIC_CLIENT_ERROR,
                         "request_id": request_id,
                     }
                     yield f"data: {json.dumps(error_data)}\n\n"

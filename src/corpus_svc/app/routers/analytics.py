@@ -60,7 +60,7 @@ async def get_hot_documents(
     try:
         # Use DatabaseConnection.fetch() which handles connection pooling internally
         query = text(
-            f"""
+            """
             SELECT
                 d.id,
                 d.title,
@@ -71,14 +71,14 @@ async def get_hot_documents(
                 COUNT(DISTINCT us.user_id) as unique_users
             FROM documents d
             LEFT JOIN usage_stats us ON d.id = us.document_id
-            WHERE us.accessed_at >= NOW() - INTERVAL '{days_back} days'
+            WHERE us.accessed_at >= NOW() - make_interval(days => :days_back)
             GROUP BY d.id, d.title, d.classification, d.ingested_at
             ORDER BY access_count DESC
             LIMIT :limit
         """
         )
 
-        result = await session.execute(query, {"limit": limit})
+        result = await session.execute(query, {"limit": limit, "days_back": days_back})
         records = result.mappings().all()
 
         return [
@@ -114,7 +114,7 @@ async def get_hot_chunks(
     try:
         # Use DatabaseConnection.fetch() which handles connection pooling internally
         query = text(
-            f"""
+            """
             SELECT
                 chunk_id,
                 COUNT(*) as access_count,
@@ -126,14 +126,14 @@ async def get_hot_chunks(
                  UNNEST(us.chunk_ids) WITH ORDINALITY AS t(chunk_id, pos)
             LEFT JOIN UNNEST(us.relevancy_scores) WITH ORDINALITY AS r(relevancy_score, pos2)
                  ON t.pos = r.pos2
-            WHERE us.accessed_at >= NOW() - INTERVAL '{days_back} days'
+            WHERE us.accessed_at >= NOW() - make_interval(days => :days_back)
             GROUP BY chunk_id
             ORDER BY access_count DESC
             LIMIT :limit
         """
         )
 
-        result = await session.execute(query, {"limit": limit})
+        result = await session.execute(query, {"limit": limit, "days_back": days_back})
         records = result.mappings().all()
 
         return [
@@ -167,30 +167,30 @@ async def get_performance_metrics(
     try:
         # Basic metrics query
         basic_query = text(
-            f"""
+            """
             SELECT
                 COUNT(*) as total_retrievals,
                 COUNT(DISTINCT document_id) as unique_documents_accessed,
                 COUNT(DISTINCT user_id) as unique_users,
                 AVG(array_length(chunk_ids, 1)) as avg_chunks_per_retrieval
             FROM usage_stats
-            WHERE accessed_at >= NOW() - INTERVAL '{days_back} days'
+            WHERE accessed_at >= NOW() - make_interval(days => :days_back)
         """
         )
 
-        result = await session.execute(basic_query)
+        result = await session.execute(basic_query, {"days_back": days_back})
         basic_record = result.mappings().first()
 
         # Calculate average relevancy score from all searches
         relevancy_query = text(
-            f"""
+            """
             SELECT
                 AVG(score) as avg_relevancy,
                 COUNT(*) as total_scores
             FROM (
                 SELECT unnest(relevancy_scores) as score
                 FROM usage_stats
-                WHERE accessed_at >= NOW() - INTERVAL '{days_back} days'
+                WHERE accessed_at >= NOW() - make_interval(days => :days_back)
                 AND relevancy_scores IS NOT NULL
                 AND array_length(relevancy_scores, 1) > 0
             ) scores
@@ -198,12 +198,12 @@ async def get_performance_metrics(
         """
         )
 
-        relevancy_result = await session.execute(relevancy_query)
+        relevancy_result = await session.execute(relevancy_query, {"days_back": days_back})
         relevancy_record = relevancy_result.mappings().first()
 
         # Get top relevancy documents
         top_docs_query = text(
-            f"""
+            """
             SELECT
                 d.id,
                 d.title,
@@ -214,7 +214,7 @@ async def get_performance_metrics(
                     document_id,
                     unnest(relevancy_scores) as score
                 FROM usage_stats
-                WHERE accessed_at >= NOW() - INTERVAL '{days_back} days'
+                WHERE accessed_at >= NOW() - make_interval(days => :days_back)
                 AND relevancy_scores IS NOT NULL
                 AND array_length(relevancy_scores, 1) > 0
             ) scores
@@ -226,12 +226,12 @@ async def get_performance_metrics(
         """
         )
 
-        top_docs_result = await session.execute(top_docs_query)
+        top_docs_result = await session.execute(top_docs_query, {"days_back": days_back})
         top_docs_records = top_docs_result.mappings().all()
 
         # Get daily trends (basic implementation)
         daily_trends_query = text(
-            f"""
+            """
             SELECT
                 DATE(accessed_at) as date,
                 COUNT(*) as queries,
@@ -243,14 +243,14 @@ async def get_performance_metrics(
                     END
                 ) as avg_relevancy
             FROM usage_stats
-            WHERE accessed_at >= NOW() - INTERVAL '{days_back} days'
+            WHERE accessed_at >= NOW() - make_interval(days => :days_back)
             GROUP BY DATE(accessed_at)
             ORDER BY date DESC
             LIMIT 7
         """
         )
 
-        daily_trends_result = await session.execute(daily_trends_query)
+        daily_trends_result = await session.execute(daily_trends_query, {"days_back": days_back})
         daily_trends_records = daily_trends_result.mappings().all()
 
         return {
@@ -365,6 +365,6 @@ async def analytics_health(
         logger.error(f"Analytics health check failed: {e}", exc_info=True)
         return {
             "status": "unhealthy",
-            "error": str(e),
+            "error": "Health check failed",
             "timestamp": datetime.now(UTC).isoformat(),
         }

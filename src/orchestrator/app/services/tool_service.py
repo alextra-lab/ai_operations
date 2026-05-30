@@ -10,7 +10,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.logging_utils.fastapi import configure_logging
+from shared.logging_utils.fastapi import configure_logging, mask_identifier
 
 from ..db.models import Tool
 from ..schemas.tool import (
@@ -281,8 +281,12 @@ class ToolService:
                 await self.secrets_manager.delete_secret(tool.secret_name)
             except Exception as e:
                 logger.warning(
-                    f"Failed to delete secret for tool {tool_id}: {e}",
-                    extra={"tool_id": tool_id, "secret_name": tool.secret_name},
+                    "Failed to delete secret for tool",
+                    extra={
+                        "tool_id": tool_id,
+                        "secret_ref": mask_identifier(tool.secret_name),
+                        "error": str(e),
+                    },
                 )
 
         await self.db.delete(tool)

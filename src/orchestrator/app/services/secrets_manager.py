@@ -12,7 +12,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.config.secrets import resolve_secret
-from shared.logging_utils.fastapi import configure_logging
+from shared.logging_utils.fastapi import configure_logging, mask_identifier
 
 from ..db.models import ToolSecret
 
@@ -120,7 +120,10 @@ class SecretsManager:
 
         await self.db.commit()
 
-        logger.info(f"Stored encrypted secret: {secret_name} for tool: {tool_id}")
+        logger.info(
+            "Stored encrypted secret",
+            extra={"secret_ref": mask_identifier(secret_name), "tool_id": str(tool_id)},
+        )
 
         # Create ToolSecret model instance from returned data
         return ToolSecret(
@@ -176,22 +179,34 @@ class SecretsManager:
         row = result.fetchone()
 
         if not row:
-            logger.warning(f"Secret not found: {secret_name}")
+            logger.warning(
+                "Secret not found",
+                extra={"secret_ref": mask_identifier(secret_name)},
+            )
             return None
 
         if not row.is_active:
-            logger.warning(f"Secret inactive: {secret_name}")
+            logger.warning(
+                "Secret inactive",
+                extra={"secret_ref": mask_identifier(secret_name)},
+            )
             return None
 
         if row.expires_at and row.expires_at < datetime.now(UTC):
-            logger.warning(f"Secret expired: {secret_name}")
+            logger.warning(
+                "Secret expired",
+                extra={"secret_ref": mask_identifier(secret_name)},
+            )
             return None
 
         # Update access tracking
         if update_access_tracking:
             await self._update_access_tracking(secret_name)
 
-        logger.debug(f"Retrieved secret: {secret_name}")
+        logger.debug(
+            "Retrieved secret",
+            extra={"secret_ref": mask_identifier(secret_name)},
+        )
 
         # Decrypted value comes as bytes, decode to string
         decrypted = row.decrypted_value
@@ -237,7 +252,10 @@ class SecretsManager:
         await self.db.commit()
 
         if deleted:
-            logger.info(f"Deactivated secret: {secret_name}")
+            logger.info(
+                "Deactivated secret",
+                extra={"secret_ref": mask_identifier(secret_name)},
+            )
 
         return deleted
 
@@ -283,7 +301,10 @@ class SecretsManager:
         await self.db.commit()
 
         if rotated:
-            logger.info(f"Rotated secret: {secret_name}")
+            logger.info(
+                "Rotated secret",
+                extra={"secret_ref": mask_identifier(secret_name)},
+            )
 
         return rotated
 

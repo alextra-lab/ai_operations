@@ -83,11 +83,12 @@ class ResponseFormatter:
             self.source_extraction_patterns = source_extraction_patterns
 
         logger.info(
-            "ResponseFormatter initialized with confidence_threshold=%f, "
-            "enable_suggested_actions=%s, %d source patterns",
-            confidence_threshold,
-            enable_suggested_actions,
-            len(self.source_extraction_patterns),
+            "ResponseFormatter initialized",
+            extra={
+                "confidence_threshold": confidence_threshold,
+                "enable_suggested_actions": enable_suggested_actions,
+                "source_pattern_count": len(self.source_extraction_patterns),
+            },
         )
 
     def _convert_context_sources(

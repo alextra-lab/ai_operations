@@ -10,7 +10,7 @@ transformers[torch]>=4.51.3  # SECURITY NOTE: 4.51.3 has known vulnerabilities, 
 llm-guard>=0.3.16
 onnxruntime>=1.25.1   # or just onnxruntime, if you prefer
 optimum[onnxruntime]>=1.25.2
-typing-extensions>=4.5.0,<5.0.0
+typing-extensions>=4.15.0,<5.0.0
 numpy>=1.24.0,<2.0.0 # llm-guard might have its own numpy constraints
 packaging>=23.0,<24.0 # llm-guard might have its own packaging constraints
 opentelemetry-api==1.37.0

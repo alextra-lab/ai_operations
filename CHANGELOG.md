@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-30
+
+### Security
+
+- Cleared all 61 CodeQL findings: SQL/path injection fixed in PR #55 (already parameterized via
+  SQLAlchemy `text()` + bound params; path allowlist in `src/embedding/app/config/models.py`);
+  stack-trace exposure fixed in `tools_testing.py` (`ValueError` handler now returns
+  `GENERIC_CLIENT_ERROR` instead of raw exception string); clear-text config logging removed from
+  `intent_parser.py`. Nine remaining alerts dismissed as false-positive or won't-fix via GitHub API
+  with documented rationale.
+- Cleared all Dependabot dependency alerts (was 98): merged safe security and maintenance PRs across
+  Python services and Angular frontend; bumped `uvicorn` → 0.48.0, `opentelemetry-sdk` → 1.42.1,
+  `opentelemetry-instrumentation-*` → 0.63b1, `fastapi` → 0.136.x, `pydantic` → 2.13.x, `psycopg`
+  → 3.3.4, `sqlalchemy` → 2.0.50, `openai` → 2.38.x, `torch` → 2.12.x, `ng2-charts` → 10,
+  `node` base image → 26-alpine, and others.
+
+### Changed
+
+- Removed six per-service pip entries from `.github/dependabot.yml`; the root entry (with
+  `pip-root` group) already follows `-r` includes through the aggregator files and updates all
+  services consistently in one PR. Per-service entries caused cross-service version conflicts when
+  the same package was pinned to different versions across services.
+- Added `.claude/settings.json` with project-level permission allowlist for `gh` and `git push`
+  operations.
+- Added `CLAUDE.md` with codebase guidance for Claude Code.
+
 ## [0.1.0] - 2026-04-28
 
 ### Added

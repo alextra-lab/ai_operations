@@ -6,39 +6,25 @@ This guide documents the dependency management strategy and upgrade process for 
 
 The project uses a phased approach to dependency upgrades to ensure system stability while keeping packages up-to-date for security and performance improvements.
 
-## Current Dependency Versions (Post Phase E-I Upgrades)
+## Current Dependency Versions (Post security remediation, 2026-05-30)
 
-### Security Packages (Phase E)
+For authoritative current versions, read the service `requirements.txt` files directly —
+this table is a snapshot and will drift. Notable pins:
 
-- **bcrypt**: 4.3.0 (target: 4.2.0+) ✅
-- **cryptography**: 44.0.3 (target: 43.0.3+) ✅
-- **python-jose**: 3.5.0 (target: 3.3.0+) ✅
-
-### ML Packages (Phase F)
-
-- **datasets**: 3.6.0 (target: 2.20.0+) ✅
-- **spacy**: 3.7.5 (target: 3.7.4+) ✅
-- **transformers**: 4.53.x (orchestrator, embedding, corpus_svc, inference-gateway); 4.51.3 (llm_guard_svc only, llm-guard pin) ✅
-
-### Development Tools (Phase G)
-
-- **mypy**: 1.15.0 (target: 1.13.0+) ✅
-- **pytest**: 8.4.0 (target: 8.3.4+) ✅
-- **black**: 25.1.0 (target: 24.10.0+) ✅
-- **ruff**: 0.11.12 (target: 0.8.4+) ✅
-
-### Document Processing (Phase H)
-
-- **pdfplumber**: 0.11.x (PDF text and table extraction; replaces PyMuPDF as the primary PDF parser)
-- **PyPDF2**: 3.0.x (PDF metadata extraction)
-- **pytesseract**: 0.3.x (optional OCR fallback)
-- **beautifulsoup4**: 4.13.3 (target: 4.12.3+) ✅
-- **lxml**: 5.4.0 (target: 5.3.0+) ✅
-
-### Database Drivers (Phase I)
-
-- **psycopg**: 3.2.10 (target: 3.2.3+) ✅
-- **qdrant-client**: 1.14.2 (target: 1.9.1+) ✅
+| Package | Version | Notes |
+|---|---|---|
+| `transformers` | 4.53.x / 4.51.3 | Most services use 4.53.x; llm_guard_svc pinned to 4.51.3 (llm-guard compat) |
+| `uvicorn` | 0.48.0 | All services |
+| `opentelemetry-sdk` | 1.42.1 | All services except llm_guard_svc |
+| `opentelemetry-instrumentation-fastapi` | 0.63b1 | All services |
+| `fastapi` | ≥0.136.3 | inference-gateway |
+| `pydantic` | ≥2.13.4 | inference-gateway |
+| `psycopg` | ≥3.3.4 | corpus_svc |
+| `sqlalchemy` | ≥2.0.50 | embedding |
+| `openai` | ≥2.38.0 | orchestrator |
+| `torch` | ≥2.12.0 | llm_guard_svc |
+| Node base image | 26-alpine | frontend-angular Dockerfile |
+| `ng2-charts` | ^10.0.0 | frontend prod |
 
 ## Upgrade Process
 
@@ -148,6 +134,31 @@ from openai import (
 # Export for other modules
 __all__ = ["LLMClient", "BadRequestError"]
 ```
+
+## Dependabot Strategy
+
+### Why only the root pip entry
+
+`.github/dependabot.yml` has **one pip entry** pointing at `directory: "/"` with a `pip-root`
+group. Do not add per-service pip entries (e.g. `directory: "/src/orchestrator"`).
+
+**Why:** `requirements-all-no-llm-guard.txt` and `requirements-all.txt` use `-r` includes to
+pull in every service's `requirements.txt`. When Dependabot scans the root, it follows those
+includes and sees all packages across all services. The `pip-root` group then bumps the same
+package in every service that uses it — in a single PR that passes CI.
+
+Per-service entries create individual PRs that update only one service at a time. Since the same
+package (e.g. `opentelemetry-sdk`) is pinned to a specific version in multiple services, a
+per-service PR that bumps it in one service leaves the other services on the old pin. The CI
+aggregator install then sees two conflicting version requirements and fails.
+
+### Known deferred items (as of 2026-05-30)
+
+- **`typescript` ~6.0.3** in the npm-dev group: `@angular-devkit/build-angular` requires
+  `typescript >=5.9 <6.0`. Dependabot will re-open once Angular build tooling adds TypeScript 6
+  support. Do not force-merge with `--legacy-peer-deps`.
+- **Python 3.14 base images**: Docker PRs for all 5 services deferred pending verification that
+  the full dependency set builds on 3.14.
 
 ## Future Upgrades
 

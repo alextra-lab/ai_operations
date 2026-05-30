@@ -175,7 +175,7 @@ async def test_tool_execution(
         return {
             "success": False,
             "status": "error",
-            "error": error_msg,
+            "error": GENERIC_CLIENT_ERROR,
             "duration_ms": round(duration_ms, 2),
         }
 

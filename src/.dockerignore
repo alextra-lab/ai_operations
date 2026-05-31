@@ -1,0 +1,27 @@
+# Exclude large/irrelevant directories from ALL service build contexts.
+# Build context is src/ — these directories are not needed by any Python service build.
+
+# Angular frontend artifacts (node_modules alone is 200+ MB)
+frontend-angular/node_modules/
+frontend-angular/dist/
+frontend-angular/.angular/
+npm_cache/
+
+# Python cache and test artifacts
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/*.egg-info/
+
+# Virtual environments
+**/venv/
+**/venv_*/
+**/.venv/
+
+# IDE and OS files
+**/.DS_Store
+**/.idea/
+**/.vscode/

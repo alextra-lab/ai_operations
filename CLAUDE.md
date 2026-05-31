@@ -52,17 +52,32 @@ python -m mypy --config-file mypy.ini src tests ops
 ### Starting the Platform
 
 ```bash
-# Copy and configure env
-cp config/env/env.template config/env/.env
-export $(grep -v '^#' config/env/.env | xargs)
+# First-time setup (creates network, data dirs, env file)
+make setup
+# Edit config/env/.env — set POSTGRES_PASSWORD, JWT_SECRET, TOOL_SECRETS_KEY
 
-# Validate configuration
-python ops/validate_configuration.py
+# Build images and download models (local profile)
+make build
+make models
 
-# Start all services
-docker compose -f deploy/docker-compose.yml up
+# Start services
+make up
 
-# x86_64 hosts: set platform override first
+# Common operations
+make status                        # running containers + ports
+make logs                          # tail all logs
+make logs SVC=orchestrator-api     # tail one service
+make restart                       # stop + start
+make down                          # stop
+
+# Enterprise profile
+make build PROFILE=enterprise
+make up PROFILE=enterprise
+
+# Offline build (no internet — uses src/wheelhouse)
+make build-offline
+
+# x86_64 hosts: set platform override before build
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 ```
 

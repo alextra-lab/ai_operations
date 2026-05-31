@@ -33,7 +33,7 @@ hit them, document each fix, then layer in the full stack and the enterprise/off
 
 | # | Task | Primary files | Links |
 |---|---|---|---|
-| M1-1 | Bootstrap wrapper: idempotent `docker network create observability` + `mkdir -p data/{postgres,qdrant,redis,models,llm-guard-models,retrieval/tmp}` | `ops/bootstrap/up.sh` *(new)* | — |
+| M1-1 | Bootstrap wrapper: idempotent `docker network create observability` + `mkdir -p data/{postgres,qdrant,redis,models,llm-guard-models,retrieval/tmp}` | `Makefile` (`make setup`) — replaced `ops/bootstrap/up.sh` | — |
 | M1-2 | Fix port 8002 collision: remap embedding host port `8002→8005`; update `EMBEDDING_SERVICE_URL` default | `deploy/docker-compose.yml` line 276, `config/env/env.template` | ADR-074 |
 | M1-3 | `db-init` one-shot service in compose: init SQL → migrations → seeds → intent-defaults; gate orchestrator/gateway/corpus on `service_completed_successfully` | `deploy/docker-compose.yml`, `ops/database/init_entrypoint.sh` *(new)* | AIO-33, AIO-6 |
 | M1-4 | Parametrize all 5 Python Dockerfiles + frontend with `BASE_REGISTRY`, `PIP_INDEX_URL`, `OFFLINE` ARGs; remove dead/stale bits; retire `Dockerfile.pipBuild` variants | All service `Dockerfile` files | ADR-074 |
@@ -44,7 +44,7 @@ hit them, document each fix, then layer in the full stack and the enterprise/off
 
 ### Success criteria
 
-- [x] `ops/bootstrap/up.sh --profile local` completes without errors (network + dirs created)
+- [x] `make setup && make build && make up` completes without errors (network + dirs created)
 - [x] `docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.local.yml up --build` succeeds
 - [x] All 8 target services report `healthy` in `docker compose ps` (7 running + db-init exited 0)
 - [x] DB populated: `intent_model_defaults`, `gateway_providers`, `intent_types` (not `intents`), `use_cases`, `models` tables exist and have rows

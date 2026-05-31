@@ -46,11 +46,16 @@ Thumbs.db
 .git/
 .gitignore
 
-# Node.js (if any)
+# Node.js — exclude at all depths (src/frontend-angular/node_modules is 673 MB)
+**/node_modules/
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+src/npm_cache/
+npm_cache/
+src/frontend-angular/dist/
+src/frontend-angular/.angular/
 
 # Docker
 Dockerfile*

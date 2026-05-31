@@ -10,13 +10,18 @@
 --   This script creates all tables, indexes, views, functions, and RLS policies
 --   required for the application to function.
 --
--- NOTE: This init script includes RBAC V2 schema (ADR-060), Inference Gateway tables (migrations 029-032),
---       and additional migrations: 027 (models.is_hidden), 028 (collections preflight), 035 (query/thread columns)
+-- NOTE: This init script is the single source of truth for the schema. It includes
+--       RBAC V2 (ADR-060), Inference Gateway tables, and ALL migrations 027-039
+--       consolidated in (AIO-65). Migrations 027-039 have been deleted; their DDL is
+--       authoritative here and their data operations live in ops/database/seed/.
+--       Specifically folded in: 036 (intent_types capability columns + new categories/intents
+--       moved to seed/012), 037 (intent_model_defaults table + trigger), 038 (output_templates),
+--       039 (intent_model_defaults.temperature column).
 --
 -- For fresh installations: Use this script directly
 -- For upgrading existing databases: Use migrations in ops/database/migrations/rbac_v2/
 --
--- Last updated: 2025-12-10 (RBAC V2 consolidation + Gateway tables + Migrations 027, 028, 035 integration)
+-- Last updated: 2026-05-31 (AIO-65: consolidated migrations 027-039 into init)
 --
 -- Prerequisites:
 --   - PostgreSQL 17 or higher
@@ -1383,6 +1388,10 @@ CREATE TABLE IF NOT EXISTS intent_types (
     recommended_model VARCHAR(100) DEFAULT 'mistral-small',
     default_temperature_min DECIMAL(3, 2) DEFAULT 0.1,
     default_temperature_max DECIMAL(3, 2) DEFAULT 0.9,
+    -- Capability profile (Migration 036 / ADR-067)
+    default_sampling_preset VARCHAR(20) NOT NULL DEFAULT 'balanced',
+    default_output_format VARCHAR(20) NOT NULL DEFAULT 'text',
+    recommended_capabilities TEXT [] NOT NULL DEFAULT '{}',
     -- UI metadata
     icon VARCHAR(50) DEFAULT 'chat',
     color VARCHAR(20) DEFAULT '#2196F3',
@@ -1405,6 +1414,13 @@ CREATE TABLE IF NOT EXISTS intent_types (
     ),
     CONSTRAINT ck_intent_types_temp_range CHECK (
         default_temperature_min <= default_temperature_max
+    ),
+    -- Capability profile constraints (Migration 036 / ADR-067)
+    CONSTRAINT chk_sampling_preset CHECK (
+        default_sampling_preset IN ('strict', 'balanced', 'creative')
+    ),
+    CONSTRAINT chk_output_format CHECK (
+        default_output_format IN ('text', 'json', 'yaml', 'structured')
     )
 );
 -- Intent Usage Logs Table
@@ -1424,7 +1440,74 @@ CREATE TABLE IF NOT EXISTS intent_usage_logs (
 COMMENT ON TABLE intent_categories IS 'Domain categories for grouping related intent types (e.g., SECURITY, LEGAL, HR)';
 COMMENT ON TABLE intent_types IS 'Dynamic intent types with minimal defaults (sampling presets). Full configuration in use_cases.config_json. NOT a permission boundary - see ADR-041.';
 COMMENT ON COLUMN intent_types.is_system IS 'System intents cannot be deleted via API';
+COMMENT ON COLUMN intent_types.default_sampling_preset IS 'Default sampling preset for auto-preset behavior in the wizard: strict | balanced | creative (Migration 036 / ADR-067)';
+COMMENT ON COLUMN intent_types.default_output_format IS 'Default output format: text | json | yaml | structured (Migration 036 / ADR-067)';
+COMMENT ON COLUMN intent_types.recommended_capabilities IS 'Informational capability tags for future model filtering (Migration 036 / ADR-067)';
 COMMENT ON TABLE intent_usage_logs IS 'Analytics and monitoring for intent type usage';
+-- Intent Model Defaults Table (Migration 037 + 039 / ADR-069)
+-- Database-driven intent-to-model configuration. Replaces INTENT_MODEL_* env vars.
+CREATE TABLE IF NOT EXISTS intent_model_defaults (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    -- Intent and model configuration
+    intent_code VARCHAR(50) NOT NULL,
+    model_id VARCHAR(255) NOT NULL,
+    -- Configuration metadata
+    priority INTEGER NOT NULL DEFAULT 1,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    effective_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    notes TEXT,
+    -- Optional per-intent temperature override (Migration 039)
+    temperature DECIMAL(3, 2),
+    -- Audit columns
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    created_by UUID,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_by UUID,
+    -- Foreign key constraints
+    CONSTRAINT fk_intent_model_defaults_intent_code FOREIGN KEY (intent_code) REFERENCES intent_types(intent_code) ON DELETE RESTRICT,
+    CONSTRAINT fk_intent_model_defaults_model_id FOREIGN KEY (model_id) REFERENCES models(model_id) ON DELETE RESTRICT,
+    CONSTRAINT fk_intent_model_defaults_created_by FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE
+    SET NULL,
+        CONSTRAINT fk_intent_model_defaults_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE
+    SET NULL,
+        -- Ensure priority is positive
+        CONSTRAINT chk_intent_model_defaults_priority CHECK (priority > 0),
+        -- Valid temperature range when set (Migration 039)
+        CONSTRAINT chk_intent_model_defaults_temperature CHECK (
+            temperature IS NULL
+            OR (
+                temperature >= 0
+                AND temperature <= 1
+            )
+        )
+);
+COMMENT ON TABLE intent_model_defaults IS 'Stores system-wide default model assignments for each intent type. Replaces environment variables (ADR-069).';
+COMMENT ON COLUMN intent_model_defaults.intent_code IS 'Intent type code from intent_types table (e.g., QUERY, RULE_GENERATION)';
+COMMENT ON COLUMN intent_model_defaults.model_id IS 'Model identifier from models registry table';
+COMMENT ON COLUMN intent_model_defaults.priority IS 'Priority for selection if multiple defaults exist (lower = higher priority)';
+COMMENT ON COLUMN intent_model_defaults.is_active IS 'Whether this default is currently active (only one active default per intent)';
+COMMENT ON COLUMN intent_model_defaults.effective_date IS 'When this configuration becomes effective (for future-dated changes)';
+COMMENT ON COLUMN intent_model_defaults.notes IS 'Admin notes about why this model was chosen';
+COMMENT ON COLUMN intent_model_defaults.temperature IS 'Optional temperature override for this intent (0.0-1.0). NULL = use ModelType default.';
+-- Output Templates Table (Migration 038 / ADR-066)
+-- Custom visualization templates. Built-in templates remain in the frontend
+-- TemplateRegistryService; custom templates are persisted here and merged at runtime.
+CREATE TABLE IF NOT EXISTS output_templates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    template_id VARCHAR(100) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT DEFAULT '',
+    is_builtin BOOLEAN NOT NULL DEFAULT FALSE,
+    data_schema JSONB NOT NULL DEFAULT '{}',
+    layout JSONB NOT NULL DEFAULT '{}',
+    export_formats TEXT [] NOT NULL DEFAULT '{}',
+    created_by UUID REFERENCES users(id) ON DELETE
+    SET NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        CONSTRAINT uq_output_templates_template_id UNIQUE (template_id)
+);
+COMMENT ON TABLE output_templates IS 'Custom output visualization templates (ADR-066). Built-in templates live in the frontend TemplateRegistryService.';
 -- ============================================================================
 -- SECTION 15: AUDIT AND SECURITY
 -- ============================================================================
@@ -1932,6 +2015,17 @@ CREATE INDEX IF NOT EXISTS idx_intent_usage_intent ON intent_usage_logs(intent_i
 CREATE INDEX IF NOT EXISTS idx_intent_usage_user ON intent_usage_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_intent_usage_created ON intent_usage_logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_intent_usage_success ON intent_usage_logs(success);
+-- Intent model defaults indexes (Migration 037 / ADR-069)
+-- Ensure only one active default per intent (partial unique index)
+CREATE UNIQUE INDEX IF NOT EXISTS uq_intent_model_defaults_intent_active ON intent_model_defaults(intent_code)
+WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_intent_model_defaults_active ON intent_model_defaults(intent_code, is_active)
+WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_intent_model_defaults_created_at ON intent_model_defaults(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_intent_model_defaults_model_id ON intent_model_defaults(model_id);
+-- Output templates indexes (Migration 038 / ADR-066)
+CREATE INDEX IF NOT EXISTS idx_output_templates_template_id ON output_templates (template_id);
+CREATE INDEX IF NOT EXISTS idx_output_templates_created_at ON output_templates (created_at DESC);
 -- Encryption keys indexes
 CREATE INDEX IF NOT EXISTS idx_encryption_keys_user ON encryption_keys (user_id, is_active);
 CREATE INDEX IF NOT EXISTS idx_encryption_keys_active ON encryption_keys (key_type, is_active)
@@ -2306,6 +2400,14 @@ END;
 $$ LANGUAGE plpgsql;
 CREATE TRIGGER trg_role_use_case_assignments_updated_at BEFORE
 UPDATE ON role_use_case_assignments FOR EACH ROW EXECUTE FUNCTION update_role_use_case_assignments_updated_at();
+-- Intent model defaults updated_at trigger (Migration 037 / ADR-069)
+CREATE OR REPLACE FUNCTION update_intent_model_defaults_timestamp() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = NOW();
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS trg_intent_model_defaults_updated_at ON intent_model_defaults;
+CREATE TRIGGER trg_intent_model_defaults_updated_at BEFORE
+UPDATE ON intent_model_defaults FOR EACH ROW EXECUTE FUNCTION update_intent_model_defaults_timestamp();
 -- ============================================================================
 -- SECTION 21: SEED DATA - DEFAULT COLLECTION
 -- ============================================================================

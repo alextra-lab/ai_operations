@@ -1,12 +1,45 @@
 # Database Migration Summary
 
-**Date:** 2025-10-24
+**Date:** 2025-10-24 (original); **Updated:** 2026-05-31 (AIO-65)
 **Action:** Pre-Release Consolidation
 **Status:** ✅ Complete
 
 ## Overview
 
 Consolidated 32 fragmented SQL migration files into a single, production-ready database initialization system.
+
+---
+
+## AIO-65 Update (2026-05-31): Migrations 027–039 Consolidated Into Init
+
+After the original consolidation, incremental migrations 027–039 accumulated in
+`ops/database/migrations/`. As of AIO-65 these have been folded back into
+`000_complete_init.sql` so init is again the single source of truth.
+
+**Categorization of the 16 deleted migration files:**
+
+| Migrations | Category | Disposition |
+|---|---|---|
+| 027, 028, 029, 030, 031, 032, 033_tool_security, 034_add_security, 035 | Pure DDL already present in init (no-ops via `IF NOT EXISTS` / `duplicate_object` guards) | Deleted |
+| 033_fix_embedding_model_provider_type | Data ops fully redundant with `seed/006` (model providers) + `seed/010` (LMStudio provider) | Deleted |
+| 036 (DDL) | New `intent_types` columns: `default_sampling_preset`, `default_output_format`, `recommended_capabilities` | Folded into init |
+| 037_create + 039 | `intent_model_defaults` table + trigger + `temperature` column | Folded into init |
+| 038 | `output_templates` table | Folded into init |
+| 036 (data), 037_rename, 034_set_documents | Data operations dependent on seeded reference data | Moved to `seed/012`, `seed/013`, `seed/014` |
+
+**Notes:**
+- Migration 037's `GRANT ... TO admin_role/developer_role/...` statements were
+  intentionally **not** folded in: those roles are never created by the DB
+  scripts (the migration's GRANTs failed at runtime). The app uses a single DB
+  user with RLS, not these roles.
+- Schema equivalence between the old flow (init + seed + migrations) and the new
+  flow (init + seed) was verified on Postgres 17 via `pg_dump --schema-only`
+  diff: structurally identical (only column ordinal position, dump session
+  nonces, and a few cosmetic comment strings differ).
+- `migrations/run_migrations.sh` and `migrations/rbac_v2/` are untouched and
+  remain the mechanism for future (> 039) migrations.
+
+**Authorized:** Alex 2026-05-31 (app not in production; no volume back-compat required).
 
 ---
 
@@ -76,7 +109,15 @@ ops/database/
 
 ## Complete Database Schema
 
-### 31 Tables (All in 000_complete_init.sql)
+### 39 Tables (All in 000_complete_init.sql)
+
+> Counts below reflect the original 2025-10-24 consolidation. As of AIO-65 the init
+> additionally contains: `collections`, `role_collection_assignments`,
+> `model_pricing_history`, `gateway_providers`, `gateway_usage_log`,
+> `gateway_rate_limits`, `system_config`, `intent_model_defaults`, and
+> `output_templates` — for **39 tables** total (verify with
+> `grep -c 'CREATE TABLE IF NOT EXISTS' init/000_complete_init.sql`).
+
 
 **Authentication (3 tables):**
 
@@ -274,7 +315,7 @@ mv ops/migrations/sql/* ops/migrations/archive/pre-release/
 After initialization, verify:
 
 ```sql
--- ✅ Table count should be 31
+-- ✅ Table count should be 39 (after AIO-65 consolidation)
 SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';
 
 -- ✅ Users should exist
@@ -404,7 +445,7 @@ ops/migrations/sql/
 
 **Total Files Created:** 15
 **Total Lines of Documentation:** ~3,800 lines
-**Database Objects Documented:** 31 tables, 12 functions, 3 views, 100+ indexes, 40+ RLS policies
+**Database Objects Documented:** 39 tables, 12 functions, 3 views, 100+ indexes, 40+ RLS policies
 
 ---
 

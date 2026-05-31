@@ -9,7 +9,12 @@
 **New deployment?** Start here:
 1. [README.md](README.md) - Administration guide
 2. [init/000_complete_init.sql](init/000_complete_init.sql) - Run this first
-3. [seed/*.sql](seed/) - Run these in order (001-011)
+3. [seed/*.sql](seed/) - Run these in order (001-014)
+
+> **Note (AIO-65, 2026-05-31):** Migrations 027–039 have been consolidated into
+> `000_complete_init.sql`; a fresh `init + seed` is the complete schema with no
+> migration step. `migrations/run_migrations.sh` remains for future (> 039)
+> migrations only.
 
 ---
 
@@ -47,7 +52,7 @@
 ```
 ops/database/
 ├── init/
-│   └── 000_complete_init.sql         # Single comprehensive init (31 tables)
+│   └── 000_complete_init.sql         # Single comprehensive init (39 tables)
 │
 ├── seed/
 │   ├── 001_seed_users.sql            # Default users (RBAC V2)
@@ -60,7 +65,14 @@ ops/database/
 │   ├── 008_seed_rbac_v2_assignments.sql # RBAC V2 team assignments
 │   ├── 009_seed_draft_use_cases.sql  # Draft use cases
 │   ├── 010_seed_gateway_providers.sql   # Gateway providers
-│   └── 011_seed_gateway_rate_limits_defaults.sql # Gateway rate limits (P2-T5)
+│   ├── 011_seed_gateway_rate_limits_defaults.sql # Gateway rate limits (P2-T5)
+│   ├── 012_intent_capability_profiles_data.sql # Intent capability data (ex-migration 036)
+│   ├── 013_rename_template_ids.sql       # Template ID rename (ex-migration 037)
+│   └── 014_set_documents_as_default_collection.sql # Default collection (ex-migration 034)
+│
+├── migrations/
+│   ├── run_migrations.sh             # Runner for FUTURE migrations (> 039)
+│   └── rbac_v2/                      # RBAC V2 upgrade migrations (untouched)
 │
 ├── rollback/
 │   └── 000_drop_all.sql              # Emergency rollback (requires unlock)
@@ -128,17 +140,18 @@ ops/database/
 | **Tools** | 5 | MCP integration, encrypted secrets |
 | **Models** | 3 | Registry, cache, pricing |
 | **Telemetry** | 1 | PII-free metrics |
-| **Pricing** | 2 | 15 tiers, audit trail |
-| **Intents** | 4 | Dynamic types, RBAC |
-| **Security** | 2 | Encryption keys, audit logs |
+| **Pricing** | 3 | 15 tiers, audit trail, per-model history |
+| **Intents** | 4 | Dynamic types, model defaults (ADR-069) |
+| **Output Templates** | 1 | Custom visualizations (ADR-066) |
+| **Security** | 3 | Encryption keys, audit logs, system config |
 
-**Total:** 31 tables, 12 functions, 3 views, 100+ indexes
+**Total:** 39 tables, 12+ functions, 3 views, 100+ indexes
 
 ---
 
 ## 🔐 Security Summary
 
-- **RLS Enabled:** 16 of 31 tables
+- **RLS Enabled:** 16 of 39 tables
 - **Encryption:** tool_secrets uses pgcrypto
 - **Audit:** All sensitive operations logged
 - **Isolation:** Multi-tenant with center_id

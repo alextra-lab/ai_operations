@@ -25,6 +25,10 @@
 -- Drop Tables (in reverse dependency order)
 -- ============================================================================
 -- Drop tables with foreign keys first
+-- Intent model defaults references intent_types(intent_code), models(model_id), users (AIO-65)
+DROP TABLE IF EXISTS intent_model_defaults CASCADE;
+-- Output templates references users (AIO-65)
+DROP TABLE IF EXISTS output_templates CASCADE;
 DROP TABLE IF EXISTS intent_usage_logs CASCADE;
 DROP TABLE IF EXISTS role_intent_permissions CASCADE;
 DROP TABLE IF EXISTS intent_types CASCADE;
@@ -105,7 +109,7 @@ RAISE NOTICE '';
 RAISE NOTICE '🗑️  All AI Operations Platform database objects have been dropped.';
 RAISE NOTICE '';
 RAISE NOTICE '📋 Objects Removed:';
-RAISE NOTICE '   - All tables (31 tables)';
+RAISE NOTICE '   - All tables (39 tables)';
 RAISE NOTICE '   - All views (3 views)';
 RAISE NOTICE '   - All functions (12 functions)';
 RAISE NOTICE '   - All enums (2 types)';

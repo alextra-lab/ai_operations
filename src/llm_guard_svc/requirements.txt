@@ -11,7 +11,7 @@ cachetools>=7.1.4,<8.0.0
 # llm-guard 0.3.16 hard-pins: transformers==4.51.3, regex==2024.11.6,
 # optimum[onnxruntime]==1.25.2, torch>=2.4.0, presidio-*==2.2.358.
 # Do NOT loosen these — pip will reject any conflicting constraint below.
-llm-guard[onnxruntime-cpu]>=0.3.16
+llm-guard>=0.3.16
 torch>=2.4.0
 transformers[torch]==4.51.3
 optimum[onnxruntime]==1.25.2

@@ -34,7 +34,7 @@ services:
     container_name: orchestrator-api
     networks: [observability]
     ports:
-      - "8000:8000"
+      - "18000:8000"
     environment:
       - ENV=${ENV:-development}
       - TESTING=${TESTING:-0}
@@ -147,7 +147,7 @@ services:
     container_name: llm-guard-svc
     networks: [observability]
     ports:
-      - "8081:8081"
+      - "18081:8081"
     volumes:
       - ../data/llm-guard-models:/app/models:cached
     environment:
@@ -192,7 +192,7 @@ services:
       # Mount temporary space for processing
       - ../data/retrieval/tmp:/data/tmp
     ports:
-      - "8003:8001"
+      - "18001:8001"
     environment:
       - ENV=${ENV:-development}
       - TESTING=${TESTING:-0}
@@ -273,7 +273,7 @@ services:
       # Mount model cache
       - ../data/models:/opt/models:cached
     ports:
-      - "8002:8000"
+      - "18005:8000"
     environment:
       - ENV=${ENV:-development}
       - TESTING=${TESTING:-0}
@@ -344,7 +344,7 @@ services:
     container_name: inference-gateway
     networks: [observability]
     ports:
-      - "8002:8002"
+      - "18002:8002"
     environment:
       - ENV=${ENV:-production}
       - TESTING=${TESTING:-0}

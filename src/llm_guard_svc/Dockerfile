@@ -1,14 +1,19 @@
-FROM python:3.12-slim
+ARG BASE_REGISTRY=docker.io/library
+FROM ${BASE_REGISTRY}/python:3.12-slim
 WORKDIR /app
 
+ARG PIP_INDEX_URL=https://pypi.org/simple
+ARG OFFLINE=0
+
 # --- Set environment variables (safe defaults, no secrets) ---
+# TRANSFORMERS_OFFLINE and HF_HUB_OFFLINE are omitted here intentionally:
+# for OFFLINE=1 builds, set them via compose environment: block so online builds
+# can freely download models from HuggingFace Hub.
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PORT=8081 \
     HF_HOME=/app/models \
-    TRANSFORMERS_OFFLINE=1 \
-    HF_HUB_OFFLINE=1 \
     PYTHONPATH="/app"
 
 # --- OS dependencies for runtime and wheels ---

@@ -1,8 +1,12 @@
-# Corpus Service - Single Stage, Fully Offline, Wheelhouse + NLTK Data
+# Corpus Service - Single Stage, Wheelhouse + NLTK Data
 
-FROM python:3.12-slim
+ARG BASE_REGISTRY=docker.io/library
+FROM ${BASE_REGISTRY}/python:3.12-slim
 
 WORKDIR /app
+
+ARG PIP_INDEX_URL=https://pypi.org/simple
+ARG OFFLINE=0
 
 # Install runtime OS dependencies for document processing
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -22,14 +26,21 @@ RUN groupadd -g 1000 appuser && \
 COPY corpus_svc/requirements.txt .
 COPY wheelhouse /app/wheelhouse
 
-# Install Python dependencies OFFLINE from wheelhouse
-RUN pip install --no-cache-dir --no-index --find-links=/app/wheelhouse -r requirements.txt \
-    && rm -rf /app/wheelhouse/*.whl
+# Install Python dependencies: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0)
+RUN if [ "$OFFLINE" = "1" ]; then \
+        pip install --no-cache-dir --no-index --find-links=/app/wheelhouse -r requirements.txt; \
+    else \
+        pip install --no-cache-dir --index-url "$PIP_INDEX_URL" -r requirements.txt; \
+    fi
 
-# Copy prebuilt NLTK data to system NLTK data directory
+# Install NLTK data: copy from wheelhouse (OFFLINE=1) or download from NLTK servers (OFFLINE=0)
 RUN mkdir -p /usr/local/share/nltk_data && \
-    cp -r /app/wheelhouse/nltk_data/* /usr/local/share/nltk_data/ && \
-    rm -rf /app/wheelhouse/nltk_data
+    if [ "$OFFLINE" = "1" ] && [ -d /app/wheelhouse/nltk_data ]; then \
+        cp -r /app/wheelhouse/nltk_data/* /usr/local/share/nltk_data/; \
+    else \
+        python -c "import nltk; [nltk.download(d, download_dir='/usr/local/share/nltk_data') for d in ['punkt', 'punkt_tab', 'stopwords']]" 2>/dev/null || true; \
+    fi && \
+    rm -rf /app/wheelhouse
 
 # Copy service code
 COPY corpus_svc/app /app/app

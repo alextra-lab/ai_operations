@@ -1,12 +1,17 @@
 # Stage 1: Build dependencies
-FROM python:3.12-slim AS builder
+ARG BASE_REGISTRY=docker.io/library
+FROM ${BASE_REGISTRY}/python:3.12-slim AS builder
 WORKDIR /app
 
+ARG PIP_INDEX_URL=https://pypi.org/simple
+ARG OFFLINE=0
+
 # --- Set environment variables (safe defaults, no secrets) ---
+# TRANSFORMERS_OFFLINE and HF_HUB_OFFLINE are omitted here intentionally:
+# for OFFLINE=1 builds, set them via compose environment: block so online builds
+# can freely download models from HuggingFace Hub.
 ENV PYTHONUNBUFFERED=1 \
-    TRANSFORMERS_OFFLINE=1 \
     HF_HOME=/opt/models \
-    HF_HUB_OFFLINE=1 \
     PYTHONPATH="/app"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -20,9 +25,12 @@ RUN groupadd -r appuser && useradd -r -g appuser appuser
 COPY embedding/requirements.txt .
 COPY wheelhouse /app/wheelhouse
 
-# Install runtime dependencies from wheelhouse and remove wheelhouse after
-RUN pip install --no-cache-dir --no-index --find-links=/app/wheelhouse -r requirements.txt \
-    && rm -rf /app/wheelhouse
+# Install runtime dependencies: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0)
+RUN if [ "$OFFLINE" = "1" ]; then \
+        pip install --no-cache-dir --no-index --find-links=/app/wheelhouse -r requirements.txt; \
+    else \
+        pip install --no-cache-dir --index-url "$PIP_INDEX_URL" -r requirements.txt; \
+    fi && rm -rf /app/wheelhouse
 
 # Copy backend/orchestrator-api service code and shared code
 COPY embedding/app /app/app

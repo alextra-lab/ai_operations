@@ -114,7 +114,8 @@ dev.db
 *.sqlite3
 
 # pip wheelhouse repository faster build in dev
-src/wheelhouse
+src/wheelhouse/*
+!src/wheelhouse/.gitkeep
 
 # npm cache for faster frontend builds
 src/npm_cache

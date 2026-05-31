@@ -4,19 +4,35 @@
 
 services:
   orchestrator-api:
+    container_name: aio-m1-orchestrator
     environment:
       - DEVELOPMENT=1
       - ENV=development
 
   inference-gateway:
+    container_name: aio-m1-gateway
     environment:
       - DEVELOPMENT=1
       - ENV=development
 
   corpus-service:
+    container_name: aio-m1-corpus
     environment:
       - DEVELOPMENT=1
 
   embedding-service:
+    container_name: aio-m1-embedding
     environment:
       - DEVELOPMENT=1
+
+  postgres-db:
+    container_name: aio-m1-postgres
+
+  vector-db:
+    container_name: aio-m1-qdrant
+
+  redis-cache:
+    container_name: aio-m1-redis
+
+  db-init:
+    container_name: aio-m1-db-init

@@ -26,19 +26,17 @@ RUN groupadd -g 1000 appuser && \
 COPY corpus_svc/requirements.txt .
 COPY wheelhouse /app/wheelhouse
 
-# Install Python dependencies: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0)
+# Install Python dependencies and NLTK data in a single layer so wheelhouse is cleaned up before commit
 RUN if [ "$OFFLINE" = "1" ]; then \
         pip install --no-cache-dir --no-index --find-links=/app/wheelhouse -r requirements.txt; \
     else \
         pip install --no-cache-dir --index-url "$PIP_INDEX_URL" -r requirements.txt; \
-    fi
-
-# Install NLTK data: copy from wheelhouse (OFFLINE=1) or download from NLTK servers (OFFLINE=0)
-RUN mkdir -p /usr/local/share/nltk_data && \
+    fi && \
+    mkdir -p /usr/local/share/nltk_data && \
     if [ "$OFFLINE" = "1" ] && [ -d /app/wheelhouse/nltk_data ]; then \
         cp -r /app/wheelhouse/nltk_data/* /usr/local/share/nltk_data/; \
     else \
-        python -c "import nltk; [nltk.download(d, download_dir='/usr/local/share/nltk_data') for d in ['punkt', 'punkt_tab', 'stopwords']]" 2>/dev/null || true; \
+        python -c "import nltk; [nltk.download(d, download_dir='/usr/local/share/nltk_data') for d in ['punkt', 'punkt_tab', 'stopwords']]" || true; \
     fi && \
     rm -rf /app/wheelhouse
 

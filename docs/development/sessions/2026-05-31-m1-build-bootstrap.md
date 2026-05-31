@@ -28,8 +28,12 @@
 9. Phase 4 intent-defaults exits 1 when no `INTENT_MODEL_*` vars → non-fatal `|| echo`
 10. Composed URLs in `.env` (`QDRANT_URL=http://${QDRANT_HOST}:...`) not expanded by `xargs` → literal values
 
+## AIO-42 Notes (e2e RAG)
+- ModelSelector not loaded per-request: router created LLMRouter without model_selector; fixed by calling `load_intent_defaults_from_async_db` and passing result to ModelSelector before each request
+- Gateway model registry JOIN: `models.provider` must match `gateway_providers.name` exactly (case-sensitive); qwen model needed `provider = 'LMStudio'` and `is_available = true`
+- Successful query: qwen3.6-35b-a3b-ud-mlx via LMStudio, 26→665 tokens, 8.5s
+
 ## Next Steps
-- AIO-42: Start LMStudio on :1234 with a model, then authenticated POST to `localhost:18000` for e2e RAG
 - AIO-43 (new): Pin `torch` CPU-only in `src/embedding/requirements.txt` to eliminate 1.1 GB CUDA bloat
 - AIO-44 (new): Consolidate `000_complete_init.sql` + migrations 027-039 into single authoritative init (authorized by Alex 2026-05-31 — app is not in production)
 - M2: llm-guard-svc + Angular UI (`--profile full`)

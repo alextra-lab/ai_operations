@@ -1,0 +1,22 @@
+# deploy/docker-compose.local.yml
+# Local M1 override: backend-core only (no llm-guard / UI)
+# Usage: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.local.yml up --build
+
+services:
+  orchestrator-api:
+    environment:
+      - DEVELOPMENT=1
+      - ENV=development
+
+  inference-gateway:
+    environment:
+      - DEVELOPMENT=1
+      - ENV=development
+
+  corpus-service:
+    environment:
+      - DEVELOPMENT=1
+
+  embedding-service:
+    environment:
+      - DEVELOPMENT=1

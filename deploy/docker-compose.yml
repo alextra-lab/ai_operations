@@ -5,6 +5,7 @@ services:
       dockerfile: frontend-angular/Dockerfile
     container_name: ui-webapp
     networks: [observability]
+    profiles: [full]
     ports:
       - "4200:80"
     depends_on:
@@ -80,8 +81,6 @@ services:
       postgres-db:
         condition: service_healthy
       vector-db:
-        condition: service_healthy
-      llm-guard-svc:
         condition: service_healthy
       corpus-service:
         condition: service_healthy
@@ -171,6 +170,7 @@ services:
       dockerfile: llm_guard_svc/Dockerfile
     container_name: llm-guard-svc
     networks: [observability]
+    profiles: [full]
     ports:
       - "18081:8081"
     volumes:

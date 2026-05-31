@@ -153,12 +153,18 @@ fi
 echo ""
 
 # ---------------------------------------------------------------------------
-# Run docker compose
+# Run docker compose — build then up
+# `docker compose up --build` does not accept --build-arg in Compose v5.
+# Separate the build step (with --build-arg) from the up step.
 # ---------------------------------------------------------------------------
-echo "==> Running docker compose..."
+echo "==> Building images..."
+docker compose \
+    "${COMPOSE_FILES[@]}" \
+    build \
+    "${BUILD_ARGS[@]}"
+
+echo "==> Starting services..."
 docker compose \
     "${COMPOSE_FILES[@]}" \
     up \
-    --build \
-    "${BUILD_ARGS[@]}" \
     "${EXTRA_ARGS[@]}"

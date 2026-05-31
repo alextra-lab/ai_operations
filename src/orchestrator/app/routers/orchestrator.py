@@ -224,14 +224,23 @@ async def process_request(
 
     # Create LLMRouter with JWT token for Inference Gateway
     from ..orchestrator.llm_router import LLMRouter
+    from ..orchestrator.model_selection import ModelSelector, load_intent_defaults_from_async_db
 
     if raw_token is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing JWT token")
+
+    # Load intent→model defaults from DB so ModelSelector has a populated cache (ADR-069)
+    intent_defaults, intent_temperatures = await load_intent_defaults_from_async_db(db)
+    model_selector = ModelSelector(
+        preloaded_defaults=intent_defaults,
+        preloaded_temperatures=intent_temperatures,
+    )
 
     llm_router = LLMRouter(
         user_jwt_token=raw_token,
         gateway_url=settings.inference_gateway_url,
         request_timeout_seconds=settings.request_timeout_seconds,
+        model_selector=model_selector,
     )
     # Create sync session for Orchestrator services that still require sync
     # All services now use async_db

@@ -2,6 +2,9 @@
 # Build stage
 FROM node:26-alpine AS build
 
+ARG NPM_REGISTRY=
+# Empty default uses npm's default registry; set to Artifactory npm URL for enterprise builds
+
 # Set working directory
 WORKDIR /app
 

@@ -5,6 +5,7 @@ services:
       dockerfile: frontend-angular/Dockerfile
     container_name: ui-webapp
     networks: [observability]
+    profiles: [full]
     ports:
       - "4200:80"
     depends_on:
@@ -34,7 +35,7 @@ services:
     container_name: orchestrator-api
     networks: [observability]
     ports:
-      - "8000:8000"
+      - "18000:8000"
     environment:
       - ENV=${ENV:-development}
       - TESTING=${TESTING:-0}
@@ -81,12 +82,12 @@ services:
         condition: service_healthy
       vector-db:
         condition: service_healthy
-      llm-guard-svc:
-        condition: service_healthy
       corpus-service:
         condition: service_healthy
       inference-gateway:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -122,6 +123,29 @@ services:
       start_period: 10s
     platform: linux/arm64
 
+  db-init:
+    build:
+      context: ..
+      dockerfile: ops/database/Dockerfile
+    container_name: db-init
+    networks: [observability]
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgres-db}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      # Optional: provide these to seed intent model defaults from env
+      - INTENT_MODEL_QUERY=${INTENT_MODEL_QUERY:-}
+      - INTENT_MODEL_RULE_GENERATION=${INTENT_MODEL_RULE_GENERATION:-}
+      - INTENT_MODEL_SUMMARIZATION=${INTENT_MODEL_SUMMARIZATION:-}
+      - INTENT_MODEL_ENRICHMENT=${INTENT_MODEL_ENRICHMENT:-}
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    restart: "no"
+    platform: linux/arm64
+
   vector-db:
     image: qdrant/qdrant:v1.16.0
     container_name: vector-db
@@ -146,8 +170,9 @@ services:
       dockerfile: llm_guard_svc/Dockerfile
     container_name: llm-guard-svc
     networks: [observability]
+    profiles: [full]
     ports:
-      - "8081:8081"
+      - "18081:8081"
     volumes:
       - ../data/llm-guard-models:/app/models:cached
     environment:
@@ -192,7 +217,7 @@ services:
       # Mount temporary space for processing
       - ../data/retrieval/tmp:/data/tmp
     ports:
-      - "8003:8001"
+      - "18001:8001"
     environment:
       - ENV=${ENV:-development}
       - TESTING=${TESTING:-0}
@@ -248,6 +273,8 @@ services:
         condition: service_healthy
       embedding-service:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     healthcheck:
       test:
         [
@@ -273,7 +300,7 @@ services:
       # Mount model cache
       - ../data/models:/opt/models:cached
     ports:
-      - "8002:8000"
+      - "18005:8000"
     environment:
       - ENV=${ENV:-development}
       - TESTING=${TESTING:-0}
@@ -344,7 +371,7 @@ services:
     container_name: inference-gateway
     networks: [observability]
     ports:
-      - "8002:8002"
+      - "18002:8002"
     environment:
       - ENV=${ENV:-production}
       - TESTING=${TESTING:-0}
@@ -384,6 +411,8 @@ services:
         condition: service_healthy
       redis-cache:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
       interval: 30s

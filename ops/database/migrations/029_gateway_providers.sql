@@ -5,10 +5,16 @@
 -- Part of: P1-T2 Inference Gateway Database Schema
 
 -- Create enum for provider types
-CREATE TYPE provider_type AS ENUM ('openai', 'mistral', 'anthropic', 'local', 'custom');
+DO $$ BEGIN
+    CREATE TYPE provider_type AS ENUM ('openai', 'mistral', 'anthropic', 'local', 'custom');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Create enum for provider status
-CREATE TYPE provider_status AS ENUM ('active', 'disabled', 'error', 'testing');
+DO $$ BEGIN
+    CREATE TYPE provider_status AS ENUM ('active', 'disabled', 'error', 'testing');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Create gateway_providers table
 CREATE TABLE IF NOT EXISTS gateway_providers (

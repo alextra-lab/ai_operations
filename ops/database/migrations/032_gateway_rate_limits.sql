@@ -6,7 +6,10 @@
 -- Note: Structure only - table will not be used until P2-T5 (Rate Limiting Implementation)
 
 -- Create enum for rate limit types
-CREATE TYPE rate_limit_type AS ENUM ('global', 'provider', 'integration', 'use_case');
+DO $$ BEGIN
+    CREATE TYPE rate_limit_type AS ENUM ('global', 'provider', 'integration', 'use_case');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Create gateway_rate_limits table
 CREATE TABLE IF NOT EXISTS gateway_rate_limits (

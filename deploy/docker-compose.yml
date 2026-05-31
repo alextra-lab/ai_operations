@@ -87,6 +87,8 @@ services:
         condition: service_healthy
       inference-gateway:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -120,6 +122,29 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    platform: linux/arm64
+
+  db-init:
+    build:
+      context: ..
+      dockerfile: ops/database/Dockerfile
+    container_name: db-init
+    networks: [observability]
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgres-db}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      # Optional: provide these to seed intent model defaults from env
+      - INTENT_MODEL_QUERY=${INTENT_MODEL_QUERY:-}
+      - INTENT_MODEL_RULE_GENERATION=${INTENT_MODEL_RULE_GENERATION:-}
+      - INTENT_MODEL_SUMMARIZATION=${INTENT_MODEL_SUMMARIZATION:-}
+      - INTENT_MODEL_ENRICHMENT=${INTENT_MODEL_ENRICHMENT:-}
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    restart: "no"
     platform: linux/arm64
 
   vector-db:
@@ -248,6 +273,8 @@ services:
         condition: service_healthy
       embedding-service:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     healthcheck:
       test:
         [
@@ -384,6 +411,8 @@ services:
         condition: service_healthy
       redis-cache:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
       interval: 30s

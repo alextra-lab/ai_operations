@@ -14,7 +14,7 @@ python:3.12-slim \
   apt-get update && \
   apt-get install -y build-essential gcc libffi-dev python3-dev cargo curl unzip && \
   pip install --upgrade pip nltk && \
-  pip wheel --resume-retries=5 --no-cache-dir --wheel-dir /wheelhouse -r /requirements/requirements-all-no-llm-guard.txt -c /requirements/constraints.txt && \
+  pip wheel --resume-retries=5 --no-cache-dir --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple --wheel-dir /wheelhouse -r /requirements/requirements-all-no-llm-guard.txt -c /requirements/constraints.txt && \
   pip wheel --resume-retries=5 --no-cache-dir --wheel-dir /wheelhouse -r /requirements/src/llm_guard_svc/requirements.txt && \
   curl -L -o /tmp/en_core_web_sm-3.7.1-py3-none-any.whl https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl && \
   unzip -t /tmp/en_core_web_sm-3.7.1-py3-none-any.whl && \

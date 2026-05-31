@@ -8,7 +8,7 @@ AI Operations Platform UI is the Angular 21 frontend for the AI Operations Platf
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 24
 - npm 10+
 - Angular CLI 21 (installed via npx automatically)
 

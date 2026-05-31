@@ -111,22 +111,15 @@ COMMENT ON FUNCTION aio.current_user_uuid IS 'Returns the AI Operations Platform
 -- SECTION 3: ENUMS AND TYPES
 -- ============================================================================
 -- Model types
-CREATE TYPE model_type_enum AS ENUM (
-    'llm',
-    'embedding',
-    'reasoning',
-    'multimodal',
-    'vision',
-    'audio',
-    'other'
-);
+DO $$ BEGIN
+    CREATE TYPE model_type_enum AS ENUM ('llm', 'embedding', 'reasoning', 'multimodal', 'vision', 'audio', 'other');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 -- Model providers
-CREATE TYPE model_provider_enum AS ENUM (
-    'openai',
-    'anthropic',
-    'local',
-    'other'
-);
+DO $$ BEGIN
+    CREATE TYPE model_provider_enum AS ENUM ('openai', 'anthropic', 'local', 'other');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 -- ============================================================================
 -- SECTION 4: AUTHENTICATION TABLES
 -- ============================================================================

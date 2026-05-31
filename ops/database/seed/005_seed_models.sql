@@ -23,7 +23,7 @@ BEGIN;
 
 -- Insert default LLM models
 INSERT INTO models (
-    model_id, name, provider, model_type,
+    model_id, name, provider_type, provider, model_type,
     context_window, max_output_tokens,
     default_temperature, description, specialization,
     recommended_use_cases, created_by
@@ -31,7 +31,8 @@ INSERT INTO models (
 (
     'gpt-4o-mini',
     'GPT-4O Mini',
-    'openai',
+    'openai',        -- provider_type
+    'openai',        -- provider
     'llm',
     128000,
     16384,
@@ -44,7 +45,8 @@ INSERT INTO models (
 (
     'gpt-4o',
     'GPT-4O',
-    'openai',
+    'openai',        -- provider_type
+    'openai',        -- provider
     'llm',
     128000,
     16384,
@@ -57,7 +59,8 @@ INSERT INTO models (
 (
     'gpt-4-turbo',
     'GPT-4 Turbo',
-    'openai',
+    'openai',        -- provider_type
+    'openai',        -- provider
     'llm',
     128000,
     4096,
@@ -70,7 +73,8 @@ INSERT INTO models (
 (
     'claude-3-sonnet',
     'Claude 3 Sonnet',
-    'anthropic',
+    'anthropic',     -- provider_type
+    'anthropic',     -- provider
     'llm',
     200000,
     4096,
@@ -83,7 +87,8 @@ INSERT INTO models (
 (
     'claude-3-opus',
     'Claude 3 Opus',
-    'anthropic',
+    'anthropic',     -- provider_type
+    'anthropic',     -- provider
     'llm',
     200000,
     4096,

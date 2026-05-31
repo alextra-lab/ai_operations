@@ -24,6 +24,19 @@ run_psql() {
         "$@"
 }
 
+# Check if DB was already initialized (schema_migrations table exists)
+ALREADY_INIT=$(run_psql -t -A -c \
+    "SELECT 1 FROM information_schema.tables WHERE table_name = 'schema_migrations' LIMIT 1" \
+    2>/dev/null || true)
+
+if [ "$ALREADY_INIT" = "1" ]; then
+    echo "=== db-init: DB already initialized — running migrations only ==="
+    cd /ops/database
+    ./run_migrations.sh
+    echo "=== db-init: Complete (resume) ==="
+    exit 0
+fi
+
 echo "=== db-init: Phase 1 — Schema init (000_complete_init.sql) ==="
 run_psql -v ON_ERROR_STOP=1 -f /ops/database/init/000_complete_init.sql
 

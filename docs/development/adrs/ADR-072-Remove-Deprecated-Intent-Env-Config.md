@@ -65,7 +65,7 @@ Additionally, `ParameterManager` only covers the original 4 intents via `ModelTy
 | `MODEL_TEMPERATURE_*` | `MODEL_TEMPERATURE_QUERY`, etc. | ParameterManager (direct env read) |
 | `INTENT_TEMPERATURE_*` | `INTENT_TEMPERATURE_QUERY`, etc. | README_INTENT_BASED_ROUTING.md only |
 
-None of these are the actual source of truth. The DB `intent_model_defaults.temperature` column (migration 039) is the real configuration.
+None of these are the actual source of truth. The DB `intent_model_defaults.temperature` column (in `000_complete_init.sql` — AIO-65) is the real configuration.
 
 **What needs to be decided:** Complete the ADR-069 cleanup by removing all deprecated intent configuration from shared/config, env files, templates, and the ParameterManager fallback system.
 
@@ -235,8 +235,7 @@ Increment `CONFIG_SCHEMA_VERSION` in `src/shared/config/version.py` since env va
 - [USE_CASE_AUTHORING_COMPLETE_SPEC](../plans/features/active/USE_CASE_AUTHORING_COMPLETE_SPEC.md) - Feature spec referencing model config
 - `src/orchestrator/app/orchestrator/model_selection.py` - DB-driven ModelSelector (ADR-069)
 - `src/orchestrator/app/orchestrator/parameter_manager.py` - Legacy parameter manager
-- `ops/database/migrations/037_create_intent_model_defaults.sql` - Intent defaults table
-- `ops/database/migrations/039_add_intent_temperature.sql` - Temperature column
+- `ops/database/init/000_complete_init.sql` - Intent defaults table + temperature column (consolidated from migrations 037/039 in AIO-65)
 
 ---
 

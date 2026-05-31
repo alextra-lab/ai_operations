@@ -76,7 +76,7 @@ preserving the existing wheelhouse path as an opt-in rather than the default.
 ### Compose structure
 - **`deploy/docker-compose.yml`** — base: all 9 services with cross-cutting fixes (`build.args` reference ARGs with public defaults). Receives the port-collision fix (embedding → `8005:8000`) and the `db-init` service.
 - **`deploy/docker-compose.local.yml`** *(new)* — local/M1 override: trims to backend-core (defers llm-guard-svc + ui-webapp); relaxes orchestrator's hard dependency on llm-guard.
-- **`ops/bootstrap/up.sh --profile local|enterprise|train`** *(new)* — wrapper that assembles the correct file list + build-arg values, creates the `observability` network and `data/` subdirs (idempotent), and invokes `docker compose`.
+- **`Makefile`** *(replaces `ops/bootstrap/up.sh`)* — developer interface: `make setup` creates the `observability` network and `data/` subdirs (idempotent); `make build [PROFILE=local|enterprise]` assembles the correct compose files and build-args; `make up/down/logs/status` covers daily workflow. The `train` profile introduced in `up.sh` was removed — it was not a deployment tier, the wheelhouse is an offline-build mechanism exposed via `make build-offline`.
 
 ### Database bootstrap in compose
 Add a one-shot `db-init` service (Alpine + psql + Python) that runs after `postgres-db` is

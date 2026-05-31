@@ -29,6 +29,7 @@ RUN mkdir -p /app/models
 
 # Declare volatile build args AFTER apt-get to avoid busting the cache layer above
 ARG OFFLINE=0
+ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
 
 # --- spaCy language model wheels (kept in sync with build_wheelhouse.sh) ---
 # en_core_web_sm-3.7.1 / zh_core_web_sm-3.7.0 require spacy>=3.7.2,<3.8.0.
@@ -50,7 +51,7 @@ RUN if [ "$OFFLINE" = "1" ]; then \
             /app/wheelhouse/en_core_web_sm-3.7.1-py3-none-any.whl \
             /app/wheelhouse/zh_core_web_sm-3.7.0-py3-none-any.whl; \
     else \
-        pip install --no-cache-dir --index-url "$PIP_INDEX_URL" \
+        pip install --no-cache-dir --index-url "$TORCH_INDEX_URL" --extra-index-url "$PIP_INDEX_URL" \
             -r requirements.txt "${EN_MODEL_URL}" "${ZH_MODEL_URL}"; \
     fi && rm -rf /app/wheelhouse
 

@@ -1,6 +1,6 @@
 # Multi-stage Docker build for Angular application
 # Build stage
-FROM node:26-alpine AS build
+FROM node:24-alpine AS build
 
 ARG NPM_REGISTRY=
 # Empty default uses npm's default registry; set to Artifactory npm URL for enterprise builds

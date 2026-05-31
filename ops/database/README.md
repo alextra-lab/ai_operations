@@ -68,20 +68,22 @@ for seed_file in ops/database/seed/*.sql; do
     -f "$seed_file"
 done
 
-# Run post-init migrations (required for Use Case Authoring, config API, etc.)
-./ops/database/run_migrations.sh
+# (No post-init migrations are needed for a fresh build — see note below.)
 ```
 
-### Post-init migrations (existing databases)
+### Post-init migrations
 
-If the database was created from init + seed **before** migrations 027–038 existed, or you see 500s on `/api/v1/config/intent-types`, run the migration script once:
+As of **AIO-65 (2026-05-31)**, migrations **027–039 have been consolidated into
+`000_complete_init.sql`** and their files deleted. A fresh `init + seed` now
+produces the complete, final schema (including intent capability profile columns,
+the `intent_model_defaults` table, and the `output_templates` table) with **no
+migration step required**.
 
-```bash
-export $(grep -v '^#' config/env/env.test | xargs)   # or config/env/.env
-./ops/database/run_migrations.sh
-```
-
-This applies `ops/database/migrations/*.sql` in order (e.g. **036** adds intent capability profile columns required by the config API). Applied migrations are recorded in `schema_migrations` so re-runs skip already-applied files.
+`./ops/database/run_migrations.sh` and the `ops/database/migrations/` directory
+remain in place as the mechanism for **future** migrations (numbered > 039). The
+runner records applied files in `schema_migrations` so re-runs skip already-applied
+files. Data operations that previously lived in migrations 033/034/036/037 now live
+in numbered `ops/database/seed/` files (012–014) and run during the seed phase.
 
 ### Initialize Test Database
 
@@ -95,7 +97,7 @@ export $(grep -v '^#' config/env/env.test | xargs)
 ### Verify Installation
 
 ```bash
-# Check table count (should be 29)
+# Check table count (should be 39)
 PGPASSWORD=$POSTGRES_PASSWORD psql-17 \
   -h $POSTGRES_HOST -p $POSTGRES_PORT \
   -U $POSTGRES_USER -d $POSTGRES_DB \
@@ -111,6 +113,24 @@ PGPASSWORD=$POSTGRES_PASSWORD psql-17 \
 ---
 
 ## Recent Changes
+
+### 2026-05-31: AIO-65 — Migrations 027–039 Consolidated Into Init
+
+✅ **Folded into init:** DDL from migrations 036–039 — intent_types capability
+   columns (`default_sampling_preset`, `default_output_format`,
+   `recommended_capabilities`), the `intent_model_defaults` table (+ `temperature`
+   column), and the `output_templates` table.
+✅ **Moved to seeds:** data operations from migrations 033/034/036/037 →
+   `seed/012_intent_capability_profiles_data.sql`, `seed/013_rename_template_ids.sql`,
+   `seed/014_set_documents_as_default_collection.sql`.
+✅ **Deleted:** all 16 migration files 027–039. Migrations 027–035 were already
+   no-ops against init; 036–039 DDL is now authoritative in init. Migration
+   033_fix was fully redundant with `seed/006` and `seed/010`.
+✅ **Verified:** schema-equivalence between the old (init+seed+migrations) and new
+   (init+seed) flows confirmed via Postgres 17 schema dump diff — structurally
+   identical.
+
+**Authorized:** Alex 2026-05-31 (app not in production).
 
 ### 2025-10-26: Database Consolidation Complete
 
@@ -150,7 +170,18 @@ ops/database/
 │   ├── 003_seed_use_cases.sql      # Default SOC use cases
 │   ├── 004_seed_pricing.sql        # LLMaaS pricing tiers
 │   ├── 005_seed_models.sql         # LLM models registry
-│   └── 006_seed_embedding_models.sql # Embedding models registry
+│   ├── 006_seed_embedding_models.sql # Embedding models registry
+│   ├── 007_seed_prompt_patterns.sql  # Prompt pattern library
+│   ├── 008_seed_rbac_v2_assignments.sql # RBAC V2 assignments
+│   ├── 009_seed_draft_use_cases.sql  # Draft use cases
+│   ├── 010_seed_gateway_providers.sql # Gateway providers
+│   ├── 011_seed_gateway_rate_limits_defaults.sql # Gateway rate limits
+│   ├── 012_intent_capability_profiles_data.sql # Intent capability data (ex-migration 036)
+│   ├── 013_rename_template_ids.sql   # Template ID rename (ex-migration 037)
+│   └── 014_set_documents_as_default_collection.sql # Default collection (ex-migration 034)
+├── migrations/
+│   ├── run_migrations.sh           # Runner for FUTURE migrations (> 039)
+│   └── rbac_v2/                    # RBAC V2 upgrade migrations (untouched)
 ├── rollback/
 │   └── 000_drop_all.sql            # Emergency rollback (development only)
 ├── docs/
@@ -178,7 +209,7 @@ The `000_complete_init.sql` script creates the entire database schema in one tra
 
 **What it creates:**
 
-- 31 tables (auth, documents, use cases, tools, models, telemetry, etc.)
+- 39 tables (auth, documents, use cases, tools, models, gateway, telemetry, intents, etc.)
 - 12 analytics and utility functions
 - 3 materialized views for hot documents/chunks
 - 100+ indexes for performance

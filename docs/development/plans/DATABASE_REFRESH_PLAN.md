@@ -162,8 +162,8 @@ Current fresh installation requires:
 
 ```
 Fresh Install (NEW):        Existing Database (Upgrade):
-1. Run init script          1. Run migrations 027-035
-2. Run seed scripts         2. Run RBAC V2 migrations (001-003)
+1. Run init script          1. No migrations 027-039 (consolidated into init — AIO-65)
+2. Run seed scripts         2. Run RBAC V2 migrations (001-003) if not yet applied
                             3. Run seed scripts
 ```
 

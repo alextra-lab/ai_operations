@@ -1,37 +1,21 @@
--- Migration: 036_add_intent_capability_profiles.sql
--- Date: 2026-02-05
--- Purpose: Add capability profile columns to intent_types for auto-preset
---          behavior in the wizard (ADR-067).
--- New columns:
---   - default_sampling_preset: strict | balanced | creative
---   - default_output_format: text | json | yaml | structured
---   - recommended_capabilities: text[] (informational tags for future model filtering)
--- Also adds new categories and expanded intent types per ADR-067.
+-- ============================================================================
+-- Seed Data: Intent Capability Profiles (ADR-067)
+-- ============================================================================
+-- Description: Data operations consolidated from migration
+--              036_add_intent_capability_profiles.sql (AIO-65).
+--              The DDL (intent_types capability columns) now lives in
+--              000_complete_init.sql; this file carries only the data portion:
+--                - capability profiles for the base system intents (seed/002)
+--                - new intent categories (ADR-067 expanded set)
+--                - new intent types (ADR-067 expanded set)
+-- Prerequisites: 000_complete_init.sql, 002_seed_intents.sql
+-- ============================================================================
 
--- ==============================================================================
--- PART 1: Add new columns to intent_types
--- ==============================================================================
+BEGIN;
 
-ALTER TABLE intent_types
-  ADD COLUMN IF NOT EXISTS default_sampling_preset VARCHAR(20)
-    NOT NULL DEFAULT 'balanced',
-  ADD COLUMN IF NOT EXISTS default_output_format VARCHAR(20)
-    NOT NULL DEFAULT 'text',
-  ADD COLUMN IF NOT EXISTS recommended_capabilities TEXT[]
-    NOT NULL DEFAULT '{}';
-
--- Add CHECK constraints
-ALTER TABLE intent_types
-  ADD CONSTRAINT chk_sampling_preset
-    CHECK (default_sampling_preset IN ('strict', 'balanced', 'creative'));
-
-ALTER TABLE intent_types
-  ADD CONSTRAINT chk_output_format
-    CHECK (default_output_format IN ('text', 'json', 'yaml', 'structured'));
-
--- ==============================================================================
--- PART 2: Update existing system intents with capability profiles
--- ==============================================================================
+-- ============================================================================
+-- PART 1: Update existing system intents with capability profiles
+-- ============================================================================
 
 -- QUERY: balanced sampling, text output
 UPDATE intent_types SET
@@ -67,9 +51,9 @@ UPDATE intent_types SET
   description = 'Data enrichment and augmentation'
 WHERE intent_code = 'ENRICHMENT';
 
--- ==============================================================================
--- PART 3: Add new categories
--- ==============================================================================
+-- ============================================================================
+-- PART 2: Add new categories (ADR-067 expanded set)
+-- ============================================================================
 
 INSERT INTO intent_categories (category_code, display_name, description, icon, color, sort_order)
 VALUES
@@ -79,9 +63,9 @@ VALUES
   ('CUSTOM', 'Custom', 'User-defined custom category', 'tune', '#9E9E9E', 10)
 ON CONFLICT (category_code) DO NOTHING;
 
--- ==============================================================================
--- PART 4: Add new intent types (ADR-067 expanded set)
--- ==============================================================================
+-- ============================================================================
+-- PART 3: Add new intent types (ADR-067 expanded set)
+-- ============================================================================
 
 INSERT INTO intent_types (
   intent_code, display_name, description, category_id,
@@ -155,9 +139,11 @@ VALUES
   )
 ON CONFLICT (intent_code) DO NOTHING;
 
--- ==============================================================================
+COMMIT;
+
+-- ============================================================================
 -- Verification
--- ==============================================================================
+-- ============================================================================
 
 DO $$
 DECLARE
@@ -167,7 +153,7 @@ BEGIN
   SELECT COUNT(*) INTO category_count FROM intent_categories;
   SELECT COUNT(*) INTO intent_count FROM intent_types;
 
-  RAISE NOTICE 'Migration 036 complete: Intent capability profiles added';
+  RAISE NOTICE 'Intent capability profiles seeded (ADR-067)';
   RAISE NOTICE '  Categories: %', category_count;
   RAISE NOTICE '  Intent types: %', intent_count;
 END $$;

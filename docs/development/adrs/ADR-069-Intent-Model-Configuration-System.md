@@ -143,7 +143,7 @@ The intent metadata we store today is designed to serve a future where model sel
 
 ### Extension: Per-Intent Temperature (2026-02)
 
-`intent_model_defaults` includes an optional `temperature` column (migration 039),
+`intent_model_defaults` includes an optional `temperature` column (now in `000_complete_init.sql` — AIO-65),
 range 0.0–1.0. When set, it overrides the ModelType metadata default at runtime.
 Admins configure it via the Intents Management UI alongside the model selection. Priority:
 use case config > intent default (DB) > ParameterManager/ModelType metadata.

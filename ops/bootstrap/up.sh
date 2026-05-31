@@ -111,13 +111,15 @@ case "$PROFILE" in
             "--build-arg" "BASE_REGISTRY=docker.io/library"
             "--build-arg" "PIP_INDEX_URL=https://pypi.org/simple"
             "--build-arg" "OFFLINE=0"
+            "--build-arg" "TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu"
         )
         ;;
     enterprise)
         echo ""
         echo "WARNING: enterprise profile uses Artifactory mirror URLs that must be" >&2
-        echo "         configured before M3. Update BASE_REGISTRY and PIP_INDEX_URL" >&2
-        echo "         placeholders in this script once your Artifactory instance is ready." >&2
+        echo "         configured before M3. Update BASE_REGISTRY, PIP_INDEX_URL, and" >&2
+        echo "         TORCH_INDEX_URL placeholders in this script once your Artifactory" >&2
+        echo "         instance is ready." >&2
         echo ""
         COMPOSE_FILES=(
             "-f" "${REPO_ROOT}/deploy/docker-compose.yml"
@@ -126,6 +128,7 @@ case "$PROFILE" in
             "--build-arg" "BASE_REGISTRY=<ARTIFACTORY_DOCKER_REGISTRY_PLACEHOLDER>"
             "--build-arg" "PIP_INDEX_URL=<ARTIFACTORY_PYPI_URL_PLACEHOLDER>"
             "--build-arg" "OFFLINE=0"
+            "--build-arg" "TORCH_INDEX_URL=<ARTIFACTORY_TORCH_CPU_URL_PLACEHOLDER>"
         )
         ;;
     train)

@@ -1,7 +1,13 @@
--- Migration: 037_rename_template_ids.sql
--- Date: 2026-02-05
--- Purpose: Rename visualization template IDs from domain-specific
---          to structural names (ADR-066).
+-- ============================================================================
+-- Seed Data: Rename Visualization Template IDs (ADR-066)
+-- ============================================================================
+-- Description: Data operation consolidated from migration
+--              037_rename_template_ids.sql (AIO-65). Renames visualization
+--              template IDs in use_cases.config_json from domain-specific to
+--              structural names. Idempotent: only updates rows still using the
+--              old names, so it is safe to re-run.
+-- Prerequisites: 000_complete_init.sql, 003_seed_use_cases.sql,
+--                009_seed_draft_use_cases.sql
 --
 -- Mapping:
 --   threat-triage-dashboard  ->  score-table-timeline
@@ -9,10 +15,9 @@
 --   incident-summary         ->  score-timeline
 --   simple-table             ->  auto-table
 --   metrics-dashboard        ->  bar-chart
+-- ============================================================================
 
--- ==============================================================================
--- Update use_cases config_json where template_id references old names
--- ==============================================================================
+BEGIN;
 
 UPDATE use_cases SET config_json = jsonb_set(
   config_json,
@@ -34,9 +39,11 @@ WHERE config_json->'output_contract'->>'template_id' IN (
   'metrics-dashboard'
 );
 
--- ==============================================================================
+COMMIT;
+
+-- ============================================================================
 -- Verification
--- ==============================================================================
+-- ============================================================================
 
 DO $$
 DECLARE
@@ -54,10 +61,8 @@ BEGIN
 
   IF old_count > 0 THEN
     RAISE WARNING
-      'Migration 037: % use cases still reference old template IDs',
-      old_count;
+      'Template ID rename: % use cases still reference old template IDs', old_count;
   ELSE
-    RAISE NOTICE
-      'Migration 037: All template IDs renamed successfully (ADR-066)';
+    RAISE NOTICE 'Template IDs renamed successfully (ADR-066)';
   END IF;
 END $$;

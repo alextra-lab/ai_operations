@@ -27,7 +27,9 @@ ENV_FILE="${REPO_ROOT}/config/env/.env"
 if [[ -f "$ENV_FILE" ]]; then
     echo "==> Loading environment from ${ENV_FILE}..."
     # shellcheck disable=SC2046
-    export $(grep -v '^\s*#' "$ENV_FILE" | grep -v '^\s*$' | xargs -d '\n') 2>/dev/null || true
+    # Plain xargs (whitespace-splitting) correctly handles lines with inline # comments:
+    # e.g. REDACT_LOGS=false  # comment → exports REDACT_LOGS=false; comment tokens ignored
+    export $(grep -v '^\s*#' "$ENV_FILE" | grep -v '^\s*$' | xargs) 2>/dev/null || true
 else
     echo "WARNING: ${ENV_FILE} not found." >&2
     echo "         Run: cp ${REPO_ROOT}/config/env/env.template ${ENV_FILE}" >&2

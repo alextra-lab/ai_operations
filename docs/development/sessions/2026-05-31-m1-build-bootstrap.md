@@ -34,6 +34,6 @@
 - Successful query: qwen3.6-35b-a3b-ud-mlx via LMStudio, 26→665 tokens, 8.5s
 
 ## Next Steps
-- AIO-43 (new): Pin `torch` CPU-only in `src/embedding/requirements.txt` to eliminate 1.1 GB CUDA bloat
-- AIO-44 (new): Consolidate `000_complete_init.sql` + migrations 027-039 into single authoritative init (authorized by Alex 2026-05-31 — app is not in production)
+- AIO-64 (new): Pin torch CPU-only across all build profiles — drops embedding image ~1.1 GB ✅ Done 2026-05-31
+- AIO-65 (new): Consolidate `000_complete_init.sql` + migrations 027-039 into single authoritative init (authorized by Alex 2026-05-31) ✅ Done 2026-05-31
 - M2: llm-guard-svc + Angular UI (`--profile full`)

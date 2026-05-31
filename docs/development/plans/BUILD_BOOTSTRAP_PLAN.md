@@ -52,7 +52,7 @@ hit them, document each fix, then layer in the full stack and the enterprise/off
 - [ ] Authenticated POST query to `orchestrator-api:18000` returns a RAG pipeline response (pending LMStudio on :1234 — AIO-42)
 
 ### Open items to resolve during M1
-- DB bootstrap ordering: confirm `000_complete_init.sql` vs. migrations 027–039 overlap (run_migrations.sh tracks `schema_migrations` for idempotency)
+- ~~DB bootstrap ordering: confirm `000_complete_init.sql` vs. migrations 027–039 overlap~~ Resolved — AIO-65 consolidated all 027–039 into init; overlap eliminated
 - Decide M1 LLM endpoint (LMStudio default or user's cloud/LLMaaS — defer until M1-8)
 - Confirm whether MCP stdio (`docker-ce-cli` in orchestrator image) is needed for M1 or deferrable
 

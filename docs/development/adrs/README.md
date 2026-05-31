@@ -101,6 +101,7 @@ See [`template.md`](template.md) for the complete format.
 
 - **[ADR-019](ADR-019-Offline-Tokenizer-Strategy.md)**: Offline Tokenizer Strategy (ACCEPTED)
 - **[ADR-022](ADR-022-Backend-Async-Database-Migration.md)**: Backend Async Database Migration (ACCEPTED)
+- **[ADR-074](ADR-074-multi-profile-build-and-bootstrap.md)**: Multi-Profile Container Build & Reproducible Bootstrap (PROPOSED 2026-05-30) ⭐ **LATEST**
 
 ---
 
@@ -123,11 +124,23 @@ All accepted ADRs (40):
 
 ### 📋 PROPOSED (Pending Review)
 
-- None
+- **ADR-074**: Multi-Profile Container Build & Reproducible Bootstrap (2026-05-30)
 
 ---
 
 ## Recent Additions
+
+### May 2026
+
+**2026-05-30:**
+
+- **ADR-074**: [Multi-Profile Container Build & Reproducible Bootstrap](ADR-074-multi-profile-build-and-bootstrap.md) ⭐ **LATEST**
+  - Three build profiles: local (public registries), enterprise (Artifactory mirrors), train (offline wheelhouse)
+  - Corrects prior misclassification: offline wheelhouse = personal convenience, NOT enterprise path
+  - Enterprise = GitLab CI + Artifactory; no direct HuggingFace access; internal LLMaaS/vLLM
+  - Single parametrized Dockerfile per service (ARGs: BASE_REGISTRY, PIP_INDEX_URL, OFFLINE, NPM_REGISTRY)
+  - DB bootstrap wired into compose via one-shot `db-init` service
+  - Execution: M1–M4 per `docs/development/plans/BUILD_BOOTSTRAP_PLAN.md`
 
 ### February 2026
 

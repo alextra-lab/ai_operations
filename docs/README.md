@@ -61,15 +61,16 @@ development/
 │       ├── OPTIMAL_IMPLEMENTATION_SEQUENCE.md
 │       ├── BACKEND_ASYNC_MIGRATION_PLAN.md
 │       ├── PERFORMANCE_OPTIMIZATION_ROADMAP.md
-│       └── TOOLS_IMPLEMENTATION_PLAN*.md (4 files)
+│       ├── TOOLS_IMPLEMENTATION_PLAN*.md (4 files)
+│       └── BUILD_BOOTSTRAP_PLAN.md          # ⭐ Build system & reproducible bootstrap (M1-M4)
 │
 ├── tasks/          # Active work items (10 files)
 │
-├── adrs/           # Architecture Decision Records (49 ADRs + template)
+├── adrs/           # Architecture Decision Records (ADR-001 through ADR-074 + template)
 │   ├── README.md                                    # ADR Index
 │   ├── template.md                                  # ADR Template
-│   ├── ADR-001 through ADR-049                     # All ADRs
-│   └── ADR-049 (Latest): Unified Authentication    # ⭐ Most Recent
+│   ├── ADR-001 through ADR-074                     # All ADRs
+│   └── ADR-074 (Latest/Proposed): Multi-Profile Build & Bootstrap  # ⭐ Most Recent
 │
 ├── specs/          # Feature specifications (1 file)
 │

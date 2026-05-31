@@ -157,8 +157,8 @@ echo ""
 # `docker compose up --build` does not accept --build-arg in Compose v5.
 # Separate the build step (with --build-arg) from the up step.
 # ---------------------------------------------------------------------------
-echo "==> Building images..."
-docker compose \
+echo "==> Building images (DOCKER_BUILDKIT=0 to avoid BuildKit manifest-resolution timeout)..."
+DOCKER_BUILDKIT=0 docker compose \
     "${COMPOSE_FILES[@]}" \
     build \
     "${BUILD_ARGS[@]}"

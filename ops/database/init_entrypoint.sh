@@ -54,6 +54,8 @@ cd /ops/database
 ./run_migrations.sh
 
 echo "=== db-init: Phase 4 — Intent defaults ==="
-python /ops/database/seed_intent_defaults_from_env.py
+# Non-fatal: no INTENT_MODEL_* vars = warn only; configure via Admin UI after bring-up
+python /ops/database/seed_intent_defaults_from_env.py || \
+    echo "  Note: INTENT_MODEL_* env vars not set — intent routing uses defaults from DB; configure via Admin UI"
 
 echo "=== db-init: Complete ==="

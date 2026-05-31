@@ -127,15 +127,21 @@ CREATE TRIGGER trg_intent_model_defaults_updated_at
 -- PART 5: Grant permissions
 -- ==============================================================================
 
--- Admin role can manage intent model defaults
-GRANT SELECT, INSERT, UPDATE, DELETE ON intent_model_defaults TO admin_role;
-
--- Developer role can view but not modify
-GRANT SELECT ON intent_model_defaults TO developer_role;
-
--- Analyst and readonly roles can view
-GRANT SELECT ON intent_model_defaults TO analyst_role;
-GRANT SELECT ON intent_model_defaults TO readonly_role;
+-- Grant permissions only if the roles exist (they are created in production setups,
+-- not in the base init SQL — skip gracefully on fresh local bootstraps).
+DO $$ BEGIN
+    GRANT SELECT, INSERT, UPDATE, DELETE ON intent_model_defaults TO admin_role;
+EXCEPTION WHEN undefined_object THEN NULL;
+END $$;
+DO $$ BEGIN
+    GRANT SELECT ON intent_model_defaults TO developer_role;
+EXCEPTION WHEN undefined_object THEN NULL;
+END $$;
+DO $$ BEGIN
+    GRANT SELECT ON intent_model_defaults TO analyst_role;
+    GRANT SELECT ON intent_model_defaults TO readonly_role;
+EXCEPTION WHEN undefined_object THEN NULL;
+END $$;
 
 -- ==============================================================================
 -- Verification

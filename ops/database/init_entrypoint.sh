@@ -40,16 +40,18 @@ fi
 echo "=== db-init: Phase 1 — Schema init (000_complete_init.sql) ==="
 run_psql -v ON_ERROR_STOP=1 -f /ops/database/init/000_complete_init.sql
 
-echo "=== db-init: Phase 2 — Migrations (run_migrations.sh) ==="
-cd /ops/database
-./run_migrations.sh
-
-echo "=== db-init: Phase 3 — Seeds ==="
+# Seeds run BEFORE migrations: run_migrations.sh documents "Use after init + seed".
+# Several migrations (e.g. 036) insert data that references seeded rows (intent_categories).
+echo "=== db-init: Phase 2 — Seeds ==="
 while IFS= read -r f; do
     [ -f "$f" ] || continue
     echo "  Seeding: $(basename "$f")"
     run_psql -v ON_ERROR_STOP=1 -f "$f"
 done < <(printf '%s\n' /ops/database/seed/0[0-9][0-9]_*.sql | sort)
+
+echo "=== db-init: Phase 3 — Migrations (run_migrations.sh) ==="
+cd /ops/database
+./run_migrations.sh
 
 echo "=== db-init: Phase 4 — Intent defaults ==="
 python /ops/database/seed_intent_defaults_from_env.py

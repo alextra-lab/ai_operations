@@ -3,7 +3,6 @@ FROM ${BASE_REGISTRY}/python:3.12-slim
 WORKDIR /app
 
 ARG PIP_INDEX_URL=https://pypi.org/simple
-ARG OFFLINE=0
 
 # --- Set environment variables (safe defaults, no secrets) ---
 # TRANSFORMERS_OFFLINE and HF_HUB_OFFLINE are omitted here intentionally:
@@ -22,38 +21,38 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# --- Create non-root user ---
+RUN groupadd -r guarduser && useradd -r -g guarduser guarduser
+
 # --- Prepare models directory ---
 RUN mkdir -p /app/models
+
+# Declare volatile build args AFTER apt-get to avoid busting the cache layer above
+ARG OFFLINE=0
+
+# --- spaCy language model wheels (kept in sync with build_wheelhouse.sh) ---
+# en_core_web_sm-3.7.1 / zh_core_web_sm-3.7.0 require spacy>=3.7.2,<3.8.0.
+# OFFLINE builds pick them up from the wheelhouse; online builds fetch them
+# from the explosion/spacy-models GitHub releases.
+ARG EN_MODEL_URL=https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
+ARG ZH_MODEL_URL=https://github.com/explosion/spacy-models/releases/download/zh_core_web_sm-3.7.0/zh_core_web_sm-3.7.0-py3-none-any.whl
 
 # --- Copy requirements and prebuilt wheelhouse (host must build it for python 3.12/linux) ---
 COPY llm_guard_svc/requirements.txt .
 COPY wheelhouse /app/wheelhouse
 
-# --- Install all runtime dependencies from the wheelhouse, strictly offline ---
-# Install spacy-3.7.5 explicitly from wheelhouse FIRST (required by language models) \
-# This ensures the correct version is installed before llm-guard potentially pulls in spacy-3.8.11 \
-RUN pip install --no-cache-dir --no-index --find-links=/app/wheelhouse "spacy==3.7.5" \
-    # Install requirements.txt (spacy is listed but already installed, pip will skip) \
-    && pip install --no-cache-dir --no-index --find-links=/app/wheelhouse -r requirements.txt \
-    && pip install --no-cache-dir --no-index --find-links=/app/wheelhouse "transformers[torch]" \
-    # Reinstall llm-guard and optimum (from PyPI, fallback is online) \
-    # Note: spacy-3.7.5 is already installed, pip won't upgrade it \
-    && pip install --no-cache-dir "llm-guard[onnxruntime-cpu]>=0.3.16" "optimum[onnxruntime]>=1.25.2" \
-    && pip install --no-cache-dir --upgrade bitsandbytes \
-    && pip install --no-cache-dir --no-index --find-links=/app/wheelhouse spacy-pkuseg==0.0.33 \
-    # Install spaCy language models (require spacy>=3.7.2,<3.8.0, spacy-3.7.5 already installed) \
-    # Must include --find-links so pip can verify spacy dependency is satisfied from wheelhouse \
-    && pip install --no-cache-dir --no-index --find-links=/app/wheelhouse /app/wheelhouse/en_core_web_sm-3.7.1-py3-none-any.whl /app/wheelhouse/zh_core_web_sm-3.7.0-py3-none-any.whl \
-    && python -m spacy link en_core_web_sm en_core_web_sm \
-    && rm -rf /app/wheelhouse
-
-# --- Download and pre-install SpaCy models and pkuseg (online step, can be moved to wheelhouse build if needed) ---
-#RUN python -m spacy download en_core_web_sm && \
-#    pip install --no-cache-dir https://github.com/explosion/spacy-models/releases/download/zh_core_web_sm-3.8.0/zh_core_web_sm-3.8.0-py3-none-any.whl && \
-#    pip install --no-cache-dir spacy-pkuseg
-
-# --- Create non-root user ---
-RUN groupadd -r guarduser && useradd -r -g guarduser guarduser
+# --- Install runtime dependencies: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0) ---
+# The spaCy language models are installed in the same resolution pass so pip can
+# verify the spacy>=3.7.2,<3.8.0 dependency is satisfied by requirements.txt.
+RUN if [ "$OFFLINE" = "1" ]; then \
+        pip install --no-cache-dir --no-index --find-links=/app/wheelhouse \
+            -r requirements.txt \
+            /app/wheelhouse/en_core_web_sm-3.7.1-py3-none-any.whl \
+            /app/wheelhouse/zh_core_web_sm-3.7.0-py3-none-any.whl; \
+    else \
+        pip install --no-cache-dir --index-url "$PIP_INDEX_URL" \
+            -r requirements.txt "${EN_MODEL_URL}" "${ZH_MODEL_URL}"; \
+    fi && rm -rf /app/wheelhouse
 
 # --- Copy service and shared code ---
 COPY llm_guard_svc/app /app/app

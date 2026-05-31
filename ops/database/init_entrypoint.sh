@@ -8,6 +8,12 @@ set -euo pipefail
 # run_migrations.sh defaults PSQL to "psql-17"; override to the standard binary
 export PSQL=psql
 
+# Validate required environment variables
+: "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}"
+: "${POSTGRES_HOST:?POSTGRES_HOST must be set}"
+: "${POSTGRES_USER:?POSTGRES_USER must be set}"
+: "${POSTGRES_DB:?POSTGRES_DB must be set}"
+
 # Convenience wrapper
 run_psql() {
     PGPASSWORD="$POSTGRES_PASSWORD" psql \
@@ -26,11 +32,11 @@ cd /ops/database
 ./run_migrations.sh
 
 echo "=== db-init: Phase 3 — Seeds ==="
-for f in /ops/database/seed/0[0-9][0-9]_*.sql; do
+while IFS= read -r f; do
     [ -f "$f" ] || continue
     echo "  Seeding: $(basename "$f")"
     run_psql -v ON_ERROR_STOP=1 -f "$f"
-done
+done < <(printf '%s\n' /ops/database/seed/0[0-9][0-9]_*.sql | sort)
 
 echo "=== db-init: Phase 4 — Intent defaults ==="
 python /ops/database/seed_intent_defaults_from_env.py

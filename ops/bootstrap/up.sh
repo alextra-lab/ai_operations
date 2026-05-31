@@ -19,6 +19,23 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 # ---------------------------------------------------------------------------
+# Load config/env/.env into the environment (if it exists)
+# Docker Compose does not auto-discover it at config/env/.env; exporting it
+# here ensures all required env vars are available for variable substitution.
+# ---------------------------------------------------------------------------
+ENV_FILE="${REPO_ROOT}/config/env/.env"
+if [[ -f "$ENV_FILE" ]]; then
+    echo "==> Loading environment from ${ENV_FILE}..."
+    # shellcheck disable=SC2046
+    export $(grep -v '^\s*#' "$ENV_FILE" | grep -v '^\s*$' | xargs -d '\n') 2>/dev/null || true
+else
+    echo "WARNING: ${ENV_FILE} not found." >&2
+    echo "         Run: cp ${REPO_ROOT}/config/env/env.template ${ENV_FILE}" >&2
+    echo "         Then edit it with real POSTGRES_PASSWORD, JWT_SECRET, TOOL_SECRETS_KEY values." >&2
+    echo "         Continuing — some services may fail if required vars are unset." >&2
+fi
+
+# ---------------------------------------------------------------------------
 # Parse --profile argument
 # ---------------------------------------------------------------------------
 PROFILE=""

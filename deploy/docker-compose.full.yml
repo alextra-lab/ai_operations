@@ -1,0 +1,27 @@
+# deploy/docker-compose.full.yml
+# Full-stack (M2+) override. Restores the orchestrator-api -> llm-guard-svc
+# health dependency that M1 backend-core intentionally omits (AIO-39 removed it
+# so the core stack runs without the guard). AIO-48.
+#
+# Why a separate override rather than the base compose: llm-guard-svc is
+# profile-gated (profiles: [full]). Declaring this depends_on in the base file
+# makes `docker compose -f docker-compose.yml -f docker-compose.local.yml ...`
+# error whenever --profile full is NOT active (the M1 backend-core run), because
+# orchestrator-api would depend on a service that isn't enabled. Keeping it here,
+# included only for the full stack, leaves M1 untouched.
+#
+# Canonical full-stack invocation (or: `make up-full`):
+#   docker compose --env-file config/env/.env \
+#     -f deploy/docker-compose.yml \
+#     -f deploy/docker-compose.local.yml \
+#     -f deploy/docker-compose.full.yml \
+#     --profile full up -d
+#
+# depends_on uses the long-form map, so this MERGES with (does not replace) the
+# orchestrator-api dependencies declared in the base compose.
+
+services:
+  orchestrator-api:
+    depends_on:
+      llm-guard-svc:
+        condition: service_healthy

@@ -1,7 +1,7 @@
 # Core FastAPI stack (matching backend service)
 fastapi>=0.136.3
 uvicorn==0.48.0
-starlette>=1.2.0
+starlette>=1.2.1
 pydantic>=2.13.4,<3.0.0
 
 # Authentication (reuses shared.auth) - Needed for P1-T3
@@ -33,4 +33,4 @@ jsonschema>=4.26.0,<5.0.0  # Prevent v5 breaking changes
 pyyaml>=6.0.1
 
 # Utilities
-python-multipart>=0.0.29
+python-multipart>=0.0.30

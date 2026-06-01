@@ -21,7 +21,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import type { ChartConfiguration, ChartOptions } from 'chart.js/auto';
-import { NgChartsModule } from 'ng2-charts';
+import { BaseChartDirective } from 'ng2-charts';
 import { Subject, interval, takeUntil } from 'rxjs';
 import {
   AllCentersUsageSummaryResponse,
@@ -49,7 +49,7 @@ import { AdminAnalyticsService } from '../../api/services/admin-analytics.servic
     MatDatepickerModule,
     MatNativeDateModule,
     MatTooltipModule,
-    NgChartsModule,
+    BaseChartDirective,
   ],
   template: `
     <div class="token-usage-dashboard">

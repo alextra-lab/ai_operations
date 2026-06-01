@@ -17,6 +17,11 @@ services:
       - DEVELOPMENT=${DEVELOPMENT:-0}
       - SERVICE_VERSION=${SERVICE_VERSION}
       - API_BASE_URL=http://orchestrator-api:8000
+      # nginx.conf.template proxies /api to ${BACKEND_HOST}:${BACKEND_PORT}.
+      # The image entrypoint defaults BACKEND_HOST to the test hostname
+      # (orchestrator-api-test); set the real service name for local/enterprise.
+      - BACKEND_HOST=${BACKEND_HOST:-orchestrator-api}
+      - BACKEND_PORT=${BACKEND_PORT:-8000}
       - NGINX_HOST=localhost
       - NGINX_PORT=80
     healthcheck:

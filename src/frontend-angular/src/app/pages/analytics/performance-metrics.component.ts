@@ -18,7 +18,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import type { ChartConfiguration, ChartOptions } from 'chart.js/auto';
-import { NgChartsModule } from 'ng2-charts';
+import { BaseChartDirective } from 'ng2-charts';
 import { Subject, interval, takeUntil } from 'rxjs';
 import { UsageStatsResponse } from '../../api/models/analytics.models';
 import { AnalyticsService } from '../../api/services/analytics.service';
@@ -35,7 +35,7 @@ import { AnalyticsService } from '../../api/services/analytics.service';
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
-    NgChartsModule,
+    BaseChartDirective,
   ],
   template: `
     <div class="performance-metrics-container">

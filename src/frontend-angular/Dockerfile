@@ -11,23 +11,12 @@ WORKDIR /app
 # Copy package files
 COPY frontend-angular/package*.json ./
 
-# Copy npm cache for offline installation (speeds up builds dramatically)
-# If cache doesn't exist, build will fail - run: bash scripts/bootstrap/build_npm_cache.sh
-# To build without cache, comment out the next 2 lines
-COPY npm_cache /app/npm_cache
-
-# Install dependencies from cache (fast ~1-2min) or skip cache if empty
-# Note: Using --ignore-scripts to skip Cypress download (not needed for production build)
-#       When cache includes Cypress (built with INCLUDE_CYPRESS=1), remove --ignore-scripts
-RUN if [ -d "/app/npm_cache/_cacache" ] && [ -n "$(ls -A /app/npm_cache/_cacache 2>/dev/null)" ]; then \
-    echo "✓ Using npm cache (fast build)..." && \
-    npm ci --include=dev --legacy-peer-deps --prefer-offline --ignore-scripts --cache /app/npm_cache && \
-    rm -rf /app/npm_cache; \
-    else \
-    echo "⚠ npm cache not found, installing from npm registry..." && \
-    rm -rf /app/npm_cache && \
-    npm ci --include=dev --legacy-peer-deps --ignore-scripts; \
-    fi
+# Install dependencies from the npm registry.
+# npm_cache/ is gitignored and excluded by .dockerignore (absent in CI), so the
+# build must not depend on it. --include=dev is required for the Angular CLI
+# build; --ignore-scripts skips the Cypress binary download (not needed for the
+# production build).
+RUN npm ci --include=dev --legacy-peer-deps --ignore-scripts
 
 # Copy source code
 COPY frontend-angular/ .

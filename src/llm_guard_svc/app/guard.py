@@ -232,6 +232,8 @@ class LLMGuard:
         cache_enabled: bool = False,  # General toggle for caching
         cache_max_size: int = 1000,
         cache_ttl_seconds: int = 3600,
+        regex_engine: str = "llm_guard",
+        secrets_engine: str = "llm_guard",
     ):
         """
         Initialize the LLMGuard with required scanners and configurations.
@@ -272,6 +274,20 @@ class LLMGuard:
 
         # Initialize the vault for anonymization
         vault = Vault()
+
+        # Per-scanner engine selection (LLG-04). Native ports drop the llm_guard
+        # dependency; the default keeps the original llm-guard scanners so
+        # behaviour is unchanged until a flag is flipped.
+        from .scanners.regex_scanner import CREDENTIAL_PATTERNS, RegexScanner
+        from .scanners.secrets_scanner import SecretsScanner
+
+        regex_scanner: Any = (
+            RegexScanner()
+            if regex_engine == "native"
+            else Regex(patterns=CREDENTIAL_PATTERNS, match_type=RMatchType.SEARCH)
+        )
+        secrets_scanner: Any = SecretsScanner() if secrets_engine == "native" else Secrets()
+
         # Set up the scanners with appropriate configurations.
         self.scanners = {
             "anonymize": Anonymize(
@@ -283,7 +299,7 @@ class LLMGuard:
                 model=PI_MODEL,  # Path already updated
                 use_onnx=True,
             ),
-            "secrets": Secrets(),
+            "secrets": secrets_scanner,
             "gibberish": Gibberish(
                 threshold=0.97,
                 match_type=GMatchType.FULL,
@@ -299,13 +315,7 @@ class LLMGuard:
                 match_type=LMatchType.FULL,
                 use_onnx=True,
             ),
-            "regex": Regex(
-                patterns=[
-                    r"(password|api_key|secret|token)[\s]*[=:][\s]*[\w\d]{8,}",  # credential patterns
-                    r"ssh-rsa[\s]+[A-Za-z0-9+/]+={0,2}",  # SSH key pattern
-                ],
-                match_type=RMatchType.SEARCH,
-            ),
+            "regex": regex_scanner,
             # Note: The Language scanner and Code scanner remain commented out; uncomment or configure as needed.
         }
 

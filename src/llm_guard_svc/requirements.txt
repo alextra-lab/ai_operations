@@ -17,6 +17,10 @@ transformers[torch]==4.51.3
 optimum[onnxruntime]==1.25.2
 onnxruntime>=1.17.0
 regex==2024.11.6
+# Required by the DebertaV2 (prompt-injection) and XLM-RoBERTa (language)
+# tokenizers; transformers[torch] does not pull it in. Without it, /api/validate
+# fails with "DebertaV2Tokenizer requires the SentencePiece library".
+sentencepiece>=0.2.0
 
 # --- spaCy (driven by the bundled language models) ---
 # en_core_web_sm-3.7.1 / zh_core_web_sm-3.7.0 require spacy>=3.7.2,<3.8.0.

@@ -1,6 +1,6 @@
 fastapi>=0.117.1
 uvicorn[standard]==0.48.0
-starlette>=1.2.0
+starlette>=1.2.1
 # websockets>=12.0  # Included in uvicorn[standard]
 # langchain==0.1.15  # REMOVED - Not used in backend code
 # langgraph==0.0.30  # REMOVED - Not used in backend code
@@ -8,7 +8,7 @@ pydantic>=2.12.5,<3.0.0
 python-jose[cryptography]>=3.3.0
 bcrypt>=5.0.0,<6.0.0
 passlib==1.7.4 # Changed from passlib[bcrypt]==1.7.4
-python-multipart>=0.0.29
+python-multipart>=0.0.30
 sqlalchemy>=2.0.43
 psycopg>=3.3.2
 psycopg[binary]>=3.3.2

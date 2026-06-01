@@ -217,11 +217,41 @@ validated against a **labelled PII test set**, not just golden diff.
 
 ## 9. Open items to resolve before/early in execution
 
-- CVE **reachability** analysis: which of the 7 are reachable via the inference
-  path vs. download-time only (advisory review + `pip-audit`). Informs urgency.
+- CVE **reachability** analysis — **RESOLVED 2026-06-01 (see §9a below).** All 7
+  open `transformers` alerts are unreachable in our usage; urgency is low and
+  LLG-04 remains the only fix. Alerts left **open** (not dismissed) as a visible
+  reminder until the migration unpins `transformers>=4.53` and closes them.
 - PII model selection (permissive license) — the gating decision for §4.4.
 - Confirm ONNX opset vs. target `onnxruntime`; pin the minimum.
 - Choose the patched `transformers` floor compatible with `optimum` + the models.
+
+### 9a. CVE reachability analysis (resolved 2026-06-01)
+
+All 7 open Dependabot alerts target `transformers` in
+`src/llm_guard_svc/requirements.txt`. No patch is installable while
+`llm-guard==0.3.16` hard-pins `transformers==4.51.3` (patches land at 4.52.1 /
+4.53.0 / 5.0.0rc3), so **LLG-04 is the only fix path** — partial bumps just
+re-break llm-guard (cf. closed PRs #84, #87).
+
+Reachability was assessed against our actual usage: **inference only, ONNX
+(`use_onnx=True`), `local_files_only=True`, no training**, and four text
+classifiers (distilbert PII, madhurjindal gibberish, deberta-v3-small PI,
+xlm-roberta language). A tree-wide grep found no use of `Trainer`, `from_tf`,
+`Marian*`, `Donut*`, TTS/`EnglishNormalizer`, or `AdamWeightDecay`.
+
+| # | Sev | Vulnerable component | Reachable? | Rationale |
+|---|---|---|---|---|
+| 138 | low | `image_utils.py` URL validation (URL username injection) | No | Text-only; no remote URL/image fetch; `local_files_only=True` |
+| 139 | med | `DonutProcessor` ReDoS | No | Donut (vision-doc) not used |
+| 140 | med | `convert_tf_weight_name_to_pt_weight_name()` (TF→PT) | No | ONNX models; no TF→PT conversion |
+| 141 | med | `MarianTokenizer` ReDoS | No | Marian MT not used |
+| 142 | med | `EnglishNormalizer.normalize_numbers()` (TTS) | No | No text-to-speech / number normalization |
+| 143 | med | `AdamWeightDecay` optimizer ReDoS | No | Inference only; no training |
+| 144 | med | `Trainer` arbitrary code execution | No | `Trainer` never instantiated |
+
+**Conclusion:** none reachable → low urgency; proceed with LLG-04 at planned
+pace (not as an emergency). Decision: keep alerts **open** until the migration
+closes them, rather than dismissing as `not_used`.
 
 ---
 

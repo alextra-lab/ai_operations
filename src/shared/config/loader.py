@@ -262,6 +262,21 @@ def load_llm_guard_config() -> LLMGuardConfig:
         cache_max_size=int(os.environ.get("LLM_GUARD_CACHE_MAX_SIZE", "1000")),
         cache_ttl_seconds=int(os.environ.get("LLM_GUARD_CACHE_TTL_SECONDS", "3600")),
         models_path=os.environ.get("LLM_GUARD_MODELS_PATH", "/app/models"),
+        pii_model_dir=os.environ.get(
+            "LLM_GUARD_PII_MODEL_DIR", "distilbert_finetuned_ai4privacy_v2"
+        ),
+        gibberish_model_dir=os.environ.get(
+            "LLM_GUARD_GIBBERISH_MODEL_DIR",
+            "madhurjindal-autonlp-Gibberish-Detector-492513457",
+        ),
+        language_model_dir=os.environ.get(
+            "LLM_GUARD_LANGUAGE_MODEL_DIR",
+            "protectai-xlm-roberta-base-language-detection-onnx",
+        ),
+        prompt_injection_model_dir=os.environ.get(
+            "LLM_GUARD_PROMPT_INJECTION_MODEL_DIR",
+            "protectai-deberta-v3-small-prompt-injection-v2",
+        ),
     )
 
     config_manager.register_config("llm_guard", config)

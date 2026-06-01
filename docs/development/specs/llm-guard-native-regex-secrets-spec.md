@@ -1,6 +1,6 @@
 # Spec — Native `regex` + `secrets` scanners (LLG-04 cutover step 1)
 
-**Status:** Draft — approved design, plan pending
+**Status:** Implemented (2026-06-01) — native regex+secrets behind flags (default `llm_guard`), unit parity green
 **Date:** 2026-06-01
 **Linear:** AIO-1 (LLG-04)
 **Related:** `docs/development/analysis/llm-guard-replacement-evaluation.md` (§3, §4.1–4.2, §6, §10.2), `src/llm_guard_svc/tests/parity/` (parity harness, PR #92), `src/llm_guard_svc/app/guard.py`
@@ -115,17 +115,44 @@ New `src/llm_guard_svc/tests/parity/test_scanner_parity.py`:
   `llm_guard` import).
 - For every one of the 22 corpus cases, run `native.scan(input_text)` and assert
   `(passed, score)` equals the golden `details.regex` / `details.secrets`.
-- For the `secrets_*` / `regex_*` / `benign` cases, additionally assert the
-  scanner's redacted `output_text` equals the expected redaction. (Valid as a
-  per-scanner oracle: for these inputs the earlier scanners — `anonymize`,
-  `prompt_injection` — are no-ops, confirmed from golden, so the golden
-  `sanitized_text` reflects this scanner on ~raw input.)
+- For the deterministic `regex_*` cases, additionally assert the redacted
+  `output_text` equals the golden `sanitized_text`. (Valid as a per-scanner
+  oracle: for these inputs the earlier scanners are no-ops, so the golden
+  `sanitized_text` reflects this scanner on ~raw input.) Secrets redaction is
+  **not** asserted as an exact string — see §6a.
 - For non-secret cases, assert native passes unchanged (`True`, `-1.0`, text
   unmodified).
 
 The existing harness self-check + golden-integrity tests continue to guard the
 overall contract. The opt-in service-level harness is unchanged and will gate the
 eventual end-to-end cutover.
+
+### 6a. Parity finding (implementation, 2026-06-01)
+
+While building the secrets parity test, the `secrets` redaction proved
+**non-deterministic for multi-secret inputs** — this is a property of llm-guard's
+`Secrets.scan()` itself, not the port: it iterates an unordered
+`SecretsCollection` and redacts via `prompt.find(value)` + index-shifting
+replacement, so for overlapping/multiple secrets the exact mask layout varies
+run-to-run and can even **re-leak a secret** (observed: an AWS keypair input
+whose "redacted" output duplicated the secret value verbatim). The live service
+now even returns a different `secret_github_pat` redaction than the golden
+captured hours earlier.
+
+Consequences:
+- **Verdict is the contract.** `secrets` parity is asserted at `(passed, score)`
+  only (deterministic; 22/22 green). Exact-string redaction is asserted only for
+  the deterministic single-match `regex` cases. The native port reproduces the
+  current (quirky) behaviour faithfully.
+- **Cutover implication (for the "make native default" step):** we should decide
+  whether to keep the non-deterministic redaction (pure parity) or **fix it**
+  (deterministic, non-leaking redaction) as an intentional, documented
+  improvement. The verdict — what the orchestrator gates on — is unaffected
+  either way.
+- **Harness follow-up:** the merged service-level harness (`compare.py`, PR #92)
+  asserts `sanitized_text` exact-equality, which is therefore flaky for these two
+  multi-secret cases when comparing any candidate. Relax that comparison (verdict
+  + secret-absence rather than exact string) before the end-to-end cutover gate.
 
 ## 7. Acceptance criteria
 

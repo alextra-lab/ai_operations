@@ -45,12 +45,20 @@ build-offline:	## Build from local src/wheelhouse — no network required
 
 # ── Start / stop ──────────────────────────────────────────────────
 .PHONY: up
-up:	## Start services in the background
+up:	## Start services in the background (backend-core; no llm-guard/UI)
 	$(DC) up -d
+
+.PHONY: up-full
+up-full:	## Start the FULL stack incl. llm-guard-svc + ui-webapp (--profile full)
+	docker compose --env-file config/env/.env $(COMPOSE_FILES) -f deploy/docker-compose.full.yml --profile full up -d
 
 .PHONY: down
 down:	## Stop and remove containers
 	$(DC) down
+
+.PHONY: down-full
+down-full:	## Stop the FULL stack (incl. llm-guard-svc + ui-webapp)
+	docker compose --env-file config/env/.env $(COMPOSE_FILES) -f deploy/docker-compose.full.yml --profile full down
 
 .PHONY: restart
 restart: down up	## Full stop + start

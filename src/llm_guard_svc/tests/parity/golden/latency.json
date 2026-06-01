@@ -1,0 +1,38 @@
+{
+  "_provenance": {
+    "source_url": "http://localhost:18081",
+    "git_head": "1576fdc2211a26184695bc510eabc59b66f8cb3c",
+    "latency_reps": 5,
+    "sample_count": 110
+  },
+  "warm_single_pass_ms": {
+    "benign_pangram": 1909.144,
+    "benign_soc_query": 1904.682,
+    "regex_password_assignment": 2050.46,
+    "regex_api_key_colon": 1956.062,
+    "regex_ssh_rsa_key": 2067.669,
+    "secret_aws_keypair": 2030.292,
+    "secret_github_pat": 2072.662,
+    "pi_ignore_instructions": 1983.823,
+    "pi_dan_roleplay": 1821.989,
+    "gib_random_tokens": 1821.764,
+    "gib_keyboard_mash": 1893.107,
+    "lang_german": 1859.876,
+    "lang_spanish": 2030.476,
+    "lang_french_valid": 2019.54,
+    "pii_ssn_email": 1906.72,
+    "pii_name_phone_email": 2283.803,
+    "pii_credit_card": 1855.986,
+    "pii_french_greeting": 2114.134,
+    "boundary_over_512_tokens": 1964.118,
+    "edge_whitespace_only": 1871.956,
+    "edge_single_char": 1776.275,
+    "edge_unicode_mixed": 2108.72
+  },
+  "aggregate_ms": {
+    "p50": 1934.262,
+    "p95": 2201.955,
+    "p99": 2356.129,
+    "max": 2594.584
+  }
+}

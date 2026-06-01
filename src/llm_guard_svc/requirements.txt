@@ -8,12 +8,12 @@ httpx>=0.28.1
 cachetools>=7.1.4,<8.0.0
 
 # --- llm-guard and its hard-pinned ML stack ---
-# llm-guard 0.3.16 hard-pins: transformers==4.51.3, regex==2024.11.6,
+# llm-guard 0.3.16 hard-pins: transformers==5.0.0rc3, regex==2024.11.6,
 # optimum[onnxruntime]==1.25.2, torch>=2.4.0, presidio-*==2.2.358.
 # Do NOT loosen these — pip will reject any conflicting constraint below.
 llm-guard[onnxruntime]>=0.3.16
 torch>=2.4.0
-transformers[torch]==4.51.3
+transformers[torch]==5.0.0rc3
 optimum[onnxruntime]==1.25.2
 onnxruntime>=1.17.0
 regex==2024.11.6

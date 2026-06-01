@@ -72,7 +72,7 @@ shell:	## Open a shell in a running container (SVC=<name> required)
 .PHONY: models
 models:	## Download all models into data/ (local profile only)
 	python ops/bootstrap/download_embedding_models.py
-	python ops/bootstrap/download_llm_guard_models.py
+	python ops/bootstrap/download_llm_guard_models.py --output-dir data/llm-guard-models
 
 .PHONY: models-embedding
 models-embedding:	## Download embedding model only
@@ -80,7 +80,7 @@ models-embedding:	## Download embedding model only
 
 .PHONY: models-llm-guard
 models-llm-guard:	## Download llm-guard ONNX models only
-	python ops/bootstrap/download_llm_guard_models.py
+	python ops/bootstrap/download_llm_guard_models.py --output-dir data/llm-guard-models
 
 # ── Database ──────────────────────────────────────────────────────
 .PHONY: db-reset

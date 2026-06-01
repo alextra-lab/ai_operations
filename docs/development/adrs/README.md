@@ -130,6 +130,12 @@ All accepted ADRs (40):
 
 ## Recent Additions
 
+### June 2026
+
+**2026-06-01:**
+
+- **ADR-073** updated: LLG-02 (AIO-3) and LLG-03 (AIO-2) shipped (PR #85). D6 reframed from "deferred" to **replacement required** — `llm-guard==0.3.16` is the final release and pins `transformers==4.51.3`, so the open `transformers` CVEs have no upstream fix path. Also recorded that the ai4privacy PII model (and ADR Option A) is `cc-by-nc-4.0` (non-commercial). LLG-04 (AIO-1) promoted to committed; Option B selected (Presidio + GLiNER). See `analysis/llm-guard-replacement-evaluation.md`.
+
 ### May 2026
 
 **2026-05-30:**

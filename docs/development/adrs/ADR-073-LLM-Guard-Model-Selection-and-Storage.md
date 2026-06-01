@@ -61,7 +61,7 @@ revealed five problems requiring decisions:
 
 ## Decision
 
-**Five decisions are made here:**
+**Six decisions are made here:**
 
 ### D1 — ONNX-only storage
 Store only the ONNX model files on disk. Do not retain PyTorch weights
@@ -103,13 +103,37 @@ backed by an environment variable. This is tracked as Linear task LLG-03 and
 is not part of the immediate Phase 0 execution. Hardcoded names in `guard.py`
 are accepted as technical debt until LLG-03 is complete.
 
-### D6 — llm-guard dependency: accepted for MVP, replacement deferred
-`llm-guard==0.3.16` is accepted as-is for the MVP release. The known
-`transformers` vulnerability is tracked as technical debt. A formal evaluation
-of replacing the library with a direct `onnxruntime` + `presidio_analyzer` +
-`presidio_anonymizer` pipeline is tracked as Linear task LLG-04 and treated as
-a post-MVP decision gate. If accepted, it would eliminate the pinned vulnerable
-dependency and reduce the service's transitive dependency footprint.
+### D6 — llm-guard dependency: replacement required (was: deferred)
+`llm-guard==0.3.16` was accepted as-is for the MVP release.
+
+**Update (2026-06-01): this is no longer a deferrable trade-off.** `0.3.16` is
+the final published release (no newer version exists on PyPI) and it hard-pins
+`transformers==4.51.3`. The open `transformers` CVEs are fixed in `>=4.52.1` /
+`>=4.53.0`, which the pin structurally forbids — so **there is no upstream fix
+path**, and the CVE exposure is permanent for as long as the service depends on
+llm-guard. The two Dependabot bumps that tried to raise `transformers` (PRs #84,
+#87) were closed because they conflict with this pin (and with
+`zh-core-web-sm`'s `spacy-pkuseg<0.1.0` requirement).
+
+The earlier mitigation ("no external-facing model inference surface") is
+inaccurate as written: `/api/validate` processes untrusted user input through
+the scanners. Whether any open `transformers` CVE is reachable via the inference
+path (vs. model-download/deserialisation only) is an **open question LLG-04 must
+resolve** via advisory review + `pip-audit` reachability. Interim posture until
+LLG-04 lands: keep `llm-guard-svc` network-isolated (reachable only from
+`orchestrator-api` on the internal `observability` network, never externally).
+
+The replacement — a direct `onnxruntime`/`optimum` + `presidio_analyzer` /
+`presidio_anonymizer` pipeline that drops the llm-guard wrapper and un-pins
+`transformers` (→ patched `>=4.53`) — is therefore **committed**, tracked as
+LLG-04. A separate, newly-surfaced blocker scopes into the same work: the PII
+model `Isotonic/distilbert_finetuned_ai4privacy_v2` is licensed
+**`cc-by-nc-4.0` (non-commercial)**, which is incompatible with commercial
+enterprise deployment and likely requires swapping the PII model for a
+permissively-licensed alternative. The detailed evaluation, per-scanner design,
+parity-harness plan, phased cutover, rollback strategy, licensing audit, and
+acceptance-gate criteria live in
+`docs/development/analysis/llm-guard-replacement-evaluation.md`.
 
 ---
 
@@ -135,6 +159,13 @@ injection model with `protectai/deberta-v3-base-prompt-injection-v2`.
 
 **Why Deferred:** Current models are sufficient for MVP validation use case.
 Upgrade is tracked as a post-MVP consideration.
+
+**Update (2026-06-01): Option A is licensing-dead.** Both
+`Isotonic/deberta-v3-base_finetuned_ai4privacy_v2` and the currently-used
+`Isotonic/distilbert_finetuned_ai4privacy_v2` are `cc-by-nc-4.0` (non-commercial),
+as is the entire ai4privacy lineage (and `iiiorg/piiranha-v1` is `cc-by-nc-nd`).
+The PII model must move to a permissively-licensed option — see LLG-04, which
+selects Presidio (MIT) + GLiNER `gliner_multi_pii-v1` (Apache-2.0).
 
 ### Option B — Replace llm-guard now with direct onnxruntime pipeline
 
@@ -214,9 +245,9 @@ LLG-04 for formal evaluation.
 
 **Remaining tracked work (Linear project: AIO - LLM Guard Hardening):**
 - LLG-01: Write this ADR (complete)
-- LLG-02: Simplify `ops/bootstrap/download_llm_guard_models.py` (single copy, ONNX-only, no duplicates)
-- LLG-03: Externalize model directory names to `LLMGuardConfig` in `schemas.py` and `loader.py`
-- LLG-04: Evaluate replacing `llm-guard` with direct `onnxruntime` + `presidio` pipeline
+- LLG-02: Simplify `ops/bootstrap/download_llm_guard_models.py` (single copy, ONNX-only, no duplicates) — **complete** (AIO-3, merged in PR #85, 2026-06-01)
+- LLG-03: Externalize model directory names to `LLMGuardConfig` in `schemas.py` and `loader.py` — **complete** (AIO-2, merged in PR #85, 2026-06-01)
+- LLG-04: Replace `llm-guard` with a direct `onnxruntime`/`optimum` + `presidio` pipeline — **committed** (was "evaluate"; see `docs/development/analysis/llm-guard-replacement-evaluation.md`)
 
 ---
 
@@ -237,9 +268,24 @@ LLG-04 for formal evaluation.
 
 ### 2026-03-03 - Accepted
 **Changed By:** Platform Team
-**Reason:** Phase 0 immediate actions executed. Five architectural decisions
+**Reason:** Phase 0 immediate actions executed. Architectural decisions
 documented and accepted. Linear tasks LLG-02 through LLG-04 created for
 remaining work.
+
+### 2026-06-01 - Updated (LLG-02/03 complete; D6 reframed; new licensing blocker)
+**Changed By:** Platform Team
+**Reason:** LLG-02 (AIO-3) and LLG-03 (AIO-2) shipped in PR #85. An independent
+review of this ADR surfaced that D6's "deferred/accepted" framing is no longer
+valid: `llm-guard==0.3.16` is the final release and pins `transformers==4.51.3`,
+so the open `transformers` CVEs have no upstream fix path and are permanent
+until the library is replaced — D6 reframed to "replacement required" and LLG-04
+promoted from optional decision-gate to committed work. Verification during this
+update also found that the PII model
+`Isotonic/distilbert_finetuned_ai4privacy_v2` is licensed `cc-by-nc-4.0`
+(non-commercial), a separate blocker for commercial deployment that LLG-04 must
+address (likely a PII-model swap). Corrected the Decision section header
+("Five" → "Six decisions"). Full Option B evaluation and execution plan:
+`docs/development/analysis/llm-guard-replacement-evaluation.md`.
 
 ---
 

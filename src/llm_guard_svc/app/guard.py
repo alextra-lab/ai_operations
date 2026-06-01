@@ -11,9 +11,12 @@ import logging
 import os
 import time  # For TTLCache timer
 from threading import RLock  # Correct import for RLock
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from cachetools import LRUCache, TTLCache
+
+if TYPE_CHECKING:
+    from shared.config.schemas import LLMGuardConfig
 
 _logger = logging.getLogger(__name__)
 from llm_guard.input_scanners import (
@@ -36,35 +39,8 @@ from llm_guard.vault import Vault
 
 _MODELS_OVERRIDE_PATH: str | None = None
 
-# Configure scanner models with local file paths and options.
-# PII Detection:
-# DISTILBERT_AI4PRIVACY_v2_CONF["DEFAULT_MODEL"].path = (
-#     "/app/models/distilbert_finetuned_ai4privacy_v2"
-# )
-# DISTILBERT_AI4PRIVACY_v2_CONF["DEFAULT_MODEL"].onnx_path = (
-#     "/app/models/distilbert_finetuned_ai4privacy_v2"
-# )
-# DISTILBERT_AI4PRIVACY_v2_CONF["DEFAULT_MODEL"].kwargs["local_files_only"] = True
-
-# Gibberish Detection:
-# GIB_MODEL.kwargs["local_files_only"] = True
-# GIB_MODEL.path = "/app/models/madhurjindal-autonlp-Gibberish-Detector-492513457"
-# GIB_MODEL.onnx_path = (
-#     "/app/models/madhurjindal-autonlp-Gibberish-Detector-492513457/onnx"
-# )
-# GIB_MODEL.onnx_subfolder = ""  # Ensure optimum looks directly in onnx_path
-
-# Language Detection:
-# LANG_MODEL.kwargs["local_files_only"] = True
-# LANG_MODEL.path = "/app/models/protectai-xlm-roberta-base-language-detection-onnx"
-# LANG_MODEL.onnx_path = "/app/models/protectai-xlm-roberta-base-language-detection-onnx"
-# LANG_MODEL.onnx_subfolder = ""  # Ensure optimum looks directly in onnx_path
-
-# Prompt Injection Detection:
-# PI_MODEL.kwargs["local_files_only"] = True
-# PI_MODEL.path = "/app/models/protectai-deberta-v3-small-prompt-injection-v2"
-# PI_MODEL.onnx_path = "/app/models/protectai-deberta-v3-small-prompt-injection-v2/onnx"
-# PI_MODEL.onnx_subfolder = ""  # Ensure optimum looks directly in onnx_path
+# Scanner model paths are configured at runtime in configure_models() from
+# LLMGuardConfig directory names (ADR-073 D5).
 
 
 def get_models_base_path() -> str:
@@ -161,15 +137,23 @@ def verify_model_path(path: str, _model_name: str) -> bool:
     return False
 
 
-def configure_models() -> None:
+def configure_models(config: "LLMGuardConfig | None" = None) -> None:
     """
     Configure all models with environment-aware paths.
     Works both inside and outside containers.
+
+    Model directory names are sourced from ``LLMGuardConfig`` (ADR-073 D5), so
+    they can be overridden via environment variables without code changes.
     """
+    if config is None:
+        from shared.config.loader import load_llm_guard_config
+
+        config = load_llm_guard_config()
+
     _logger.info("Configuring LLM-Guard models")
 
     # PII Detection Model Configuration
-    pii_model_path = get_model_path("distilbert_finetuned_ai4privacy_v2")
+    pii_model_path = get_model_path(config.pii_model_dir)
     if verify_model_path(pii_model_path, "PII Detection"):
         DISTILBERT_AI4PRIVACY_v2_CONF["DEFAULT_MODEL"].path = pii_model_path
         DISTILBERT_AI4PRIVACY_v2_CONF["DEFAULT_MODEL"].onnx_path = pii_model_path
@@ -181,7 +165,7 @@ def configure_models() -> None:
         _logger.warning("PII Detection model not found")
 
     # Gibberish Detection Model Configuration
-    gibberish_model_path = get_model_path("madhurjindal-autonlp-Gibberish-Detector-492513457")
+    gibberish_model_path = get_model_path(config.gibberish_model_dir)
     if verify_model_path(gibberish_model_path, "Gibberish Detection"):
         GIB_MODEL.path = gibberish_model_path
         GIB_MODEL.onnx_path = os.path.join(gibberish_model_path, "onnx")
@@ -192,7 +176,7 @@ def configure_models() -> None:
         _logger.warning("Gibberish Detection model not found")
 
     # Language Detection Model Configuration
-    language_model_path = get_model_path("protectai-xlm-roberta-base-language-detection-onnx")
+    language_model_path = get_model_path(config.language_model_dir)
     if verify_model_path(language_model_path, "Language Detection"):
         LANG_MODEL.path = language_model_path
         LANG_MODEL.onnx_path = language_model_path
@@ -209,7 +193,7 @@ def configure_models() -> None:
         _logger.warning("Language Detection model not found")
 
     # Prompt Injection Detection Model Configuration
-    prompt_injection_model_path = get_model_path("protectai-deberta-v3-small-prompt-injection-v2")
+    prompt_injection_model_path = get_model_path(config.prompt_injection_model_dir)
     if verify_model_path(prompt_injection_model_path, "Prompt Injection Detection"):
         PI_MODEL.path = prompt_injection_model_path
         PI_MODEL.onnx_path = os.path.join(prompt_injection_model_path, "onnx")
@@ -227,7 +211,9 @@ def initialize_models(models_base_path: str | None = None) -> None:
     global _MODELS_OVERRIDE_PATH
     if models_base_path:
         _MODELS_OVERRIDE_PATH = models_base_path
-    configure_models()
+    from shared.config.loader import load_llm_guard_config
+
+    configure_models(config=load_llm_guard_config())
 
 
 class LLMGuard:

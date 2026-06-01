@@ -238,3 +238,19 @@ class LLMGuardConfig(ServiceConfig):
     cache_max_size: int = Field(default=1000, description="Maximum cache size")
     cache_ttl_seconds: int = Field(default=3600, description="Cache TTL in seconds")
     models_path: str = Field(default="/app/models", description="Models directory path")
+    pii_model_dir: str = Field(
+        default="distilbert_finetuned_ai4privacy_v2",
+        description="PII detection model directory name within models_path",
+    )
+    gibberish_model_dir: str = Field(
+        default="madhurjindal-autonlp-Gibberish-Detector-492513457",
+        description="Gibberish detection model directory name within models_path",
+    )
+    language_model_dir: str = Field(
+        default="protectai-xlm-roberta-base-language-detection-onnx",
+        description="Language detection model directory name within models_path",
+    )
+    prompt_injection_model_dir: str = Field(
+        default="protectai-deberta-v3-small-prompt-injection-v2",
+        description="Prompt injection detection model directory name within models_path",
+    )

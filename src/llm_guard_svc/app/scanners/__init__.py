@@ -5,4 +5,8 @@ llm-guard input scanner, depending on detect_secrets / presidio_anonymizer
 directly (never llm_guard). See
 docs/development/specs/llm-guard-native-regex-secrets-spec.md.
 """
-# Exports added in the secrets-scanner task once both modules exist.
+
+from .regex_scanner import RegexScanner
+from .secrets_scanner import SecretsScanner
+
+__all__ = ["RegexScanner", "SecretsScanner"]

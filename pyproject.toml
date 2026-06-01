@@ -70,7 +70,11 @@ exclude = [
     "venv",
     "wheelhouse",
     "*.egg-info",
-    "docs/archive/*"
+    "docs/archive/*",
+    # Verbatim MIT ports/vendoring from llm-guard (LLG-04) — kept byte-for-byte
+    # for parity; not linted/maintained here. See secrets_plugins/PROVENANCE.md.
+    "src/llm_guard_svc/app/scanners/secrets_scanner.py",
+    "src/llm_guard_svc/app/scanners/secrets_plugins/*",
 ]
 
 # Same as Black.

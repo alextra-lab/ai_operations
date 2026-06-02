@@ -258,7 +258,12 @@ closes them, rather than dismissing as `not_used`.
 ## 10. Suggested sequencing
 
 1. Stand up the **parity harness** + capture golden outputs (no behaviour change).
+   **DONE (2026-06-01)** — `src/llm_guard_svc/tests/parity/`, PR #92.
 2. Replace `regex` + `secrets` (lowest risk) → validate.
+   **DONE (2026-06-01)** — native ports in `app/scanners/` (95 detect-secrets
+   plugins vendored) behind `LLM_GUARD_REGEX_ENGINE` / `LLM_GUARD_SECRETS_ENGINE`
+   (default `llm_guard`). Verdict parity green. Finding: secrets redaction is
+   non-deterministic in llm-guard for multi-secret inputs — see the spec §6a.
 3. Replace the 3 ONNX classifiers → validate (tokenizer/threshold parity).
 4. PII workstream: pick a permissive model → wire via presidio → validate on the
    labelled set.

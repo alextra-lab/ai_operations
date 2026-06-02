@@ -254,3 +254,11 @@ class LLMGuardConfig(ServiceConfig):
         default="protectai-deberta-v3-small-prompt-injection-v2",
         description="Prompt injection detection model directory name within models_path",
     )
+    regex_engine: str = Field(
+        default="llm_guard",
+        description="Engine for the regex scanner: 'llm_guard' or 'native' (LLG-04)",
+    )
+    secrets_engine: str = Field(
+        default="llm_guard",
+        description="Engine for the secrets scanner: 'llm_guard' or 'native' (LLG-04)",
+    )

@@ -254,6 +254,13 @@ class LLMGuardConfig(ServiceConfig):
         default="protectai-deberta-v3-small-prompt-injection-v2",
         description="Prompt injection detection model directory name within models_path",
     )
+    gliner_model_dir: str = Field(
+        default="gliner_multi_pii-v1",
+        description=(
+            "GLiNER PII NER model directory name within models_path (Apache-2.0, "
+            "en+fr). Used by the native anonymize engine only (LLG-04 step 3)."
+        ),
+    )
     regex_engine: str = Field(
         default="llm_guard",
         description="Engine for the regex scanner: 'llm_guard' or 'native' (LLG-04)",
@@ -273,4 +280,11 @@ class LLMGuardConfig(ServiceConfig):
     language_engine: str = Field(
         default="llm_guard",
         description="Engine for the language scanner: 'llm_guard' or 'native' (LLG-04)",
+    )
+    anonymize_engine: str = Field(
+        default="llm_guard",
+        description=(
+            "Engine for the anonymize/PII scanner: 'llm_guard' or 'native' (LLG-04 "
+            "step 3). 'native' = Presidio pattern recognizers + GLiNER."
+        ),
     )

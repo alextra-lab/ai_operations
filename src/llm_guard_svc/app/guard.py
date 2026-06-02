@@ -251,6 +251,7 @@ class LLMGuard:
         prompt_injection_engine: str = "llm_guard",
         gibberish_engine: str = "llm_guard",
         language_engine: str = "llm_guard",
+        anonymize_engine: str = "llm_guard",
     ):
         """
         Initialize the LLMGuard with required scanners and configurations.
@@ -289,9 +290,6 @@ class LLMGuard:
             self.cache = None
             self.logger.info("LLMGuard initialized with caching disabled.")
 
-        # Initialize the vault for anonymization
-        vault = Vault()
-
         # Per-scanner engine selection (LLG-04). Native ports drop the llm_guard
         # dependency; the default keeps the original llm-guard scanners so
         # behaviour is unchanged until a flag is flipped.
@@ -316,9 +314,7 @@ class LLMGuard:
 
         # Set up the scanners with appropriate configurations.
         self.scanners = {
-            "anonymize": Anonymize(
-                vault, recognizer_conf=DISTILBERT_AI4PRIVACY_v2_CONF, use_onnx=True
-            ),
+            "anonymize": self._build_anonymize(anonymize_engine),
             "prompt_injection": prompt_injection_scanner,
             "secrets": secrets_scanner,
             "gibberish": gibberish_scanner,
@@ -326,6 +322,17 @@ class LLMGuard:
             "regex": regex_scanner,
             # Note: The Code scanner remains commented out; configure as needed.
         }
+
+    @staticmethod
+    def _build_anonymize(engine: str) -> Any:
+        if engine == "native":
+            from .scanners.anonymize_scanner import AnonymizeScanner
+
+            # Deliberate model swap off the cc-by-nc distilbert: Presidio pattern
+            # recognizers + GLiNER (Apache-2.0). Not a verbatim port — gated on a
+            # labelled PII set, not golden parity (LLG-04 step 3).
+            return AnonymizeScanner(_native_model_path("gliner_model_dir"))
+        return Anonymize(Vault(), recognizer_conf=DISTILBERT_AI4PRIVACY_v2_CONF, use_onnx=True)
 
     @staticmethod
     def _build_prompt_injection(engine: str) -> Any:

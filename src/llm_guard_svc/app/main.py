@@ -102,6 +102,7 @@ def get_llm_guard() -> LLMGuard | None:
         prompt_injection_engine=llm_guard_config.prompt_injection_engine,
         gibberish_engine=llm_guard_config.gibberish_engine,
         language_engine=llm_guard_config.language_engine,
+        anonymize_engine=llm_guard_config.anonymize_engine,
     )
 
 

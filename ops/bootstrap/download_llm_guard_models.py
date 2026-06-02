@@ -5,14 +5,16 @@ Utility script to pre-download the ONNX models used by LLM-Guard.
 Per ADR-073 (D1/D2), this script downloads ONNX-only model files to a local
 directory, making them available for offline use within the llm-guard-svc
 container. PyTorch weights (``*.safetensors``, ``pytorch_model.bin``) and
-training artifacts are excluded via ``ignore_patterns`` since every scanner runs
-with ``use_onnx=True`` and never loads them.
+training artifacts are excluded via ``ignore_patterns`` since the four ONNX
+classifiers run with ``use_onnx=True`` and never load them. The one exception is
+the GLiNER PII model (LLG-04 step 3), which runs eager torch and therefore keeps
+its PyTorch weights via ``MODEL_IGNORE_OVERRIDES``.
 
 Each model is downloaded exactly once into the flat ``org-model`` directory that
-``guard.py``'s ``configure_models()`` references. The one exception is the PII
-model (``Isotonic/distilbert_finetuned_ai4privacy_v2``), whose canonical
-directory is the id-only ``distilbert_finetuned_ai4privacy_v2`` (ADR-073 D2
-exception); the mapping below encodes that.
+``guard.py``'s ``configure_models()`` references. Two repos keep id-only
+canonical directories: the distilbert PII model
+(``distilbert_finetuned_ai4privacy_v2``, ADR-073 D2 exception) and the GLiNER PII
+model (``gliner_multi_pii-v1``); the mapping below encodes that.
 
 Example usage:
     python download_llm_guard_models.py --output-dir ../data/llm-guard-models
@@ -49,6 +51,11 @@ DEFAULT_MODELS: dict[str, str] = {
     "protectai/deberta-v3-small-prompt-injection-v2": (
         "protectai-deberta-v3-small-prompt-injection-v2"
     ),
+    # LLG-04 step 3: GLiNER PII NER (Apache-2.0), used by the native anonymize
+    # engine. Unlike the four ONNX classifiers above, this runs eager torch, so
+    # its PyTorch weights must be kept (see MODEL_IGNORE_OVERRIDES). Id-only
+    # canonical dir, matching LLMGuardConfig.gliner_model_dir.
+    "urchade/gliner_multi_pii-v1": "gliner_multi_pii-v1",
 }
 
 # PyTorch weights and training artifacts that are never loaded at runtime.
@@ -66,6 +73,24 @@ IGNORE_PATTERNS = [
     "sample_input.pkl",
     "model_optimized.onnx",
 ]
+
+# GLiNER runs eager torch (no ONNX export — LLG-04 step 3), so it needs its
+# PyTorch weights and gliner_config.json kept; only training artifacts are
+# dropped. This override replaces the ONNX-only IGNORE_PATTERNS for this repo.
+GLINER_IGNORE_PATTERNS = [
+    "*.msgpack",
+    "flax_model.msgpack",
+    "training_args.bin",
+    "trainer_state.json",
+    "*_results.json",
+    "*.onnx",
+    "onnx/*",
+]
+
+# Per-repo ignore overrides; repos not listed use IGNORE_PATTERNS.
+MODEL_IGNORE_OVERRIDES: dict[str, list[str]] = {
+    "urchade/gliner_multi_pii-v1": GLINER_IGNORE_PATTERNS,
+}
 
 
 def check_dependencies() -> bool:
@@ -129,18 +154,19 @@ def download_models(
         model_success = False
         model_path = os.path.join(output_dir, target_dir)
 
+        ignore_patterns = MODEL_IGNORE_OVERRIDES.get(repo_id, IGNORE_PATTERNS)
         for attempt in range(max_retries):
             try:
                 logger.info(
                     f"Downloading {repo_id} -> {model_path} "
-                    f"(attempt {attempt + 1}/{max_retries}, ONNX-only)"
+                    f"(attempt {attempt + 1}/{max_retries})"
                 )
                 os.makedirs(model_path, exist_ok=True)
                 snapshot_download(
                     repo_id=repo_id,
                     local_dir=model_path,
                     local_dir_use_symlinks="auto",
-                    ignore_patterns=IGNORE_PATTERNS,
+                    ignore_patterns=ignore_patterns,
                     token=hf_token,
                 )
                 logger.info(f"Successfully downloaded {repo_id} to {model_path}")

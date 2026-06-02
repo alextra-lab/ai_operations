@@ -261,30 +261,44 @@ class LLMGuardConfig(ServiceConfig):
             "en+fr). Used by the native anonymize engine only (LLG-04 step 3)."
         ),
     )
+    pii_score_threshold: float = Field(
+        default=0.4,
+        description=(
+            "Min Presidio/GLiNER score for a PII span to be redacted by the native "
+            "anonymize engine. Calibrate against the labelled PII set (pii_metrics)."
+        ),
+    )
+    pii_gliner_threshold: float = Field(
+        default=0.5,
+        description="GLiNER predict_entities threshold for the native anonymize engine.",
+    )
+    # LLG-04 finale (AIO-73): llm-guard removed; 'native' is the only engine. The
+    # flags are retained as a vestigial knob defaulting to 'native'; a stale
+    # 'llm_guard' value warns and resolves to native.
     regex_engine: str = Field(
-        default="llm_guard",
-        description="Engine for the regex scanner: 'llm_guard' or 'native' (LLG-04)",
+        default="native",
+        description="Engine for the regex scanner (native only since LLG-04 finale)",
     )
     secrets_engine: str = Field(
-        default="llm_guard",
-        description="Engine for the secrets scanner: 'llm_guard' or 'native' (LLG-04)",
+        default="native",
+        description="Engine for the secrets scanner (native only since LLG-04 finale)",
     )
     prompt_injection_engine: str = Field(
-        default="llm_guard",
-        description="Engine for the prompt_injection scanner: 'llm_guard' or 'native' (LLG-04)",
+        default="native",
+        description="Engine for the prompt_injection scanner (native only since LLG-04 finale)",
     )
     gibberish_engine: str = Field(
-        default="llm_guard",
-        description="Engine for the gibberish scanner: 'llm_guard' or 'native' (LLG-04)",
+        default="native",
+        description="Engine for the gibberish scanner (native only since LLG-04 finale)",
     )
     language_engine: str = Field(
-        default="llm_guard",
-        description="Engine for the language scanner: 'llm_guard' or 'native' (LLG-04)",
+        default="native",
+        description="Engine for the language scanner (native only since LLG-04 finale)",
     )
     anonymize_engine: str = Field(
-        default="llm_guard",
+        default="native",
         description=(
-            "Engine for the anonymize/PII scanner: 'llm_guard' or 'native' (LLG-04 "
-            "step 3). 'native' = Presidio pattern recognizers + GLiNER."
+            "Engine for the anonymize/PII scanner (native only since LLG-04 finale): "
+            "Presidio pattern recognizers + GLiNER."
         ),
     )

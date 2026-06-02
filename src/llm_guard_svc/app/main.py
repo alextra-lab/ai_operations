@@ -5,6 +5,8 @@ This module configures the FastAPI application, sets up CORS and logging,
 and defines endpoints for health checks and text validation using the LLMGuard.
 """
 
+from functools import lru_cache
+
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -65,10 +67,18 @@ if llm_guard_config.enable_cors:
 
 
 # Dependency to get the LLMGuard instance
+@lru_cache(maxsize=1)
 def get_llm_guard() -> LLMGuard | None:
     """
     Provides the LLMGuard instance with configuration from centralized config.
     Returns None if the service is disabled.
+
+    Process singleton (``@lru_cache``): built once on the FIRST ``/api/validate``
+    request and reused, so the native ONNX/GLiNER models load exactly once instead
+    of per request. Lazy-loading is preserved — nothing loads at import, startup,
+    or ``/health`` (which does not depend on this); construction is deferred to the
+    first validate call. Tests that change engine/config between cases must call
+    ``get_llm_guard.cache_clear()``.
 
     Uses the module-level logger instead of injecting it as a dependency to avoid
     FastAPI dependency resolution conflicts.

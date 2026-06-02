@@ -25,3 +25,9 @@ any parity-tested case:
   `REDACT_HASH` path (default `redact_mode` is `REDACT_ALL`, so this output is
   never produced here); the detection log emits a secret *count* instead of the
   type list. Neither affects scan verdicts or redaction in our configuration.
+- `../secrets_scanner.py` `plugins_used` (AIO-73 review finding) — upstream
+  llm-guard 0.3.16 ships `BittrexDetector` paired with `beamer_api_token.py` and
+  `BeamerApiTokenDetector` paired with `bittrex.py` (the two name→path entries are
+  swapped). detect-secrets imports every custom-plugin path into a shared registry
+  before resolving names, so upstream tolerates it, but it is fragile and
+  mislabels. Corrected so each `name` matches the class defined at its `path`.

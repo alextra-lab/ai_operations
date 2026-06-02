@@ -144,6 +144,43 @@ def test_compare_detects_score_drift_beyond_tolerance() -> None:
     assert not result.passed(include_scores=True)
 
 
+def _first_scanning_case(golden: dict) -> tuple[str, dict]:
+    for cid, e in golden["cases"].items():
+        if "status" not in e["response"]["details"]:
+            return cid, e["response"]
+    raise AssertionError("expected at least one scanning-shape golden case")
+
+
+def test_compare_ignores_anonymize_scanner() -> None:
+    """ignore_scanners={'anonymize'} drops the PII verdict from the gate."""
+    golden = _load_golden()
+    case_id, resp = _first_scanning_case(golden)
+    mutated = copy.deepcopy(resp)
+    # Flip the anonymize verdict — caught by default, ignored when excluded.
+    mutated["details"]["anonymize"]["passed"] = not mutated["details"]["anonymize"].get(
+        "passed", True
+    )
+    assert not compare(case_id, resp, mutated).passed(include_scores=False)
+    ignored = compare(case_id, resp, mutated, ignore_scanners=frozenset({"anonymize"}))
+    assert ignored.passed(include_scores=False), [str(d) for d in ignored.diffs]
+
+
+def test_compare_skips_text_when_flagged() -> None:
+    """compare_text=False suppresses sanitized_text/modified equality."""
+    golden = _load_golden()
+    case_id, resp = _first_scanning_case(golden)
+    mutated = copy.deepcopy(resp)
+    mutated["sanitized_text"] = resp["sanitized_text"] + " DIVERGES"
+    mutated["modified"] = not resp.get("modified", False)
+    # Caught with text comparison on; suppressed when off.
+    assert any(
+        d.field in ("sanitized_text", "modified")
+        for d in compare(case_id, resp, mutated).semantic_diffs
+    )
+    skipped = compare(case_id, resp, mutated, compare_text=False)
+    assert not any(d.field in ("sanitized_text", "modified") for d in skipped.semantic_diffs)
+
+
 def test_schema_validator_rejects_malformed() -> None:
     assert validate_response_schema({"sanitized_text": 5}), "non-string sanitized_text should fail"
     assert validate_response_schema({}), "empty payload should fail"
@@ -155,6 +192,20 @@ def test_schema_validator_rejects_malformed() -> None:
 # --------------------------------------------------------------------------- #
 # Layer 3 — candidate parity (opt-in via PARITY_CANDIDATE_URL)
 # --------------------------------------------------------------------------- #
+# The golden was captured with the llm-guard distilbert PII model. Since the
+# LLG-04 finale, the native `anonymize` engine is a deliberate model swap
+# (Presidio+GLiNER) that diverges by design — so its per-scanner verdict is
+# excluded from this golden gate everywhere, and `sanitized_text` is not compared
+# for cases where the golden `anonymize` redacted (its text diverges too). Native
+# PII correctness is gated separately by test_pii_metrics_container (recall/
+# precision on the labelled set) + test_pii_golden_divergence.
+_IGNORE_PII = frozenset({"anonymize"})
+
+
+def _golden_anonymize_redacted(golden_resp: dict) -> bool:
+    return golden_resp.get("details", {}).get("anonymize", {}).get("passed") is False
+
+
 @pytest.mark.skipif(not CANDIDATE_URL, reason="set PARITY_CANDIDATE_URL to run candidate parity")
 def test_candidate_matches_golden() -> None:
     golden = _load_golden()
@@ -165,11 +216,17 @@ def test_candidate_matches_golden() -> None:
         probe = validate(CANDIDATE_URL, case)
         assert probe.status == 200, f"{case.id}: HTTP {probe.status}"
         golden_resp = golden["cases"][case.id]["response"]
-        result = compare(case.id, golden_resp, probe.payload)
+        result = compare(
+            case.id,
+            golden_resp,
+            probe.payload,
+            ignore_scanners=_IGNORE_PII,
+            compare_text=not _golden_anonymize_redacted(golden_resp),
+        )
         if not result.passed(include_scores=False):
             failures.extend(f"{case.id}: {d}" for d in result.diffs if d.kind != "score")
 
-    assert not failures, "candidate diverged from golden:\n" + "\n".join(failures)
+    assert not failures, "candidate diverged from golden (non-anonymize):\n" + "\n".join(failures)
 
 
 @pytest.mark.skipif(not CANDIDATE_URL, reason="set PARITY_CANDIDATE_URL to run candidate parity")

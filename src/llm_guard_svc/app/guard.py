@@ -7,40 +7,34 @@ The scanners include anonymization, prompt injection, secrets detection, gibberi
 It also incorporates best practices like fail-fast scanning and caching.
 """
 
+import hashlib
 import logging
 import os
 import time  # For TTLCache timer
 from threading import RLock  # Correct import for RLock
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from cachetools import LRUCache, TTLCache
 
-if TYPE_CHECKING:
-    from shared.config.schemas import LLMGuardConfig
-
 _logger = logging.getLogger(__name__)
-from llm_guard.input_scanners import (
-    Anonymize,
-    Gibberish,
-    Language,
-    PromptInjection,
-    Regex,
-    Secrets,
-)
-from llm_guard.input_scanners.anonymize_helpers import DISTILBERT_AI4PRIVACY_v2_CONF
-from llm_guard.input_scanners.gibberish import DEFAULT_MODEL as GIB_MODEL
-from llm_guard.input_scanners.gibberish import MatchType as GMatchType
-from llm_guard.input_scanners.language import DEFAULT_MODEL as LANG_MODEL
-from llm_guard.input_scanners.language import MatchType as LMatchType
-from llm_guard.input_scanners.prompt_injection import V2_SMALL_MODEL as PI_MODEL
-from llm_guard.input_scanners.prompt_injection import MatchType as PIMatchType
-from llm_guard.input_scanners.regex import MatchType as RMatchType
-from llm_guard.vault import Vault
+
+# Per-process salt so the result cache is keyed by a hash of the input rather than
+# the raw text (ADR-048: do not retain user content). Cleared on restart.
+_CACHE_SALT = os.urandom(16)
+
+
+def _cache_key(text: str) -> str:
+    """Salted SHA-256 of the input — the cache key, so raw user text (which may
+    contain PII/secrets) is never stored as an in-memory dict key."""
+    return hashlib.sha256(_CACHE_SALT + text.encode("utf-8")).hexdigest()
+
+
+# LLG-04 finale (AIO-73): the llm-guard library has been removed. Every scanner
+# now runs its native implementation (see app/scanners/); model dirs are resolved
+# from LLMGuardConfig via _native_model_path(). There are no llm_guard imports and
+# no global *_MODEL mutation step anymore.
 
 _MODELS_OVERRIDE_PATH: str | None = None
-
-# Scanner model paths are configured at runtime in configure_models() from
-# LLMGuardConfig directory names (ADR-073 D5).
 
 
 def get_models_base_path() -> str:
@@ -110,9 +104,8 @@ def _native_model_path(model_dir_attr: str) -> str:
     """Resolve the on-disk model dir for a native scanner from config.
 
     ``model_dir_attr`` is an ``LLMGuardConfig`` field name (e.g.
-    ``"prompt_injection_model_dir"``). Mirrors how ``configure_models`` resolves
-    paths for the llm-guard variants, so native and llm-guard engines load the
-    same directory.
+    ``"prompt_injection_model_dir"``); resolved under the models base path so each
+    native scanner loads its own staged model directory.
     """
     from shared.config.loader import load_llm_guard_config
 
@@ -151,83 +144,35 @@ def verify_model_path(path: str, _model_name: str) -> bool:
     return False
 
 
-def configure_models(config: "LLMGuardConfig | None" = None) -> None:
+def _warn_if_legacy_engine(engine: str, scanner: str) -> None:
+    """Warn (don't fail) if a removed ``llm_guard`` engine value is still set.
+
+    The per-scanner engine flag was the LLG-04 migration knob. The llm-guard
+    library is gone (finale), so ``native`` is the only engine; a stale
+    ``llm_guard`` value is tolerated and resolves to native.
     """
-    Configure all models with environment-aware paths.
-    Works both inside and outside containers.
-
-    Model directory names are sourced from ``LLMGuardConfig`` (ADR-073 D5), so
-    they can be overridden via environment variables without code changes.
-    """
-    if config is None:
-        from shared.config.loader import load_llm_guard_config
-
-        config = load_llm_guard_config()
-
-    _logger.info("Configuring LLM-Guard models")
-
-    # PII Detection Model Configuration
-    pii_model_path = get_model_path(config.pii_model_dir)
-    if verify_model_path(pii_model_path, "PII Detection"):
-        DISTILBERT_AI4PRIVACY_v2_CONF["DEFAULT_MODEL"].path = pii_model_path
-        DISTILBERT_AI4PRIVACY_v2_CONF["DEFAULT_MODEL"].onnx_path = pii_model_path
-        DISTILBERT_AI4PRIVACY_v2_CONF["DEFAULT_MODEL"].kwargs.update(
-            {"local_files_only": True, "trust_remote_code": False}
+    if engine != "native":
+        _logger.warning(
+            "Engine %r for the %s scanner is no longer supported (llm-guard "
+            "removed, LLG-04 finale); using the native engine.",
+            engine,
+            scanner,
         )
-        _logger.info("PII Detection model configured")
-    else:
-        _logger.warning("PII Detection model not found")
-
-    # Gibberish Detection Model Configuration
-    gibberish_model_path = get_model_path(config.gibberish_model_dir)
-    if verify_model_path(gibberish_model_path, "Gibberish Detection"):
-        GIB_MODEL.path = gibberish_model_path
-        GIB_MODEL.onnx_path = os.path.join(gibberish_model_path, "onnx")
-        GIB_MODEL.onnx_subfolder = ""
-        GIB_MODEL.kwargs.update({"local_files_only": True, "trust_remote_code": False})
-        _logger.info("Gibberish Detection model configured")
-    else:
-        _logger.warning("Gibberish Detection model not found")
-
-    # Language Detection Model Configuration
-    language_model_path = get_model_path(config.language_model_dir)
-    if verify_model_path(language_model_path, "Language Detection"):
-        LANG_MODEL.path = language_model_path
-        LANG_MODEL.onnx_path = language_model_path
-        LANG_MODEL.onnx_subfolder = ""
-        LANG_MODEL.onnx_filename = "model_quantized.onnx"
-        LANG_MODEL.kwargs.update(
-            {
-                "local_files_only": True,
-                "trust_remote_code": False,
-            }
-        )
-        _logger.info("Language Detection model configured")
-    else:
-        _logger.warning("Language Detection model not found")
-
-    # Prompt Injection Detection Model Configuration
-    prompt_injection_model_path = get_model_path(config.prompt_injection_model_dir)
-    if verify_model_path(prompt_injection_model_path, "Prompt Injection Detection"):
-        PI_MODEL.path = prompt_injection_model_path
-        PI_MODEL.onnx_path = os.path.join(prompt_injection_model_path, "onnx")
-        PI_MODEL.onnx_subfolder = ""
-        PI_MODEL.kwargs.update({"local_files_only": True, "trust_remote_code": False})
-        _logger.info("Prompt Injection Detection model configured")
-    else:
-        _logger.warning("Prompt Injection Detection model not found")
 
 
 def initialize_models(models_base_path: str | None = None) -> None:
     """
-    Initialize model configuration using optional override path.
+    Register the models base-path override used by the native scanners.
+
+    Since the llm-guard removal (LLG-04 finale), there is no global ``*_MODEL``
+    mutation step: each native scanner resolves its own model dir lazily via
+    ``_native_model_path()`` on first ``/api/validate``. This only records the
+    optional base-path override so ``get_models_base_path()`` prefers it; model
+    loading stays lazy (nothing is loaded here or at startup).
     """
     global _MODELS_OVERRIDE_PATH
     if models_base_path:
         _MODELS_OVERRIDE_PATH = models_base_path
-    from shared.config.loader import load_llm_guard_config
-
-    configure_models(config=load_llm_guard_config())
 
 
 class LLMGuard:
@@ -246,12 +191,12 @@ class LLMGuard:
         cache_enabled: bool = False,  # General toggle for caching
         cache_max_size: int = 1000,
         cache_ttl_seconds: int = 3600,
-        regex_engine: str = "llm_guard",
-        secrets_engine: str = "llm_guard",
-        prompt_injection_engine: str = "llm_guard",
-        gibberish_engine: str = "llm_guard",
-        language_engine: str = "llm_guard",
-        anonymize_engine: str = "llm_guard",
+        regex_engine: str = "native",
+        secrets_engine: str = "native",
+        prompt_injection_engine: str = "native",
+        gibberish_engine: str = "native",
+        language_engine: str = "native",
+        anonymize_engine: str = "native",
     ):
         """
         Initialize the LLMGuard with required scanners and configurations.
@@ -290,94 +235,79 @@ class LLMGuard:
             self.cache = None
             self.logger.info("LLMGuard initialized with caching disabled.")
 
-        # Per-scanner engine selection (LLG-04). Native ports drop the llm_guard
-        # dependency; the default keeps the original llm-guard scanners so
-        # behaviour is unchanged until a flag is flipped.
-        from .scanners.regex_scanner import CREDENTIAL_PATTERNS, RegexScanner
-        from .scanners.secrets_scanner import SecretsScanner
-
-        regex_scanner: Any = (
-            RegexScanner()
-            if regex_engine == "native"
-            else Regex(patterns=CREDENTIAL_PATTERNS, match_type=RMatchType.SEARCH)
-        )
-        secrets_scanner: Any = SecretsScanner() if secrets_engine == "native" else Secrets()
-
-        # Native ONNX classifiers (LLG-04 step 2). They call transformers +
-        # optimum directly off resolved local model dirs; the llm-guard variants
-        # rely on the *_MODEL globals already mutated by configure_models(). Model
-        # dirs are sourced from config lazily (this __init__ only runs when the
-        # lazy LLMGuard singleton is first built, preserving lazy model loading).
-        prompt_injection_scanner: Any = self._build_prompt_injection(prompt_injection_engine)
-        gibberish_scanner: Any = self._build_gibberish(gibberish_engine)
-        language_scanner: Any = self._build_language(language_engine)
-
-        # Set up the scanners with appropriate configurations.
+        # Native scanners only (LLG-04 finale: llm-guard removed). The per-scanner
+        # engine flags are retained as a vestigial knob defaulting to "native"; a
+        # stale "llm_guard" value warns and resolves to native. Each scanner is
+        # built lazily here (this __init__ runs when the LLMGuard singleton is
+        # first constructed on /api/validate), preserving lazy model loading.
         self.scanners = {
             "anonymize": self._build_anonymize(anonymize_engine),
-            "prompt_injection": prompt_injection_scanner,
-            "secrets": secrets_scanner,
-            "gibberish": gibberish_scanner,
-            "language": language_scanner,
-            "regex": regex_scanner,
+            "prompt_injection": self._build_prompt_injection(prompt_injection_engine),
+            "secrets": self._build_secrets(secrets_engine),
+            "gibberish": self._build_gibberish(gibberish_engine),
+            "language": self._build_language(language_engine),
+            "regex": self._build_regex(regex_engine),
             # Note: The Code scanner remains commented out; configure as needed.
         }
 
     @staticmethod
-    def _build_anonymize(engine: str) -> Any:
-        if engine == "native":
-            from .scanners.anonymize_scanner import AnonymizeScanner
+    def _build_regex(engine: str) -> Any:
+        _warn_if_legacy_engine(engine, "regex")
+        from .scanners.regex_scanner import RegexScanner
 
-            # Deliberate model swap off the cc-by-nc distilbert: Presidio pattern
-            # recognizers + GLiNER (Apache-2.0). Not a verbatim port — gated on a
-            # labelled PII set, not golden parity (LLG-04 step 3).
-            return AnonymizeScanner(_native_model_path("gliner_model_dir"))
-        return Anonymize(Vault(), recognizer_conf=DISTILBERT_AI4PRIVACY_v2_CONF, use_onnx=True)
+        return RegexScanner()
+
+    @staticmethod
+    def _build_secrets(engine: str) -> Any:
+        _warn_if_legacy_engine(engine, "secrets")
+        from .scanners.secrets_scanner import SecretsScanner
+
+        return SecretsScanner()
+
+    @staticmethod
+    def _build_anonymize(engine: str) -> Any:
+        _warn_if_legacy_engine(engine, "anonymize")
+        from shared.config.loader import load_llm_guard_config
+
+        from .scanners.anonymize_scanner import AnonymizeScanner
+
+        # Deliberate model swap off the cc-by-nc distilbert: Presidio pattern
+        # recognizers + GLiNER (Apache-2.0). Gated on a labelled PII set, not
+        # golden parity (LLG-04 step 3). Thresholds are config-driven so the
+        # container PII metric gate can calibrate them without a code change.
+        config = load_llm_guard_config()
+        return AnonymizeScanner(
+            get_model_path(config.gliner_model_dir),
+            score_threshold=config.pii_score_threshold,
+            gliner_threshold=config.pii_gliner_threshold,
+        )
 
     @staticmethod
     def _build_prompt_injection(engine: str) -> Any:
-        if engine == "native":
-            from .scanners.prompt_injection_scanner import MatchType, PromptInjectionScanner
+        _warn_if_legacy_engine(engine, "prompt_injection")
+        from .scanners.prompt_injection_scanner import MatchType, PromptInjectionScanner
 
-            return PromptInjectionScanner(
-                _native_model_path("prompt_injection_model_dir"),
-                threshold=0.92,
-                match_type=MatchType.TRUNCATE_HEAD_TAIL,
-            )
-        return PromptInjection(
+        return PromptInjectionScanner(
+            _native_model_path("prompt_injection_model_dir"),
             threshold=0.92,
-            match_type=PIMatchType.TRUNCATE_HEAD_TAIL,
-            model=PI_MODEL,  # Path already updated by configure_models()
-            use_onnx=True,
+            match_type=MatchType.TRUNCATE_HEAD_TAIL,
         )
 
     @staticmethod
     def _build_gibberish(engine: str) -> Any:
-        if engine == "native":
-            from .scanners.gibberish_scanner import GibberishScanner
+        _warn_if_legacy_engine(engine, "gibberish")
+        from .scanners.gibberish_scanner import GibberishScanner
 
-            return GibberishScanner(_native_model_path("gibberish_model_dir"), threshold=0.97)
-        return Gibberish(
-            threshold=0.97,
-            match_type=GMatchType.FULL,
-            model=GIB_MODEL,
-            use_onnx=True,
-        )
+        return GibberishScanner(_native_model_path("gibberish_model_dir"), threshold=0.97)
 
     @staticmethod
     def _build_language(engine: str) -> Any:
-        if engine == "native":
-            from .scanners.language_scanner import LanguageScanner
+        _warn_if_legacy_engine(engine, "language")
+        from .scanners.language_scanner import LanguageScanner
 
-            return LanguageScanner(
-                _native_model_path("language_model_dir"),
-                valid_languages=["en", "fr"],
-            )
-        return Language(
-            model=LANG_MODEL,  # Path already updated by configure_models()
+        return LanguageScanner(
+            _native_model_path("language_model_dir"),
             valid_languages=["en", "fr"],
-            match_type=LMatchType.FULL,
-            use_onnx=True,
         )
 
     def validate_input(
@@ -408,9 +338,10 @@ class LLMGuard:
                 - Dictionary of detailed results from each scanner.
         """
         log = logger if logger is not None else self.logger
+        cache_key = _cache_key(input_text)
         if self.cache is not None:
             with self._cache_rlock:  # Ensure thread-safe access to cache
-                cached_result = self.cache.get(input_text)
+                cached_result = self.cache.get(cache_key)
             if cached_result:
                 log.debug(
                     "Cache hit for validation request",
@@ -564,8 +495,10 @@ class LLMGuard:
 
         result_tuple = (sanitized_text, final_risk_score, modified, scanner_results)
         if self.cache is not None:
+            # original_input_text == input_text (never reassigned), so the same
+            # salted-hash key is used for get and set.
             with self._cache_rlock:
-                self.cache[original_input_text] = result_tuple
+                self.cache[cache_key] = result_tuple
             log.debug(
                 "Result cached for validation request",
                 extra={

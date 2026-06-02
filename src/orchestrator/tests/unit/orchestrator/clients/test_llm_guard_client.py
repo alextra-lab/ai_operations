@@ -14,7 +14,7 @@ import json
 import httpx
 import pytest
 
-from src.orchestrator.app.orchestrator.clients.llm_guard_client import LLMGuardClient
+from app.orchestrator.clients.llm_guard_client import LLMGuardClient
 
 
 # ---------------------------------------------------------------------------

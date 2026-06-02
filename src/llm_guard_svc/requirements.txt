@@ -28,6 +28,15 @@ sentencepiece>=0.2.0
 bc-detect-secrets==1.5.43
 presidio-anonymizer==2.2.358
 
+# --- Native PII stack (LLG-04 step 3: anonymize ported off llm-guard) ---
+# Presidio pattern recognizers + GLiNER replace the cc-by-nc distilbert PII model.
+# presidio-analyzer is currently only transitive via llm-guard; pin it explicitly
+# so the native engine does not depend on llm-guard pulling it in. gliner 0.2.26
+# requires transformers>=4.51.3,<5.2.0 (satisfied by the 4.51.3 pin above) and
+# torch>=2.0.0; it adds no optimum/transformers conflict. Apache-2.0.
+presidio-analyzer==2.2.358
+gliner==0.2.26
+
 # --- spaCy (driven by the bundled language models) ---
 # en_core_web_sm-3.7.1 / zh_core_web_sm-3.7.0 require spacy>=3.7.2,<3.8.0.
 # spaCy 3.7.x depends on thinc 8.2.x, which pins numpy<2.0.0 — hence the

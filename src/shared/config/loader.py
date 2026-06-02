@@ -277,11 +277,13 @@ def load_llm_guard_config() -> LLMGuardConfig:
             "LLM_GUARD_PROMPT_INJECTION_MODEL_DIR",
             "protectai-deberta-v3-small-prompt-injection-v2",
         ),
+        gliner_model_dir=os.environ.get("LLM_GUARD_GLINER_MODEL_DIR", "gliner_multi_pii-v1"),
         regex_engine=os.environ.get("LLM_GUARD_REGEX_ENGINE", "llm_guard"),
         secrets_engine=os.environ.get("LLM_GUARD_SECRETS_ENGINE", "llm_guard"),
         prompt_injection_engine=os.environ.get("LLM_GUARD_PROMPT_INJECTION_ENGINE", "llm_guard"),
         gibberish_engine=os.environ.get("LLM_GUARD_GIBBERISH_ENGINE", "llm_guard"),
         language_engine=os.environ.get("LLM_GUARD_LANGUAGE_ENGINE", "llm_guard"),
+        anonymize_engine=os.environ.get("LLM_GUARD_ANONYMIZE_ENGINE", "llm_guard"),
     )
 
     config_manager.register_config("llm_guard", config)

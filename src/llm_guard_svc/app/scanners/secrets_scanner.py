@@ -456,7 +456,9 @@ class SecretsScanner:
         if mode == REDACT_PARTIAL:
             redacted_value = f"{value[:2]}..{value[-2:]}"
         elif mode == REDACT_HASH:
-            redacted_value = hashlib.md5(value.encode()).hexdigest()  # nosec
+            redacted_value = hashlib.md5(  # nosec
+                value.encode(), usedforsecurity=False
+            ).hexdigest()
         elif mode == REDACT_ALL:
             redacted_value = "******"
         else:
@@ -502,7 +504,7 @@ class SecretsScanner:
         os.remove(temp_file.name)
 
         if secret_types:
-            LOGGER.warning("Detected secrets in prompt: %s", secret_types)
+            LOGGER.warning("Detected %d secret(s) in prompt", len(secret_types))
             return text_replace_builder.output_text, False, 1.0
 
         LOGGER.debug("No secrets detected in the prompt")

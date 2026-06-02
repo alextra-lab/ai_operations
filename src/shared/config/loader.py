@@ -279,6 +279,9 @@ def load_llm_guard_config() -> LLMGuardConfig:
         ),
         regex_engine=os.environ.get("LLM_GUARD_REGEX_ENGINE", "llm_guard"),
         secrets_engine=os.environ.get("LLM_GUARD_SECRETS_ENGINE", "llm_guard"),
+        prompt_injection_engine=os.environ.get("LLM_GUARD_PROMPT_INJECTION_ENGINE", "llm_guard"),
+        gibberish_engine=os.environ.get("LLM_GUARD_GIBBERISH_ENGINE", "llm_guard"),
+        language_engine=os.environ.get("LLM_GUARD_LANGUAGE_ENGINE", "llm_guard"),
     )
 
     config_manager.register_config("llm_guard", config)

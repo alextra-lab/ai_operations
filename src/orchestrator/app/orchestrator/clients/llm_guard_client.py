@@ -83,7 +83,7 @@ class LLMGuardClient:
 
         payload = {
             "input_text": query,
-            "context": {k: str(v) for k, v in context.items()},
+            "context": {k: str(v) for k, v in context.items()} if context else None,
             "strict_mode": strict_mode,
         }
 

@@ -160,7 +160,7 @@ async def test_empty_context_becomes_none():
 
 @pytest.mark.asyncio
 async def test_happy_path_round_trip():
-    """Given a valid service response, validate() returns a dict with the expected keys."""
+    """Full request-response contract: correct outgoing payload and expected return keys."""
     service_response = {
         "sanitized_text": "cleaned query",
         "risk_score": 0.15,
@@ -176,6 +176,13 @@ async def test_happy_path_round_trip():
         request_id="req-007",
     )
 
+    # Verify outgoing payload was well-formed
+    body = json.loads(captured[0].content)
+    assert body["input_text"] == "original query"
+    assert body["context"] == {"role": "analyst"}
+    assert "query" not in body
+
+    # Verify response keys are returned as-is
     assert result["sanitized_text"] == "cleaned query"
     assert result["risk_score"] == 0.15
     assert result["modified"] is True

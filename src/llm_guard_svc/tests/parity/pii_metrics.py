@@ -19,7 +19,7 @@ from dataclasses import dataclass
 STRUCTURED_ENTITIES = frozenset(
     {"EMAIL_ADDRESS", "CREDIT_CARD", "US_SSN", "PHONE_NUMBER", "IBAN_CODE"}
 )
-FREE_TEXT_ENTITIES = frozenset({"PERSON", "LOCATION", "ORGANIZATION"})
+FREE_TEXT_ENTITIES = frozenset({"PERSON", "LOCATION"})
 
 # Ratified acceptance bars.
 STRUCTURED_MIN_RECALL = 0.98

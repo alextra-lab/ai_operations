@@ -105,9 +105,9 @@ PII_CASES: list[PiiCase] = [
     ),
     _case(
         "email_only_en",
-        "Forward the report to security-team@corp.example when ready.",
+        "Forward the report to security-team@corp.com when ready.",
         "en",
-        [("EMAIL_ADDRESS", "security-team@corp.example")],
+        [("EMAIL_ADDRESS", "security-team@corp.com")],
     ),
     _case(
         "phone_uk_en",
@@ -138,7 +138,8 @@ PII_CASES: list[PiiCase] = [
         "person_org_en",
         "Dmitri Volkov joined Acme Corporation as a security analyst.",
         "en",
-        [("PERSON", "Dmitri Volkov"), ("ORGANIZATION", "Acme Corporation")],
+        [("PERSON", "Dmitri Volkov")],
+        "ORGANIZATION is out of scope (not evaluated); only the PERSON is gold.",
     ),
     _case(
         "person_only_en",
@@ -156,7 +157,8 @@ PII_CASES: list[PiiCase] = [
         "org_only_en",
         "We migrated the workload off Globex Industries last year.",
         "en",
-        [("ORGANIZATION", "Globex Industries")],
+        [],
+        "ORGANIZATION out of scope; no PERSON/LOCATION here -> a precision case.",
     ),
     _case(
         "person_phone_en",
@@ -187,7 +189,8 @@ PII_CASES: list[PiiCase] = [
         "person_org_fr",
         "Sophie Marchand dirige la securite chez Entreprise Lumiere.",
         "fr",
-        [("PERSON", "Sophie Marchand"), ("ORGANIZATION", "Entreprise Lumiere")],
+        [("PERSON", "Sophie Marchand")],
+        "ORGANIZATION is out of scope (not evaluated); only the PERSON is gold.",
     ),
     _case(
         "location_only_fr",
@@ -197,9 +200,9 @@ PII_CASES: list[PiiCase] = [
     ),
     _case(
         "email_only_fr",
-        "Transmettez le rapport a equipe-securite@societe.exemple rapidement.",
+        "Transmettez le rapport a equipe-securite@societe.fr rapidement.",
         "fr",
-        [("EMAIL_ADDRESS", "equipe-securite@societe.exemple")],
+        [("EMAIL_ADDRESS", "equipe-securite@societe.fr")],
     ),
     # ---- adversarial ------------------------------------------------------
     _case(

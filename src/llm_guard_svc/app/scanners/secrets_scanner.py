@@ -80,8 +80,12 @@ _default_detect_secrets_config = {
             "path": _custom_plugins_path + "/authress_access_key.py",
         },
         {
+            # Deviation (AIO-73): upstream llm-guard 0.3.16 swaps these two
+            # name->path pairings (Bittrex -> beamer_api_token.py and
+            # Beamer -> bittrex.py). Corrected so each name matches the class
+            # defined at its path. See secrets_plugins/PROVENANCE.md.
             "name": "BittrexDetector",
-            "path": _custom_plugins_path + "/beamer_api_token.py",
+            "path": _custom_plugins_path + "/bittrex.py",
         },
         {
             "name": "BitbucketDetector",
@@ -89,7 +93,7 @@ _default_detect_secrets_config = {
         },
         {
             "name": "BeamerApiTokenDetector",
-            "path": _custom_plugins_path + "/bittrex.py",
+            "path": _custom_plugins_path + "/beamer_api_token.py",
         },
         {
             "name": "ClojarsApiTokenDetector",

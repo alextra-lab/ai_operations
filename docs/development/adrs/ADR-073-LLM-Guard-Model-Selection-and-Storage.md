@@ -103,8 +103,13 @@ backed by an environment variable. This is tracked as Linear task LLG-03 and
 is not part of the immediate Phase 0 execution. Hardcoded names in `guard.py`
 are accepted as technical debt until LLG-03 is complete.
 
-### D6 — llm-guard dependency: replacement required (was: deferred)
+### D6 — llm-guard dependency: replacement required (was: deferred) — RESOLVED 2026-06-02
 `llm-guard==0.3.16` was accepted as-is for the MVP release.
+
+**Resolved (2026-06-02):** Option B implemented across LLG-04 (AIO-1); the
+`llm-guard` library is removed, all six scanners run native engines, and
+`transformers` is unpinned to `>=4.53.0,<4.54.0`, closing the 7 CVEs. See the
+2026-06-02 entry under Status Updates.
 
 **Update (2026-06-01): this is no longer a deferrable trade-off.** `0.3.16` is
 the final published release (no newer version exists on PyPI) and it hard-pins
@@ -286,6 +291,25 @@ update also found that the PII model
 address (likely a PII-model swap). Corrected the Decision section header
 ("Five" → "Six decisions"). Full Option B evaluation and execution plan:
 `docs/development/analysis/llm-guard-replacement-evaluation.md`.
+
+### 2026-06-02 - LLG-04 complete (D6 resolved; llm-guard removed; CVEs closed)
+**Changed By:** Platform Team
+**Reason:** LLG-04 (epic AIO-1) shipped across five increments: parity harness
+(PR #92), native regex+secrets (#93), native ONNX classifiers (#94), native PII
+via Presidio+GLiNER (#96, AIO-72), and the finale (AIO-73) — remove the
+`llm-guard` library, flip all six scanners to their native engines by default,
+and unpin `transformers`. **D6 is now resolved (Option B implemented).** Final
+dependency set for `llm-guard-svc`: `transformers>=4.53.0,<4.54.0` (closes the 7
+Dependabot CVEs; the `<4.54` bound minimises ONNX tokenizer drift),
+`optimum[onnxruntime]>=1.27.0` (the old `1.25.2` capped `transformers<4.52`),
+`onnxruntime>=1.17.0`, plus the native-scanner stack `presidio-analyzer` /
+`presidio-anonymizer==2.2.358`, `bc-detect-secrets==1.5.43`, and `gliner==0.2.26`.
+**PII model:** the `cc-by-nc` distilbert (the Option A/ai4privacy licensing
+blocker) is replaced by **Presidio pattern recognizers (MIT) + GLiNER
+`gliner_multi_pii-v1` (Apache-2.0, en+fr)**, gated on a labelled recall/precision
+set rather than golden parity. The staged ONNX graphs are unchanged (loaded by
+onnxruntime, version-independent of transformers). See the native-scanner specs
+under `docs/development/specs/llm-guard-native-*.md` and the eval doc §8.
 
 ---
 

@@ -31,28 +31,23 @@ RUN mkdir -p /app/models
 ARG OFFLINE=0
 ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
 
-# --- spaCy language model wheels (kept in sync with build_wheelhouse.sh) ---
-# en_core_web_sm-3.7.1 / zh_core_web_sm-3.7.0 require spacy>=3.7.2,<3.8.0.
-# OFFLINE builds pick them up from the wheelhouse; online builds fetch them
-# from the explosion/spacy-models GitHub releases.
-ARG EN_MODEL_URL=https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
-ARG ZH_MODEL_URL=https://github.com/explosion/spacy-models/releases/download/zh_core_web_sm-3.7.0/zh_core_web_sm-3.7.0-py3-none-any.whl
-
 # --- Copy requirements and prebuilt wheelhouse (host must build it for python 3.12/linux) ---
+# NOTE (LLG-04 finale): no model files are downloaded during the build. The
+# native scanners' ML models (the 3 ONNX classifiers + GLiNER + its mdeberta-v3
+# backbone tokenizer) are staged separately by the operator into the mounted
+# models volume before enabling the service — see src/llm_guard_svc/README.md.
+# The former en/zh spaCy model wheels were dropped: the native PII path calls
+# Presidio pattern recognizers directly (no spaCy NlpEngine), so no spaCy model
+# is needed (the `spacy` library remains only as a presidio-analyzer dependency).
 COPY llm_guard_svc/requirements.txt .
 COPY wheelhouse /app/wheelhouse
 
 # --- Install runtime dependencies: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0) ---
-# The spaCy language models are installed in the same resolution pass so pip can
-# verify the spacy>=3.7.2,<3.8.0 dependency is satisfied by requirements.txt.
 RUN if [ "$OFFLINE" = "1" ]; then \
-        pip install --no-cache-dir --no-index --find-links=/app/wheelhouse \
-            -r requirements.txt \
-            /app/wheelhouse/en_core_web_sm-3.7.1-py3-none-any.whl \
-            /app/wheelhouse/zh_core_web_sm-3.7.0-py3-none-any.whl; \
+        pip install --no-cache-dir --no-index --find-links=/app/wheelhouse -r requirements.txt; \
     else \
         pip install --no-cache-dir --index-url "$TORCH_INDEX_URL" --extra-index-url "$PIP_INDEX_URL" \
-            -r requirements.txt "${EN_MODEL_URL}" "${ZH_MODEL_URL}"; \
+            -r requirements.txt; \
     fi && rm -rf /app/wheelhouse
 
 # --- Copy service and shared code ---

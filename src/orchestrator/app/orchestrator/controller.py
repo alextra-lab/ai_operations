@@ -354,8 +354,9 @@ class Orchestrator:
             or disabled, it returns the original input with safe defaults rather than failing
             the entire request.
         """
-        # Check if LLM-Guard is disabled via configuration
-        llm_guard_enabled = self.config.get("llm_guard_enabled", True)
+        # Check if LLM-Guard is disabled via configuration. Disabled by default
+        # (LLG-04 finale): native scanners need models staged manually first.
+        llm_guard_enabled = self.config.get("llm_guard_enabled", False)
         if not llm_guard_enabled:
             logger.info("LLM-Guard validation disabled via configuration")
             return (
@@ -810,7 +811,7 @@ class Orchestrator:
         Returns:
             True if guard should be used, False if disabled
         """
-        enabled = bool(self.config.get("llm_guard_enabled", True))
+        enabled = bool(self.config.get("llm_guard_enabled", False))
 
         if not enabled:
             logger.info("LLM-Guard is disabled via configuration")

@@ -1,6 +1,6 @@
 # Spec — Native PII / `anonymize` (Presidio + GLiNER) — LLG-04 cutover step 3
 
-**Status:** Implemented (2026-06-02) — native code dormant behind `LLM_GUARD_ANONYMIZE_ENGINE` (default `llm_guard`); gated on a labelled PII recall/precision set (not golden parity)
+**Status:** Implemented (#96, AIO-72); **default since the LLG-04 finale (AIO-73)** — `LLM_GUARD_ANONYMIZE_ENGINE` defaults to `native` and the llm-guard fallback is removed. Gated on a labelled PII recall/precision set (not golden parity)
 **Date:** 2026-06-02
 **Linear:** AIO-72 (sub-issue of AIO-1 / LLG-04)
 **Related:** `docs/development/analysis/llm-guard-replacement-evaluation.md` (§3a, §4.4, §8), `docs/development/specs/llm-guard-native-regex-secrets-spec.md` (step 1), `docs/development/specs/llm-guard-native-onnx-classifiers-spec.md` (step 2), `src/llm_guard_svc/app/scanners/anonymize_scanner.py`, `src/llm_guard_svc/tests/parity/`

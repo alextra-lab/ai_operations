@@ -1,9 +1,12 @@
 # LLM-Guard Replacement Evaluation (LLG-04)
 
-**Status:** Committed (Option B) — execution in progress. Done: parity harness (PR #92),
-native regex+secrets (PR #93), native ONNX classifiers (PR #94). Remaining: PII
-(`anonymize`) cutover via Presidio + GLiNER, then remove llm-guard + unpin
-`transformers>=4.53` + close the 7 CVEs (the acceptance gate in §8).
+**Status:** **Complete (Option B implemented).** Shipped: parity harness (PR #92),
+native regex+secrets (#93), native ONNX classifiers (#94), native PII via
+Presidio+GLiNER (#96, AIO-72), and the finale (AIO-73) — llm-guard removed, all
+six scanners native by default, `transformers` unpinned to `>=4.53.0,<4.54.0`
+(closing the 7 CVEs). The §8 acceptance gate's pre-merge container validation
+(PII metric bars + candidate parity at the new transformers) is the remaining
+operator/CI step before the AIO-73 PR merges.
 **Date:** 2026-06-01 (updated 2026-06-02)
 **Linear:** AIO-1 (LLG-04)
 **Related:** ADR-073 (D6), `src/llm_guard_svc/app/guard.py`, `src/llm_guard_svc/app/main.py`

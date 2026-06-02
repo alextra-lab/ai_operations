@@ -62,8 +62,18 @@ def compare(
     *,
     score_tol: float = 0.05,
     risk_tol: float = 0.05,
+    ignore_scanners: frozenset[str] = frozenset(),
+    compare_text: bool = True,
 ) -> ParityResult:
-    """Compare a candidate response against the golden baseline for one case."""
+    """Compare a candidate response against the golden baseline for one case.
+
+    ``ignore_scanners`` drops those scanners from the scanner-set and per-scanner
+    verdict/score comparison — used for ``anonymize`` after the LLG-04 finale,
+    whose native engine is a deliberate model swap (Presidio+GLiNER) that diverges
+    from the distilbert golden by design (gated instead by the labelled PII metric
+    set). ``compare_text=False`` skips the ``sanitized_text``/``modified`` equality
+    for cases where the golden ``anonymize`` redacted (so its text diverges too).
+    """
     result = ParityResult(case_id=case_id)
 
     # --- schema (both sides) ---
@@ -73,26 +83,28 @@ def compare(
     if result.schema_diffs:
         return result  # can't meaningfully compare malformed payloads
 
-    g_scanners, c_scanners = scanner_names(golden), scanner_names(candidate)
+    g_scanners = scanner_names(golden) - ignore_scanners
+    c_scanners = scanner_names(candidate) - ignore_scanners
     if g_scanners != c_scanners:
         result.diffs.append(
             Diff("details.scanners", sorted(g_scanners), sorted(c_scanners), "semantic")
         )
 
     # --- semantic: sanitized_text + modified ---
-    if golden.get("sanitized_text") != candidate.get("sanitized_text"):
-        result.diffs.append(
-            Diff(
-                "sanitized_text",
-                golden.get("sanitized_text"),
-                candidate.get("sanitized_text"),
-                "semantic",
+    if compare_text:
+        if golden.get("sanitized_text") != candidate.get("sanitized_text"):
+            result.diffs.append(
+                Diff(
+                    "sanitized_text",
+                    golden.get("sanitized_text"),
+                    candidate.get("sanitized_text"),
+                    "semantic",
+                )
             )
-        )
-    if golden.get("modified") != candidate.get("modified"):
-        result.diffs.append(
-            Diff("modified", golden.get("modified"), candidate.get("modified"), "semantic")
-        )
+        if golden.get("modified") != candidate.get("modified"):
+            result.diffs.append(
+                Diff("modified", golden.get("modified"), candidate.get("modified"), "semantic")
+            )
 
     # --- per-scanner passed (semantic) + score (score) ---
     g_details = golden.get("details", {})

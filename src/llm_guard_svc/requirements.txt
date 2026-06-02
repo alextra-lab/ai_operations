@@ -7,16 +7,19 @@ python-json-logger==4.1.0
 httpx>=0.28.1
 cachetools>=7.1.4,<8.0.0
 
-# --- llm-guard and its hard-pinned ML stack ---
-# llm-guard 0.3.16 hard-pins: transformers==4.51.3, regex==2024.11.6,
-# optimum[onnxruntime]==1.25.2, torch>=2.4.0, presidio-*==2.2.358.
-# Do NOT loosen these — pip will reject any conflicting constraint below.
-llm-guard[onnxruntime]>=0.3.16
+# --- Native ML stack (LLG-04 finale: llm-guard removed) ---
+# The llm-guard library (which hard-pinned transformers==4.51.3, the source of the
+# 7 unfixable Dependabot CVEs) is gone; all 6 scanners run native implementations.
+# transformers is unpinned to the patched >=4.53.0 floor that closes those CVEs,
+# bounded <4.54.0 to minimise tokenizer/pipeline drift for the native ONNX
+# scanners (validated by the parity candidate gate). GLiNER 0.2.26 independently
+# caps transformers<5.2.0, so 4.53.x is in range. optimum bumps to >=1.27.0 (the
+# 1.25.2 pin capped transformers<4.52, blocking 4.53).
 torch>=2.4.0
-transformers[torch]==4.51.3
-optimum[onnxruntime]==1.25.2
+transformers[torch]>=4.53.0,<4.54.0
+optimum[onnxruntime]>=1.27.0,<3.0.0
 onnxruntime>=1.17.0
-regex==2024.11.6
+regex>=2024.11.6
 # Required by the DebertaV2 (prompt-injection) and XLM-RoBERTa (language)
 # tokenizers; transformers[torch] does not pull it in. Without it, /api/validate
 # fails with "DebertaV2Tokenizer requires the SentencePiece library".
@@ -30,9 +33,9 @@ presidio-anonymizer==2.2.358
 
 # --- Native PII stack (LLG-04 step 3: anonymize ported off llm-guard) ---
 # Presidio pattern recognizers + GLiNER replace the cc-by-nc distilbert PII model.
-# presidio-analyzer is currently only transitive via llm-guard; pin it explicitly
-# so the native engine does not depend on llm-guard pulling it in. gliner 0.2.26
-# requires transformers>=4.51.3,<5.2.0 (satisfied by the 4.51.3 pin above) and
+# presidio-analyzer was previously only transitive via llm-guard; it is pinned
+# explicitly now that llm-guard is gone. gliner 0.2.26 requires
+# transformers>=4.51.3,<5.2.0 (satisfied by the >=4.53.0,<4.54.0 range above) and
 # torch>=2.0.0; it adds no optimum/transformers conflict. Apache-2.0.
 presidio-analyzer==2.2.358
 gliner==0.2.26

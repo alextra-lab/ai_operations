@@ -21,6 +21,7 @@ any parity-tested case:
   variant). Fixes `py/incomplete-hostname-regexp`; only narrows matching of
   Sidekiq enterprise URLs with non-dot hostname characters (not present in our
   corpus).
-- `../secrets_scanner.py` — `md5(...)` in the unused `REDACT_HASH` path gains
-  `usedforsecurity=False` (identical output); the detection log emits a secret
-  *count* instead of the type list. Neither affects scan verdicts or redaction.
+- `../secrets_scanner.py` — `md5(...)` → `sha256(...)` in the unused
+  `REDACT_HASH` path (default `redact_mode` is `REDACT_ALL`, so this output is
+  never produced here); the detection log emits a secret *count* instead of the
+  type list. Neither affects scan verdicts or redaction in our configuration.

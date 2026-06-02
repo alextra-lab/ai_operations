@@ -456,9 +456,11 @@ class SecretsScanner:
         if mode == REDACT_PARTIAL:
             redacted_value = f"{value[:2]}..{value[-2:]}"
         elif mode == REDACT_HASH:
-            redacted_value = hashlib.md5(  # nosec
-                value.encode(), usedforsecurity=False
-            ).hexdigest()
+            # LLG-04: upstream llm-guard uses md5 here; switched to sha256 to
+            # satisfy CodeQL (py/weak-sensitive-data-hashing). This REDACT_HASH
+            # path is unused (default redact_mode is REDACT_ALL), so this output
+            # is never produced in our configuration.
+            redacted_value = hashlib.sha256(value.encode()).hexdigest()
         elif mode == REDACT_ALL:
             redacted_value = "******"
         else:

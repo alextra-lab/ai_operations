@@ -262,3 +262,15 @@ class LLMGuardConfig(ServiceConfig):
         default="llm_guard",
         description="Engine for the secrets scanner: 'llm_guard' or 'native' (LLG-04)",
     )
+    prompt_injection_engine: str = Field(
+        default="llm_guard",
+        description="Engine for the prompt_injection scanner: 'llm_guard' or 'native' (LLG-04)",
+    )
+    gibberish_engine: str = Field(
+        default="llm_guard",
+        description="Engine for the gibberish scanner: 'llm_guard' or 'native' (LLG-04)",
+    )
+    language_engine: str = Field(
+        default="llm_guard",
+        description="Engine for the language scanner: 'llm_guard' or 'native' (LLG-04)",
+    )

@@ -106,6 +106,20 @@ def get_model_path(model_name: str) -> str:
     return os.path.join(base_path, model_name)
 
 
+def _native_model_path(model_dir_attr: str) -> str:
+    """Resolve the on-disk model dir for a native scanner from config.
+
+    ``model_dir_attr`` is an ``LLMGuardConfig`` field name (e.g.
+    ``"prompt_injection_model_dir"``). Mirrors how ``configure_models`` resolves
+    paths for the llm-guard variants, so native and llm-guard engines load the
+    same directory.
+    """
+    from shared.config.loader import load_llm_guard_config
+
+    config = load_llm_guard_config()
+    return get_model_path(getattr(config, model_dir_attr))
+
+
 def verify_model_path(path: str, _model_name: str) -> bool:
     """
     Verify that a model path exists and contains required files.
@@ -234,6 +248,9 @@ class LLMGuard:
         cache_ttl_seconds: int = 3600,
         regex_engine: str = "llm_guard",
         secrets_engine: str = "llm_guard",
+        prompt_injection_engine: str = "llm_guard",
+        gibberish_engine: str = "llm_guard",
+        language_engine: str = "llm_guard",
     ):
         """
         Initialize the LLMGuard with required scanners and configurations.
@@ -288,36 +305,73 @@ class LLMGuard:
         )
         secrets_scanner: Any = SecretsScanner() if secrets_engine == "native" else Secrets()
 
+        # Native ONNX classifiers (LLG-04 step 2). They call transformers +
+        # optimum directly off resolved local model dirs; the llm-guard variants
+        # rely on the *_MODEL globals already mutated by configure_models(). Model
+        # dirs are sourced from config lazily (this __init__ only runs when the
+        # lazy LLMGuard singleton is first built, preserving lazy model loading).
+        prompt_injection_scanner: Any = self._build_prompt_injection(prompt_injection_engine)
+        gibberish_scanner: Any = self._build_gibberish(gibberish_engine)
+        language_scanner: Any = self._build_language(language_engine)
+
         # Set up the scanners with appropriate configurations.
         self.scanners = {
             "anonymize": Anonymize(
                 vault, recognizer_conf=DISTILBERT_AI4PRIVACY_v2_CONF, use_onnx=True
             ),
-            "prompt_injection": PromptInjection(
-                threshold=0.92,
-                match_type=PIMatchType.TRUNCATE_HEAD_TAIL,
-                model=PI_MODEL,  # Path already updated
-                use_onnx=True,
-            ),
+            "prompt_injection": prompt_injection_scanner,
             "secrets": secrets_scanner,
-            "gibberish": Gibberish(
-                threshold=0.97,
-                match_type=GMatchType.FULL,
-                model=GIB_MODEL,
-                use_onnx=True,  # Use ONNX for the madhurjindal Gibberish model
-            ),
-            "language": Language(  # Added Language scanner
-                model=LANG_MODEL,  # Path already updated
-                valid_languages=[
-                    "en",
-                    "fr",
-                ],
-                match_type=LMatchType.FULL,
-                use_onnx=True,
-            ),
+            "gibberish": gibberish_scanner,
+            "language": language_scanner,
             "regex": regex_scanner,
-            # Note: The Language scanner and Code scanner remain commented out; uncomment or configure as needed.
+            # Note: The Code scanner remains commented out; configure as needed.
         }
+
+    @staticmethod
+    def _build_prompt_injection(engine: str) -> Any:
+        if engine == "native":
+            from .scanners.prompt_injection_scanner import MatchType, PromptInjectionScanner
+
+            return PromptInjectionScanner(
+                _native_model_path("prompt_injection_model_dir"),
+                threshold=0.92,
+                match_type=MatchType.TRUNCATE_HEAD_TAIL,
+            )
+        return PromptInjection(
+            threshold=0.92,
+            match_type=PIMatchType.TRUNCATE_HEAD_TAIL,
+            model=PI_MODEL,  # Path already updated by configure_models()
+            use_onnx=True,
+        )
+
+    @staticmethod
+    def _build_gibberish(engine: str) -> Any:
+        if engine == "native":
+            from .scanners.gibberish_scanner import GibberishScanner
+
+            return GibberishScanner(_native_model_path("gibberish_model_dir"), threshold=0.97)
+        return Gibberish(
+            threshold=0.97,
+            match_type=GMatchType.FULL,
+            model=GIB_MODEL,
+            use_onnx=True,
+        )
+
+    @staticmethod
+    def _build_language(engine: str) -> Any:
+        if engine == "native":
+            from .scanners.language_scanner import LanguageScanner
+
+            return LanguageScanner(
+                _native_model_path("language_model_dir"),
+                valid_languages=["en", "fr"],
+            )
+        return Language(
+            model=LANG_MODEL,  # Path already updated by configure_models()
+            valid_languages=["en", "fr"],
+            match_type=LMatchType.FULL,
+            use_onnx=True,
+        )
 
     def validate_input(
         self,

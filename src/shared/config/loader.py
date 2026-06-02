@@ -220,7 +220,8 @@ def load_orchestrator_config() -> OrchestratorConfig:
             "EMBEDDING_SERVICE_URL", "http://embedding-service:8000"
         ),
         llm_guard_service_url=os.environ.get("LLM_GUARD_SERVICE_URL", "http://llm-guard-svc:8081"),
-        llm_guard_enabled=os.environ.get("LLM_GUARD_ENABLED", "true").lower() in ("true", "1", "t"),
+        llm_guard_enabled=os.environ.get("LLM_GUARD_ENABLED", "false").lower()
+        in ("true", "1", "t"),
         llm_guard_timeout_seconds=float(os.environ.get("LLM_GUARD_TIMEOUT", "10.0")),
         inference_gateway_url=os.environ.get(
             "INFERENCE_GATEWAY_URL", "http://inference-gateway:8002"
@@ -256,7 +257,7 @@ def load_llm_guard_config() -> LLMGuardConfig:
         port=int(os.environ.get("LLM_GUARD_PORT", "8081")),
         enable_cors=os.environ.get("LLM_GUARD_ENABLE_CORS", "true").lower() == "true",
         cors_origins=os.environ.get("LLM_GUARD_CORS_ORIGINS", "*").split(","),
-        enabled=os.environ.get("LLM_GUARD_ENABLED", "true").lower() == "true",
+        enabled=os.environ.get("LLM_GUARD_ENABLED", "false").lower() == "true",
         fail_fast=os.environ.get("LLM_GUARD_FAIL_FAST", "false").lower() == "true",
         cache_enabled=os.environ.get("LLM_GUARD_CACHE_ENABLED", "true").lower() == "true",
         cache_max_size=int(os.environ.get("LLM_GUARD_CACHE_MAX_SIZE", "1000")),
@@ -278,8 +279,8 @@ def load_llm_guard_config() -> LLMGuardConfig:
             "protectai-deberta-v3-small-prompt-injection-v2",
         ),
         gliner_model_dir=os.environ.get("LLM_GUARD_GLINER_MODEL_DIR", "gliner_multi_pii-v1"),
-        pii_score_threshold=float(os.environ.get("LLM_GUARD_PII_SCORE_THRESHOLD", "0.4")),
-        pii_gliner_threshold=float(os.environ.get("LLM_GUARD_PII_GLINER_THRESHOLD", "0.5")),
+        pii_score_threshold=float(os.environ.get("LLM_GUARD_PII_SCORE_THRESHOLD", "0.3")),
+        pii_gliner_threshold=float(os.environ.get("LLM_GUARD_PII_GLINER_THRESHOLD", "0.93")),
         regex_engine=os.environ.get("LLM_GUARD_REGEX_ENGINE", "native"),
         secrets_engine=os.environ.get("LLM_GUARD_SECRETS_ENGINE", "native"),
         prompt_injection_engine=os.environ.get("LLM_GUARD_PROMPT_INJECTION_ENGINE", "native"),

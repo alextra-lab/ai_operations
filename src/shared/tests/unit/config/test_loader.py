@@ -359,7 +359,9 @@ class TestLoadOrchestratorConfig:
             config = load_orchestrator_config()
             assert config.name == "orchestrator-api"
             assert config.port == 8000
-            assert config.llm_guard_enabled is True
+            # Disabled by default since the LLG-04 finale (AIO-73): native scanners
+            # require models staged manually first and are unsupported on enterprise.
+            assert config.llm_guard_enabled is False
             assert config.retrieval_enabled is True
             assert config.transcript_storage_enabled is False
             assert config.dashboard_health_endpoints == {}
@@ -402,7 +404,8 @@ class TestLoadLLMGuardConfig:
         with patch.dict(os.environ, {}, clear=True):
             config = load_llm_guard_config()
             assert config.name == "llm-guard-svc"
-            assert config.enabled is True
+            # Disabled by default since the LLG-04 finale (AIO-73).
+            assert config.enabled is False
             assert config.cache_enabled is True
             assert config.cache_max_size == 1000
 

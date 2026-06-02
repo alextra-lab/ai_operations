@@ -1,127 +1,87 @@
 # LLM-Guard Service
 
-An API service that provides input validation and sanitization for LLM interactions using [LLM-Guard](https://github.com/protectai/llm-guard).
+An API service that validates and sanitizes text inputs (e.g. user prompts) before
+they reach an LLM. The service name, container name (`llm-guard-svc`), API
+(`POST /api/validate`), and `LLM_GUARD_*` configuration are unchanged, but as of the
+**LLG-04 finale** it no longer depends on the `llm-guard` PyPI library — every
+scanner runs a native, permissively-licensed implementation (see `app/scanners/`).
+This removed the library's hard `transformers==4.51.3` pin and closed 7 CVEs.
 
-## Features
+## Scanners (all native)
 
-- Prompt injection detection and prevention
-- Sensitive information detection and redaction
-- Content moderation (toxicity, banned topics)
-- Code detection
-- Gibberish detection
-- Language filtering
+| Scanner | Implementation | License |
+|---|---|---|
+| `regex` | stdlib `re` + presidio TextReplaceBuilder | MIT |
+| `secrets` | `detect-secrets` (vendored plugins) | MIT |
+| `prompt_injection` | ONNX (deberta-v3) via transformers + optimum | Apache-2.0 |
+| `gibberish` | ONNX classifier | Apache-2.0 |
+| `language` | ONNX (xlm-roberta) | MIT |
+| `anonymize` (PII) | Presidio pattern recognizers + GLiNER `gliner_multi_pii-v1` | MIT / Apache-2.0 |
 
-## Architecture
+The previous PII model (`distilbert_finetuned_ai4privacy_v2`) was **removed** — it is
+`cc-by-nc-4.0` (non-commercial). PII now uses Presidio pattern recognizers (email,
+credit card, US SSN, phone, IBAN) plus GLiNER for free-text `PERSON`/`LOCATION`.
 
-The service exposes a FastAPI application that provides endpoints for validating text inputs before they are sent to LLMs. This adds a crucial security layer to the AI Operations platform.
+## ⚠️ Disabled by default
 
-## Building and Running
+`LLM_GUARD_ENABLED` defaults to **`false`**. The service returns a pass-through
+response and the orchestrator skips it. Enable it **only after** staging the models
+(below). The native PII engine is **not supported on the enterprise profile**.
 
-### Prerequisites
+## Prerequisite: stage the models (manual, before enabling)
 
-Before building and running the LLM-Guard service, you must have the required models available in the `data/llm-guard-models` directory. The service will not function without these models.
-
-The service requires the following models to be present (directory names must match):
-
-- `Isotonic/distilbert_finetuned_ai4privacy_v2` → `distilbert_finetuned_ai4privacy_v2`
-- `madhurjindal/autonlp-Gibberish-Detector-492513457` → `madhurjindal-autonlp-Gibberish-Detector-492513457`
-- `protectai/xlm-roberta-base-language-detection-onnx` → `protectai-xlm-roberta-base-language-detection-onnx`
-- `protectai/deberta-v3-small-prompt-injection-v2` → `protectai-deberta-v3-small-prompt-injection-v2`
-
-You can download models using the bootstrap script (recommended):
+Models are **not** downloaded during the image build. They are staged once into
+`data/llm-guard-models/` (mounted read-only to `/app/models`, which is also
+`HF_HOME`) by the operator:
 
 ```bash
 python ops/bootstrap/download_llm_guard_models.py --output-dir data/llm-guard-models
 ```
 
-Or download manually from Hugging Face using git:
+This stages:
+- the three ONNX classifiers (gibberish, language, prompt-injection), ONNX files only;
+- GLiNER `urchade/gliner_multi_pii-v1` (PyTorch weights kept);
+- **the GLiNER backbone tokenizer** `microsoft/mdeberta-v3-base` into `data/llm-guard-models/hub`
+  (the HF cache). GLiNER ships no tokenizer and loads its backbone's at runtime, so
+  without this it cannot load offline (`local_files_only=True` / `HF_HUB_OFFLINE=1`).
+
+PII thresholds are calibrated against `tests/parity/pii_labelled.py`
+(`LLM_GUARD_PII_SCORE_THRESHOLD=0.3`, `LLM_GUARD_PII_GLINER_THRESHOLD=0.93`) and can be
+overridden via env.
+
+## Building and running
 
 ```bash
-# Create models directory if it doesn't exist
-mkdir -p data/llm-guard-models
+# Build just this service (local profile)
+make build                       # or: docker compose ... build llm-guard-svc
 
-# Download each required model (target directory names must match guard.py expectations)
-git clone https://huggingface.co/Isotonic/distilbert_finetuned_ai4privacy_v2 data/llm-guard-models/distilbert_finetuned_ai4privacy_v2
-git clone https://huggingface.co/madhurjindal/autonlp-Gibberish-Detector-492513457 data/llm-guard-models/madhurjindal-autonlp-Gibberish-Detector-492513457
-git clone https://huggingface.co/protectai/xlm-roberta-base-language-detection-onnx data/llm-guard-models/protectai-xlm-roberta-base-language-detection-onnx
-git clone https://huggingface.co/protectai/deberta-v3-small-prompt-injection-v2 data/llm-guard-models/protectai-deberta-v3-small-prompt-injection-v2
+# Stage models (see above), then enable + start
+#   set LLM_GUARD_ENABLED=true in config/env/.env
+make up
 ```
 
-### Using Docker Compose (Standard)
+Lazy loading: no model loads at import, startup, or `/health`. The native scanners
+are built once (process singleton) on the first `/api/validate` call.
 
-Once the models are downloaded, you can build and run the LLM-Guard service using Docker Compose:
+## API
 
-```bash
-# Build and start the entire stack including LLM-Guard
-docker-compose -f deploy/docker-compose.yml build
-docker-compose -f deploy/docker-compose.yml up -d
+`POST /api/validate` — body `{"input_text": "...", "context": {...}, "strict_mode": false}`
+→ `{"sanitized_text", "risk_score", "modified", "details": {<scanner>: {"passed", "score"}}}`.
 
-# Or just build and start LLM-Guard service alone
-docker-compose -f deploy/docker-compose.yml build llm-guard
-docker-compose -f deploy/docker-compose.yml up -d llm-guard
-```
+`GET /health` — liveness (does not load models).
 
-The service is configured to mount the models directory from `data/llm-guard-models` to `/app/models` inside the container.
+## Validation
 
-## API Usage
-
-### Main Endpoint
-
-```
-POST /api/validate
-```
-
-#### Request Body
-
-```json
-{
-  "input_text": "Text to validate",
-  "context": {
-    "optional_context": "value"
-  },
-  "strict_mode": false
-}
-```
-
-#### Response
-
-```json
-{
-  "sanitized_text": "Text after sanitization",
-  "risk_score": 0.25,
-  "modified": true,
-  "details": {
-    "scanner_results": {}
-  }
-}
-```
-
-### Health Check
-
-```
-GET /health
-```
+- Native-scanner parity vs the frozen golden + latency budget:
+  `PARITY_CANDIDATE_URL=<url> pytest src/llm_guard_svc/tests/parity/test_parity.py`.
+- PII recall/precision against the labelled set (needs the model stack, runs in-container):
+  `pytest tests/parity/test_pii_metrics_container.py -q -s`.
 
 ## Troubleshooting
 
-If you encounter issues with the LLM-Guard service:
-
-1. Ensure all required models are properly downloaded to the `data/llm-guard-models` directory
-2. Verify the models are correctly mounted to the container via the volume configuration
-3. Check the container logs for any startup errors: `docker logs llm-guard`
-4. Ensure your network can reach huggingface.co if downloading models
-5. If using a proxy, make sure it doesn't block necessary connections
-
-### Common Error Messages
-
-- **"Cannot access files in /app/models"**: Verify that the models directory is properly mounted and has the required files
-- **"Failed building wheel for thinc"**: This is resolved in the Dockerfile by including the necessary build dependencies
-
-## Models
-
-The service uses the following models:
-
-- `Isotonic/distilbert_finetuned_ai4privacy_v2`: For PII and sensitive information detection
-- `madhurjindal/autonlp-Gibberish-Detector-492513457`: For gibberish detection
-- `protectai/xlm-roberta-base-language-detection-onnx`: For language detection
-- `protectai/deberta-v3-small-prompt-injection-v2`: For prompt injection detection
+- **GLiNER fails to load offline** — the backbone tokenizer
+  (`microsoft/mdeberta-v3-base`) is not staged under `data/llm-guard-models/hub`; re-run
+  the download script.
+- **Service returns `status: disabled`** — `LLM_GUARD_ENABLED` is `false` (the default);
+  set it to `true` after staging models.
+- **"Cannot access files in /app/models"** — the models volume is not mounted / empty.

@@ -41,5 +41,5 @@ def test_pii_thresholds_have_defaults(monkeypatch):
     for var in ("LLM_GUARD_PII_SCORE_THRESHOLD", "LLM_GUARD_PII_GLINER_THRESHOLD"):
         monkeypatch.delenv(var, raising=False)
     cfg = load_llm_guard_config()
-    assert cfg.pii_score_threshold == 0.4
-    assert cfg.pii_gliner_threshold == 0.5
+    assert cfg.pii_score_threshold == 0.3
+    assert cfg.pii_gliner_threshold == 0.93

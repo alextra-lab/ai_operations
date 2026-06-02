@@ -10,7 +10,8 @@ permissively-licensed components only:
     directly (no spaCy ``NlpEngine``), so en+fr text is handled without a French
     spaCy model.
   * GLiNER ``urchade/gliner_multi_pii-v1`` (Apache-2.0, en+fr) for free-text
-    PERSON/LOCATION/ORGANIZATION, wrapped as a Presidio recognizer.
+    PERSON/LOCATION, wrapped as a Presidio recognizer. (ORGANIZATION is
+    intentionally excluded — noisiest label, and company names are not PII.)
 
 Because this is a deliberate MODEL SWAP (not a verbatim port), it does NOT
 reproduce the old distilbert redactions byte-for-byte. It is validated against a
@@ -33,7 +34,7 @@ from ._pii_common import Span, build_redaction, resolve_overlaps
 LOGGER = logging.getLogger(__name__)
 
 # Structured-PII entities handled by Presidio pattern recognizers (high
-# precision, model-free). Free-text PERSON/LOCATION/ORGANIZATION come from GLiNER.
+# precision, model-free). Free-text PERSON/LOCATION come from GLiNER.
 _DEFAULT_REGIONS = ("US", "GB", "FR")
 
 
@@ -44,27 +45,36 @@ class AnonymizeScanner:
         self,
         gliner_model_path: str,
         *,
-        score_threshold: float = 0.4,
-        gliner_threshold: float = 0.5,
+        score_threshold: float = 0.3,
+        gliner_threshold: float = 0.93,
         regions: tuple[str, ...] = _DEFAULT_REGIONS,
     ) -> None:
         self._score_threshold = score_threshold
 
         # Deferred heavy imports: presidio predefined recognizers + GLiNER wrapper.
+        from presidio_analyzer import Pattern, PatternRecognizer
         from presidio_analyzer.predefined_recognizers import (
             CreditCardRecognizer,
             EmailRecognizer,
             IbanRecognizer,
             PhoneRecognizer,
-            UsSsnRecognizer,
         )
 
         from ._gliner_recognizer import GlinerRecognizer
 
+        # presidio's predefined UsSsnRecognizer does not match a bare dashed SSN
+        # without an NlpEngine/context (verified: returns nothing), so we use an
+        # explicit regex recognizer — the same approach llm-guard took (its golden
+        # emits ``[REDACTED_US_SSN_RE_1]``).
+        ssn_recognizer = PatternRecognizer(
+            supported_entity="US_SSN",
+            name="UsSsnRegexRecognizer",
+            patterns=[Pattern("ssn_dashed", r"\b[0-9]{3}-[0-9]{2}-[0-9]{4}\b", 0.85)],
+        )
         self._pattern_recognizers: list[Any] = [
             EmailRecognizer(),
             CreditCardRecognizer(),
-            UsSsnRecognizer(),
+            ssn_recognizer,
             PhoneRecognizer(supported_regions=list(regions)),
             IbanRecognizer(),
         ]
@@ -93,12 +103,12 @@ class AnonymizeScanner:
                 if r.score >= self._score_threshold
             )
 
+        # GLiNER results are already filtered by its own (higher) gliner_threshold
+        # inside predict_entities; do NOT also apply the low pattern score_threshold
+        # here, so the two knobs stay decoupled (patterns = high recall, GLiNER =
+        # high precision).
         gliner_results = self._gliner.analyze(prompt, self._gliner.supported_entities) or []
-        spans.extend(
-            Span(r.start, r.end, r.entity_type, float(r.score))
-            for r in gliner_results
-            if r.score >= self._score_threshold
-        )
+        spans.extend(Span(r.start, r.end, r.entity_type, float(r.score)) for r in gliner_results)
         return resolve_overlaps(spans)
 
     def scan(self, prompt: str) -> tuple[str, bool, float]:

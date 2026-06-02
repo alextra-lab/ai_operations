@@ -18,10 +18,13 @@ from dataclasses import dataclass
 # Presidio entity type. The mapping MUST be total over ``GLINER_PII_LABELS`` —
 # an unmapped label silently drops recall (eval doc §4.4). ``test_pii_logic``
 # asserts totality.
+# ORGANIZATION is intentionally excluded: it is the noisiest GLiNER label (it
+# confidently tags common phrases like "downtown hotel"/"pipeline run"/"We") and
+# company names are generally not personal data. The ratified PII bar covers
+# PERSON/LOCATION only (LLG-04 / AIO-72).
 GLINER_LABEL_TO_ENTITY: dict[str, str] = {
     "person": "PERSON",
     "location": "LOCATION",
-    "organization": "ORGANIZATION",
 }
 
 # The label set handed to ``GLiNER.predict_entities``.

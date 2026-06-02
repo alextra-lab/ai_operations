@@ -17,7 +17,7 @@ cachetools>=7.1.4,<8.0.0
 # 1.25.2 pin capped transformers<4.52, blocking 4.53).
 torch>=2.4.0
 transformers[torch]>=4.53.0,<4.54.0
-optimum[onnxruntime]>=1.27.0
+optimum[onnxruntime]>=1.27.0,<3.0.0
 onnxruntime>=1.17.0
 regex>=2024.11.6
 # Required by the DebertaV2 (prompt-injection) and XLM-RoBERTa (language)

@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 """
-Utility script to pre-download the ONNX models used by LLM-Guard.
+Utility script to pre-stage the models used by the native llm-guard-svc scanners.
 
-Per ADR-073 (D1/D2), this script downloads ONNX-only model files to a local
-directory, making them available for offline use within the llm-guard-svc
-container. PyTorch weights (``*.safetensors``, ``pytorch_model.bin``) and
-training artifacts are excluded via ``ignore_patterns`` since the four ONNX
-classifiers run with ``use_onnx=True`` and never load them. The one exception is
-the GLiNER PII model (LLG-04 step 3), which runs eager torch and therefore keeps
-its PyTorch weights via ``MODEL_IGNORE_OVERRIDES``.
+Per ADR-073 (D1/D2), the three ONNX classifiers are staged ONNX-only — PyTorch
+weights (``*.safetensors``, ``pytorch_model.bin``) and training artifacts are
+excluded via ``ignore_patterns`` since they run with ``use_onnx=True``. The GLiNER
+PII model (LLG-04) runs eager torch and therefore keeps its PyTorch weights via
+``MODEL_IGNORE_OVERRIDES``, and its backbone tokenizer
+(``microsoft/mdeberta-v3-base``) is staged into the HF cache
+(``<output_dir>/hub``) by ``stage_gliner_backbone_tokenizer`` so GLiNER loads
+offline (it ships no tokenizer of its own).
 
-Each model is downloaded exactly once into the flat ``org-model`` directory that
-``guard.py``'s ``configure_models()`` references. Two repos keep id-only
-canonical directories: the distilbert PII model
-(``distilbert_finetuned_ai4privacy_v2``, ADR-073 D2 exception) and the GLiNER PII
-model (``gliner_multi_pii-v1``); the mapping below encodes that.
+Each model is staged into the flat ``org-model`` directory the native scanners
+resolve via ``LLMGuardConfig``; GLiNER keeps an id-only canonical directory
+(``gliner_multi_pii-v1``). The cc-by-nc distilbert PII model is no longer staged
+(removed in the LLG-04 finale — PII is now Presidio + GLiNER).
 
 Example usage:
     python download_llm_guard_models.py --output-dir ../data/llm-guard-models
@@ -38,10 +38,11 @@ logging.basicConfig(
 logger = logging.getLogger("model-downloader")
 
 # Map each HuggingFace repo id to the on-disk directory name that
-# guard.py::configure_models() expects. Three models use the flat org-model
-# name; the PII model keeps its id-only canonical name (ADR-073 D2 exception).
+# the native scanners expect (resolved via LLMGuardConfig *_model_dir). The three
+# ONNX classifiers use the flat org-model name; GLiNER keeps an id-only name.
+# NOTE (LLG-04 finale): the cc-by-nc distilbert PII model was REMOVED — the native
+# anonymize engine uses Presidio + GLiNER (Apache-2.0) instead.
 DEFAULT_MODELS: dict[str, str] = {
-    "Isotonic/distilbert_finetuned_ai4privacy_v2": "distilbert_finetuned_ai4privacy_v2",
     "madhurjindal/autonlp-Gibberish-Detector-492513457": (
         "madhurjindal-autonlp-Gibberish-Detector-492513457"
     ),
@@ -51,10 +52,11 @@ DEFAULT_MODELS: dict[str, str] = {
     "protectai/deberta-v3-small-prompt-injection-v2": (
         "protectai-deberta-v3-small-prompt-injection-v2"
     ),
-    # LLG-04 step 3: GLiNER PII NER (Apache-2.0), used by the native anonymize
-    # engine. Unlike the four ONNX classifiers above, this runs eager torch, so
-    # its PyTorch weights must be kept (see MODEL_IGNORE_OVERRIDES). Id-only
-    # canonical dir, matching LLMGuardConfig.gliner_model_dir.
+    # GLiNER PII NER (Apache-2.0), used by the native anonymize engine. Unlike the
+    # three ONNX classifiers it runs eager torch, so its PyTorch weights must be
+    # kept (see MODEL_IGNORE_OVERRIDES); its backbone tokenizer is staged
+    # separately (see stage_gliner_backbone_tokenizer). Id-only canonical dir,
+    # matching LLMGuardConfig.gliner_model_dir.
     "urchade/gliner_multi_pii-v1": "gliner_multi_pii-v1",
 }
 
@@ -91,6 +93,35 @@ GLINER_IGNORE_PATTERNS = [
 MODEL_IGNORE_OVERRIDES: dict[str, list[str]] = {
     "urchade/gliner_multi_pii-v1": GLINER_IGNORE_PATTERNS,
 }
+
+# GLiNER's repo ships NO tokenizer: it loads its backbone's tokenizer at runtime
+# from the id in gliner_config.json. Without this staged, the native anonymize
+# engine cannot load GLiNER with local_files_only=True (offline). We stage just
+# the backbone TOKENIZER (not its ~560MB encoder weights, which GLiNER does not
+# need — its own weights carry the encoder) into the HF cache. HF_HOME=/app/models
+# in the container, so the cache lives at <models_dir>/hub.
+GLINER_BACKBONE_REPO = "microsoft/mdeberta-v3-base"
+GLINER_BACKBONE_TOKENIZER_PATTERNS = [
+    "config.json",
+    "tokenizer_config.json",
+    "spm.model",
+    "special_tokens_map.json",
+    "added_tokens.json",
+    "tokenizer.json",
+    "vocab.txt",
+]
+
+
+def stage_gliner_backbone_tokenizer(output_dir: str, hf_token: str | None = None) -> None:
+    """Stage the GLiNER backbone tokenizer into the HF cache under ``output_dir/hub``."""
+    cache_dir = os.path.join(output_dir, "hub")
+    logger.info(f"Staging GLiNER backbone tokenizer {GLINER_BACKBONE_REPO} -> {cache_dir}")
+    snapshot_download(
+        repo_id=GLINER_BACKBONE_REPO,
+        cache_dir=cache_dir,
+        allow_patterns=GLINER_BACKBONE_TOKENIZER_PATTERNS,
+        token=hf_token,
+    )
 
 
 def check_dependencies() -> bool:
@@ -181,6 +212,14 @@ def download_models(
 
         if not model_success:
             logger.error(f"Failed to download {repo_id} after {max_retries} attempts")
+            success = False
+
+    # If GLiNER was staged, also stage its backbone tokenizer (offline requirement).
+    if success and any("gliner" in target for target in models.values()):
+        try:
+            stage_gliner_backbone_tokenizer(output_dir, hf_token)
+        except Exception as e:
+            logger.error(f"Failed to stage GLiNER backbone tokenizer: {e!s}")
             success = False
 
     if success:

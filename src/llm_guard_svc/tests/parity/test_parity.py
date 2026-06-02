@@ -192,18 +192,40 @@ def test_schema_validator_rejects_malformed() -> None:
 # --------------------------------------------------------------------------- #
 # Layer 3 — candidate parity (opt-in via PARITY_CANDIDATE_URL)
 # --------------------------------------------------------------------------- #
-# The golden was captured with the llm-guard distilbert PII model. Since the
-# LLG-04 finale, the native `anonymize` engine is a deliberate model swap
-# (Presidio+GLiNER) that diverges by design — so its per-scanner verdict is
-# excluded from this golden gate everywhere, and `sanitized_text` is not compared
-# for cases where the golden `anonymize` redacted (its text diverges too). Native
-# PII correctness is gated separately by test_pii_metrics_container (recall/
-# precision on the labelled set) + test_pii_golden_divergence.
+# The golden was captured from the llm-guard engine (distilbert PII) at the old
+# transformers==4.51.3 pin. The candidate is the native engine at transformers>=4.53
+# (LLG-04 finale), so some divergence is expected and accepted:
+#
+# 1. `anonymize` — a deliberate model swap (Presidio+GLiNER); its verdict is excluded
+#    everywhere and its redacted `sanitized_text` is not compared. Native PII is gated
+#    by test_pii_metrics_container + test_pii_golden_divergence instead.
+# 2. `secrets` `sanitized_text` — redaction is non-deterministic for multi-secret inputs
+#    (eval §6a / detect-secrets ordering), so text is not compared where secrets redacted;
+#    the verdict still is.
+# 3. A few ONNX-classifier VERDICTS shift on near-threshold inputs at transformers 4.53
+#    vs 4.51.3. Verified native >= golden on each (golden false-positived valid French as
+#    prompt-injection; native passes it; keyboard-mash flagged non-language, still caught by
+#    gibberish). Accepted with evidence below. The gate still catches any OTHER verdict drift.
 _IGNORE_PII = frozenset({"anonymize"})
+_ACCEPTED_VERDICT_DRIFT = {
+    ("lang_french_valid", "prompt_injection"),  # golden FP 0.7 -> native pass -0.9 (better)
+    ("pii_french_greeting", "prompt_injection"),  # golden FP 0.4 -> native pass -1.0 (better)
+    ("gib_keyboard_mash", "language"),  # golden pass -1.0 -> native fail 0.7 (gibberish also flags)
+}
 
 
-def _golden_anonymize_redacted(golden_resp: dict) -> bool:
-    return golden_resp.get("details", {}).get("anonymize", {}).get("passed") is False
+def _golden_redacted(golden_resp: dict, scanner: str) -> bool:
+    return golden_resp.get("details", {}).get(scanner, {}).get("passed") is False
+
+
+def _is_accepted_drift(case_id: str, diff) -> bool:
+    for scanner in ("prompt_injection", "language", "gibberish"):
+        if (
+            diff.field == f"details.{scanner}.passed"
+            and (case_id, scanner) in _ACCEPTED_VERDICT_DRIFT
+        ):
+            return True
+    return False
 
 
 @pytest.mark.skipif(not CANDIDATE_URL, reason="set PARITY_CANDIDATE_URL to run candidate parity")
@@ -216,17 +238,25 @@ def test_candidate_matches_golden() -> None:
         probe = validate(CANDIDATE_URL, case)
         assert probe.status == 200, f"{case.id}: HTTP {probe.status}"
         golden_resp = golden["cases"][case.id]["response"]
+        # Skip sanitized_text where the model-swapped anonymize or the
+        # non-deterministic secrets scanner redacted in the golden.
+        compare_text = not (
+            _golden_redacted(golden_resp, "anonymize") or _golden_redacted(golden_resp, "secrets")
+        )
         result = compare(
             case.id,
             golden_resp,
             probe.payload,
             ignore_scanners=_IGNORE_PII,
-            compare_text=not _golden_anonymize_redacted(golden_resp),
+            compare_text=compare_text,
         )
-        if not result.passed(include_scores=False):
-            failures.extend(f"{case.id}: {d}" for d in result.diffs if d.kind != "score")
+        failures.extend(
+            f"{case.id}: {d}"
+            for d in result.diffs
+            if d.kind != "score" and not _is_accepted_drift(case.id, d)
+        )
 
-    assert not failures, "candidate diverged from golden (non-anonymize):\n" + "\n".join(failures)
+    assert not failures, "candidate diverged from golden (unexpected):\n" + "\n".join(failures)
 
 
 @pytest.mark.skipif(not CANDIDATE_URL, reason="set PARITY_CANDIDATE_URL to run candidate parity")

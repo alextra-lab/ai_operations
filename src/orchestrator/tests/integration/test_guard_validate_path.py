@@ -34,6 +34,10 @@ VALID_RESPONSE: dict[str, Any] = {
     "details": {},
 }
 
+_422_BODY: dict[str, Any] = {
+    "detail": [{"msg": "field required", "loc": ["body", "input_text"]}]
+}
+
 
 def _make_client(handler) -> LLMGuardClient:
     """Wire an LLMGuardClient through a mock httpx transport."""
@@ -51,6 +55,20 @@ def _minimal_ctx() -> RequestContext:
     )
 
 
+def _contract_handler(request: httpx.Request) -> httpx.Response:
+    """
+    Mirror the real service contract: 422 when input_text is absent, 200 otherwise.
+
+    This is the discriminating handler used to verify the AIO-74 regression:
+    - current (fixed) client sends input_text → 200
+    - old (broken) client sent query instead → would 422
+    """
+    body = json.loads(request.content)
+    if "input_text" not in body:
+        return httpx.Response(422, json=_422_BODY)
+    return httpx.Response(200, json=VALID_RESPONSE)
+
+
 # ---------------------------------------------------------------------------
 # Test 1: Happy path — guard validates successfully
 # ---------------------------------------------------------------------------
@@ -61,28 +79,29 @@ async def test_happy_path_guard_validates_successfully():
     """
     Full path: GuardValidate.run() → LLMGuardClient → mock HTTP service.
 
-    The mock handler accepts any request that carries input_text and returns
-    a 200 with a clean result.  guard_metrics["status"] must be "success".
+    The mock handler returns a 200 with a clean result.
+    guard_metrics["status"] must be "success".
     """
 
     def happy_handler(request: httpx.Request) -> httpx.Response:
-        body = json.loads(request.content)
-        assert "input_text" in body, "payload must contain input_text (AIO-74 regression check)"
         return httpx.Response(200, json=VALID_RESPONSE)
 
     guard_client = _make_client(happy_handler)
-    step = GuardValidate(guard=guard_client, enabled=True)
-    ctx = _minimal_ctx()
+    try:
+        step = GuardValidate(guard=guard_client, enabled=True)
+        ctx = _minimal_ctx()
 
-    ctx = await step.run(ctx)
+        ctx = await step.run(ctx)
 
-    assert ctx.guard_metrics["status"] == "success", (
-        "expected status='success' but got status=%r — "
-        "this would be 'error' if AIO-74 regression were present"
-        % ctx.guard_metrics.get("status")
-    )
-    assert ctx.guard_metrics["risk_score"] == 0.0
-    assert ctx.guard_metrics["modified"] is False
+        assert ctx.guard_metrics["status"] == "success", (
+            "expected status='success' but got status=%r — "
+            "this would be 'error' if AIO-74 regression were present"
+            % ctx.guard_metrics.get("status")
+        )
+        assert ctx.guard_metrics["risk_score"] == 0.0
+        assert ctx.guard_metrics["modified"] is False
+    finally:
+        await guard_client.close()
 
 
 # ---------------------------------------------------------------------------
@@ -108,17 +127,20 @@ async def test_known_bad_input_is_flagged():
         return httpx.Response(200, json=pii_response)
 
     guard_client = _make_client(pii_handler)
-    step = GuardValidate(guard=guard_client, enabled=True)
-    ctx = _minimal_ctx()
+    try:
+        step = GuardValidate(guard=guard_client, enabled=True)
+        ctx = _minimal_ctx()
 
-    ctx = await step.run(ctx)
+        ctx = await step.run(ctx)
 
-    assert ctx.guard_metrics["modified"] is True
-    assert ctx.guard_metrics["risk_score"] == 0.95
-    assert ctx.query_sanitized == "REDACTED", (
-        "query_sanitized must be updated to the sanitized_text returned by the guard service"
-    )
-    assert ctx.guard_metrics["status"] == "success"
+        assert ctx.guard_metrics["modified"] is True
+        assert ctx.guard_metrics["risk_score"] == 0.95
+        assert ctx.query_sanitized == "REDACTED", (
+            "query_sanitized must be updated to the sanitized_text returned by the guard service"
+        )
+        assert ctx.guard_metrics["status"] == "success"
+    finally:
+        await guard_client.close()
 
 
 # ---------------------------------------------------------------------------
@@ -148,18 +170,56 @@ async def test_service_422_yields_graceful_degradation():
 
     def always_422(request: httpx.Request) -> httpx.Response:
         """Unconditionally reject — mirrors the service behaviour when input_text is absent."""
-        return httpx.Response(422, json={"detail": [{"msg": "field required", "loc": ["body", "input_text"]}]})
+        return httpx.Response(422, json=_422_BODY)
 
     guard_client = _make_client(always_422)
-    step = GuardValidate(guard=guard_client, enabled=True)
-    ctx = _minimal_ctx()
+    try:
+        step = GuardValidate(guard=guard_client, enabled=True)
+        ctx = _minimal_ctx()
 
-    ctx = await step.run(ctx)
+        ctx = await step.run(ctx)
 
-    assert ctx.guard_metrics["status"] == "error", (
-        "expected status='error' when service returns 422, "
-        "but got status=%r — guard_metrics: %r" % (ctx.guard_metrics.get("status"), ctx.guard_metrics)
-    )
-    assert ctx.guard_metrics.get("graceful_degradation") is True, (
-        "expected graceful_degradation=True in guard_metrics"
-    )
+        assert ctx.guard_metrics["status"] == "error", (
+            "expected status='error' when service returns 422, "
+            "but got status=%r — guard_metrics: %r" % (ctx.guard_metrics.get("status"), ctx.guard_metrics)
+        )
+        assert ctx.guard_metrics.get("graceful_degradation") is True, (
+            "expected graceful_degradation=True in guard_metrics"
+        )
+    finally:
+        await guard_client.close()
+
+
+# ---------------------------------------------------------------------------
+# Test 4: Discriminating handler — current client passes, old payload 422s
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_contract_handler_accepts_fixed_payload():
+    """
+    Uses a discriminating handler that mirrors the real service contract:
+      - 200 when input_text is present in the payload
+      - 422 when input_text is absent (old {"query": ...} behaviour)
+
+    The current (fixed) LLMGuardClient always sends input_text, so this
+    test must result in status="success".
+
+    If the AIO-74 regression were re-introduced (client reverts to sending
+    "query" instead of "input_text"), this test would fail with status="error"
+    because the discriminating handler would return 422.
+    """
+    guard_client = _make_client(_contract_handler)
+    try:
+        step = GuardValidate(guard=guard_client, enabled=True)
+        ctx = _minimal_ctx()
+
+        ctx = await step.run(ctx)
+
+        assert ctx.guard_metrics["status"] == "success", (
+            "expected status='success' with fixed payload — "
+            "if 'error', the client may have regressed to the old 'query' key (AIO-74). "
+            "guard_metrics: %r" % ctx.guard_metrics
+        )
+    finally:
+        await guard_client.close()

@@ -54,6 +54,7 @@ class LLMGuardClient:
         context: dict[str, Any],
         request_id: str,
         token: str | None = None,
+        strict_mode: bool = False,
     ) -> dict[str, Any]:
         """
         Validate query with LLM-Guard service.
@@ -63,12 +64,13 @@ class LLMGuardClient:
             context: Request context for validation
             request_id: Request ID for tracing
             token: Optional JWT token for authentication
+            strict_mode: Whether to use strict validation mode
 
         Returns:
             Validation result with keys:
-            - sanitized: str (sanitized query text)
+            - sanitized_text: str (sanitized query text)
             - modified: bool (whether query was modified)
-            - risk: float (risk score 0.0-1.0)
+            - risk_score: float (risk score 0.0-1.0)
             - details: dict (validation details)
 
         Raises:
@@ -79,7 +81,11 @@ class LLMGuardClient:
         if token:
             headers["Authorization"] = f"Bearer {token}"
 
-        payload = {"query": query, "context": context}
+        payload = {
+            "input_text": query,
+            "context": {k: str(v) for k, v in context.items()},
+            "strict_mode": strict_mode,
+        }
 
         try:
             response = await self.http.post(
@@ -89,9 +95,9 @@ class LLMGuardClient:
             result = response.json()
 
             logger.debug(
-                "LLM-Guard validation complete: modified=%s, risk=%s",
+                "LLM-Guard validation complete: modified=%s, risk_score=%s",
                 result.get("modified", False),
-                result.get("risk", 0.0),
+                result.get("risk_score", 0.0),
             )
 
             data: dict[str, Any] = result

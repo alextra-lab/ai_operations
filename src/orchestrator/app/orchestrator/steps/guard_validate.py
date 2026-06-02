@@ -89,6 +89,7 @@ class GuardValidate:
                 context=guard_context,
                 request_id=ctx.req_id,
                 token=self.token,
+                strict_mode=self.strict_mode,
             )
 
             # Extract results

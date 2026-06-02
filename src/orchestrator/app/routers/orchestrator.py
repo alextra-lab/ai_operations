@@ -368,6 +368,7 @@ async def process_request(
                     guard=guard_client,
                     policy_engine=None,
                     token=raw_token,
+                    strict_mode=orchestrator.config.get("llm_guard_strict_mode", False),
                 ),
                 RetrieveContext(
                     retrieval=retrieval_client,
@@ -619,6 +620,7 @@ async def process_request(
                 guard=guard_client,
                 policy_engine=None,  # Not yet extracted
                 token=raw_token,
+                strict_mode=orchestrator.config.get("llm_guard_strict_mode", False),
             ),
             RetrieveContext(
                 retrieval=retrieval_client,

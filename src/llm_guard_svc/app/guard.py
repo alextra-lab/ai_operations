@@ -152,10 +152,13 @@ def _warn_if_legacy_engine(engine: str, scanner: str) -> None:
     ``llm_guard`` value is tolerated and resolves to native.
     """
     if engine != "native":
+        # NB: do NOT log the engine *value* — for the ``secrets`` scanner the
+        # ``secrets_engine`` source name trips CodeQL's clear-text-logging-of-
+        # secrets heuristic (false positive; the value is just a flag). Log only
+        # the (hardcoded) scanner name.
         _logger.warning(
-            "Engine %r for the %s scanner is no longer supported (llm-guard "
+            "The %s scanner engine flag is set to an unsupported value (llm-guard "
             "removed, LLG-04 finale); using the native engine.",
-            engine,
             scanner,
         )
 

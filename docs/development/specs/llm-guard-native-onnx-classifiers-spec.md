@@ -1,6 +1,6 @@
 # Spec — Native ONNX classifiers (`prompt_injection`, `gibberish`, `language`) — LLG-04 cutover step 2
 
-**Status:** Proposed (2026-06-02)
+**Status:** Implemented (2026-06-02) — merged in PR #94 (squash 1cb497c); native code dormant behind flags, differential parity green (66/66)
 **Date:** 2026-06-02
 **Linear:** AIO-1 (LLG-04)
 **Related:** `docs/development/analysis/llm-guard-replacement-evaluation.md` (§3, §4.3, §6, §10.2), `docs/development/specs/llm-guard-native-regex-secrets-spec.md` (step 1, the pattern this reuses), `src/llm_guard_svc/tests/parity/` (parity harness, PR #92), `src/llm_guard_svc/app/guard.py`

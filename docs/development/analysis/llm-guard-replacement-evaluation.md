@@ -1,7 +1,10 @@
 # LLM-Guard Replacement Evaluation (LLG-04)
 
-**Status:** Draft — decision recommended (Option B), execution not yet started
-**Date:** 2026-06-01
+**Status:** Committed (Option B) — execution in progress. Done: parity harness (PR #92),
+native regex+secrets (PR #93), native ONNX classifiers (PR #94). Remaining: PII
+(`anonymize`) cutover via Presidio + GLiNER, then remove llm-guard + unpin
+`transformers>=4.53` + close the 7 CVEs (the acceptance gate in §8).
+**Date:** 2026-06-01 (updated 2026-06-02)
 **Linear:** AIO-1 (LLG-04)
 **Related:** ADR-073 (D6), `src/llm_guard_svc/app/guard.py`, `src/llm_guard_svc/app/main.py`
 **Supersedes the "post-MVP decision gate" framing in ADR-073 D6.**

@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import json
 from typing import Any
-from unittest.mock import patch
 
 import httpx
 import pytest
@@ -123,66 +122,44 @@ async def test_known_bad_input_is_flagged():
 
 
 # ---------------------------------------------------------------------------
-# Test 3: Regression assertion — old broken payload triggers 422 → "error"
+# Test 3: Service 422 → graceful degradation (AIO-74 regression guard)
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
-async def test_old_broken_payload_yields_error_status():
+async def test_service_422_yields_graceful_degradation():
     """
-    Demonstrates the AIO-74 regression: if the client sends the OLD payload
-    {"query": ..., "context": ...} instead of {"input_text": ...}, the
-    service returns 422 and GuardValidate gracefully degrades to status="error".
+    When the LLM-Guard service returns 422 — as it did on every call before
+    AIO-74 was fixed, because the client sent {"query": ...} instead of
+    {"input_text": ...} — GuardValidate must catch the resulting
+    httpx.HTTPStatusError and degrade gracefully.
 
-    We simulate the pre-fix behaviour by patching LLMGuardClient.validate to
-    send the broken payload, then confirm GuardValidate catches the resulting
-    HTTP error and records status="error".
+    We simulate the 422 at the transport level so the full real stack runs:
+      GuardValidate.run()
+        → LLMGuardClient.validate()  (real implementation)
+          → httpx raises HTTPStatusError on raise_for_status()
+        → GuardValidate catches Exception, sets status="error"
+
+    Assertions:
+    - guard_metrics["status"] == "error"  (not "success" — proves degradation)
+    - guard_metrics["graceful_degradation"] == True
+    - The pipeline does not raise (context is returned unchanged)
     """
 
-    def strict_handler(request: httpx.Request) -> httpx.Response:
-        """Reject requests that lack input_text — mirrors FastAPI validation."""
-        body = json.loads(request.content)
-        if "input_text" not in body:
-            return httpx.Response(422, json={"detail": "input_text is required"})
-        return httpx.Response(200, json=VALID_RESPONSE)
+    def always_422(request: httpx.Request) -> httpx.Response:
+        """Unconditionally reject — mirrors the service behaviour when input_text is absent."""
+        return httpx.Response(422, json={"detail": [{"msg": "field required", "loc": ["body", "input_text"]}]})
 
-    guard_client = _make_client(strict_handler)
+    guard_client = _make_client(always_422)
     step = GuardValidate(guard=guard_client, enabled=True)
     ctx = _minimal_ctx()
 
-    # Patch LLMGuardClient.validate to send the old broken payload.
-    # This simulates what the client did BEFORE the AIO-74 fix.
-    async def _broken_validate(
-        self_inner,
-        query: str,
-        context: dict,
-        request_id: str,
-        token: str | None = None,
-        strict_mode: bool = False,
-    ) -> dict:
-        headers = {
-            "X-Request-ID": request_id,
-            "Content-Type": "application/json",
-        }
-        broken_payload = {
-            "query": query,        # old, wrong key
-            "context": context,    # missing input_text
-        }
-        response = await self_inner.http.post(
-            f"{self_inner.base_url}/api/validate",
-            json=broken_payload,
-            headers=headers,
-        )
-        response.raise_for_status()  # will raise on 422
-        result: dict = response.json()
-        return result
-
-    with patch.object(LLMGuardClient, "validate", _broken_validate):
-        ctx = await step.run(ctx)
+    ctx = await step.run(ctx)
 
     assert ctx.guard_metrics["status"] == "error", (
-        "expected status='error' for the old broken payload (AIO-74 regression), "
-        "but got status=%r" % ctx.guard_metrics.get("status")
+        "expected status='error' when service returns 422, "
+        "but got status=%r — guard_metrics: %r" % (ctx.guard_metrics.get("status"), ctx.guard_metrics)
     )
-    # Graceful degradation: the pipeline must not raise; the context is returned
-    assert ctx.guard_metrics.get("graceful_degradation") is True
+    assert ctx.guard_metrics.get("graceful_degradation") is True, (
+        "expected graceful_degradation=True in guard_metrics"
+    )

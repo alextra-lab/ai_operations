@@ -1,7 +1,7 @@
 # AI Operations Platform - Project Overview
 
-**Version:** 2.0
-**Date:** March 2, 2026
+**Version:** 2.1
+**Date:** June 3, 2026
 **Document Owner:** Project maintainer
 **Purpose:** Executive summary and project navigation hub
 
@@ -559,6 +559,14 @@ sequenceDiagram
 - **ADR-071:** Centralized Configuration Gateway (shared/config)
 - **ADR-072:** Remove Deprecated Intent Model and Temperature Env Config
 
+**LLM Guard:**
+
+- **ADR-073:** LLM-Guard Model Selection & Storage (LLG-04 — Option B: Presidio + GLiNER)
+
+**Build System & Bootstrap:**
+
+- **ADR-074:** Multi-Profile Container Build & Reproducible Bootstrap (local / enterprise profiles; offline wheelhouse via `OFFLINE=1`)
+
 [→ Complete ADR List](development/adrs/) | [→ ADR Index](development/adrs/README.md)
 
 ---
@@ -569,7 +577,7 @@ sequenceDiagram
 **Overall Completion:** ~90% of total planned work
 **Active Work:** Phase 6 stabilization, AI Ops Authoring polish (Phase 4bis/5)
 **Production Status:** Beta — not yet deployed to or validated in a production environment. Backend services functional locally; Inference Gateway active (local profile), RBAC V2 deployed.
-**Last Major Milestone:** AI Ops Authoring Phase 4bis complete (February 2026)
+**Last Major Milestone:** M4 bootstrap documentation complete (June 2026) — GETTING_STARTED.md, bootstrap troubleshooting guide, service READMEs, all broken doc links fixed, ADR index fully reconciled
 
 ### **What Works Today** ✅
 
@@ -723,7 +731,7 @@ sequenceDiagram
 - **At Phase Boundaries:** Major updates
 - **Quarterly:** During maintenance phases
 
-**Next Review:** April 2026 (Phase 6 completion / Phase 7 start)
+**Next Review:** Q3 2026 (Phase 6 completion / Phase 7 start)
 
 **Change Process:**
 
@@ -733,5 +741,5 @@ sequenceDiagram
 
 ---
 
-**Last Updated:** March 2, 2026
-**Status:** Active v2.0
+**Last Updated:** June 3, 2026
+**Status:** Active v2.1

@@ -43,8 +43,9 @@ development/
 │   │   └── PHASE_04_SECURITY_ENTERPRISE.md   # Phase 4 (100%)
 │   │
 │   ├── future/                               # Upcoming phases
-│   │   ├── PHASE_06_PERFORMANCE.md           # Phase 6
-│   │   └── PHASE_07_BACKEND_ASYNC.md         # Phase 7
+│   │   ├── PHASE_06_STABILIZATION.md         # Phase 6
+│   │   ├── PHASE_07_DOCUMENTATION.md         # Phase 7
+│   │   └── PHASE_08_AGENTIC_AI.md            # Phase 8
 │   │
 │   ├── features/                             # Feature specifications
 │   │   ├── active/

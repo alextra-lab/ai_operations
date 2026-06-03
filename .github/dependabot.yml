@@ -18,6 +18,12 @@ updates:
     commit-message:
       prefix: "chore(deps)"
       include: scope
+    ignore:
+      # transformers is managed by the /src/llm_guard_svc pip ecosystem scanner.
+      # requirements-all.txt chains to it transitively, causing the root uv.lock
+      # (dev-tools only) to be incorrectly flagged as the manifest. Ignore here
+      # to suppress stale duplicate alerts 145-151; service scanner owns it.
+      - dependency-name: "transformers"
 
   - package-ecosystem: npm
     directory: "/src/frontend-angular"

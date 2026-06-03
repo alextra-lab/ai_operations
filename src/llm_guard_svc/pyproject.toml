@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=45"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm-guard-svc"
+version = "0.1.0"
+description = "LLM Guard Service — native ML scanner stack (AIO)"
+requires-python = ">=3.11"
+
+# Runtime dependencies — kept in sync with requirements.txt.
+# This pyproject.toml + uv.lock exist so Dependabot can determine the exact
+# pinned versions and create automated security PRs (AIO-77 lockfile fix).
+dependencies = [
+    # Web framework
+    "fastapi>=0.117.1",
+    "uvicorn==0.48.0",
+    "starlette>=1.2.0",
+    "pydantic>=2.12.5,<3.0.0",
+    "python-json-logger==4.1.0",
+    "httpx>=0.28.1",
+    "cachetools>=7.1.4,<8.0.0",
+
+    # ML stack — transformers capped <4.56.0 by optimum-onnx 0.1.0 dependency chain.
+    # CVE-2026-1839 / GHSA-69w3-r845-3855 is a Trainer checkpoint-resume
+    # torch.load(rng_state.pth) issue. 4.55.4 is in the advisory range, but this
+    # service is inference-only and never instantiates Trainer. Track in AIO-77.
+    "torch>=2.4.0",
+    "transformers[torch]>=4.53.0,<4.56.0",
+    "optimum[onnxruntime]>=1.27.0,<3.0.0",
+    "onnxruntime>=1.17.0",
+    "regex>=2024.11.6",
+    "sentencepiece>=0.2.0",
+
+    # Native scanner stack
+    "bc-detect-secrets==1.5.43",
+    "presidio-anonymizer==2.2.358",
+
+    # PII stack
+    "presidio-analyzer==2.2.358",
+    "gliner==0.2.26",
+
+    # spaCy — thinc 8.2.x (required by spacy 3.7.x) pins numpy<2.0.0
+    "spacy>=3.7.2,<3.8.0",
+    "spacy-pkuseg>=0.0.27,<0.1.0",
+    "numpy>=1.19.0,<2.0.0",
+
+    "typing-extensions>=4.15.0,<5.0.0",
+
+    # Instrumentation
+    "opentelemetry-api==1.42.1",
+    "opentelemetry-sdk==1.42.1",
+    "opentelemetry-exporter-otlp==1.42.1",
+    "opentelemetry-instrumentation-fastapi==0.63b1",
+    "opentelemetry-instrumentation-requests==0.63b1",
+    "opentelemetry-instrumentation-sqlalchemy==0.63b1",
+    "prometheus-client==0.25.0",
+]

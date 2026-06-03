@@ -68,6 +68,25 @@ updates:
       - dependencies
       - docker
 
+  - package-ecosystem: pip
+    directory: "/src/llm_guard_svc"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Brussels
+    open-pull-requests-limit: 5
+    groups:
+      pip-llm-guard-svc:
+        patterns:
+          - "*"
+    labels:
+      - dependencies
+      - python
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
   - package-ecosystem: docker
     directory: "/src/llm_guard_svc"
     schedule:

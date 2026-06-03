@@ -10,13 +10,17 @@ cachetools>=7.1.4,<8.0.0
 # --- Native ML stack (LLG-04 finale: llm-guard removed) ---
 # The llm-guard library (which hard-pinned transformers==4.51.3, the source of the
 # 7 unfixable Dependabot CVEs) is gone; all 6 scanners run native implementations.
-# transformers is unpinned to the patched >=4.53.0 floor that closes those CVEs,
-# bounded <4.54.0 to minimise tokenizer/pipeline drift for the native ONNX
-# scanners (validated by the parity candidate gate). GLiNER 0.2.26 independently
-# caps transformers<5.2.0, so 4.53.x is in range. optimum bumps to >=1.27.0 (the
-# 1.25.2 pin capped transformers<4.52, blocking 4.53).
+# transformers is unpinned to the patched >=4.53.0 floor that closes the 6
+# Dependabot CVEs (alerts 145-150). Bounded <4.56.0 because optimum-onnx 0.1.0
+# (resolved by optimum>=2.0.0) caps transformers<4.56.0; 4.55.x is the highest
+# reachable without breaking the optimum[onnxruntime] stack.
+# CVE-2026-1839 / GHSA-69w3-r845-3855 is a Trainer checkpoint-resume
+# torch.load(rng_state.pth) issue. 4.55.4 is in the advisory range, but it is
+# not exploitable here: this service performs inference only and never calls Trainer.
+# Upgrading past 4.56 requires optimum to lift its optimum-onnx cap — track in AIO-77.
+# GLiNER 0.2.26 caps transformers<5.2.0 (satisfied by 4.55.x).
 torch>=2.4.0
-transformers[torch]>=4.53.0,<4.54.0
+transformers[torch]>=4.53.0,<4.56.0
 optimum[onnxruntime]>=1.27.0,<3.0.0
 onnxruntime>=1.17.0
 regex>=2024.11.6
@@ -35,7 +39,7 @@ presidio-anonymizer==2.2.358
 # Presidio pattern recognizers + GLiNER replace the cc-by-nc distilbert PII model.
 # presidio-analyzer was previously only transitive via llm-guard; it is pinned
 # explicitly now that llm-guard is gone. gliner 0.2.26 requires
-# transformers>=4.51.3,<5.2.0 (satisfied by the >=4.53.0,<4.54.0 range above) and
+# transformers>=4.51.3,<5.2.0 (satisfied by the >=4.53.0,<4.56.0 range above) and
 # torch>=2.0.0; it adds no optimum/transformers conflict. Apache-2.0.
 presidio-analyzer==2.2.358
 gliner==0.2.26

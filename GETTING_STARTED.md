@@ -189,6 +189,7 @@ See **[docs/development/guides/bootstrap-troubleshooting.md](docs/development/gu
 
 - [Architecture overview](README.md#architecture)
 - [Configuration reference](README.md#configuration-management)
+- [Enterprise profile bootstrap](ENTERPRISE_GETTING_STARTED.md)
 - [Offline & enterprise build modes](docs/operations/AIR_GAPPED_DEPLOYMENT.md)
 - [Testing guide](docs/testing/TESTING_GUIDE.md)
 - [ADR-074 — Build strategy](docs/development/adrs/ADR-074-multi-profile-build-and-bootstrap.md)

@@ -5,8 +5,8 @@ llm-guard input scanner, depending on its underlying library directly (never
 llm_guard):
   * regex / secrets -> detect_secrets + presidio_anonymizer
     (spec: docs/development/specs/llm-guard-native-regex-secrets-spec.md)
-  * prompt_injection / gibberish / language -> transformers + optimum.onnxruntime
-    via ``_onnx_classifier`` (spec:
+  * prompt_injection / gibberish / language -> transformers + onnxruntime (direct
+    InferenceSession, no optimum) via ``_onnx_classifier`` (spec:
     docs/development/specs/llm-guard-native-onnx-classifiers-spec.md)
 
 The ONNX classifier scanners are imported lazily by ``guard.py`` (they pull the

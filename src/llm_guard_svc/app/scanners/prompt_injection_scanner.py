@@ -2,10 +2,10 @@
 
 Verbatim from ``llm_guard.input_scanners.prompt_injection`` (llm-guard==0.3.16),
 with only the dependency swaps from ``_onnx_classifier`` (stdlib logging, direct
-transformers/optimum imports, Scanner Protocol base dropped). The model config
-matches what ``guard.py::configure_models`` applies to ``V2_SMALL_MODEL`` at
-runtime (onnx subfolder layout, ``use_fast=False`` tokenizer, ``local_files_only``),
-so detection is identical to the current service at the pinned transformers.
+transformers/onnxruntime imports via ``_onnx_classifier``, Scanner Protocol base
+dropped). The model config matches what ``guard.py::configure_models`` applies to
+``V2_SMALL_MODEL`` at runtime (onnx subfolder layout, ``use_fast=False`` tokenizer,
+``local_files_only``), so detection is identical to the service at the pinned transformers.
 
 Only the MatchType branches the service uses are ported (FULL,
 TRUNCATE_HEAD_TAIL, TRUNCATE_TOKEN_HEAD_TAIL); SENTENCE/CHUNKS depended on nltk

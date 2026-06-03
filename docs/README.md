@@ -4,6 +4,8 @@
 **Total Documents:** 90+ markdown files
 **Organization:** Purpose-driven, lifecycle-aware structure
 
+> **Status: Beta — not production-ready.** This platform has not yet been deployed to or validated in a production environment. Intended for local evaluation use at this stage.
+
 ---
 
 ## 📚 Documentation Philosophy
@@ -28,25 +30,24 @@ This documentation is organized by **purpose and lifecycle**:
 ```
 development/
 ├── plans/          # Implementation plans & roadmaps
-│   ├── MASTER_ROADMAP.md                    # ⭐ Single source of truth
+│   ├── MASTER_ROADMAP_V2.md                 # ⭐ Single source of truth
 │   ├── README.md                             # Navigation guide
 │   │
 │   ├── active/                               # Current work
-│   │   └── PHASE_04_SECURITY_ENTERPRISE.md   # Phase 4 (65% done)
+│   │   └── PHASE_05_INFRASTRUCTURE_OVERHAUL.md  # Phase 5 (in progress)
 │   │
 │   ├── completed/                            # Finished phases
 │   │   ├── PHASE_01_FOUNDATION.md            # Phase 1 (100%)
 │   │   ├── PHASE_02_CORE_INTERFACE.md        # Phase 2 (100%)
-│   │   └── PHASE_03_USE_CASE_MGMT.md         # Phase 3 (100%)
+│   │   ├── PHASE_03_USE_CASE_MGMT.md         # Phase 3 (100%)
+│   │   └── PHASE_04_SECURITY_ENTERPRISE.md   # Phase 4 (100%)
 │   │
 │   ├── future/                               # Upcoming phases
-│   │   ├── PHASE_05_INTEGRATION.md           # Phase 5
 │   │   ├── PHASE_06_PERFORMANCE.md           # Phase 6
 │   │   └── PHASE_07_BACKEND_ASYNC.md         # Phase 7
 │   │
 │   ├── features/                             # Feature specifications
 │   │   ├── active/
-│   │   │   └── P3-F2_USE_CASE_MANAGEMENT_SPEC.md
 │   │   └── completed/
 │   │       # (Features documented in phase files)
 │   │
@@ -58,7 +59,6 @@ development/
 │   │
 │   └── [Specialized Plans]
 │       ├── IMPLEMENTATION_ROADMAP.md
-│       ├── OPTIMAL_IMPLEMENTATION_SEQUENCE.md
 │       ├── BACKEND_ASYNC_MIGRATION_PLAN.md
 │       ├── PERFORMANCE_OPTIMIZATION_ROADMAP.md
 │       ├── TOOLS_IMPLEMENTATION_PLAN*.md (4 files)
@@ -70,7 +70,7 @@ development/
 │   ├── README.md                                    # ADR Index
 │   ├── template.md                                  # ADR Template
 │   ├── ADR-001 through ADR-074                     # All ADRs
-│   └── ADR-074 (Latest/Accepted): Multi-Profile Build & Bootstrap  # ⭐ Most Recent
+│   └── ADR-074 (Latest/Proposed): Multi-Profile Build & Bootstrap  # ⭐ Most Recent
 │
 ├── specs/          # Feature specifications (1 file)
 │
@@ -168,11 +168,10 @@ See `development/adrs/template.md` for complete format.
 1. `PROJECT_OVERVIEW.md` - Executive summary and project status (designated overview at docs root)
 2. `development/plans/MASTER_ROADMAP_V2.md` - Single source of truth
 3. `development/plans/active/` - Current work (see plans README for latest phase)
-4. `development/plans/OPTIMAL_IMPLEMENTATION_SEQUENCE.md` - Backend dependencies
-5. `development/tasks/` - Active work items
-6. `development/guides/` - Implementation patterns
-7. `development/adrs/` - Architecture decisions
-8. `architecture/` - System architecture details
+4. `development/tasks/` - Active work items
+5. `development/guides/` - Implementation patterns
+6. `development/adrs/` - Architecture decisions
+7. `architecture/` - System architecture details
 
 ### For Understanding the Application
 
@@ -288,7 +287,6 @@ Use these in document headers:
 ## 🔗 Related Documentation
 
 - `development/guidelines/DOCUMENTATION_GUIDELINES.md` - Documentation system guidelines
-- `development/sessions/2025-10-10-docs-reorganization.md` - Today's reorganization session log
 
 ---
 
@@ -297,8 +295,8 @@ Use these in document headers:
 **Question** | **Go To**
 -------------|----------
 "What's the project status?" | `PROJECT_OVERVIEW.md`
-"What's being built now?" | `development/plans/MASTER_ROADMAP.md`
-"What's the current work?" | `development/plans/active/PHASE_03_USE_CASE_MGMT.md`
+"What's being built now?" | `development/plans/MASTER_ROADMAP_V2.md`
+"What's the current work?" | `development/plans/active/PHASE_05_INFRASTRUCTURE_OVERHAUL.md`
 "How do I implement X?" | `development/guides/`
 "Why did we choose Y?" | `development/adrs/`
 "What are the requirements?" | `development/specs/`

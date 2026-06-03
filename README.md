@@ -9,6 +9,10 @@ question answering, document ingestion, prompt safety guards, and a web UI
 for security analysts. Backend is FastAPI + PostgreSQL + Qdrant; frontend is
 Angular.
 
+> **Status: Beta — not production-ready.** This platform has not yet been deployed to or
+> validated in a production environment. APIs, schemas, and defaults may change. It is
+> intended for local evaluation use (local profile) at this stage.
+
 - **Source:** https://github.com/alextra-lab/ai_operations
 - **License:** [MIT](LICENSE)
 - **Security policy:** [SECURITY.md](SECURITY.md)
@@ -27,7 +31,7 @@ All major dependencies have been successfully upgraded to their latest stable ve
 - **Document Processing**: pdfplumber 0.11.x, PyPDF2 3.0.x, beautifulsoup4 4.13.3, lxml 5.4.0
 - **Database**: psycopg 3.2.10, qdrant-client 1.14.2
 
-See [Dependency Management Guide](docs/development/Dependency_Management.md) for details.
+See [Dependency Management Guide](docs/development/guidelines/Dependency_Management.md) for details.
 
 ## Quick Start
 
@@ -215,8 +219,7 @@ export $(grep -v '^#' config/env/.env | xargs)
 
 ## Documentation
 
-- **[Configuration Migration Guide](docs/configuration/configuration_migration_guide.md)** - Detailed migration instructions
-- **[Developer Guide](docs/development/Developer_Guide.md)** - Development setup and workflows
+- **[Developer Guide](docs/development/guidelines/Developer_Guide.md)** - Development setup and workflows
 - **[Architecture Documentation](docs/architecture/)** - System architecture and design patterns
 
 ## Security Notes

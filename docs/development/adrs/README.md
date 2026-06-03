@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADRs)
 
-**Total ADRs:** 74 (ADR-001 through ADR-074)
+**Total ADRs:** 58 unique numbers (ADR-001 through ADR-074; numbering has gaps). 61 files on disk — ADR-052 (3 files) and ADR-053 (2 files) have duplicates pending canonicalization (AIO-31).
 **Last Updated:** 2026-06-03
 **Latest:** ADR-074 - Multi-Profile Container Build & Reproducible Bootstrap
 
@@ -34,7 +34,8 @@ See [`template.md`](template.md) for the complete format.
 - **[ADR-039](ADR-039-rls-security-model.md)**: Row-Level Security Model (ACCEPTED)
 - **[ADR-048](ADR-048-Secure-Logging-Redaction.md)**: Secure Logging and Redaction (ACCEPTED)
 - **[ADR-049](ADR-049-Unified-Authentication-Security-Implementation.md)**: Unified Authentication and Security Implementation (ACCEPTED 2025-11-02)
-- **[ADR-056](ADR-056-MCP-Tool-Registration-Workflow.md)**: MCP Tool Registration Workflow (ACCEPTED 2025-11-24)
+- **[ADR-051](ADR-051-Provider-Secrets-and-Service-to-Service-Auth.md)**: Provider Secrets & Service-to-Service Auth (ACCEPTED)
+- **[ADR-060](ADR-060-Corrected-RBAC-Architecture.md)**: Corrected RBAC Architecture (ACCEPTED)
 
 ### Database & Schema
 
@@ -58,6 +59,8 @@ See [`template.md`](template.md) for the complete format.
 - **[ADR-036](ADR-036-Orchestrator-Pipeline-Pattern.md)**: Orchestrator Pipeline Pattern (ACCEPTED)
 - **[ADR-043](ADR-043-Conversations-As-QUERY-Pattern.md)**: Conversations as QUERY Pattern (ACCEPTED)
 - **[ADR-044](ADR-044-Use-Cases-As-Bounded-Refinement-Spaces.md)**: Use Cases as Bounded Refinement Spaces (ACCEPTED)
+- **[ADR-063](ADR-063-Structured-Output-End-to-End-Pipeline.md)**: Structured Output End-to-End Pipeline (PROPOSED)
+- **[ADR-070](ADR-070-IsActive-Gates-Discovery-Not-Execution.md)**: IsActive Gates — Discovery Not Execution (ACCEPTED)
 
 ### Frontend & UI
 
@@ -67,6 +70,10 @@ See [`template.md`](template.md) for the complete format.
 - **[ADR-015](ADR-015-custom-llm-content-renderer.md)**: Custom LLM Content Renderer (ACCEPTED)
 - **[ADR-045](ADR-045-Query-Developer-Tools.md)**: Query Developer Tools (ACCEPTED)
 - **[ADR-059](ADR-059-Client-Side-Conversation-Session-Management-UX.md)**: Client-Side Conversation Session Management UX (ACCEPTED 2025-12-07)
+- **[ADR-064](ADR-064-User-Interaction-Combined-Panel.md)**: User Interaction Combined Panel (ACCEPTED)
+- **[ADR-065](ADR-065-Wizard-Step-Restructuring.md)**: Wizard Step Restructuring (ACCEPTED)
+- **[ADR-066](ADR-066-Domain-Neutral-Visualization-Templates.md)**: Domain-Neutral Visualization Templates (ACCEPTED)
+- **[ADR-068](ADR-068-Portable-Visualization-Specification.md)**: Portable Visualization Specification (ACCEPTED)
 
 ### Stateless Core (v1)
 
@@ -76,7 +83,7 @@ See [`template.md`](template.md) for the complete format.
 - **[ADR-033](ADR-033-Provider-Interfaces.md)**: Provider Interfaces for History/Evidence/Crypto (ACCEPTED)
 - **[ADR-043](ADR-043-Conversations-As-QUERY-Pattern.md)**: Conversations as QUERY Pattern (ACCEPTED)
 - **[ADR-047](ADR-047-Ephemeral-Cache-Observability.md)**: Ephemeral Cache Observability (ACCEPTED)
-- **[ADR-059](ADR-059-Client-Side-Conversation-Session-Management-UX.md)**: Client-Side Conversation Session Management UX ⭐ **LATEST** (ACCEPTED 2025-12-07)
+- **[ADR-059](ADR-059-Client-Side-Conversation-Session-Management-UX.md)**: Client-Side Conversation Session Management UX (ACCEPTED 2025-12-07)
 
 ### Use Case Management
 
@@ -85,6 +92,8 @@ See [`template.md`](template.md) for the complete format.
 - **[ADR-034](ADR-034-Use-Case-Validation-Harness.md)**: Use Case Validation & Test Harness (ACCEPTED)
 - **[ADR-041](ADR-041-Role-Based-Use-Case-Permissions.md)**: Role-Based Use Case Permissions (ACCEPTED)
 - **[ADR-044](ADR-044-Use-Cases-As-Bounded-Refinement-Spaces.md)**: Use Cases as Bounded Refinement Spaces (ACCEPTED)
+- **[ADR-062](ADR-062-User-Prompt-Templates-Parameter-Injection.md)**: User Prompt Templates & Parameter Injection (PROPOSED)
+- **[ADR-067](ADR-067-Dynamic-Categories-Intent-Profiles.md)**: Dynamic Categories & Intent Profiles (ACCEPTED)
 
 ### Pricing & Analytics
 
@@ -93,14 +102,31 @@ See [`template.md`](template.md) for the complete format.
 
 ### Configuration & Environment
 
+- **[ADR-061](ADR-061-HashiCorp-Vault-Secrets-Integration.md)**: HashiCorp Vault Secrets Integration (PROPOSED)
 - **[ADR-069](ADR-069-Intent-Model-Configuration-System.md)**: Intent Model Configuration System (ACCEPTED 2026-02-08)
 - **[ADR-071](ADR-071-Centralized-Configuration-Gateway.md)**: Centralized Configuration Gateway — shared/config (ACCEPTED 2026-02-18)
 - **[ADR-072](ADR-072-Remove-Deprecated-Intent-Env-Config.md)**: Remove Deprecated Intent Model/Temperature Env Config (ACCEPTED 2026-02-18)
+
+### Inference Gateway & Providers
+
+- **[ADR-050](ADR-050-Inference-Gateway-and-Responsibility-Split.md)**: Inference Gateway & Responsibility Split (ACCEPTED)
+- **[ADR-051](ADR-051-Provider-Secrets-and-Service-to-Service-Auth.md)**: Provider Secrets & Service-to-Service Auth (ACCEPTED)
+- **[ADR-052](ADR-052-Model-Routing-and-Provider-Fallback.md)**: Model Routing & Provider Fallback (ACCEPTED) *(duplicate files pending AIO-31)*
+- **[ADR-053](ADR-053-Rate-Limiting-and-Usage-Tracking.md)**: Rate Limiting & Usage Tracking (ACCEPTED) *(duplicate files pending AIO-31)*
+- **[ADR-054](ADR-054-OpenAI-Compatibility-and-Error-Taxonomy.md)**: OpenAI Compatibility & Error Taxonomy (ACCEPTED)
+- **[ADR-055](ADR-055-Observability-Metering-and-Cost-Accounting.md)**: Observability, Metering & Cost Accounting (ACCEPTED)
+
+### MCP & Tooling
+
+- **[ADR-056](ADR-056-MCP-Tool-Registration-Workflow.md)**: MCP Tool Registration Workflow (ACCEPTED 2025-11-24)
+- **[ADR-057](ADR-057-MCP-Tool-Security-Classification.md)**: MCP Tool Security Classification (ACCEPTED)
+- **[ADR-058](ADR-058-MCP-Docker-Socket-Access.md)**: MCP Docker Socket Access (ACCEPTED)
 
 ### Deployment & Operations
 
 - **[ADR-019](ADR-019-Offline-Tokenizer-Strategy.md)**: Offline Tokenizer Strategy (ACCEPTED)
 - **[ADR-022](ADR-022-Backend-Async-Database-Migration.md)**: Backend Async Database Migration (ACCEPTED)
+- **[ADR-073](ADR-073-LLM-Guard-Model-Selection-and-Storage.md)**: LLM-Guard Model Selection & Storage (ACCEPTED 2026-06-01)
 - **[ADR-074](ADR-074-multi-profile-build-and-bootstrap.md)**: Multi-Profile Container Build & Reproducible Bootstrap (PROPOSED 2026-05-30) ⭐ **LATEST**
 
 ---
@@ -109,13 +135,15 @@ See [`template.md`](template.md) for the complete format.
 
 ### ✅ ACCEPTED (Active)
 
-All accepted ADRs (40):
+All accepted ADRs (50):
 
 - ADR-001, ADR-012, ADR-015, ADR-016, ADR-017, ADR-018, ADR-019, ADR-020
 - ADR-021, ADR-022, ADR-023, ADR-030, ADR-031, ADR-032, ADR-033, ADR-034
 - ADR-035, ADR-036, ADR-037, ADR-038, ADR-039, ADR-040, ADR-041, ADR-042
-- ADR-043, ADR-044, ADR-045, ADR-046, ADR-047, ADR-048, ADR-049, ADR-054
-- ADR-060, ADR-065, ADR-067, ADR-068, ADR-069, ADR-070, ADR-071, ADR-072
+- ADR-043, ADR-044, ADR-045, ADR-046, ADR-047, ADR-048, ADR-049, ADR-050
+- ADR-051, ADR-052, ADR-053, ADR-054, ADR-055, ADR-056, ADR-057, ADR-058
+- ADR-059, ADR-060, ADR-064, ADR-065, ADR-066, ADR-067, ADR-068, ADR-069
+- ADR-070, ADR-071, ADR-072, ADR-073
 
 ### ⏸️ SUPERSEDED (Historical)
 
@@ -124,6 +152,9 @@ All accepted ADRs (40):
 
 ### 📋 PROPOSED (Pending Review)
 
+- **ADR-061**: HashiCorp Vault Secrets Integration (2025-11)
+- **ADR-062**: User Prompt Templates & Parameter Injection (2025-11)
+- **ADR-063**: Structured Output End-to-End Pipeline (2025-11)
 - **ADR-074**: Multi-Profile Container Build & Reproducible Bootstrap (2026-05-30)
 
 ---
@@ -152,7 +183,7 @@ All accepted ADRs (40):
 
 **2026-02-18:**
 
-- **ADR-072**: [Remove Deprecated Intent Model/Temperature Env Config](ADR-072-Remove-Deprecated-Intent-Env-Config.md) ⭐ **LATEST**
+- **ADR-072**: [Remove Deprecated Intent Model/Temperature Env Config](ADR-072-Remove-Deprecated-Intent-Env-Config.md)
   - Completes ADR-069 cleanup: removes ghost intent fields from shared/config schemas and loader
   - Retires ParameterManager env reads; retains as code-level fallback only
   - Cleans `INTENT_MODEL_*` and `INTENT_TEMP_*` from env files and templates
@@ -257,7 +288,7 @@ All accepted ADRs (40):
 ## Related Documentation
 
 - **[Project Overview](../../PROJECT_OVERVIEW.md)** - High-level project summary
-- **[Master Roadmap](../plans/MASTER_ROADMAP.md)** - Implementation timeline
+- **[Master Roadmap](../plans/MASTER_ROADMAP_V2.md)** - Implementation timeline
 - **[Architecture Docs](../../architecture/)** - System architecture details
 - **[Security Audit (2025-11-02)](../analysis/security-audit-2025-11-02.md)** - Latest security assessment
 
@@ -267,7 +298,7 @@ All accepted ADRs (40):
 
 ### Creating a New ADR
 
-1. **Use the next available number** (ADR-073)
+1. **Use the next available number** (ADR-075)
 2. **Start with status PROPOSED**
 3. **Follow the standard format** (see [`template.md`](template.md))
 4. **Link related ADRs and tasks**

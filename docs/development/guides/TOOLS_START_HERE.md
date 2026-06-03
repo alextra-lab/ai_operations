@@ -107,7 +107,7 @@ Visual architecture diagrams and flows
 
 ### Option 1: Use the Existing Enterprise Stack (Recommended)
 
-T1–T4 are already implemented and production-ready.
+T1–T4 are already implemented.
 To understand and extend them:
 
 1. Read `TOOLS_IMPLEMENTATION_PLAN.md` (main)

@@ -25,7 +25,7 @@ dependencies = [
     # Bounded <5.2.0 by gliner==0.2.26; lifting requires a gliner upgrade.
     # optimum[onnxruntime] removed (AIO-77): classifiers use InferenceSession directly.
     "torch>=2.4.0",
-    "transformers[torch]>=5.0.0,<5.2.0",
+    "transformers[torch]>=5.0.0,<5.11.0",
     "onnxruntime>=1.26.0",
     # Explicit floor — closes 6 Dependabot onnx CVEs (alerts 153-157, 159), all patched in onnx>=1.21.0.
     "onnx>=1.21.0",
@@ -41,9 +41,9 @@ dependencies = [
     "gliner==0.2.26",
 
     # spaCy — thinc 8.2.x (required by spacy 3.7.x) pins numpy<2.0.0
-    "spacy>=3.7.2,<3.8.0",
+    "spacy>=3.7.2,<3.9.0",
     "spacy-pkuseg>=1.0.1,<1.1.0",
-    "numpy>=1.19.0,<2.0.0",
+    "numpy>=1.19.0,<3.0.0",
 
     "typing-extensions>=4.15.0,<5.0.0",
     # Explicit floor — closes Dependabot cryptography CVEs (alerts 152, 154), patched in >=46.0.5.

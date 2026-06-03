@@ -18,7 +18,6 @@ from typing import Any
 
 import httpx
 import pytest
-
 from app.orchestrator.clients.llm_guard_client import LLMGuardClient
 from app.orchestrator.context import RequestContext
 from app.orchestrator.steps.guard_validate import GuardValidate
@@ -34,9 +33,7 @@ VALID_RESPONSE: dict[str, Any] = {
     "details": {},
 }
 
-_422_BODY: dict[str, Any] = {
-    "detail": [{"msg": "field required", "loc": ["body", "input_text"]}]
-}
+_422_BODY: dict[str, Any] = {"detail": [{"msg": "field required", "loc": ["body", "input_text"]}]}
 
 
 def _make_client(handler) -> LLMGuardClient:
@@ -94,9 +91,10 @@ async def test_happy_path_guard_validates_successfully():
         ctx = await step.run(ctx)
 
         assert ctx.guard_metrics["status"] == "success", (
-            "expected status='success' but got status=%r — "
-            "this would be 'error' if AIO-74 regression were present"
-            % ctx.guard_metrics.get("status")
+            "expected status='success' but got status={!r} — "
+            "this would be 'error' if AIO-74 regression were present".format(
+                ctx.guard_metrics.get("status")
+            )
         )
         assert ctx.guard_metrics["risk_score"] == 0.0
         assert ctx.guard_metrics["modified"] is False
@@ -135,9 +133,9 @@ async def test_known_bad_input_is_flagged():
 
         assert ctx.guard_metrics["modified"] is True
         assert ctx.guard_metrics["risk_score"] == 0.95
-        assert ctx.query_sanitized == "REDACTED", (
-            "query_sanitized must be updated to the sanitized_text returned by the guard service"
-        )
+        assert (
+            ctx.query_sanitized == "REDACTED"
+        ), "query_sanitized must be updated to the sanitized_text returned by the guard service"
         assert ctx.guard_metrics["status"] == "success"
     finally:
         await guard_client.close()
@@ -181,11 +179,13 @@ async def test_service_422_yields_graceful_degradation():
 
         assert ctx.guard_metrics["status"] == "error", (
             "expected status='error' when service returns 422, "
-            "but got status=%r — guard_metrics: %r" % (ctx.guard_metrics.get("status"), ctx.guard_metrics)
+            "but got status={!r} — guard_metrics: {!r}".format(
+                ctx.guard_metrics.get("status"), ctx.guard_metrics
+            )
         )
-        assert ctx.guard_metrics.get("graceful_degradation") is True, (
-            "expected graceful_degradation=True in guard_metrics"
-        )
+        assert (
+            ctx.guard_metrics.get("graceful_degradation") is True
+        ), "expected graceful_degradation=True in guard_metrics"
     finally:
         await guard_client.close()
 
@@ -219,7 +219,57 @@ async def test_contract_handler_accepts_fixed_payload():
         assert ctx.guard_metrics["status"] == "success", (
             "expected status='success' with fixed payload — "
             "if 'error', the client may have regressed to the old 'query' key (AIO-74). "
-            "guard_metrics: %r" % ctx.guard_metrics
+            f"guard_metrics: {ctx.guard_metrics!r}"
         )
+    finally:
+        await guard_client.close()
+
+
+# ---------------------------------------------------------------------------
+# Test 5: AIO-75 regression — enabled=False short-circuits without calling
+#          the guard service (eval §3a.2 hard requirement)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_disabled_guard_short_circuits_without_calling_service():
+    """
+    When GuardValidate is constructed with enabled=False (as it will be when
+    LLM_GUARD_ENABLED=false is forwarded from config at the call site — AIO-75),
+    the step must return immediately without ever calling the guard service.
+
+    Assertions:
+    - guard_metrics["status"] == "disabled"
+    - ctx.query_sanitized is unchanged (the original query)
+    - The guard service's validate() is never called; any call would raise,
+      proving the service was not contacted.
+
+    This is the eval §3a.2 hard requirement: LLM_GUARD_ENABLED=false must
+    short-circuit the orchestrator path entirely.
+    """
+
+    def bomb_handler(request: httpx.Request) -> httpx.Response:
+        """If called, the bypass failed — raise to make the bug visible."""
+        raise AssertionError(
+            "Guard service was contacted despite enabled=False — "
+            "LLM_GUARD_ENABLED=false bypass is broken (AIO-75)"
+        )
+
+    guard_client = _make_client(bomb_handler)
+    try:
+        step = GuardValidate(guard=guard_client, enabled=False)
+        ctx = _minimal_ctx()
+        original_query = ctx.query_sanitized
+
+        ctx = await step.run(ctx)
+
+        assert (
+            ctx.guard_metrics["status"] == "disabled"
+        ), "expected status='disabled' when enabled=False, got {!r}".format(
+            ctx.guard_metrics.get("status")
+        )
+        assert (
+            ctx.query_sanitized == original_query
+        ), "query_sanitized must not be modified when guard is disabled"
     finally:
         await guard_client.close()

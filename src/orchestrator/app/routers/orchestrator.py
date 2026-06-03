@@ -150,25 +150,22 @@ async def _calculate_cache_capacity(
 async def process_request(
     request: Request,
     query: str = Body(..., description="User query or request text"),
-    request_type: RequestType | None = Body(
-        None, description="Request type (QUERY, RULE_GENERATION, etc.)"
-    ),
+    request_type: RequestType
+    | None = Body(None, description="Request type (QUERY, RULE_GENERATION, etc.)"),
     stream: bool = Body(False, description="Whether to use streaming response"),
-    session_id: str | None = Body(
-        None, description="Client-owned session ID for ephemeral conversation context"
-    ),
-    thread_id: uuid.UUID | None = Body(
+    session_id: str
+    | None = Body(None, description="Client-owned session ID for ephemeral conversation context"),
+    thread_id: uuid.UUID
+    | None = Body(
         None,
         description="Thread UUID for multi-turn conversations (deprecated in stateless v1)",
     ),
-    discussion_id: str | None = Body(
-        None, description="External incident/ticket ID for correlation"
-    ),
+    discussion_id: str
+    | None = Body(None, description="External incident/ticket ID for correlation"),
     use_case_id: uuid.UUID | None = Body(None, description="Use case UUID"),
     current_user: TokenPayload = Depends(get_current_user),  # Provides user details like role, id
-    raw_token_creds: HTTPAuthorizationCredentials | None = Depends(
-        jwt_validator.security
-    ),  # Provides HTTPAuthorizationCredentials
+    raw_token_creds: HTTPAuthorizationCredentials
+    | None = Depends(jwt_validator.security),  # Provides HTTPAuthorizationCredentials
     db: AsyncSession = Depends(get_async_db),
     settings: OrchestratorConfig = Depends(get_orchestrator_settings),
 ) -> FormattedResponse | StreamingResponse:
@@ -368,6 +365,7 @@ async def process_request(
                     guard=guard_client,
                     policy_engine=None,
                     token=raw_token,
+                    enabled=orchestrator.config.get("llm_guard_enabled", False),
                     strict_mode=orchestrator.config.get("llm_guard_strict_mode", False),
                 ),
                 RetrieveContext(
@@ -620,6 +618,7 @@ async def process_request(
                 guard=guard_client,
                 policy_engine=None,  # Not yet extracted
                 token=raw_token,
+                enabled=orchestrator.config.get("llm_guard_enabled", False),
                 strict_mode=orchestrator.config.get("llm_guard_strict_mode", False),
             ),
             RetrieveContext(

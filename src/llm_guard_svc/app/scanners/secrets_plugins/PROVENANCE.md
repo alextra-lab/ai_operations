@@ -31,3 +31,9 @@ any parity-tested case:
   swapped). detect-secrets imports every custom-plugin path into a shared registry
   before resolving names, so upstream tolerates it, but it is fragile and
   mislabels. Corrected so each `name` matches the class defined at its `path`.
+- `../secrets_scanner.py` temp-file cleanup (AIO-76) — upstream llm-guard 0.3.16
+  calls `os.remove(temp_file.name)` only on the happy path, so a raised
+  `scan_file()` (or any error between write and remove) leaves a file containing
+  the raw user prompt on disk indefinitely. Wrapped in `try/finally` with
+  `contextlib.suppress(FileNotFoundError)` so cleanup is guaranteed regardless of
+  scan outcome. No effect on detection verdicts or redaction.

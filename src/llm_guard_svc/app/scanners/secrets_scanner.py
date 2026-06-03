@@ -11,6 +11,7 @@ service byte-for-byte.
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import logging
 import os
@@ -479,35 +480,43 @@ class SecretsScanner:
         if prompt.strip() == "":
             return prompt, True, risk_score
 
-        temp_file = tempfile.NamedTemporaryFile(delete=False)
-        temp_file.write(prompt.encode("utf-8"))
-        temp_file.close()
+        # Write prompt to a named temp file (detect-secrets requires a path).
+        # The `with` block closes the file; `delete=False` leaves it on disk for
+        # scan_file(). A separate try/finally guarantees removal even if the scan
+        # raises, so the raw prompt is never retained past this call (ADR-048, AIO-76).
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            temp_file.write(prompt.encode("utf-8"))
+            temp_name = temp_file.name
 
-        with transient_settings(self._detect_secrets_config):
-            secrets.scan_file(str(temp_file.name))
+        try:
+            with transient_settings(self._detect_secrets_config):
+                secrets.scan_file(temp_name)
 
-        secret_types = []
-        text_replace_builder = TextReplaceBuilder(original_text=prompt)
-        for file in secrets.files:
-            for found_secret in secrets[file]:
-                if found_secret.secret_value is None:
-                    continue
+            secret_types = []
+            text_replace_builder = TextReplaceBuilder(original_text=prompt)
+            for file in secrets.files:
+                for found_secret in secrets[file]:
+                    if found_secret.secret_value is None:
+                        continue
 
-                secret_types.append(found_secret.type)
+                    secret_types.append(found_secret.type)
 
-                character_start_index = prompt.find(found_secret.secret_value, None, None)
-                character_end_index = character_start_index + len(str(found_secret.secret_value))
-                secret_value = text_replace_builder.get_text_in_position(
-                    character_start_index, character_end_index
-                )
+                    character_start_index = prompt.find(found_secret.secret_value, None, None)
+                    character_end_index = character_start_index + len(
+                        str(found_secret.secret_value)
+                    )
+                    secret_value = text_replace_builder.get_text_in_position(
+                        character_start_index, character_end_index
+                    )
 
-                text_replace_builder.replace_text_get_insertion_index(
-                    self.redact_value(secret_value, self._redact_mode),
-                    character_start_index,
-                    character_end_index,
-                )
-
-        os.remove(temp_file.name)
+                    text_replace_builder.replace_text_get_insertion_index(
+                        self.redact_value(secret_value, self._redact_mode),
+                        character_start_index,
+                        character_end_index,
+                    )
+        finally:
+            with contextlib.suppress(FileNotFoundError):
+                os.remove(temp_name)
 
         if secret_types:
             LOGGER.warning("Detected %d secret(s) in prompt", len(secret_types))

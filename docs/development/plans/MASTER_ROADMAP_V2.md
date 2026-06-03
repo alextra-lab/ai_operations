@@ -1,9 +1,9 @@
 # AI Operations Platform - Master Roadmap V2
 
-**Version:** 2.1
+**Version:** 2.2
 **Last Updated:** 2026-06-03
 **Purpose:** Single source of truth for current and future development
-**Status:** Build Bootstrap M3 next; LLG Hardening AIO-75/76 open
+**Status:** Build Bootstrap M3 next; LLG Hardening complete (AIO-77 done)
 
 ---
 
@@ -33,7 +33,7 @@ This roadmap supersedes `MASTER_ROADMAP_V1_PHASES_1-4.md` which covered:
 | 5.5 | RBAC V2 Fix | 🔄 Phases 1–3 ✅ / Phases 4–5 Backlog | AIO - RBAC V2 Completion |
 | 6 | Platform Stabilization | 🔄 STAB-01/02 ✅ / STAB-03/04 + MVP Gate Backlog | AIO - Platform Stabilization |
 | Bootstrap | Build System & Bootstrap | 🔄 M1 ✅ M2 ✅ / M3 Active | AIO - Build System & Bootstrap |
-| LLG | LLM Guard Hardening (LLG-04) | 🔄 Steps 0–4 ✅ / AIO-75/76 Open | AIO - LLM Guard Hardening |
+| LLG | LLM Guard Hardening (LLG-04) | ✅ Complete (AIO-77 ✅ done — optimum removed, transformers 5.1.0) | AIO - LLM Guard Hardening |
 | QE | Quality Engineering (deferred test failures) | 📋 Backlog | AIO - Quality Engineering |
 | DB | Database and Config | 📋 Backlog | AIO - Database and Config |
 | 7 | User Documentation | 📋 Backlog | AIO - User Documentation |
@@ -43,8 +43,8 @@ This roadmap supersedes `MASTER_ROADMAP_V1_PHASES_1-4.md` which covered:
 
 | Metric | Value |
 |--------|-------|
-| **Active tracks** | Build Bootstrap (M3), LLG Hardening (AIO-75/76) |
-| **Next milestone** | LLG AIO-75/76 → Dependabot security → Bootstrap M3 |
+| **Active tracks** | Build Bootstrap (M3) |
+| **Next milestone** | Bootstrap M3 (enterprise path) |
 | **Platform** | Fully builds and runs locally (M1+M2 ✅); llm-guard-svc on native ONNX + Presidio/GLiNER (LLG-04 ✅) |
 | **RBAC V2** | Phases 1–3 shipped; Integration testing + cleanup (Phases 4–5) deferred to backlog |
 | **Pre-release readiness** | Blocked by Bootstrap M3 (enterprise path) and RBAC V2 Phase 4 (integration testing) |
@@ -62,17 +62,18 @@ This roadmap supersedes `MASTER_ROADMAP_V1_PHASES_1-4.md` which covered:
 | M3 — Enterprise + offline paths | 🔄 Next | AIO-44, AIO-51–57, AIO-67 |
 | M4 — Canonical bootstrap docs | 📋 Approved | AIO-45, AIO-58–63 |
 
-### LLM Guard Hardening — LLG-04 complete; two bugs deferred
+### LLM Guard Hardening — ✅ Complete
 
 | Ticket | Title | Status |
 |--------|-------|--------|
 | AIO-1–4, AIO-69–74 | LLG-04 (parity harness → native ONNX/Presidio/GLiNER → guard client fix) | ✅ Done |
-| **AIO-75** | `LLM_GUARD_ENABLED=false` bypass not forwarded to `GuardValidate` | Approved |
-| **AIO-76** | Secrets scanner temp file with raw prompt left on disk on exception | Approved |
+| AIO-75 | `LLM_GUARD_ENABLED=false` bypass not forwarded to `GuardValidate` | ✅ Done (PR #101) |
+| AIO-76 | Secrets scanner temp file with raw prompt left on disk on exception | ✅ Done (PR #102) |
+| **AIO-77** | Upgrade `transformers` to 5.x (CVE-2026-1839 full close) | ✅ Done — replaced `optimum[onnxruntime]` with direct `InferenceSession`; `transformers==5.1.0` in lockfile |
 
-### Dependabot Security (post-LLG-04)
+### Dependabot Security (post-LLG-04) — ✅ Resolved
 
-7 `transformers` alerts in `llm_guard_svc/requirements.txt` should auto-close on Dependabot rescan (pin now `>=4.53.0,<4.54.0`). 7 phantom `uv.lock` alerts need manual triage. Resolve before starting M3.
+`llm_guard_svc` now has a service-level `uv.lock` (`transformers==5.1.0`, `onnx==1.21.0`, `cryptography==48.0.0`). Root scanner ignores `transformers` (handled by service scanner). CVE-2026-1839 (Dependabot alert 160) closed as fixed: `optimum[onnxruntime]` / `optimum-onnx` removed; ONNX classifiers drive `onnxruntime.InferenceSession` directly (AIO-77).
 
 ---
 

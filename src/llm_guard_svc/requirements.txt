@@ -10,18 +10,16 @@ cachetools>=7.1.4,<8.0.0
 # --- Native ML stack (LLG-04 finale: llm-guard removed) ---
 # The llm-guard library (which hard-pinned transformers==4.51.3, the source of the
 # 7 unfixable Dependabot CVEs) is gone; all 6 scanners run native implementations.
-# transformers is unpinned to the patched >=4.53.0 floor that closes the 6
-# Dependabot CVEs (alerts 145-150). Bounded <4.56.0 because optimum-onnx 0.1.0
-# (resolved by optimum>=2.0.0) caps transformers<4.56.0; 4.55.x is the highest
-# reachable without breaking the optimum[onnxruntime] stack.
-# CVE-2026-1839 / GHSA-69w3-r845-3855 is a Trainer checkpoint-resume
-# torch.load(rng_state.pth) issue. 4.55.4 is in the advisory range, but it is
-# not exploitable here: this service performs inference only and never calls Trainer.
-# Upgrading past 4.56 requires optimum to lift its optimum-onnx cap — track in AIO-77.
-# GLiNER 0.2.26 caps transformers<5.2.0 (satisfied by 4.55.x).
+# transformers >=5.0.0 closes CVE-2026-1839 / GHSA-69w3-r845-3855 (Dependabot
+# alert 160; Trainer._load_rng_state torch.load RCE — inference-only, not
+# exploitable here, but closed as fixed in the lockfile, AIO-77).
+# Bounded <5.2.0 because gliner==0.2.26 caps transformers<5.2.0; lifting that
+# ceiling requires a gliner upgrade (future ticket).
+# optimum[onnxruntime] removed: its optimum-onnx 0.1.0 transitive dep was the
+# sole blocker for the transformers 5.x upgrade. The three ONNX classifiers now
+# drive onnxruntime.InferenceSession directly (see _onnx_classifier.py, AIO-77).
 torch>=2.4.0
-transformers[torch]>=4.53.0,<4.56.0
-optimum[onnxruntime]>=2.1.0,<3.0.0
+transformers[torch]>=5.0.0,<5.2.0
 onnxruntime>=1.26.0
 # onnx is transitive (via onnxruntime/optimum). Explicit floor closes 6 Dependabot CVEs
 # (alerts 153-157, 159): GHSA-6xj5-x7h3-3r6c et al., all patched in onnx>=1.21.0.

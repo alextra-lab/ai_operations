@@ -14,6 +14,7 @@ Angular.
 > intended for local evaluation use (local profile) at this stage.
 
 - **Source:** https://github.com/alextra-lab/ai_operations
+- **Getting started:** [GETTING_STARTED.md](GETTING_STARTED.md)
 - **License:** [MIT](LICENSE)
 - **Security policy:** [SECURITY.md](SECURITY.md)
 - **Contributing:** [CONTRIBUTING.md](CONTRIBUTING.md)

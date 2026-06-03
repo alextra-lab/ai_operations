@@ -197,8 +197,7 @@ aggregator install then sees two conflicting version requirements and fails.
 
 ### Documentation
 
-- `docs/development/Dependency_Management.md` - This file
-- `PHASE_E_I_UPGRADE_INSTRUCTIONS.md` - Upgrade instructions
+- `docs/development/guidelines/Dependency_Management.md` - This file
 
 ## Verification Commands
 

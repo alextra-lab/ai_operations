@@ -568,7 +568,7 @@ sequenceDiagram
 **Project Phase:** Phase 6 of 8 (Stabilization & Validation — 55%)
 **Overall Completion:** ~90% of total planned work
 **Active Work:** Phase 6 stabilization, AI Ops Authoring polish (Phase 4bis/5)
-**Production Status:** Backend production-ready, Inference Gateway active, RBAC V2 deployed
+**Production Status:** Beta — not yet deployed to or validated in a production environment. Backend services functional locally; Inference Gateway active (local profile), RBAC V2 deployed.
 **Last Major Milestone:** AI Ops Authoring Phase 4bis complete (February 2026)
 
 ### **What Works Today** ✅

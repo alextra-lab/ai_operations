@@ -20,7 +20,7 @@ cachetools>=7.1.4,<8.0.0
 # Upgrading past 4.56 requires optimum to lift its optimum-onnx cap — track in AIO-77.
 # GLiNER 0.2.26 caps transformers<5.2.0 (satisfied by 4.55.x).
 torch>=2.4.0
-transformers[torch]>=4.53.0,<4.56.0
+transformers[torch]>=4.53.0,<5.10.0
 optimum[onnxruntime]>=1.27.0,<3.0.0
 onnxruntime>=1.17.0
 # onnx is transitive (via onnxruntime/optimum). Explicit floor closes 6 Dependabot CVEs
@@ -35,7 +35,7 @@ sentencepiece>=0.2.0
 # --- Native scanner stack (LLG-04: regex + secrets ported off llm-guard) ---
 # Pinned to the versions llm-guard==0.3.16 already resolves, so the vendored
 # detect-secrets plugins behave identically. Currently transitive via llm-guard.
-bc-detect-secrets==1.5.43
+bc-detect-secrets==1.5.47
 presidio-anonymizer==2.2.362
 
 # --- Native PII stack (LLG-04 step 3: anonymize ported off llm-guard) ---
@@ -51,10 +51,10 @@ gliner==0.2.26
 # en_core_web_sm-3.7.1 / zh_core_web_sm-3.7.0 require spacy>=3.7.2,<3.8.0.
 # spaCy 3.7.x depends on thinc 8.2.x, which pins numpy<2.0.0 — hence the
 # numpy ceiling below. presidio-analyzer (via llm-guard) allows spacy<4.0.0.
-# zh_core_web_sm-3.7.0 pins spacy-pkuseg>=0.0.27,<0.1.0, so 1.0.x is rejected.
-spacy>=3.7.2,<3.8.0
-spacy-pkuseg>=0.0.27,<0.1.0
-numpy>=1.19.0,<2.0.0
+# zh_core_web_sm-3.7.0 pins spacy-pkuseg>=0.0.27,<1.1.0, so 1.0.x is rejected.
+spacy>=3.7.2,<3.9.0
+spacy-pkuseg>=0.0.27,<1.1.0
+numpy>=1.19.0,<3.0.0
 
 typing-extensions>=4.15.0,<5.0.0
 # cryptography is transitive (via pyOpenSSL/httpx chain). Explicit floor closes

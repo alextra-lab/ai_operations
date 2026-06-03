@@ -709,6 +709,7 @@ async def execute_use_case(
                 guard=guard_client,
                 policy_engine=None,
                 token=raw_token,
+                enabled=orchestrator.config.get("llm_guard_enabled", False),
                 strict_mode=orchestrator.config.get("llm_guard_strict_mode", False),
             ),
             RetrieveContext(

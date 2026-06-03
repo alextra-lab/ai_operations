@@ -406,5 +406,5 @@ Enterprise-scale features deferred to backlog:
 ---
 
 **Document Owner:** Project team
-**Last Updated:** December 9, 2025
-**Status:** Active v2.7 - Phase 5.5 RBAC V2 Phase 3 ✅ Complete (All tasks 3.1-3.6 ✅)
+**Last Updated:** 2026-06-03
+**Status:** Active v2.8 — Phase 5.5 RBAC V2 ✅ Complete; Build Bootstrap active (M1 ✅ 2026-05-31, M2 ✅ 2026-06-01, M3 next); LLG-04 ✅ Complete (AIO-73, 2026-06-02 — llm_guard replaced with native ONNX + Presidio/GLiNER, transformers unpinned). See [BUILD_BOOTSTRAP_PLAN.md](BUILD_BOOTSTRAP_PLAN.md) for current active track.

@@ -1,6 +1,6 @@
 # AI Operations Platform - Documentation
 
-**Last Updated:** 2025-10-25
+**Last Updated:** 2026-06-03
 **Total Documents:** 90+ markdown files
 **Organization:** Purpose-driven, lifecycle-aware structure
 
@@ -70,7 +70,7 @@ development/
 │   ├── README.md                                    # ADR Index
 │   ├── template.md                                  # ADR Template
 │   ├── ADR-001 through ADR-074                     # All ADRs
-│   └── ADR-074 (Latest/Proposed): Multi-Profile Build & Bootstrap  # ⭐ Most Recent
+│   └── ADR-074 (Latest/Accepted): Multi-Profile Build & Bootstrap  # ⭐ Most Recent
 │
 ├── specs/          # Feature specifications (1 file)
 │

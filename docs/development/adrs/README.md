@@ -1,8 +1,8 @@
 # Architecture Decision Records (ADRs)
 
-**Total ADRs:** 42 (ADR-001 through ADR-072)
-**Last Updated:** February 18, 2026
-**Latest:** ADR-072 - Remove Deprecated Intent Model and Temperature Environment Configuration
+**Total ADRs:** 74 (ADR-001 through ADR-074)
+**Last Updated:** 2026-06-03
+**Latest:** ADR-074 - Multi-Profile Container Build & Reproducible Bootstrap
 
 ---
 
@@ -141,7 +141,7 @@ All accepted ADRs (40):
 **2026-05-30:**
 
 - **ADR-074**: [Multi-Profile Container Build & Reproducible Bootstrap](ADR-074-multi-profile-build-and-bootstrap.md) ⭐ **LATEST**
-  - Three build profiles: local (public registries), enterprise (Artifactory mirrors), train (offline wheelhouse)
+  - Build profiles: local (public registries), enterprise (Artifactory mirrors), offline (`make build-offline` / `OFFLINE=1` ARG) — "train" profile was a misunderstanding and has been removed
   - Corrects prior misclassification: offline wheelhouse = personal convenience, NOT enterprise path
   - Enterprise = GitLab CI + Artifactory; no direct HuggingFace access; internal LLMaaS/vLLM
   - Single parametrized Dockerfile per service (ARGs: BASE_REGISTRY, PIP_INDEX_URL, OFFLINE, NPM_REGISTRY)
@@ -295,4 +295,4 @@ If an ADR becomes obsolete:
 ---
 
 **Template:** [`template.md`](template.md)
-**Latest ADR:** [ADR-072 - Remove Deprecated Intent Model/Temperature Env Config](ADR-072-Remove-Deprecated-Intent-Env-Config.md)
+**Latest ADR:** [ADR-074 - Multi-Profile Container Build & Reproducible Bootstrap](ADR-074-multi-profile-build-and-bootstrap.md)

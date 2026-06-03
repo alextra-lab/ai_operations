@@ -89,11 +89,11 @@ This is a multi-service SOC AI Assistant platform. Services communicate over a D
 
 | Service | Port | Description |
 |---|---|---|
-| `orchestrator-api` (`src/orchestrator`) | 8000 | Central FastAPI backend — RAG query pipeline, admin, tools, WebSocket |
-| `corpus-service` (`src/corpus_svc`) | 8003→8001 | Document ingestion, chunking, Qdrant indexing |
-| `embedding-service` (`src/embedding`) | 8002→8000 | Sentence-transformer embedding endpoint |
-| `inference-gateway` (`src/inference-gateway`) | 8002 | OpenAI-compatible LLM proxy with rate limiting, circuit breaking, Redis caching |
-| `llm-guard-svc` (`src/llm_guard_svc`) | 8081 | Prompt safety scanning (llm-guard library) |
+| `orchestrator-api` (`src/orchestrator`) | 18000→8000 | Central FastAPI backend — RAG query pipeline, admin, tools, WebSocket |
+| `corpus-service` (`src/corpus_svc`) | 18001→8001 | Document ingestion, chunking, Qdrant indexing |
+| `embedding-service` (`src/embedding`) | 18005→8000 | Sentence-transformer embedding endpoint |
+| `inference-gateway` (`src/inference-gateway`) | 18002→8002 | OpenAI-compatible LLM proxy with rate limiting, circuit breaking, Redis caching |
+| `llm-guard-svc` (`src/llm_guard_svc`) | 18081→8081 | Prompt safety scanning (native ONNX + Presidio/GLiNER) |
 | `ui-webapp` (`src/frontend-angular`) | 4200→80 | Angular SPA served via Nginx |
 | `postgres-db` | 5532→5432 | Primary relational store |
 | `vector-db` (Qdrant) | 6333 | Vector similarity search |

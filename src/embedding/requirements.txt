@@ -3,7 +3,7 @@ fastapi>=0.117.1
 uvicorn==0.48.0
 pydantic>=2.12.5,<3.0.0
 pyyaml>=6.0.1
-openai>=2.16.0,<3.0.0  # Updated Nov 2025: Allow v2.x (current: 2.16.0)
+openai>=2.40.0,<3.0.0  # Updated Nov 2025: Allow v2.x (current: 2.16.0)
 starlette>=1.2.1
 python-multipart>=0.0.30
 httpx>=0.28.1

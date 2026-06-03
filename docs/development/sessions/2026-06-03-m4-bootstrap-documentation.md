@@ -18,6 +18,8 @@
 - ADR-052/053 duplicate files left to AIO-31; only represented accurately in the index.
 - Next available ADR number: **ADR-075**.
 
+- **AIO-79** (PR pending): New `ENTERPRISE_GETTING_STARTED.md` at repo root — enterprise profile parallel to `GETTING_STARTED.md`. Covers prereqs, enterprise team provisioning table, pull-vs-build image paths, model pre-staging (no HuggingFace), DB-driven provider repoint to internal LLMaaS/vLLM, start/verify flow. Links `AIR_GAPPED_DEPLOYMENT.md` for deep build/model mechanics rather than duplicating. Cross-linked from `GETTING_STARTED.md` Further Reading and `README.md`.
+
 ## Next Steps
 
-- M4 milestone is complete; M5 (Infrastructure Overhaul) is the active phase.
+- M5 enterprise bootstrap guide complete (AIO-79). Next: M5 remaining tickets (if any).

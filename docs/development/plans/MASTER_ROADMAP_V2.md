@@ -178,4 +178,4 @@ Enterprise-scale features deferred; not needed for 5–10 user departmental depl
 
 **Document Owner:** AIOps team
 **Last Updated:** 2026-06-03
-**Version:** 2.1 — Rewritten from v2.7 (Dec 2025) to reflect June 2026 reality; stale weekly timelines, completed phase detail, and outdated exit criteria removed; all tracks sourced from Linear AIOps project state.
+**Version:** 2.2 — AIO-77 complete (optimum removed, transformers 5.1.0, CVE-2026-1839 fixed); LLG Hardening track closed; M3 active.

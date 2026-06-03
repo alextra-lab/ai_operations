@@ -16,7 +16,7 @@ else
   $(error Unknown PROFILE '$(PROFILE)'. Use: local (default) or enterprise)
 endif
 
-DC = docker compose $(COMPOSE_FILES)
+DC = docker compose --env-file config/env/.env $(COMPOSE_FILES)
 
 .DEFAULT_GOAL := help
 

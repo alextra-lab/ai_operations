@@ -26,7 +26,7 @@ dependencies = [
     # torch.load(rng_state.pth) issue. 4.55.4 is in the advisory range, but this
     # service is inference-only and never instantiates Trainer. Track in AIO-77.
     "torch>=2.4.0",
-    "transformers[torch]>=4.53.0,<4.56.0",
+    "transformers[torch]>=4.53.0,<5.10.0",
     "optimum[onnxruntime]>=1.27.0,<3.0.0",
     "onnxruntime>=1.17.0",
     # Explicit floor — closes 6 Dependabot onnx CVEs (alerts 153-157, 159), all patched in onnx>=1.21.0.
@@ -35,7 +35,7 @@ dependencies = [
     "sentencepiece>=0.2.0",
 
     # Native scanner stack
-    "bc-detect-secrets==1.5.43",
+    "bc-detect-secrets==1.5.47",
     "presidio-anonymizer==2.2.362",
 
     # PII stack
@@ -43,9 +43,9 @@ dependencies = [
     "gliner==0.2.26",
 
     # spaCy — thinc 8.2.x (required by spacy 3.7.x) pins numpy<2.0.0
-    "spacy>=3.7.2,<3.8.0",
+    "spacy>=3.7.2,<3.9.0",
     "spacy-pkuseg>=0.0.27,<0.1.0",
-    "numpy>=1.19.0,<2.0.0",
+    "numpy>=1.19.0,<3.0.0",
 
     "typing-extensions>=4.15.0,<5.0.0",
     # Explicit floor — closes Dependabot cryptography CVEs (alerts 152, 154), patched in >=46.0.5.

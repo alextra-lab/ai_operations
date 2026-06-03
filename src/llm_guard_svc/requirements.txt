@@ -14,8 +14,9 @@ cachetools>=7.1.4,<8.0.0
 # Dependabot CVEs (alerts 145-150). Bounded <4.56.0 because optimum-onnx 0.1.0
 # (resolved by optimum>=2.0.0) caps transformers<4.56.0; 4.55.x is the highest
 # reachable without breaking the optimum[onnxruntime] stack.
-# CVE-2026-1839 (GHSA-69w3-r845-3855, Trainer-class RCE, requires transformers>=5.0.0)
-# is not applicable: this service performs inference only and never calls Trainer.
+# CVE-2026-1839 / GHSA-69w3-r845-3855 is a Trainer checkpoint-resume
+# torch.load(rng_state.pth) issue. 4.55.4 is in the advisory range, but it is
+# not exploitable here: this service performs inference only and never calls Trainer.
 # Upgrading past 4.56 requires optimum to lift its optimum-onnx cap — track in AIO-77.
 # GLiNER 0.2.26 caps transformers<5.2.0 (satisfied by 4.55.x).
 torch>=2.4.0

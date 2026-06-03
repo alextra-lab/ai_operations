@@ -22,8 +22,9 @@ dependencies = [
     "cachetools>=7.1.4,<8.0.0",
 
     # ML stack — transformers capped <4.56.0 by optimum-onnx 0.1.0 dependency chain.
-    # CVE-2026-1839 (Trainer-class RCE, requires >=5.0.0) is not applicable:
-    # inference-only; Trainer is never instantiated. Track in AIO-77.
+    # CVE-2026-1839 / GHSA-69w3-r845-3855 is a Trainer checkpoint-resume
+    # torch.load(rng_state.pth) issue. 4.55.4 is in the advisory range, but this
+    # service is inference-only and never instantiates Trainer. Track in AIO-77.
     "torch>=2.4.0",
     "transformers[torch]>=4.53.0,<4.56.0",
     "optimum[onnxruntime]>=1.27.0,<3.0.0",

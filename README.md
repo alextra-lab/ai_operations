@@ -4,10 +4,11 @@
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A container-packaged SOC AI Assistant. Provides retrieval-augmented (RAG)
-question answering, document ingestion, prompt safety guards, and a web UI
-for security analysts. Backend is FastAPI + PostgreSQL + Qdrant; frontend is
-Angular.
+A security-first platform for building governed AI Operations — discrete, auditable
+LLM execution units with validated inputs, scanned outputs, and structured results.
+AI Operations are created via a wizard and can be deployed by any enterprise team
+(security, IT, compliance, legal, HR, and more). Backend is FastAPI + PostgreSQL +
+Qdrant; frontend is Angular.
 
 > **Status: Beta — not production-ready.** This platform has not yet been deployed to or
 > validated in a production environment. APIs, schemas, and defaults may change. It is

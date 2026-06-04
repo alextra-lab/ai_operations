@@ -6,7 +6,7 @@
 
 ## Context
 
-AI Operations Platform is a multi-tenant SOC platform that requires:
+AI Operations Platform is a multi-tenant enterprise platform that requires:
 - **Data isolation** - Users see only their own data
 - **Role-based access** - Different permissions for admin/developer/user
 - **Use case permissions** - Granular access to specific use cases

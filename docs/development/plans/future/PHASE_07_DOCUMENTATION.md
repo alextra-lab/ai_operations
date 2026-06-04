@@ -25,7 +25,7 @@ Shift documentation focus from development to user-facing guides. The applicatio
 
 ### Guide 1: Analyst Guide
 
-**Audience:** SOC Analysts (primary users)
+**Audience:** Platform users across business domains (analysts, developers, admins)
 **Location:** `docs/user-guides/analyst-guide.md`
 
 **Table of Contents:**

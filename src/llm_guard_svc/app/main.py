@@ -107,12 +107,6 @@ def get_llm_guard() -> LLMGuard | None:
         cache_enabled=cache_enabled,
         cache_max_size=cache_max_size,
         cache_ttl_seconds=cache_ttl_seconds,
-        regex_engine=llm_guard_config.regex_engine,
-        secrets_engine=llm_guard_config.secrets_engine,
-        prompt_injection_engine=llm_guard_config.prompt_injection_engine,
-        gibberish_engine=llm_guard_config.gibberish_engine,
-        language_engine=llm_guard_config.language_engine,
-        anonymize_engine=llm_guard_config.anonymize_engine,
     )
 
 

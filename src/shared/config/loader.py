@@ -281,12 +281,6 @@ def load_llm_guard_config() -> LLMGuardConfig:
         gliner_model_dir=os.environ.get("LLM_GUARD_GLINER_MODEL_DIR", "gliner_multi_pii-v1"),
         pii_score_threshold=float(os.environ.get("LLM_GUARD_PII_SCORE_THRESHOLD", "0.3")),
         pii_gliner_threshold=float(os.environ.get("LLM_GUARD_PII_GLINER_THRESHOLD", "0.93")),
-        regex_engine=os.environ.get("LLM_GUARD_REGEX_ENGINE", "native"),
-        secrets_engine=os.environ.get("LLM_GUARD_SECRETS_ENGINE", "native"),
-        prompt_injection_engine=os.environ.get("LLM_GUARD_PROMPT_INJECTION_ENGINE", "native"),
-        gibberish_engine=os.environ.get("LLM_GUARD_GIBBERISH_ENGINE", "native"),
-        language_engine=os.environ.get("LLM_GUARD_LANGUAGE_ENGINE", "native"),
-        anonymize_engine=os.environ.get("LLM_GUARD_ANONYMIZE_ENGINE", "native"),
     )
 
     config_manager.register_config("llm_guard", config)

@@ -293,33 +293,3 @@ class LLMGuardConfig(ServiceConfig):
             "false positives cluster lower. Calibrated against the labelled PII set."
         ),
     )
-    # LLG-04 finale (AIO-73): llm-guard removed; 'native' is the only engine. The
-    # flags are retained as a vestigial knob defaulting to 'native'; a stale
-    # 'llm_guard' value warns and resolves to native.
-    regex_engine: str = Field(
-        default="native",
-        description="Engine for the regex scanner (native only since LLG-04 finale)",
-    )
-    secrets_engine: str = Field(
-        default="native",
-        description="Engine for the secrets scanner (native only since LLG-04 finale)",
-    )
-    prompt_injection_engine: str = Field(
-        default="native",
-        description="Engine for the prompt_injection scanner (native only since LLG-04 finale)",
-    )
-    gibberish_engine: str = Field(
-        default="native",
-        description="Engine for the gibberish scanner (native only since LLG-04 finale)",
-    )
-    language_engine: str = Field(
-        default="native",
-        description="Engine for the language scanner (native only since LLG-04 finale)",
-    )
-    anonymize_engine: str = Field(
-        default="native",
-        description=(
-            "Engine for the anonymize/PII scanner (native only since LLG-04 finale): "
-            "Presidio pattern recognizers + GLiNER."
-        ),
-    )

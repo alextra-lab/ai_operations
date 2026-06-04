@@ -77,7 +77,7 @@ def get_llm_guard() -> LLMGuard | None:
     request and reused, so the native ONNX/GLiNER models load exactly once instead
     of per request. Lazy-loading is preserved — nothing loads at import, startup,
     or ``/health`` (which does not depend on this); construction is deferred to the
-    first validate call. Tests that change engine/config between cases must call
+    first validate call. Tests that change config between cases must call
     ``get_llm_guard.cache_clear()``.
 
     Uses the module-level logger instead of injecting it as a dependency to avoid

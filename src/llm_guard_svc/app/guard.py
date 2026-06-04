@@ -144,7 +144,6 @@ def verify_model_path(path: str, _model_name: str) -> bool:
     return False
 
 
-
 def initialize_models(models_base_path: str | None = None) -> None:
     """
     Register the models base-path override used by the native scanners.

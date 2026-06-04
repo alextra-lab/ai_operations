@@ -74,7 +74,7 @@ This document provides step-by-step instructions for implementing the remaining 
 
 ### ⚠️ Important Constraint
 
-- **DO NOT UPGRADE**: `transformers` (must remain at 4.51.3 due to llm-guard hard requirement)
+- **NOTE**: `transformers` is split: `llm_guard_svc` uses `>=5.0.0,<5.2.0` (gliner ceiling); other services use `>=5.9.0` via `constraints.txt`. Do not unify them.
 
 ### Implementation Steps
 
@@ -331,7 +331,7 @@ git add .
 git commit -m "feat: Complete Phases E-I dependency upgrades
 
 ## Phase E: Security upgrades (bcrypt, cryptography, python-jose)
-## Phase F: ML upgrades (datasets, spacy) - transformers excluded per llm-guard constraint
+## Phase F: ML upgrades (datasets, spacy) - transformers version split maintained
 ## Phase G: Development tools (mypy, pytest, black, ruff)
 ## Phase H: Document processing (pdfplumber, PyPDF2, beautifulsoup4, lxml)
 ## Phase I: Database drivers (psycopg, qdrant-client)
@@ -383,7 +383,7 @@ git commit -m "feat: Complete Phases E-I dependency upgrades
 
 ## Notes
 
-- **Transformers Constraint**: Always maintain `transformers==4.51.3` due to llm-guard requirement
+- **Transformers Split**: `llm_guard_svc` uses `>=5.0.0,<5.2.0` (gliner ceiling); all other services use `>=5.9.0`. Do not unify.
 - **Testing Priority**: Run tests after each phase before proceeding
 - **Backup Strategy**: Create backups before each phase
 - **Monitoring**: Watch container logs during upgrades

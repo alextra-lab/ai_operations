@@ -28,7 +28,7 @@ Angular.
 All major dependencies have been successfully upgraded to their latest stable versions:
 
 - **Security**: bcrypt 4.3.0, cryptography 44.0.3, python-jose 3.5.0
-- **ML**: datasets 3.6.0, spacy 3.7.5 (transformers maintained for llm-guard compatibility)
+- **ML**: datasets 3.6.0, spacy 3.7.5 (transformers version split maintained for llm_guard_svc gliner compatibility)
 - **Development**: mypy 1.15.0, pytest 8.4.0, black 25.1.0, ruff 0.11.12
 - **Document Processing**: pdfplumber 0.11.x, PyPDF2 3.0.x, beautifulsoup4 4.13.3, lxml 5.4.0
 - **Database**: psycopg 3.2.10, qdrant-client 1.14.2

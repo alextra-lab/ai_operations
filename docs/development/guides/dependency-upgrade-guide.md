@@ -352,9 +352,9 @@ git commit -m "feat: Complete Phases E-I dependency upgrades
 
 ### ✅ Phase F Complete When
 
-- ML packages upgraded (excluding transformers)
+- ML packages upgraded (datasets, spacy); transformers version split maintained
 - Embedding compatibility verified
-- No llm-guard conflicts
+- No version conflicts between llm_guard_svc and other services
 
 ### ✅ Phase G Complete When
 

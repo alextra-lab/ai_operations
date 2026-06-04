@@ -13,7 +13,7 @@ this table is a snapshot and will drift. Notable pins:
 
 | Package | Version | Notes |
 |---|---|---|
-| `transformers` | 4.53.x / 4.51.3 | Most services use 4.53.x; llm_guard_svc pinned to 4.51.3 (llm-guard compat) |
+| `transformers` | ≥5.9.0 / ≥5.0.0,<5.2.0 | Most services use ≥5.9.0 (constraints.txt); llm_guard_svc uses ≥5.0.0,<5.2.0 (gliner ceiling) |
 | `uvicorn` | 0.48.0 | All services |
 | `opentelemetry-sdk` | 1.42.1 | All services except llm_guard_svc |
 | `opentelemetry-instrumentation-fastapi` | 0.63b1 | All services |
@@ -44,17 +44,17 @@ For each phase:
 
 1. **Backup**: Create requirements backup and virtual environment backup
 2. **Update**: Modify requirements.txt files with new version constraints
-3. **Install**: Run `pip install -r requirements-all.txt` for a single env, or use the wheelhouse (two-pass build provides transformers 4.53.x for most services and 4.51.3 for llm_guard_svc only).
+3. **Install**: Run `pip install -r requirements-all.txt` for a single env, or use the wheelhouse (two-pass build provides transformers ≥5.9.0 for most services and ≥5.0.0,<5.2.0 for llm_guard_svc, gliner ceiling).
 4. **Test**: Verify package imports and basic functionality
 5. **Container**: Rebuild affected containers
 6. **Verify**: Ensure all services remain healthy
 
 ### Wheelhouse build (two transformers versions)
 
-The wheelhouse is built in two passes so that most services get secure transformers 4.53.x while llm_guard_svc keeps its pinned 4.51.3:
+The wheelhouse is built in two passes because `gliner==0.2.26` (a native PII scanner dep in `llm_guard_svc`) caps `transformers<5.2.0`, while other services can use `>=5.9.0`:
 
-1. **Pass 1**: `requirements-all-no-llm-guard.txt` with `constraints.txt` → wheels for orchestrator, embedding, corpus_svc, inference-gateway, shared (transformers 4.53.x).
-2. **Pass 2**: `src/llm_guard_svc/requirements.txt` → wheels for llm_guard_svc (transformers 4.51.3).
+1. **Pass 1**: `requirements-all-no-llm-guard.txt` with `constraints.txt` → wheels for orchestrator, embedding, corpus_svc, inference-gateway, shared (transformers ≥5.9.0).
+2. **Pass 2**: `src/llm_guard_svc/requirements.txt` → wheels for llm_guard_svc (transformers ≥5.0.0,<5.2.0).
 
 Both passes write into the same wheelhouse. Each container installs with its own `requirements.txt`, so pip picks the correct transformers version per service.
 
@@ -78,13 +78,13 @@ docker-compose -f deploy/docker-compose.yml ps
 
 ## Important Constraints
 
-### LLM-Guard Compatibility
+### Transformers Version Split
 
-The `transformers` package version is constrained by the `llm-guard` dependency:
+The `transformers` package version is split between `llm_guard_svc` and other services due to the `gliner==0.2.26` ceiling:
 
-- **llm-guard**: Requires specific transformers version
-- **Constraint**: Do not upgrade transformers independently
-- **Solution**: Wait for llm-guard updates that support newer transformers versions
+- **llm_guard_svc**: `>=5.0.0,<5.2.0` — `gliner==0.2.26` caps `transformers<5.2.0`
+- **All other services**: `>=5.9.0` (via `constraints.txt`)
+- **Constraint**: Do not unify these ranges without first upgrading gliner to a version that supports `>=5.2.0`
 
 ### Spacy Models
 
@@ -171,7 +171,7 @@ aggregator install then sees two conflicting version requirements and fails.
 ### Monitoring
 
 - Monitor security advisories for critical packages
-- Track llm-guard releases for transformers compatibility
+- Track gliner releases for transformers ceiling changes (currently `gliner==0.2.26` caps `<5.2.0`)
 - Regular dependency audits using `pip-audit`
 
 ## Best Practices

@@ -144,25 +144,6 @@ def verify_model_path(path: str, _model_name: str) -> bool:
     return False
 
 
-def _warn_if_legacy_engine(engine: str, scanner: str) -> None:
-    """Warn (don't fail) if a removed ``llm_guard`` engine value is still set.
-
-    The per-scanner engine flag was the LLG-04 migration knob. The llm-guard
-    library is gone (finale), so ``native`` is the only engine; a stale
-    ``llm_guard`` value is tolerated and resolves to native.
-    """
-    if engine != "native":
-        # NB: do NOT log the engine *value* — for the ``secrets`` scanner the
-        # ``secrets_engine`` source name trips CodeQL's clear-text-logging-of-
-        # secrets heuristic (false positive; the value is just a flag). Log only
-        # the (hardcoded) scanner name.
-        _logger.warning(
-            "The %s scanner engine flag is set to an unsupported value (llm-guard "
-            "removed, LLG-04 finale); using the native engine.",
-            scanner,
-        )
-
-
 def initialize_models(models_base_path: str | None = None) -> None:
     """
     Register the models base-path override used by the native scanners.
@@ -194,12 +175,6 @@ class LLMGuard:
         cache_enabled: bool = False,  # General toggle for caching
         cache_max_size: int = 1000,
         cache_ttl_seconds: int = 3600,
-        regex_engine: str = "native",
-        secrets_engine: str = "native",
-        prompt_injection_engine: str = "native",
-        gibberish_engine: str = "native",
-        language_engine: str = "native",
-        anonymize_engine: str = "native",
     ):
         """
         Initialize the LLMGuard with required scanners and configurations.
@@ -238,38 +213,33 @@ class LLMGuard:
             self.cache = None
             self.logger.info("LLMGuard initialized with caching disabled.")
 
-        # Native scanners only (LLG-04 finale: llm-guard removed). The per-scanner
-        # engine flags are retained as a vestigial knob defaulting to "native"; a
-        # stale "llm_guard" value warns and resolves to native. Each scanner is
+        # Native scanners only (LLG-04 finale: llm-guard removed). Each scanner is
         # built lazily here (this __init__ runs when the LLMGuard singleton is
         # first constructed on /api/validate), preserving lazy model loading.
         self.scanners = {
-            "anonymize": self._build_anonymize(anonymize_engine),
-            "prompt_injection": self._build_prompt_injection(prompt_injection_engine),
-            "secrets": self._build_secrets(secrets_engine),
-            "gibberish": self._build_gibberish(gibberish_engine),
-            "language": self._build_language(language_engine),
-            "regex": self._build_regex(regex_engine),
+            "anonymize": self._build_anonymize(),
+            "prompt_injection": self._build_prompt_injection(),
+            "secrets": self._build_secrets(),
+            "gibberish": self._build_gibberish(),
+            "language": self._build_language(),
+            "regex": self._build_regex(),
             # Note: The Code scanner remains commented out; configure as needed.
         }
 
     @staticmethod
-    def _build_regex(engine: str) -> Any:
-        _warn_if_legacy_engine(engine, "regex")
+    def _build_regex() -> Any:
         from .scanners.regex_scanner import RegexScanner
 
         return RegexScanner()
 
     @staticmethod
-    def _build_secrets(engine: str) -> Any:
-        _warn_if_legacy_engine(engine, "secrets")
+    def _build_secrets() -> Any:
         from .scanners.secrets_scanner import SecretsScanner
 
         return SecretsScanner()
 
     @staticmethod
-    def _build_anonymize(engine: str) -> Any:
-        _warn_if_legacy_engine(engine, "anonymize")
+    def _build_anonymize() -> Any:
         from shared.config.loader import load_llm_guard_config
 
         from .scanners.anonymize_scanner import AnonymizeScanner
@@ -286,8 +256,7 @@ class LLMGuard:
         )
 
     @staticmethod
-    def _build_prompt_injection(engine: str) -> Any:
-        _warn_if_legacy_engine(engine, "prompt_injection")
+    def _build_prompt_injection() -> Any:
         from .scanners.prompt_injection_scanner import MatchType, PromptInjectionScanner
 
         return PromptInjectionScanner(
@@ -297,15 +266,13 @@ class LLMGuard:
         )
 
     @staticmethod
-    def _build_gibberish(engine: str) -> Any:
-        _warn_if_legacy_engine(engine, "gibberish")
+    def _build_gibberish() -> Any:
         from .scanners.gibberish_scanner import GibberishScanner
 
         return GibberishScanner(_native_model_path("gibberish_model_dir"), threshold=0.97)
 
     @staticmethod
-    def _build_language(engine: str) -> Any:
-        _warn_if_legacy_engine(engine, "language")
+    def _build_language() -> Any:
         from .scanners.language_scanner import LanguageScanner
 
         return LanguageScanner(

@@ -9,7 +9,7 @@
 
 ## Context
 
-AI Operations Platform is a multi-service SOC platform that requires:
+AI Operations Platform is a multi-service enterprise platform that requires:
 
 - **Secure authentication** across multiple microservices (Backend, Retrieval, Embedding, LLM Guard)
 - **Role-based access control** (RBAC) with fine-grained permissions

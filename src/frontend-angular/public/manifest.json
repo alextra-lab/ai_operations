@@ -14,7 +14,7 @@
     }
   ],
   "categories": ["productivity", "business", "utilities"],
-  "description": "Enterprise SOC AI Assistant for security operations center workflows",
+  "description": "Enterprise platform for building governed AI Operations — auditable LLM execution units for any business domain",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "lang": "en-US",

@@ -83,7 +83,7 @@ export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
 ## Architecture
 
-This is a multi-service SOC AI Assistant platform. Services communicate over a Docker network named `observability` (must be created externally with `docker network create observability`).
+This is a multi-service AI Operations platform — governed LLM execution units (AIOps) created via a wizard, usable by any enterprise team. Services communicate over a Docker network named `observability` (must be created externally with `docker network create observability`).
 
 ### Services
 

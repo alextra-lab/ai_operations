@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Builds one wheelhouse with two transformers versions:
-# - Pass 1: requirements-all-no-llm-guard.txt + constraints.txt -> transformers 4.53.x for orchestrator, embedding, corpus_svc, inference-gateway, shared
-# - Pass 2: llm_guard_svc/requirements.txt -> transformers >=4.53.0,<4.54.0 for llm_guard_svc (native scanners; llm-guard removed, LLG-04 finale AIO-73)
+# - Pass 1: requirements-all-no-llm-guard.txt + constraints.txt -> transformers>=5.9.0 for orchestrator, embedding, corpus_svc, inference-gateway, shared
+# - Pass 2: llm_guard_svc/requirements.txt -> transformers>=5.0.0,<5.2.0 for llm_guard_svc (gliner ceiling; llm-guard removed, LLG-04 finale AIO-73)
 # Must be run from <project root>. Clean src/wheelhouse prior to running.
 
 docker run --rm \

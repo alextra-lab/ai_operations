@@ -1,4 +1,5 @@
 # Security override constraints
 # Force transformers>=5.9.0 for services that can use it (orchestrator, embedding, corpus_svc, inference-gateway, shared).
-# Used by build_wheelhouse.sh pass 1 (requirements-all-no-llm-guard.txt). llm_guard_svc is built in pass 2 with its pinned transformers==4.51.3.
+# Used by build_wheelhouse.sh pass 1 (requirements-all-no-llm-guard.txt). llm_guard_svc is built in pass 2
+# with its own range (>=5.0.0,<5.2.0) because gliner==0.2.26 caps transformers<5.2.0.
 transformers>=5.9.0

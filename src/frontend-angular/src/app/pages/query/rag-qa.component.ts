@@ -14,6 +14,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ExecutionMetrics,
   isHighEntropyConfig,
@@ -32,7 +33,6 @@ import { ParameterConfigPanelComponent } from '../../components/parameter-config
 import { QueryResultsPanelComponent } from '../../components/query-results-panel/query-results-panel.component';
 import { EnterToExecuteDirective } from '../../directives/enter-to-execute.directive';
 import { AutoScrollService } from '../../services/auto-scroll.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-rag-qa',
@@ -129,7 +129,11 @@ import { LucideAngularModule } from 'lucide-angular';
             >
               <mat-card-content>
                 <div class="flex items-center gap-3 warning-content">
-                  <lucide-icon color="warn" aria-hidden="true" name="triangle-alert"></lucide-icon>
+                  <lucide-icon
+                    color="warn"
+                    aria-hidden="true"
+                    name="triangle-alert"
+                  ></lucide-icon>
                   <span class="text-sm"
                     >High-entropy configuration detected (temp > 0.9 AND top_p >
                     0.97). This may cause inconsistent outputs.</span
@@ -165,7 +169,10 @@ import { LucideAngularModule } from 'lucide-angular';
                             text-center p-12 text-gray-500
                             empty-state"
         >
-          <lucide-icon class="!text-[80px] !w-20 !h-20 mb-4 text-gray-400" name="circle-help"></lucide-icon>
+          <lucide-icon
+            class="!text-[80px] !w-20 !h-20 mb-4 text-gray-400"
+            name="circle-help"
+          ></lucide-icon>
           <h3 class="text-xl font-medium mb-2 text-gray-700">
             Ready to Answer Questions
           </h3>
@@ -234,7 +241,11 @@ import { LucideAngularModule } from 'lucide-angular';
             class="flex items-center gap-1 px-2 py-1 bg-blue-50
                                  rounded text-blue-700 metric-badge"
           >
-            <lucide-icon class="!text-base !w-4 !h-4" aria-hidden="true" name="clock"></lucide-icon>
+            <lucide-icon
+              class="!text-base !w-4 !h-4"
+              aria-hidden="true"
+              name="clock"
+            ></lucide-icon>
             {{ lastExecutionTime }}ms
           </span>
 
@@ -243,7 +254,11 @@ import { LucideAngularModule } from 'lucide-angular';
             class="flex items-center gap-1 px-2 py-1 bg-purple-50
                                  rounded text-purple-700 metric-badge"
           >
-            <lucide-icon class="!text-base !w-4 !h-4" aria-hidden="true" name="coins"></lucide-icon>
+            <lucide-icon
+              class="!text-base !w-4 !h-4"
+              aria-hidden="true"
+              name="coins"
+            ></lucide-icon>
             {{ tokensUsed }} tokens
           </span>
 
@@ -252,7 +267,11 @@ import { LucideAngularModule } from 'lucide-angular';
             class="flex items-center gap-1 px-2 py-1 bg-green-50
                                  rounded text-green-700 metric-badge"
           >
-            <lucide-icon class="!text-base !w-4 !h-4" aria-hidden="true" name="dollar-sign"></lucide-icon>
+            <lucide-icon
+              class="!text-base !w-4 !h-4"
+              aria-hidden="true"
+              name="dollar-sign"
+            ></lucide-icon>
             {{ currentCost | currency: 'USD' : 'symbol' : '1.4-4' }}
           </span>
         </div>
@@ -351,7 +370,6 @@ import { LucideAngularModule } from 'lucide-angular';
           width: 28px;
           height: 28px;
         }
-
       }
 
       // ====================================================================
@@ -406,7 +424,7 @@ export class RagQaComponent implements OnInit, OnDestroy {
     private ragService: RagService,
     private autoScrollService: AutoScrollService,
     private snackBar: MatSnackBar
-  ) { }
+  ) {}
 
   // ========================================================================
   // Lifecycle Hooks

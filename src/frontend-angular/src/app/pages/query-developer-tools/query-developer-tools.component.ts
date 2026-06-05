@@ -22,16 +22,16 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { QueryConfig } from '../../api/models/query-config.models';
 import {
   UseCaseSelectorDialogComponent,
-  UseCaseSelectorDialogData
+  UseCaseSelectorDialogData,
 } from './components/use-case-selector-dialog/use-case-selector-dialog.component';
 import { SharedConfigService } from './services/shared-config.service';
 import { RagQaTabComponent } from './tabs/rag-qa-tab.component';
 import { SemanticSearchTabComponent } from './tabs/semantic-search-tab.component';
 import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-query-developer-tools',
@@ -60,9 +60,7 @@ import { LucideAngularModule } from 'lucide-angular';
             <lucide-icon name="flask-conical"></lucide-icon>
             Query Developer Tools
           </h1>
-          <p class="subtitle">
-            Test, tune, and optimize query configurations
-          </p>
+          <p class="subtitle">Test, tune, and optimize query configurations</p>
         </div>
 
         <!-- Material Tabs (part of Layer 2) -->
@@ -355,7 +353,7 @@ export class QueryDeveloperToolsComponent implements OnInit {
     private readonly sharedConfigService: SharedConfigService,
     private readonly dialog: MatDialog,
     private readonly router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // Load saved tab preference from localStorage

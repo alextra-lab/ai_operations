@@ -14,7 +14,7 @@
 .use-case-list {
   max-height: 400px;
   overflow-y: auto;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0;
 
@@ -132,7 +132,7 @@
   margin: 0 0 20px 0;
 
   :is(mat-icon, lucide-icon) {
-    color: #1976d2;
+    color: var(--primary);
   }
 }
 

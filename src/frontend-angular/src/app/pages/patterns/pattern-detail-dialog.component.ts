@@ -16,11 +16,11 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   PATTERN_CATEGORIES,
   PromptPattern,
 } from '../../api/models/prompt-patterns.models';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-pattern-detail-dialog',

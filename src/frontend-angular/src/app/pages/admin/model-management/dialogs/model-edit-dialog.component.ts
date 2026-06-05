@@ -19,8 +19,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 
-import { ModelDetailedResponse } from '../../../../api/models/model-registry.models';
 import { LucideAngularModule } from 'lucide-angular';
+import { ModelDetailedResponse } from '../../../../api/models/model-registry.models';
 
 export interface ModelEditDialogData {
   modelId: string;

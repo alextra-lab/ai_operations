@@ -32,6 +32,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   Collection,
   EMBEDDING_MODELS,
@@ -39,7 +40,6 @@ import {
 import { CollectionService } from '../../api/services/collection.service';
 import { CollectionCreateDialogComponent } from './collection-create-dialog.component';
 import { CollectionEditDialogComponent } from './collection-edit-dialog.component';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-collection-list',

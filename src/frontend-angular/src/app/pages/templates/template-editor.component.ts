@@ -16,9 +16,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ModelDetailedResponse } from '../../api/models/model-registry.models';
 import { ModelSelectorComponent } from '../../components/model-selector/model-selector.component';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-template-editor',

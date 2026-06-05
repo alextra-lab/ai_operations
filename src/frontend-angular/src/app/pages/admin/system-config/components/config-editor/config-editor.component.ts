@@ -30,6 +30,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Subscription } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { Model } from '../../../../../api/models/model-registry.models';
 import { ModelRegistryService } from '../../../../../api/services/model-registry.service';
 import {
@@ -38,7 +39,6 @@ import {
   SchemaProperty,
 } from '../../models/system-config.models';
 import { SystemConfigService } from '../../services/system-config.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-config-editor',

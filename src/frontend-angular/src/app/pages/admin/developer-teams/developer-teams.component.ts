@@ -13,9 +13,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { DeveloperTeamInfo } from '../role-management/models/role-management.models';
 import { DeveloperTeamsService } from './services/developer-teams.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 const TEAM_PATTERN = /^team:[a-z0-9_-]{1,64}$/;
 

@@ -73,7 +73,10 @@
                   >{{ model.embedding_dimensions }}D</span
                 >
                 @if (!model.is_available) {
-                  <lucide-icon class="unavailable-icon" name="triangle-alert"></lucide-icon>
+                  <lucide-icon
+                    class="unavailable-icon"
+                    name="triangle-alert"
+                  ></lucide-icon>
                 }
               </div>
             </div>
@@ -124,7 +127,10 @@
     <!-- Information Note -->
     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
       <div class="flex items-start gap-2">
-        <lucide-icon class="text-yellow-600 text-lg" name="lightbulb"></lucide-icon>
+        <lucide-icon
+          class="text-yellow-600 text-lg"
+          name="lightbulb"
+        ></lucide-icon>
         <p class="text-xs text-yellow-900 m-0 leading-relaxed">
           The embedding model is <strong>immutable</strong> after collection
           creation. Use Cases can search multiple collections only if they share

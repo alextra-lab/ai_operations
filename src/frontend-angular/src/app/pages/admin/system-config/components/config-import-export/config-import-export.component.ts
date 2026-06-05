@@ -20,8 +20,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 
-import { SystemConfigService } from '../../services/system-config.service';
 import { LucideAngularModule } from 'lucide-angular';
+import { SystemConfigService } from '../../services/system-config.service';
 
 export interface ConfigImportExportDialogData {
   mode: 'import' | 'export';

@@ -31,7 +31,11 @@
             <!-- Search (flexible width) -->
             <mat-form-field appearance="outline" class="flex-1 min-w-[200px]">
               <mat-label>Search</mat-label>
-              <input matInput formControlName="search" placeholder="Search by name or description" />
+              <input
+                matInput
+                formControlName="search"
+                placeholder="Search by name or description"
+              />
               <mat-icon matSuffix>search</mat-icon>
             </mat-form-field>
 
@@ -54,7 +58,10 @@
               <mat-label>State</mat-label>
               <mat-select formControlName="lifecycle_state">
                 <mat-option value="">All States</mat-option>
-                <mat-option *ngFor="let state of lifecycleStates" [value]="state">
+                <mat-option
+                  *ngFor="let state of lifecycleStates"
+                  [value]="state"
+                >
                   {{ getStateName(state) }}
                 </mat-option>
               </mat-select>
@@ -94,7 +101,12 @@
             </button>
 
             <!-- Create Button -->
-            <button mat-raised-button color="primary" type="button" (click)="createUseCase()">
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="createUseCase()"
+            >
               <lucide-icon name="plus"></lucide-icon>
               Create AI Operation
             </button>
@@ -104,9 +116,8 @@
 
             <!-- Results summary -->
             <div class="text-sm text-gray-600" *ngIf="!isLoading">
-              Found <strong class="text-blue-600">{{ totalCount }}</strong> AI operation{{
-              totalCount !== 1 ? 's' : ''
-              }}
+              Found <strong class="text-blue-600">{{ totalCount }}</strong> AI
+              operation{{ totalCount !== 1 ? 's' : '' }}
             </div>
           </div>
         </form>
@@ -133,7 +144,7 @@
               <strong>{{ useCase.name }}</strong>
               <small *ngIf="useCase.description" class="description">{{
                 useCase.description
-                }}</small>
+              }}</small>
             </div>
           </td>
         </ng-container>
@@ -160,8 +171,14 @@
         <ng-container matColumnDef="lifecycle_state">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>State</th>
           <td mat-cell *matCellDef="let useCase">
-            <div class="state-badge" [ngClass]="getStateClass(useCase.lifecycle_state)">
-              <lucide-icon class="state-icon" [name]="getStateIcon(useCase.lifecycle_state)"></lucide-icon>
+            <div
+              class="state-badge"
+              [ngClass]="getStateClass(useCase.lifecycle_state)"
+            >
+              <lucide-icon
+                class="state-icon"
+                [name]="getStateIcon(useCase.lifecycle_state)"
+              ></lucide-icon>
               <span>{{ getStateName(useCase.lifecycle_state) }}</span>
             </div>
           </td>
@@ -171,7 +188,11 @@
         <ng-container matColumnDef="is_active">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Active</th>
           <td mat-cell *matCellDef="let useCase">
-            <lucide-icon [class.active-icon]="useCase.is_active" [class.inactive-icon]="!useCase.is_active" [name]="useCase.is_active ? 'circle-check' : 'circle-x'"></lucide-icon>
+            <lucide-icon
+              [class.active-icon]="useCase.is_active"
+              [class.inactive-icon]="!useCase.is_active"
+              [name]="useCase.is_active ? 'circle-check' : 'circle-x'"
+            ></lucide-icon>
           </td>
         </ng-container>
 
@@ -195,7 +216,11 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let useCase">
-            <button mat-icon-button [matMenuTriggerFor]="actionsMenu" aria-label="Actions">
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="actionsMenu"
+              aria-label="Actions"
+            >
               <lucide-icon name="ellipsis-vertical"></lucide-icon>
             </button>
             <mat-menu #actionsMenu="matMenu">
@@ -206,13 +231,21 @@
               </button>
 
               <!-- Edit -->
-              <button mat-menu-item (click)="editUseCase(useCase)" *ngIf="canEdit(useCase)">
+              <button
+                mat-menu-item
+                (click)="editUseCase(useCase)"
+                *ngIf="canEdit(useCase)"
+              >
                 <lucide-icon name="pencil"></lucide-icon>
                 <span>Edit</span>
               </button>
 
               <!-- Clone -->
-              <button mat-menu-item (click)="cloneUseCase(useCase)" *ngIf="canClone(useCase)">
+              <button
+                mat-menu-item
+                (click)="cloneUseCase(useCase)"
+                *ngIf="canClone(useCase)"
+              >
                 <lucide-icon name="copy"></lucide-icon>
                 <span>Clone</span>
               </button>
@@ -225,32 +258,53 @@
               </div>
 
               <!-- Send to Review -->
-              <button mat-menu-item (click)="sendToReview(useCase)" *ngIf="useCase.lifecycle_state === 'draft'">
+              <button
+                mat-menu-item
+                (click)="sendToReview(useCase)"
+                *ngIf="useCase.lifecycle_state === 'draft'"
+              >
                 <lucide-icon name="message-square-text"></lucide-icon>
                 <span>Send to Review</span>
               </button>
 
               <!-- Publish -->
-              <button mat-menu-item (click)="publishUseCase(useCase)" *ngIf="useCase.lifecycle_state === 'review'">
+              <button
+                mat-menu-item
+                (click)="publishUseCase(useCase)"
+                *ngIf="useCase.lifecycle_state === 'review'"
+              >
                 <lucide-icon name="upload"></lucide-icon>
                 <span>Publish</span>
               </button>
 
               <!-- Return to Draft -->
-              <button mat-menu-item (click)="returnToDraft(useCase)" *ngIf="useCase.lifecycle_state === 'review'">
+              <button
+                mat-menu-item
+                (click)="returnToDraft(useCase)"
+                *ngIf="useCase.lifecycle_state === 'review'"
+              >
                 <lucide-icon name="square-pen"></lucide-icon>
                 <span>Return to Draft</span>
               </button>
 
               <!-- Archive -->
-              <button mat-menu-item (click)="archiveUseCase(useCase)" *ngIf="useCase.lifecycle_state === 'published'">
+              <button
+                mat-menu-item
+                (click)="archiveUseCase(useCase)"
+                *ngIf="useCase.lifecycle_state === 'published'"
+              >
                 <lucide-icon name="archive"></lucide-icon>
                 <span>Archive</span>
               </button>
 
               <!-- Delete -->
               <mat-divider *ngIf="canDelete(useCase)"></mat-divider>
-              <button mat-menu-item (click)="deleteUseCase(useCase)" *ngIf="canDelete(useCase)" class="delete-action">
+              <button
+                mat-menu-item
+                (click)="deleteUseCase(useCase)"
+                *ngIf="canDelete(useCase)"
+                class="delete-action"
+              >
                 <lucide-icon name="trash-2"></lucide-icon>
                 <span>Delete</span>
               </button>
@@ -263,7 +317,10 @@
 
         <!-- No Data Row -->
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
+          <td
+            class="mat-cell no-data-cell"
+            [attr.colspan]="displayedColumns.length"
+          >
             <div class="no-data-message">
               <lucide-icon name="info"></lucide-icon>
               <p *ngIf="!isLoading">
@@ -280,8 +337,14 @@
 
   <!-- Layer 4: Page Footer (NEVER SCROLLS) -->
   <div class="page-footer" *ngIf="totalCount > 0">
-    <mat-paginator [length]="totalCount" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
-      [pageIndex]="currentPage - 1" (page)="onPageChange($event)" showFirstLastButtons>
+    <mat-paginator
+      [length]="totalCount"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="currentPage - 1"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    >
     </mat-paginator>
   </div>
 </div>

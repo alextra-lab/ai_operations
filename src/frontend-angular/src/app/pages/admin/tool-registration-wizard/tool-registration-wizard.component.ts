@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ToolRegistrationPhase,
   ToolRegistrationService,
@@ -30,7 +31,6 @@ import {
   DraftStorageService,
   RegistrationDraft,
 } from '../../../services/draft-storage.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-tool-registration-wizard',

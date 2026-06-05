@@ -18,7 +18,9 @@
         (click)="toggleStats()"
         aria-label="Toggle statistics"
       >
-        <lucide-icon [name]="showStats ? 'eye-off' : 'chart-column'"></lucide-icon>
+        <lucide-icon
+          [name]="showStats ? 'eye-off' : 'chart-column'"
+        ></lucide-icon>
         {{ showStats ? 'Hide Stats' : 'Show Stats' }}
       </button>
       <button
@@ -245,7 +247,9 @@
           <td mat-cell *matCellDef="let log">
             <lucide-icon
               [color]="getStatusColor(log.success)"
-              [matTooltip]="log.success ? 'Success' : 'Failure'" [name]="getStatusIcon(log.success)"></lucide-icon>
+              [matTooltip]="log.success ? 'Success' : 'Failure'"
+              [name]="getStatusIcon(log.success)"
+            ></lucide-icon>
           </td>
         </ng-container>
 

@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { PasswordResetDialogComponent } from './user-management/components/password-reset-dialog/password-reset-dialog.component';
 import { SessionViewerComponent } from './user-management/components/session-viewer/session-viewer.component';
 import { UserCreateDialogComponent } from './user-management/components/user-create-dialog/user-create-dialog.component';
@@ -25,7 +26,6 @@ import {
   UserListItem,
 } from './user-management/models/user-management.models';
 import { UserManagementService } from './user-management/services/user-management.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * User Management Component

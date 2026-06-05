@@ -13,6 +13,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { AssignUseCaseDialogComponent } from './components/assign-use-case-dialog/assign-use-case-dialog.component';
 import { RoleDetailsDialogComponent } from './components/role-details-dialog/role-details-dialog.component';
 import {
@@ -21,7 +22,6 @@ import {
   SYSTEM_ROLES,
 } from './models/role-management.models';
 import { RoleManagementService } from './services/role-management.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * Role Management Component

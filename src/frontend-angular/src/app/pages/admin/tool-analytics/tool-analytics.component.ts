@@ -26,6 +26,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { RouterLink } from '@angular/router';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ToolAnalyticsService } from '../../../api/services/tool-analytics.service';
 import { ToolAdminService } from '../tool-management/services/tool-admin.service';
 import {
@@ -42,7 +43,6 @@ import {
   TIME_RANGE_OPTIONS,
   ToolUsageSummary,
 } from './models/tool-analytics.models';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-tool-analytics',

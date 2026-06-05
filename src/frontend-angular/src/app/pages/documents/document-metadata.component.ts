@@ -24,13 +24,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   Document,
   DocumentMetadata,
   DocumentUpdateRequest,
 } from '../../api/models/document.models';
 import { DocumentService } from '../../api/services/document.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-document-metadata',
@@ -66,7 +66,10 @@ import { LucideAngularModule } from 'lucide-angular';
           class="flex-1 p-4 bg-blue-50 border border-blue-200 rounded flex items-center gap-3"
           *ngIf="getCollectionName()"
         >
-          <lucide-icon class="text-blue-600 text-3xl" name="folder"></lucide-icon>
+          <lucide-icon
+            class="text-blue-600 text-3xl"
+            name="folder"
+          ></lucide-icon>
           <div class="flex-1">
             <div class="text-xs text-blue-700 uppercase">Collection</div>
             <div class="text-lg font-semibold text-blue-900">
@@ -79,7 +82,10 @@ import { LucideAngularModule } from 'lucide-angular';
           class="flex-1 p-4 bg-green-50 border border-green-200 rounded flex items-center gap-3"
           *ngIf="document?.num_chunks"
         >
-          <lucide-icon class="text-green-600 text-3xl" name="chart-column"></lucide-icon>
+          <lucide-icon
+            class="text-green-600 text-3xl"
+            name="chart-column"
+          ></lucide-icon>
           <div class="flex-1">
             <div class="text-xs text-green-700 uppercase">Chunking</div>
             <div class="text-lg font-semibold text-green-900">

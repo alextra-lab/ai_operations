@@ -62,7 +62,9 @@
             <lucide-icon
               *ngIf="isExpired(assignment)"
               class="expired-icon"
-              inline="true" name="triangle-alert"></lucide-icon>
+              inline="true"
+              name="triangle-alert"
+            ></lucide-icon>
           </span>
           <span *ngIf="!assignment.expires_at" class="permanent">
             Permanent

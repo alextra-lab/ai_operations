@@ -11,7 +11,9 @@
       </h1>
       <p class="subtitle">
         Curated prompt engineering patterns from
-        <a href="https://www.promptingguide.ai/" target="_blank">promptingguide.ai</a>
+        <a href="https://www.promptingguide.ai/" target="_blank"
+          >promptingguide.ai</a
+        >
       </p>
     </div>
 
@@ -31,7 +33,11 @@
           <!-- Search (flexible width) -->
           <mat-form-field appearance="outline" class="flex-1 min-w-[200px]">
             <mat-label>Search patterns</mat-label>
-            <input matInput [formControl]="searchControl" placeholder="Search by name, description, or tags" />
+            <input
+              matInput
+              [formControl]="searchControl"
+              placeholder="Search by name, description, or tags"
+            />
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
 
@@ -41,7 +47,10 @@
             <mat-select [formControl]="categoryControl">
               <mat-option [value]="null">All Categories</mat-option>
               <mat-option *ngFor="let cat of categories" [value]="cat.id">
-                <lucide-icon [style.color]="cat.color" [name]="cat.icon"></lucide-icon>
+                <lucide-icon
+                  [style.color]="cat.color"
+                  [name]="cat.icon"
+                ></lucide-icon>
                 {{ cat.label }}
               </mat-option>
             </mat-select>
@@ -72,12 +81,20 @@
         <div class="flex gap-3 items-center mt-2">
           <!-- View Mode Toggle -->
           <div class="view-controls">
-            <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="onViewModeChange('grid')"
-              matTooltip="Grid View">
+            <button
+              mat-icon-button
+              [class.active]="viewMode === 'grid'"
+              (click)="onViewModeChange('grid')"
+              matTooltip="Grid View"
+            >
               <lucide-icon name="layout-grid"></lucide-icon>
             </button>
-            <button mat-icon-button [class.active]="viewMode === 'list'" (click)="onViewModeChange('list')"
-              matTooltip="List View">
+            <button
+              mat-icon-button
+              [class.active]="viewMode === 'list'"
+              (click)="onViewModeChange('list')"
+              matTooltip="List View"
+            >
               <lucide-icon name="list"></lucide-icon>
             </button>
           </div>
@@ -85,8 +102,14 @@
           <!-- Items Per Page (narrow) -->
           <mat-form-field appearance="outline" class="w-24">
             <mat-label>Per page</mat-label>
-            <mat-select [(ngModel)]="pageSize" (selectionChange)="onItemsPerPageChange()">
-              <mat-option *ngFor="let option of itemsPerPageOptions" [value]="option">
+            <mat-select
+              [(ngModel)]="pageSize"
+              (selectionChange)="onItemsPerPageChange()"
+            >
+              <mat-option
+                *ngFor="let option of itemsPerPageOptions"
+                [value]="option"
+              >
                 {{ option }}
               </mat-option>
             </mat-select>
@@ -103,8 +126,9 @@
 
           <!-- Results summary -->
           <div class="text-sm text-gray-600" *ngIf="!loading">
-            Found <strong class="text-blue-600">{{ totalPatterns }}</strong> pattern{{
-            totalPatterns !== 1 ? 's' : ''
+            Found
+            <strong class="text-blue-600">{{ totalPatterns }}</strong> pattern{{
+              totalPatterns !== 1 ? 's' : ''
             }}
           </div>
         </div>
@@ -131,7 +155,10 @@
     </mat-card>
 
     <!-- Empty state -->
-    <mat-card *ngIf="!loading && !error && patterns.length === 0" class="empty-state">
+    <mat-card
+      *ngIf="!loading && !error && patterns.length === 0"
+      class="empty-state"
+    >
       <lucide-icon name="search-x"></lucide-icon>
       <h2>No patterns found</h2>
       <p>Try adjusting your filters or search query.</p>
@@ -141,11 +168,23 @@
     </mat-card>
 
     <!-- Grid View -->
-    <div *ngIf="!loading && !error && viewMode === 'grid' && patterns.length > 0" class="patterns-grid">
-      <mat-card *ngFor="let pattern of patterns" class="pattern-card" (click)="viewPattern(pattern)">
+    <div
+      *ngIf="!loading && !error && viewMode === 'grid' && patterns.length > 0"
+      class="patterns-grid"
+    >
+      <mat-card
+        *ngFor="let pattern of patterns"
+        class="pattern-card"
+        (click)="viewPattern(pattern)"
+      >
         <!-- Category badge -->
-        <div class="category-badge" [style.background-color]="getCategoryInfo(pattern.category).color">
-          <lucide-icon [name]="getCategoryInfo(pattern.category).icon"></lucide-icon>
+        <div
+          class="category-badge"
+          [style.background-color]="getCategoryInfo(pattern.category).color"
+        >
+          <lucide-icon
+            [name]="getCategoryInfo(pattern.category).icon"
+          ></lucide-icon>
           <span>{{ getCategoryInfo(pattern.category).label }}</span>
         </div>
 
@@ -156,7 +195,10 @@
         </div>
 
         <!-- Tags -->
-        <div class="tags-section" *ngIf="pattern.tags && pattern.tags.length > 0">
+        <div
+          class="tags-section"
+          *ngIf="pattern.tags && pattern.tags.length > 0"
+        >
           <mat-chip-set>
             <mat-chip *ngFor="let tag of pattern.tags.slice(0, 3)">
               {{ tag }}
@@ -171,7 +213,11 @@
             <span>{{ pattern.use_count }}</span>
           </div>
 
-          <button mat-icon-button (click)="viewPattern(pattern); $event.stopPropagation()" matTooltip="View details">
+          <button
+            mat-icon-button
+            (click)="viewPattern(pattern); $event.stopPropagation()"
+            matTooltip="View details"
+          >
             <lucide-icon name="eye"></lucide-icon>
           </button>
         </div>
@@ -179,10 +225,20 @@
     </div>
 
     <!-- List View -->
-    <div *ngIf="!loading && !error && viewMode === 'list' && patterns.length > 0" class="patterns-list">
-      <div *ngFor="let pattern of patterns" class="pattern-list-item" (click)="viewPattern(pattern)">
+    <div
+      *ngIf="!loading && !error && viewMode === 'list' && patterns.length > 0"
+      class="patterns-list"
+    >
+      <div
+        *ngFor="let pattern of patterns"
+        class="pattern-list-item"
+        (click)="viewPattern(pattern)"
+      >
         <div class="pattern-icon">
-          <lucide-icon [style.color]="getCategoryInfo(pattern.category).color" [name]="getCategoryInfo(pattern.category).icon"></lucide-icon>
+          <lucide-icon
+            [style.color]="getCategoryInfo(pattern.category).color"
+            [name]="getCategoryInfo(pattern.category).icon"
+          ></lucide-icon>
         </div>
 
         <div class="pattern-info">
@@ -191,7 +247,10 @@
         </div>
 
         <div class="pattern-category">
-          <span class="category-tag" [style.background-color]="getCategoryInfo(pattern.category).color">
+          <span
+            class="category-tag"
+            [style.background-color]="getCategoryInfo(pattern.category).color"
+          >
             {{ getCategoryInfo(pattern.category).label }}
           </span>
         </div>
@@ -201,8 +260,14 @@
 
   <!-- Layer 4: Page Footer (Pagination - NEVER SCROLLS) -->
   <div class="page-footer" *ngIf="!loading && !error && patterns.length > 0">
-    <mat-paginator [length]="totalPatterns" [pageSize]="pageSize" [pageSizeOptions]="itemsPerPageOptions"
-      [pageIndex]="currentPage - 1" (page)="onPageChange($event)" showFirstLastButtons>
+    <mat-paginator
+      [length]="totalPatterns"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="itemsPerPageOptions"
+      [pageIndex]="currentPage - 1"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    >
     </mat-paginator>
   </div>
 </div>

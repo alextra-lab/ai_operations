@@ -20,9 +20,8 @@
 .page-header-section {
   flex: 0 0 auto;
   z-index: 100;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-bottom: 1px solid var(--border);
   position: relative; // For absolute positioning of header actions
 }
 
@@ -32,8 +31,9 @@
 
   h1 {
     margin: 0;
-    font-size: 24px;
-    font-weight: 500;
+    font-size: var(--h1-size);
+    font-weight: var(--h1-weight);
+    letter-spacing: -0.01em;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -67,7 +67,7 @@
   padding: 0 24px 12px 24px;
 
   .controls-container {
-    background: #f5f5f5;
+    background: var(--surface-2);
     border-radius: 6px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     padding: 8px 16px 4px 16px;
@@ -112,7 +112,7 @@ mat-form-field {
   flex: 0 0 auto; // Don't grow or shrink
   z-index: 90; // Below header
   background: white;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border);
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 
   mat-paginator {
@@ -155,7 +155,7 @@ mat-form-field {
   width: 100%;
 
   th {
-    background: #f5f5f5;
+    background: var(--surface-2);
     font-weight: 600;
     color: #666;
   }
@@ -250,6 +250,6 @@ mat-form-field {
 button:focus,
 input:focus,
 mat-select:focus {
-  outline: 2px solid #1976d2;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }

@@ -40,17 +40,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { Model } from '../../api/models/model-registry.models';
+import {
+  CategoryConfig,
+  IntentTypeConfig,
+} from '../../api/models/platform-config.models';
 import {
   PATTERN_CATEGORIES,
   PromptPattern,
 } from '../../api/models/prompt-patterns.models';
 import {
-  InputField,
-  UserPromptTemplateConfig,
-} from '../../api/models/use-case.models';
-import {
-  IntentType,
   LifecycleState,
   ToolRestrictions,
   UseCaseCreate,
@@ -58,38 +58,35 @@ import {
   UseCaseUpdate,
 } from '../../api/models/use-case-management.models';
 import {
-  CategoryConfig,
-  IntentTypeConfig,
-} from '../../api/models/platform-config.models';
-import { PlatformConfigService } from '../../api/services/platform-config.service';
+  InputField,
+  UserPromptTemplateConfig,
+} from '../../api/models/use-case.models';
 import { CollectionService } from '../../api/services/collection.service';
 import { ModelRegistryService } from '../../api/services/model-registry.service';
+import { PlatformConfigService } from '../../api/services/platform-config.service';
 import { PromptPatternsService } from '../../api/services/prompt-patterns.service';
 import { UseCaseManagementService } from '../../api/services/use-case-management.service';
-import {
-  SchemaPreset,
-  SchemaEditorComponent,
-} from '../../components/schema-editor/schema-editor.component';
-import {
-  DOMAIN_SCHEMA_PRESETS,
-} from '../../constants/domain-schema-presets';
 import { OutputTemplateSelectorComponent } from '../../components/output-template-selector/output-template-selector.component';
+import {
+  CompatibilityStatus,
+  SchemaEditorComponent,
+  SchemaPreset,
+} from '../../components/schema-editor/schema-editor.component';
+import { StructuredOutputRendererComponent } from '../../components/structured-output-renderer/structured-output-renderer.component';
+import { ToolRestrictionsComponent } from '../../components/tool-restrictions/tool-restrictions.component';
+import { ToolSelectorComponent } from '../../components/tool-selector/tool-selector.component';
 import {
   SyncValidationResult,
   UserInteractionConfigComponent,
 } from '../../components/user-interaction-config/user-interaction-config.component';
-import { ToolRestrictionsComponent } from '../../components/tool-restrictions/tool-restrictions.component';
-import { ToolSelectorComponent } from '../../components/tool-selector/tool-selector.component';
+import { DOMAIN_SCHEMA_PRESETS } from '../../constants/domain-schema-presets';
+import { FormattedOutput } from '../../models/output-format.model';
 import { OutputFormattingService } from '../../services/output-formatting.service';
-import { TemplateRegistryService } from '../../services/template-registry.service';
 import {
   CompatibilityResult,
   SchemaTemplateCompatibilityService,
 } from '../../services/schema-template-compatibility.service';
-import { FormattedOutput } from '../../models/output-format.model';
-import { StructuredOutputRendererComponent } from '../../components/structured-output-renderer/structured-output-renderer.component';
-import { CompatibilityStatus } from '../../components/schema-editor/schema-editor.component';
-import { LucideAngularModule } from 'lucide-angular';
+import { TemplateRegistryService } from '../../services/template-registry.service';
 
 type StartingPoint = 'blank' | 'pattern' | 'clone';
 
@@ -415,7 +412,8 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
    * Called after populateFormsForEdit when navigating from execution with refinedSchema.
    */
   private applyRefinedSchemaFromQueryParams(): void {
-    const refinedSchema = this.route.snapshot.queryParamMap.get('refinedSchema');
+    const refinedSchema =
+      this.route.snapshot.queryParamMap.get('refinedSchema');
     const stepParam = this.route.snapshot.queryParamMap.get('step');
 
     if (refinedSchema?.trim()) {
@@ -433,7 +431,9 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
         console.log('[Wizard] Applied refined schema from query params:', {
           schemaLength: refinedSchema.trim().length,
           outputFormat: 'json',
-          formValue: this.configForm.get('output_schema')?.value?.substring(0, 100),
+          formValue: this.configForm
+            .get('output_schema')
+            ?.value?.substring(0, 100),
         });
 
         // Scroll to Step 3 (User Experience) after a short delay for rendering
@@ -457,7 +457,9 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
    * Scroll to the current step for better UX
    */
   private scrollToCurrentStep(): void {
-    const stepElement = document.querySelector(`[data-step="${this.currentStep}"]`);
+    const stepElement = document.querySelector(
+      `[data-step="${this.currentStep}"]`
+    );
     if (stepElement) {
       stepElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -583,14 +585,20 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
       const rawFields = useCase.config_json['input_fields'];
       this.inputFields =
         Array.isArray(rawFields) && rawFields.length > 0
-          ? rawFields.map((f: Record<string, unknown>) => this.mapRawToInputField(f))
+          ? rawFields.map((f: Record<string, unknown>) =>
+              this.mapRawToInputField(f)
+            )
           : [{ ...DEFAULT_QUERY_FIELD }];
 
       // Try config_json.user_prompt_template first (legacy), then prompts.prompt_template (new location)
       const upt = useCase.config_json['user_prompt_template'];
       const prompts = useCase.prompts;
 
-      if (upt && typeof upt === 'object' && typeof (upt as { template?: string }).template === 'string') {
+      if (
+        upt &&
+        typeof upt === 'object' &&
+        typeof (upt as { template?: string }).template === 'string'
+      ) {
         this.userPromptTemplate = upt as UserPromptTemplateConfig;
       } else if (prompts) {
         const promptTemplate = (prompts as any)['prompt_template'];
@@ -600,7 +608,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
           this.userPromptTemplate = {
             template: promptTemplate,
             variables: Array.isArray(variables) ? variables : [],
-            fallback_mode: 'concatenate'
+            fallback_mode: 'concatenate',
           };
         } else {
           this.userPromptTemplate = null;
@@ -696,8 +704,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const profile = this.platformConfig
-      .getIntentType(intentCode);
+    const profile = this.platformConfig.getIntentType(intentCode);
     if (!profile) {
       return;
     }
@@ -1169,7 +1176,9 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
       template_id: configValue.output_template_id,
     });
 
-    const parsedSchema = this.parseOutputSchemaForApi(configValue.output_schema);
+    const parsedSchema = this.parseOutputSchemaForApi(
+      configValue.output_schema
+    );
     console.log('[Wizard] Parsed schema for API:', parsedSchema);
 
     const updateData: UseCaseUpdate = {
@@ -1269,13 +1278,19 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
     const rawFields = useCase.config_json?.['input_fields'];
     this.inputFields =
       Array.isArray(rawFields) && rawFields.length > 0
-        ? rawFields.map((f: Record<string, unknown>) => this.mapRawToInputField(f))
+        ? rawFields.map((f: Record<string, unknown>) =>
+            this.mapRawToInputField(f)
+          )
         : [{ ...DEFAULT_QUERY_FIELD }];
     // Try config_json.user_prompt_template first (legacy), then prompts.prompt_template (new location)
     const upt = useCase.config_json?.['user_prompt_template'];
     const prompts = useCase.prompts;
 
-    if (upt && typeof upt === 'object' && typeof (upt as { template?: string }).template === 'string') {
+    if (
+      upt &&
+      typeof upt === 'object' &&
+      typeof (upt as { template?: string }).template === 'string'
+    ) {
       this.userPromptTemplate = upt as UserPromptTemplateConfig;
     } else if (prompts) {
       const promptTemplate = (prompts as any)['prompt_template'];
@@ -1285,7 +1300,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
         this.userPromptTemplate = {
           template: promptTemplate,
           variables: Array.isArray(variables) ? variables : [],
-          fallback_mode: 'concatenate'
+          fallback_mode: 'concatenate',
         };
       } else {
         this.userPromptTemplate = null;
@@ -1306,11 +1321,15 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
       name: String(f['name'] ?? ''),
       type: (f['type'] as InputField['type']) ?? 'text',
       label: String(f['label'] ?? ''),
-      description: f['description'] != null ? String(f['description']) : undefined,
+      description:
+        f['description'] != null ? String(f['description']) : undefined,
       required: Boolean(f['required']),
-      placeholder: f['placeholder'] != null ? String(f['placeholder']) : undefined,
+      placeholder:
+        f['placeholder'] != null ? String(f['placeholder']) : undefined,
       default_value,
-      options: Array.isArray(f['options']) ? (f['options'] as InputField['options']) : undefined,
+      options: Array.isArray(f['options'])
+        ? (f['options'] as InputField['options'])
+        : undefined,
       validation: f['validation'] as InputField['validation'],
     };
   }
@@ -1640,12 +1659,9 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
     // Template-based presets for any templates not
     // covered by domain presets
     const coveredIds = new Set(
-      domain
-        .map((p) => p.recommendedTemplateId)
-        .filter(Boolean)
+      domain.map((p) => p.recommendedTemplateId).filter(Boolean)
     );
-    const templatePresets: SchemaPreset[] = this
-      .templateRegistry
+    const templatePresets: SchemaPreset[] = this.templateRegistry
       .list()
       .filter((t) => !coveredIds.has(t.template_id))
       .map((t) => ({
@@ -1678,8 +1694,8 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
    */
   onSchemaPresetApplied(preset: SchemaPreset): void {
     if (
-      preset.recommendedTemplateId
-      && this.templateRegistry.has(preset.recommendedTemplateId)
+      preset.recommendedTemplateId &&
+      this.templateRegistry.has(preset.recommendedTemplateId)
     ) {
       this.configForm.patchValue({
         output_template_id: preset.recommendedTemplateId,
@@ -1697,16 +1713,16 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
    * Recompute schema-template compatibility (ADR-063).
    */
   updateSchemaCompatibility(): void {
-    const templateId =
-      this.configForm.get('output_template_id')?.value;
+    const templateId = this.configForm.get('output_template_id')?.value;
     const template = templateId
-      ? this.templateRegistry.get(templateId) ?? null
+      ? (this.templateRegistry.get(templateId) ?? null)
       : null;
-    const schemaText =
-      this.getOutputSchemaForEditor() || null;
+    const schemaText = this.getOutputSchemaForEditor() || null;
 
-    const result: CompatibilityResult =
-      this.schemaCompat.validate(schemaText, template);
+    const result: CompatibilityResult = this.schemaCompat.validate(
+      schemaText,
+      template
+    );
 
     this.schemaCompatibility = {
       level: result.level,
@@ -1753,9 +1769,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
    * Minimal sample data per built-in template for preview.
    * ADR-066: IDs are structural, not domain-specific.
    */
-  private getPreviewSampleForTemplate(
-    templateId: string
-  ): unknown {
+  private getPreviewSampleForTemplate(templateId: string): unknown {
     const samples: Record<string, unknown> = {
       'score-table-timeline': {
         score: 'high',
@@ -1795,9 +1809,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
         status: 'investigating',
       },
       'auto-table': {
-        data: [
-          { col1: 'A', col2: 'B' },
-        ],
+        data: [{ col1: 'A', col2: 'B' }],
       },
       'bar-chart': {
         metrics: [
@@ -1816,15 +1828,11 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
         tables: [
           {
             title: 'Findings',
-            rows: [
-              { item: 'Finding 1', status: 'Open' },
-            ],
+            rows: [{ item: 'Finding 1', status: 'Open' }],
           },
           {
             title: 'Recommendations',
-            rows: [
-              { action: 'Action 1', priority: 'High' },
-            ],
+            rows: [{ action: 'Action 1', priority: 'High' }],
           },
         ],
       },
@@ -1845,9 +1853,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
   /**
    * Normalize output_schema from API (object or string) to form string.
    */
-  private normalizeOutputSchemaForForm(
-    value: unknown
-  ): string | null {
+  private normalizeOutputSchemaForForm(value: unknown): string | null {
     if (value == null) return null;
     if (typeof value === 'string') return value;
     try {
@@ -2142,9 +2148,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
    * ADR-067: Get display name for a category code.
    */
   getCategoryDisplayName(code: string): string {
-    const cat = this.categories.find(
-      (c) => c.category_code === code
-    );
+    const cat = this.categories.find((c) => c.category_code === code);
     return cat?.display_name ?? code;
   }
 
@@ -2152,9 +2156,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
    * ADR-067: Get display name for an intent type code.
    */
   getIntentDisplayName(code: string): string {
-    const intent = this.intentTypes.find(
-      (t) => t.intent_code === code
-    );
+    const intent = this.intentTypes.find((t) => t.intent_code === code);
     return intent?.display_name ?? code;
   }
 
@@ -2163,16 +2165,11 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
    * currently selected intent type.
    */
   getSelectedIntentProfile(): IntentTypeConfig | null {
-    const code =
-      this.basicInfoForm.get('intent_type')?.value;
+    const code = this.basicInfoForm.get('intent_type')?.value;
     if (!code) {
       return null;
     }
-    return (
-      this.intentTypes.find(
-        (t) => t.intent_code === code
-      ) ?? null
-    );
+    return this.intentTypes.find((t) => t.intent_code === code) ?? null;
   }
 
   getCategoryInfo(categoryId: string) {

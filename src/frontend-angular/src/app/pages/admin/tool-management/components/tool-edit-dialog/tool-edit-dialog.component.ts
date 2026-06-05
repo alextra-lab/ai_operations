@@ -24,9 +24,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { Tool, ToolUpdateRequest } from '../../models/tool-management.models';
 import { ToolAdminService } from '../../services/tool-admin.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-tool-edit-dialog',

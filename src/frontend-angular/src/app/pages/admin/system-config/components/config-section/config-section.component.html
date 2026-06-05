@@ -4,7 +4,10 @@
   <mat-expansion-panel-header>
     <mat-panel-title>
       <div class="section-header">
-        <lucide-icon [class.restart-required]="metadata.restart_required" [name]="metadata.icon"></lucide-icon>
+        <lucide-icon
+          [class.restart-required]="metadata.restart_required"
+          [name]="metadata.icon"
+        ></lucide-icon>
         <div class="section-info">
           <span class="section-title">{{ metadata.title }}</span>
           <span class="section-description">{{ metadata.description }}</span>

@@ -5,17 +5,17 @@
  * Requires developer role or higher.
  */
 
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import {
   AvailableModel,
   IntentModelDefault,
   IntentModelDefaultWithModel,
+  IntentModelHistoryEntry,
   IntentModelSummary,
   UpdateIntentModelRequest,
-  IntentModelHistoryEntry,
 } from '../models/intent-model-config.models';
 
 @Injectable({
@@ -37,9 +37,7 @@ export class IntentModelConfigService {
    * Get list of models available for intent configuration
    */
   getAvailableModels(): Observable<AvailableModel[]> {
-    return this.http.get<AvailableModel[]>(
-      `${this.baseUrl}/available-models`
-    );
+    return this.http.get<AvailableModel[]>(`${this.baseUrl}/available-models`);
   }
 
   /**

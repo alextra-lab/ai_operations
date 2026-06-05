@@ -10,8 +10,8 @@ import {
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ModelDetailedResponse } from '../../../../api/models/model-registry.models';
 import { LucideAngularModule } from 'lucide-angular';
+import { ModelDetailedResponse } from '../../../../api/models/model-registry.models';
 
 export interface ModelDetailsDialogData {
   modelId: string;
@@ -67,7 +67,9 @@ export interface ModelDetailsDialogData {
               <mat-chip
                 [class]="data.model.is_available ? 'available' : 'unavailable'"
               >
-                <lucide-icon [name]="data.model.is_available ? 'circle-check' : 'circle-x'"></lucide-icon>
+                <lucide-icon
+                  [name]="data.model.is_available ? 'circle-check' : 'circle-x'"
+                ></lucide-icon>
                 {{ data.model.is_available ? 'Available' : 'Unavailable' }}
               </mat-chip>
             </div>
@@ -86,42 +88,76 @@ export interface ModelDetailsDialogData {
               class="capability-item"
               [class.enabled]="data.model.capabilities.supports_tools"
             >
-              <lucide-icon [name]="data.model.capabilities.supports_tools ? 'circle-check' : 'circle-x'"></lucide-icon>
+              <lucide-icon
+                [name]="
+                  data.model.capabilities.supports_tools
+                    ? 'circle-check'
+                    : 'circle-x'
+                "
+              ></lucide-icon>
               <span>Tools/Functions</span>
             </div>
             <div
               class="capability-item"
               [class.enabled]="data.model.capabilities.supports_vision"
             >
-              <lucide-icon [name]="data.model.capabilities.supports_vision ? 'circle-check' : 'circle-x'"></lucide-icon>
+              <lucide-icon
+                [name]="
+                  data.model.capabilities.supports_vision
+                    ? 'circle-check'
+                    : 'circle-x'
+                "
+              ></lucide-icon>
               <span>Vision</span>
             </div>
             <div
               class="capability-item"
               [class.enabled]="data.model.capabilities.supports_audio"
             >
-              <lucide-icon [name]="data.model.capabilities.supports_audio ? 'circle-check' : 'circle-x'"></lucide-icon>
+              <lucide-icon
+                [name]="
+                  data.model.capabilities.supports_audio
+                    ? 'circle-check'
+                    : 'circle-x'
+                "
+              ></lucide-icon>
               <span>Audio</span>
             </div>
             <div
               class="capability-item"
               [class.enabled]="data.model.capabilities.supports_streaming"
             >
-              <lucide-icon [name]="data.model.capabilities.supports_streaming ? 'circle-check' : 'circle-x'"></lucide-icon>
+              <lucide-icon
+                [name]="
+                  data.model.capabilities.supports_streaming
+                    ? 'circle-check'
+                    : 'circle-x'
+                "
+              ></lucide-icon>
               <span>Streaming</span>
             </div>
             <div
               class="capability-item"
               [class.enabled]="data.model.capabilities.supports_json_mode"
             >
-              <lucide-icon [name]="data.model.capabilities.supports_json_mode ? 'circle-check' : 'circle-x'"></lucide-icon>
+              <lucide-icon
+                [name]="
+                  data.model.capabilities.supports_json_mode
+                    ? 'circle-check'
+                    : 'circle-x'
+                "
+              ></lucide-icon>
               <span>JSON Mode</span>
             </div>
             <div
               class="capability-item"
               [class.enabled]="data.model.is_reasoning_model"
             >
-              <lucide-icon [name]="data.model.is_reasoning_model ? 'circle-check' : 'circle-x'"></lucide-icon>
+              <lucide-icon
+                [name]="
+                  data.model.is_reasoning_model ? 'circle-check' : 'circle-x'
+                "
+              ></lucide-icon>
               <span>Reasoning</span>
             </div>
           </div>

@@ -26,13 +26,13 @@ import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   DeploymentStatus,
   TemplateListResponse,
   TemplateResponse,
 } from '../../api/models/template.models';
 import { TemplateService } from '../../api/services/template.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-template-library',

@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import type { ChartConfiguration, ChartOptions } from 'chart.js/auto';
+import { LucideAngularModule } from 'lucide-angular';
 import { BaseChartDirective } from 'ng2-charts';
 import { Subject, interval, takeUntil } from 'rxjs';
 import {
@@ -24,7 +25,6 @@ import {
   UsageStatsResponse,
 } from '../../api/models/analytics.models';
 import { AnalyticsService } from '../../api/services/analytics.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-usage-analytics',

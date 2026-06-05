@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 import { Observable, Subject, forkJoin, of } from 'rxjs';
 import { catchError, take, takeUntil, tap } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   UseCaseListResponse,
   UseCaseResponse,
@@ -24,7 +25,6 @@ import { UseCaseManagementService } from '../../../api/services/use-case-managem
 import { UserProfile } from '../../../core/auth/auth.models';
 import { AuthService } from '../../../core/auth/auth.service';
 import { UserManagementService } from '../user-management/services/user-management.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 interface TabState {
   data: UseCaseResponse[];

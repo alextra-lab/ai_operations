@@ -157,7 +157,10 @@
                       {{ model.provider }} • {{ model.embedding_dimensions }}D
                     </span>
                     @if (!model.is_available) {
-                      <lucide-icon class="unavailable-icon" name="triangle-alert"></lucide-icon>
+                      <lucide-icon
+                        class="unavailable-icon"
+                        name="triangle-alert"
+                      ></lucide-icon>
                     }
                   </div>
                 </mat-option>

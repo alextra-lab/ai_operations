@@ -10,7 +10,7 @@ import {
   ComponentFixture,
   fakeAsync,
   flush,
-  TestBed
+  TestBed,
 } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';

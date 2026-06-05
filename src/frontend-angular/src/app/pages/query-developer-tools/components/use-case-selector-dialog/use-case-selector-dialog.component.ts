@@ -37,6 +37,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { map, Observable, startWith, switchMap } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { QueryConfig } from '../../../../api/models/query-config.models';
 import {
   CloneRequest,
@@ -47,7 +48,6 @@ import {
 import { UseCaseManagementService } from '../../../../api/services/use-case-management.service';
 import { UserProfile } from '../../../../core/auth/auth.models';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 export interface UseCaseSelectorDialogData {
   mode: 'update' | 'clone';

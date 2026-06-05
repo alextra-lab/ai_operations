@@ -18,13 +18,13 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   formatCost,
   formatDuration,
   getSuccessRateClass,
   ToolUsageSummary,
 } from '../../models/tool-analytics.models';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-usage-by-tool-table',

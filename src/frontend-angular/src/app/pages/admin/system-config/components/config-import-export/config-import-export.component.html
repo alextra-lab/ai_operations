@@ -2,7 +2,9 @@
 <div class="dialog-container">
   <!-- Dialog Header -->
   <h2 mat-dialog-title>
-    <lucide-icon [name]="data.mode === 'export' ? 'download' : 'upload'"></lucide-icon>
+    <lucide-icon
+      [name]="data.mode === 'export' ? 'download' : 'upload'"
+    ></lucide-icon>
     {{
       data.mode === 'export' ? 'Export Configuration' : 'Import Configuration'
     }}

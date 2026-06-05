@@ -16,13 +16,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ModelPriceChangeRequest,
   ModelPriceCurrentResponse,
   ModelPriceHistoryEntry,
 } from '../../../../api/models/pricing.models';
 import { AdminPricingService } from '../../../../api/services/admin-pricing.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 export interface ModelPricingDialogData {
   modelId: string; // external model_id string

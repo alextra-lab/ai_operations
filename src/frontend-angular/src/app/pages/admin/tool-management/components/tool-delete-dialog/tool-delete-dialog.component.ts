@@ -18,9 +18,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ToolListItem } from '../../models/tool-management.models';
 import { ToolAdminService } from '../../services/tool-admin.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-tool-delete-dialog',

@@ -13,14 +13,14 @@ h2[mat-dialog-title] {
   gap: 12px;
   margin: 0;
   padding: 20px 24px;
-  background: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
 
   :is(mat-icon, lucide-icon) {
     font-size: 28px;
     width: 28px;
     height: 28px;
-    color: #1976d2;
+    color: var(--primary);
   }
 }
 
@@ -116,7 +116,7 @@ mat-dialog-content {
 
 mat-dialog-actions {
   padding: 16px 24px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border);
   background: #f9f9f9;
 
   button {

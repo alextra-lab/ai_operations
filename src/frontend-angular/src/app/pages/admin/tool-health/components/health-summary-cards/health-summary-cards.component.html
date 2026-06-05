@@ -48,7 +48,10 @@
   <mat-card class="summary-card offline">
     <mat-card-content>
       <div class="card-content">
-        <lucide-icon class="card-icon offline" name="circle-alert"></lucide-icon>
+        <lucide-icon
+          class="card-icon offline"
+          name="circle-alert"
+        ></lucide-icon>
         <div class="card-info">
           <span class="card-value" *ngIf="!isLoading">
             {{ summary?.offline ?? 0 }}

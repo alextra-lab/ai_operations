@@ -20,6 +20,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import type { ChartConfiguration, ChartOptions } from 'chart.js/auto';
+import { LucideAngularModule } from 'lucide-angular';
 import { BaseChartDirective } from 'ng2-charts';
 import { Subject, interval, takeUntil } from 'rxjs';
 import {
@@ -29,7 +30,6 @@ import {
   TokenUsageSummary,
 } from '../../api/models/token-usage.models';
 import { AdminAnalyticsService } from '../../api/services/admin-analytics.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-token-usage-dashboard',

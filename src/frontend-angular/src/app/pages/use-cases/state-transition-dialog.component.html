@@ -2,7 +2,9 @@
 <!-- ADR-012 Compliant: Material components + Tailwind utilities -->
 
 <h2 mat-dialog-title class="flex items-center gap-2">
-  <lucide-icon [name]="getStateIcon(form.get('targetState')?.value)"></lucide-icon>
+  <lucide-icon
+    [name]="getStateIcon(form.get('targetState')?.value)"
+  ></lucide-icon>
   <span>Confirm State Transition</span>
 </h2>
 
@@ -16,7 +18,10 @@
           class="flex items-center gap-2"
           [ngClass]="getStateColor(data.useCase.lifecycle_state)"
         >
-          <lucide-icon class="text-lg" [name]="getStateIcon(data.useCase.lifecycle_state)"></lucide-icon>
+          <lucide-icon
+            class="text-lg"
+            [name]="getStateIcon(data.useCase.lifecycle_state)"
+          ></lucide-icon>
           <span class="font-semibold">{{
             getStateName(data.useCase.lifecycle_state)
           }}</span>
@@ -31,7 +36,10 @@
           class="flex items-center gap-2"
           [ngClass]="getStateColor(form.get('targetState')?.value)"
         >
-          <lucide-icon class="text-lg" [name]="getStateIcon(form.get('targetState')?.value)"></lucide-icon>
+          <lucide-icon
+            class="text-lg"
+            [name]="getStateIcon(form.get('targetState')?.value)"
+          ></lucide-icon>
           <span class="font-semibold">{{
             getStateName(form.get('targetState')?.value)
           }}</span>
@@ -61,7 +69,10 @@
       class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2"
       *ngIf="getWarningMessage()"
     >
-      <lucide-icon class="text-yellow-600 mt-0.5" name="triangle-alert"></lucide-icon>
+      <lucide-icon
+        class="text-yellow-600 mt-0.5"
+        name="triangle-alert"
+      ></lucide-icon>
       <p class="text-sm text-yellow-800 m-0">{{ getWarningMessage() }}</p>
     </div>
 
@@ -136,7 +147,9 @@
     [disabled]="!form.valid"
     type="button"
   >
-    <lucide-icon [name]="getStateIcon(form.get('targetState')?.value)"></lucide-icon>
+    <lucide-icon
+      [name]="getStateIcon(form.get('targetState')?.value)"
+    ></lucide-icon>
     Confirm Transition
   </button>
 </mat-dialog-actions>

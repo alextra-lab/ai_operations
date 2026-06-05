@@ -84,6 +84,10 @@ $aio-ui-theme: mat.define-theme(
 // LAYER 4: Global App Overrides & Custom Styles
 // ============================================================================
 
+// Design-system component skins + page scaffold defaults
+@import 'styles/material-overrides';
+@import 'styles/page-scaffold';
+
 // ----------------------------------------------------------------------------
 // Design-system bridge: route Material system variables through the design
 // tokens (src/styles/tokens.css) so Material components and the Tailwind

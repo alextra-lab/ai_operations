@@ -1,0 +1,197 @@
+// ============================================================================
+// Material component skins — design-system re-skin (kit.css component spec)
+// Applied via Material's CSS custom-property tokens wherever possible; class
+// overrides only where Material exposes no token.
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// Buttons — raised: cobalt, h40, radius-sm; stroked: white + primary text,
+// n-300 border; text: primary; icon-button: 40px round fg-3. Focus: --ring.
+// ----------------------------------------------------------------------------
+:root {
+  --mdc-filled-button-container-color: var(--primary);
+  --mdc-filled-button-label-text-color: #fff;
+  --mdc-filled-button-container-shape: var(--radius-sm);
+  --mdc-filled-button-container-height: 40px;
+  --mdc-protected-button-container-color: var(--primary);
+  --mdc-protected-button-label-text-color: #fff;
+  --mdc-protected-button-container-shape: var(--radius-sm);
+  --mdc-protected-button-container-height: 40px;
+  --mdc-outlined-button-label-text-color: var(--primary);
+  --mdc-outlined-button-outline-color: var(--n-300);
+  --mdc-outlined-button-container-shape: var(--radius-sm);
+  --mdc-outlined-button-container-height: 40px;
+  --mdc-text-button-label-text-color: var(--primary);
+  --mdc-text-button-container-shape: var(--radius-sm);
+  --mat-icon-button-icon-color: var(--fg-3);
+
+  // Cards / panels
+  --mdc-elevated-card-container-color: var(--surface);
+  --mdc-elevated-card-container-shape: var(--radius-md);
+  --mdc-elevated-card-container-elevation: var(--shadow-1);
+  --mdc-outlined-card-container-color: var(--surface);
+  --mdc-outlined-card-container-shape: var(--radius-md);
+  --mdc-outlined-card-outline-color: var(--border);
+
+  // Form fields — outline 1px n-300, radius-sm; focus primary
+  --mdc-outlined-text-field-outline-color: var(--n-300);
+  --mdc-outlined-text-field-hover-outline-color: var(--n-400);
+  --mdc-outlined-text-field-focus-outline-color: var(--primary);
+  --mdc-outlined-text-field-container-shape: var(--radius-sm);
+  --mdc-outlined-text-field-label-text-color: var(--fg-3);
+  --mdc-outlined-text-field-focus-label-text-color: var(--primary);
+  --mdc-outlined-text-field-input-text-color: var(--fg-1);
+
+  // Tables — header surface-2, hairline rows
+  --mat-table-background-color: var(--surface);
+  --mat-table-header-headline-color: var(--fg-3);
+  --mat-table-header-headline-size: 12px;
+  --mat-table-header-headline-weight: 600;
+  --mat-table-row-item-label-text-color: var(--fg-2);
+  --mat-table-row-item-label-text-size: 13.5px;
+  --mat-table-row-item-outline-color: var(--border-soft);
+
+  // Slide toggle — on = success, off = muted
+  --mdc-switch-selected-track-color: var(--success);
+  --mdc-switch-selected-hover-track-color: var(--success);
+  --mdc-switch-selected-focus-track-color: var(--success);
+  --mdc-switch-selected-pressed-track-color: var(--success);
+  --mdc-switch-selected-handle-color: #fff;
+  --mdc-switch-selected-hover-handle-color: #fff;
+  --mdc-switch-selected-focus-handle-color: #fff;
+  --mdc-switch-selected-pressed-handle-color: #fff;
+
+  // Chips — bordered, not flat fills
+  --mdc-chip-container-shape-radius: var(--radius-pill);
+  --mdc-chip-elevated-container-color: var(--surface);
+  --mdc-chip-outline-color: #d7dee8;
+  --mdc-chip-label-text-color: var(--fg-2);
+
+  // Dialogs
+  --mdc-dialog-container-color: var(--surface);
+  --mdc-dialog-container-shape: var(--radius-lg);
+
+  // Expansion panels / menus / tooltips
+  --mat-expansion-container-background-color: var(--surface);
+  --mat-expansion-container-shape: var(--radius-md);
+  --mat-menu-container-color: var(--surface);
+  --mat-menu-container-shape: var(--radius-sm);
+
+  // Snackbar on ink
+  --mdc-snackbar-container-color: var(--n-800);
+  --mdc-snackbar-container-shape: var(--radius-sm);
+}
+
+// Focus ring on all Material buttons
+.mat-mdc-raised-button:focus-visible,
+.mat-mdc-unelevated-button:focus-visible,
+.mat-mdc-outlined-button:focus-visible,
+.mat-mdc-button:focus-visible,
+.mat-mdc-icon-button:focus-visible {
+  box-shadow: var(--ring);
+  outline: none;
+}
+
+// Stroked buttons: white field, primary-50 hover (kit .btn--stroked)
+.mat-mdc-outlined-button:not(:disabled) {
+  background: var(--surface);
+
+  &:hover {
+    background: var(--primary-50);
+    border-color: var(--primary-200);
+  }
+}
+
+// Danger buttons (color="warn"): white field, deep error text, tinted border
+.mat-mdc-raised-button.mat-warn:not(:disabled),
+.mat-mdc-unelevated-button.mat-warn:not(:disabled) {
+  background: var(--surface);
+  color: var(--error-fg);
+  border: 1px solid #e6bcc1;
+
+  &:hover {
+    background: var(--error-bg);
+  }
+
+  :is(mat-icon, lucide-icon) {
+    color: var(--error-fg);
+  }
+}
+
+.mat-mdc-button.mat-warn,
+.mat-mdc-icon-button.mat-warn {
+  color: var(--error-fg);
+
+  &:hover {
+    background: var(--error-bg);
+  }
+}
+
+// Cards: 1px border + rest shadow per kit .panel
+.mat-mdc-card {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-1) !important;
+}
+
+// Tables: header row + hover (no Material token for these)
+.mat-mdc-header-row {
+  background: var(--surface-2);
+}
+
+.mat-mdc-row:hover {
+  background: var(--n-50);
+}
+
+// Chips: hairline border (Material renders outline only for outlined chips)
+.mat-mdc-standard-chip {
+  border: 1px solid #d7dee8;
+}
+
+// ----------------------------------------------------------------------------
+// Badges — lifecycle/state + role badges (app-level conventions used across
+// tables and cards). Tinted bg + matching fg + 1px tinted border.
+// ----------------------------------------------------------------------------
+.badge-draft,
+.state-draft {
+  background: var(--neutral-bg);
+  color: var(--neutral-fg);
+  border: 1px solid var(--n-300);
+}
+
+.badge-review,
+.state-review {
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  border: 1px solid #ecd3a3;
+}
+
+.badge-published,
+.state-published {
+  background: var(--success-bg);
+  color: var(--success-fg);
+  border: 1px solid #b5e2c8;
+}
+
+.badge-archived,
+.state-archived {
+  background: var(--error-bg);
+  color: var(--error-fg);
+  border: 1px solid #e6bcc1;
+}
+
+// Role badge — white field, primary-100 border, primary-dark mono text
+.role-badge {
+  background: var(--surface);
+  border: 1px solid var(--primary-100);
+  color: var(--primary-dark);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+}
+
+// Code styling — DM Mono
+code,
+pre {
+  font-family: var(--font-mono);
+}

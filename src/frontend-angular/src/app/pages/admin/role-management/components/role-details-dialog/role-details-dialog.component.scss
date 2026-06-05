@@ -14,7 +14,7 @@
 
 .role-description {
   padding: 16px;
-  background: #f5f5f5;
+  background: var(--surface-2);
   border-radius: 4px;
   margin-bottom: 16px;
   color: #666;
@@ -67,11 +67,11 @@
 .assignments-table {
   width: 100%;
   background: #fff;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
   border-radius: 4px;
 
   th {
-    background: #f5f5f5;
+    background: var(--surface-2);
     font-weight: 600;
     color: #666;
   }

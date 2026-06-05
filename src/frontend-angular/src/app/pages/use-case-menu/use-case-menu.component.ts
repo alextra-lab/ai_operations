@@ -20,9 +20,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { UseCase } from '../../api/models/use-case.models';
 import { UseCaseService } from '../../api/services/use-case.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-use-case-menu',

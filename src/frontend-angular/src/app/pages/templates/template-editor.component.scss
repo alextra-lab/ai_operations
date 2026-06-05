@@ -26,7 +26,7 @@
 
 .form-section h3 {
   margin: 0;
-  color: #1976d2;
+  color: var(--primary);
   font-size: 18px;
   font-weight: 500;
 }
@@ -36,7 +36,7 @@
 }
 
 .model-selector-card {
-  background: #f5f5f5;
+  background: var(--surface-2);
   margin-top: 8px;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .config-preview {
-  background: #f5f5f5;
+  background: var(--surface-2);
   padding: 16px;
   border-radius: 4px;
   font-family: 'Courier New', monospace;

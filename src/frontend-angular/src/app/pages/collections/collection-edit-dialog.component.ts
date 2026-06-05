@@ -23,12 +23,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   Collection,
   CollectionUpdate,
 } from '../../api/models/collection.models';
 import { CollectionService } from '../../api/services/collection.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-collection-edit-dialog',

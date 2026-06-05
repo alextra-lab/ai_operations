@@ -35,6 +35,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   TemplateDiffResponse,
   TemplateResponse,
@@ -42,7 +43,6 @@ import {
   TemplateVersionResponse,
 } from '../../api/models/template.models';
 import { TemplateService } from '../../api/services/template.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-template-detail',

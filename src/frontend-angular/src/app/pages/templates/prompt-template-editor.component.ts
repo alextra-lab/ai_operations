@@ -27,13 +27,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   TemplateCreate,
   TemplateResponse,
   TemplateUpdate,
 } from '../../api/models/template.models';
 import { TemplateService } from '../../api/services/template.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-prompt-template-editor',

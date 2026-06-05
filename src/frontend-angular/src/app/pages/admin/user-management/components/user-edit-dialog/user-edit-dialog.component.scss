@@ -18,12 +18,12 @@
 
   label {
     font-weight: 500;
-    color: rgba(0, 0, 0, 0.87);
+    color: var(--fg-1);
   }
 }
 
 .audit-info {
-  background: #f5f5f5;
+  background: var(--surface-2);
   padding: 12px;
   border-radius: 4px;
   margin-top: 8px;

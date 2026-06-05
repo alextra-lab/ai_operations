@@ -19,6 +19,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ProviderCreateDialogComponent } from './components/provider-create-dialog/provider-create-dialog.component';
 import { ProviderEditDialogComponent } from './components/provider-edit-dialog/provider-edit-dialog.component';
 import {
@@ -26,7 +27,6 @@ import {
   ProviderFilters,
 } from './models/provider-management.models';
 import { ProviderManagementService } from './services/provider-management.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-provider-management',

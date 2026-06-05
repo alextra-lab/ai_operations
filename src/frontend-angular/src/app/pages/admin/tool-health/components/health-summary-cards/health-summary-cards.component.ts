@@ -10,8 +10,8 @@ import { Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { HealthSummary } from '../../models/tool-health.models';
 import { LucideAngularModule } from 'lucide-angular';
+import { HealthSummary } from '../../models/tool-health.models';
 
 @Component({
   selector: 'app-health-summary-cards',

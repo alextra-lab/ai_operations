@@ -76,7 +76,9 @@
       <span class="detail-value">
         <lucide-icon
           [class.success]="data.log.success"
-          [class.failure]="!data.log.success" [name]="data.log.success ? 'circle-check' : 'circle-alert'"></lucide-icon>
+          [class.failure]="!data.log.success"
+          [name]="data.log.success ? 'circle-check' : 'circle-alert'"
+        ></lucide-icon>
         {{ data.log.success ? 'Success' : 'Failure' }}
       </span>
     </div>

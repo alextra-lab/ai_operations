@@ -7,8 +7,7 @@ import { LucideAngularModule } from 'lucide-angular';
 @Component({
   selector: 'app-unauthorized',
   standalone: true,
-  imports: [
-    LucideAngularModule,MatCardModule, MatButtonModule],
+  imports: [LucideAngularModule, MatCardModule, MatButtonModule],
   template: `
     <mat-card class="unauthorized-card">
       <mat-card-header>

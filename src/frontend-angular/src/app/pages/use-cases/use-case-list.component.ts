@@ -29,22 +29,22 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
+import {
+  CategoryConfig,
+  IntentTypeConfig,
+} from '../../api/models/platform-config.models';
 import {
   LifecycleState,
   UseCaseListFilters,
   UseCaseResponse,
 } from '../../api/models/use-case-management.models';
-import {
-  CategoryConfig,
-  IntentTypeConfig,
-} from '../../api/models/platform-config.models';
 import { PlatformConfigService } from '../../api/services/platform-config.service';
 import { UseCaseManagementService } from '../../api/services/use-case-management.service';
 import {
   StateTransitionDialogComponent,
   StateTransitionDialogResult,
 } from './state-transition-dialog.component';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-use-case-list',
@@ -340,9 +340,7 @@ export class UseCaseListComponent implements OnInit, OnDestroy {
    * ADR-067: Get display name for a category code.
    */
   getCategoryDisplayName(code: string): string {
-    const cat = this.categories.find(
-      (c) => c.category_code === code
-    );
+    const cat = this.categories.find((c) => c.category_code === code);
     return cat?.display_name ?? code;
   }
 
@@ -350,9 +348,7 @@ export class UseCaseListComponent implements OnInit, OnDestroy {
    * ADR-067: Get display name for an intent type code.
    */
   getIntentDisplayName(code: string): string {
-    const intent = this.intentTypes.find(
-      (t) => t.intent_code === code
-    );
+    const intent = this.intentTypes.find((t) => t.intent_code === code);
     return intent?.display_name ?? code;
   }
 

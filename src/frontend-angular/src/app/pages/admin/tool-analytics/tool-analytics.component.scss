@@ -13,9 +13,8 @@
 /* Layer 2: Page Header */
 .page-header-layer {
   flex: 0 0 auto;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-bottom: 1px solid var(--border);
   z-index: 10;
 }
 
@@ -43,7 +42,7 @@
   color: #333;
 
   :is(mat-icon, lucide-icon) {
-    color: #1976d2;
+    color: var(--primary);
     font-size: 28px;
     width: 28px;
     height: 28px;
@@ -140,7 +139,7 @@
 
   ::ng-deep .mat-mdc-tab-header {
     background: #fafafa;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border);
   }
 }
 

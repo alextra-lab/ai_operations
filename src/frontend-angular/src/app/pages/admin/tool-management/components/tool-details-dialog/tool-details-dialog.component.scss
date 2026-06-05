@@ -13,7 +13,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border);
 
   h2 {
     margin: 0;
@@ -105,7 +105,7 @@
 }
 
 .status-disabled {
-  background-color: #e0e0e0 !important;
+  background-color: var(--border) !important;
   color: #616161 !important;
 }
 
@@ -121,7 +121,7 @@
 
 .dialog-actions {
   padding: 1rem 1.5rem;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
@@ -154,7 +154,7 @@
   margin-top: 1rem;
 
   .info-icon {
-    color: #1976d2;
+    color: var(--primary);
     font-size: 1.25rem;
     width: 1.25rem;
     height: 1.25rem;
@@ -180,7 +180,7 @@
 }
 
 .security-none {
-  background-color: #e0e0e0 !important;
+  background-color: var(--border) !important;
   color: #616161 !important;
 }
 
@@ -206,7 +206,7 @@
 }
 
 .flow-none {
-  background-color: #e0e0e0 !important;
+  background-color: var(--border) !important;
   color: #616161 !important;
 }
 
@@ -228,7 +228,7 @@
 
 // Data Sensitivity badges
 .sensitivity-public {
-  background-color: #e0e0e0 !important;
+  background-color: var(--border) !important;
   color: #616161 !important;
 }
 

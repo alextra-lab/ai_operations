@@ -110,7 +110,9 @@
                   provider.last_health_check
                     ? 'Last check: ' + provider.last_health_check
                     : 'Never checked'
-                " [name]="getHealthStatusIcon(provider)"></lucide-icon>
+                "
+                [name]="getHealthStatusIcon(provider)"
+              ></lucide-icon>
             </td>
           </ng-container>
 

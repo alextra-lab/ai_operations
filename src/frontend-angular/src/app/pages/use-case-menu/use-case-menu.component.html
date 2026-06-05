@@ -30,7 +30,11 @@
             <!-- Search (flexible width) -->
             <mat-form-field appearance="outline" class="flex-1 min-w-[200px]">
               <mat-label>Search use cases</mat-label>
-              <input matInput formControlName="search" placeholder="Search by name, description, or tags" />
+              <input
+                matInput
+                formControlName="search"
+                placeholder="Search by name, description, or tags"
+              />
               <mat-icon matSuffix>search</mat-icon>
             </mat-form-field>
 
@@ -39,7 +43,10 @@
               <mat-label>Category</mat-label>
               <mat-select formControlName="category">
                 <mat-option value="all">All Categories</mat-option>
-                <mat-option *ngFor="let category of availableCategories" [value]="category">
+                <mat-option
+                  *ngFor="let category of availableCategories"
+                  [value]="category"
+                >
                   {{ getCategoryDisplayName(category) }}
                 </mat-option>
               </mat-select>
@@ -56,8 +63,15 @@
             </mat-form-field>
 
             <!-- Sort Order Button -->
-            <button mat-icon-button [matMenuTriggerFor]="sortMenu" class="shrink-0" matTooltip="Sort order">
-              <lucide-icon [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"></lucide-icon>
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="sortMenu"
+              class="shrink-0"
+              matTooltip="Sort order"
+            >
+              <lucide-icon
+                [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
+              ></lucide-icon>
             </button>
             <mat-menu #sortMenu="matMenu">
               <button mat-menu-item (click)="onSortChange(sortBy, 'asc')">
@@ -75,12 +89,20 @@
           <div class="flex gap-3 items-center">
             <!-- View Mode Toggle -->
             <div class="view-controls">
-              <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="onViewModeChange('grid')"
-                matTooltip="Grid View">
+              <button
+                mat-icon-button
+                [class.active]="viewMode === 'grid'"
+                (click)="onViewModeChange('grid')"
+                matTooltip="Grid View"
+              >
                 <lucide-icon name="layout-grid"></lucide-icon>
               </button>
-              <button mat-icon-button [class.active]="viewMode === 'list'" (click)="onViewModeChange('list')"
-                matTooltip="List View">
+              <button
+                mat-icon-button
+                [class.active]="viewMode === 'list'"
+                (click)="onViewModeChange('list')"
+                matTooltip="List View"
+              >
                 <lucide-icon name="list"></lucide-icon>
               </button>
             </div>
@@ -88,7 +110,10 @@
             <!-- Items Per Page -->
             <mat-form-field appearance="outline" class="w-24 shrink-0">
               <mat-label>Per page</mat-label>
-              <mat-select [value]="itemsPerPage" (selectionChange)="onItemsPerPageChange($event.value)">
+              <mat-select
+                [value]="itemsPerPage"
+                (selectionChange)="onItemsPerPageChange($event.value)"
+              >
                 <mat-option value="6">6</mat-option>
                 <mat-option value="12">12</mat-option>
                 <mat-option value="24">24</mat-option>
@@ -97,13 +122,23 @@
             </mat-form-field>
 
             <!-- Clear Filters -->
-            <button mat-button type="button" (click)="searchForm.reset()" *ngIf="hasFilters">
+            <button
+              mat-button
+              type="button"
+              (click)="searchForm.reset()"
+              *ngIf="hasFilters"
+            >
               <lucide-icon name="x"></lucide-icon>
               Clear Filters
             </button>
 
             <!-- Refresh -->
-            <button mat-button type="button" (click)="refresh()" [disabled]="isLoading">
+            <button
+              mat-button
+              type="button"
+              (click)="refresh()"
+              [disabled]="isLoading"
+            >
               <lucide-icon name="refresh-cw"></lucide-icon>
               Refresh
             </button>
@@ -113,9 +148,8 @@
 
             <!-- Results summary -->
             <div class="text-sm text-gray-600" *ngIf="!isLoading">
-              Found <strong class="text-blue-600">{{ totalItems }}</strong> use case{{
-              totalItems !== 1 ? 's' : ''
-              }}
+              Found <strong class="text-blue-600">{{ totalItems }}</strong> use
+              case{{ totalItems !== 1 ? 's' : '' }}
               <span *ngIf="hasFilters" class="text-blue-500">(filtered)</span>
             </div>
           </div>
@@ -148,23 +182,38 @@
       <h3>No Use Cases Found</h3>
       <p *ngIf="!hasFilters">No use cases are available for your role.</p>
       <p *ngIf="hasFilters">No use cases match your current filters.</p>
-      <button *ngIf="hasFilters" mat-raised-button color="primary" (click)="searchForm.reset()">
+      <button
+        *ngIf="hasFilters"
+        mat-raised-button
+        color="primary"
+        (click)="searchForm.reset()"
+      >
         Clear Filters
       </button>
     </div>
 
     <!-- Use Cases Grid -->
-    <div class="use-cases-grid" *ngIf="hasUseCases && viewMode === 'grid' && !isLoading">
-      <mat-card *ngFor="let useCase of paginatedUseCases" class="use-case-card" (click)="openUseCase(useCase)"
-        [style.border-left-color]="getUseCaseColor(useCase.category)">
+    <div
+      class="use-cases-grid"
+      *ngIf="hasUseCases && viewMode === 'grid' && !isLoading"
+    >
+      <mat-card
+        *ngFor="let useCase of paginatedUseCases"
+        class="use-case-card"
+        (click)="openUseCase(useCase)"
+        [style.border-left-color]="getUseCaseColor(useCase.category)"
+      >
         <mat-card-header>
           <div mat-card-avatar class="use-case-avatar">
-            <lucide-icon [style.color]="getUseCaseColor(useCase.category)" [name]="getUseCaseIcon(useCase.category)"></lucide-icon>
+            <lucide-icon
+              [style.color]="getUseCaseColor(useCase.category)"
+              [name]="getUseCaseIcon(useCase.category)"
+            ></lucide-icon>
           </div>
           <mat-card-title>{{ useCase.name }}</mat-card-title>
           <mat-card-subtitle>{{
             getCategoryDisplayName(useCase.category)
-            }}</mat-card-subtitle>
+          }}</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
@@ -177,9 +226,11 @@
             </div>
             <div class="meta-item" *ngIf="useCase.tags?.length">
               <lucide-icon name="tag"></lucide-icon>
-              <span>{{ useCase.tags?.length }} tag{{
-                useCase.tags?.length !== 1 ? 's' : ''
-                }}</span>
+              <span
+                >{{ useCase.tags?.length }} tag{{
+                  useCase.tags?.length !== 1 ? 's' : ''
+                }}</span
+              >
             </div>
           </div>
 
@@ -188,7 +239,10 @@
               <mat-chip *ngFor="let tag of useCase.tags?.slice(0, 3)">
                 {{ tag }}
               </mat-chip>
-              <mat-chip *ngIf="(useCase.tags?.length ?? 0) > 3" class="more-chip">
+              <mat-chip
+                *ngIf="(useCase.tags?.length ?? 0) > 3"
+                class="more-chip"
+              >
                 +{{ (useCase.tags?.length ?? 0) - 3 }}
               </mat-chip>
             </mat-chip-listbox>
@@ -218,12 +272,21 @@
     </div>
 
     <!-- Use Cases List -->
-    <div class="use-cases-list" *ngIf="hasUseCases && viewMode === 'list' && !isLoading">
+    <div
+      class="use-cases-list"
+      *ngIf="hasUseCases && viewMode === 'list' && !isLoading"
+    >
       <mat-list>
-        <mat-list-item *ngFor="let useCase of paginatedUseCases" class="use-case-list-item"
-          (click)="openUseCase(useCase)">
+        <mat-list-item
+          *ngFor="let useCase of paginatedUseCases"
+          class="use-case-list-item"
+          (click)="openUseCase(useCase)"
+        >
           <div matListItemAvatar class="list-avatar">
-            <lucide-icon [style.color]="getUseCaseColor(useCase.category)" [name]="getUseCaseIcon(useCase.category)"></lucide-icon>
+            <lucide-icon
+              [style.color]="getUseCaseColor(useCase.category)"
+              [name]="getUseCaseIcon(useCase.category)"
+            ></lucide-icon>
           </div>
 
           <div matListItemTitle class="list-title">{{ useCase.name }}</div>
@@ -233,12 +296,15 @@
           </div>
           <div matListItemMeta class="list-meta">
             <div class="meta-info">
-              <span class="category-badge" [style.background-color]="getUseCaseColor(useCase.category)">
+              <span
+                class="category-badge"
+                [style.background-color]="getUseCaseColor(useCase.category)"
+              >
                 {{ getCategoryDisplayName(useCase.category) }}
               </span>
               <span class="tags-count" *ngIf="useCase.tags?.length">
                 {{ useCase.tags?.length }} tag{{
-                useCase.tags?.length !== 1 ? 's' : ''
+                  useCase.tags?.length !== 1 ? 's' : ''
                 }}
               </span>
             </div>
@@ -263,13 +329,18 @@
         </mat-list-item>
       </mat-list>
     </div>
-
   </div>
 
   <!-- Layer 4: Page Footer (NEVER SCROLLS) -->
   <div class="page-footer" *ngIf="showPagination">
-    <mat-paginator [length]="totalItems" [pageSize]="itemsPerPage" [pageIndex]="currentPage - 1"
-      [pageSizeOptions]="[6, 12, 24, 48]" (page)="onPageChange($event.pageIndex + 1)" showFirstLastButtons>
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="itemsPerPage"
+      [pageIndex]="currentPage - 1"
+      [pageSizeOptions]="[6, 12, 24, 48]"
+      (page)="onPageChange($event.pageIndex + 1)"
+      showFirstLastButtons
+    >
     </mat-paginator>
   </div>
 </div>

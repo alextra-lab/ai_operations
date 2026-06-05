@@ -10,19 +10,18 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   AggregateAnalytics,
   formatCost,
   formatDuration,
   getSuccessRateClass,
 } from '../../models/tool-analytics.models';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-usage-summary-cards',
   standalone: true,
-  imports: [
-    LucideAngularModule,CommonModule, MatCardModule, MatTooltipModule],
+  imports: [LucideAngularModule, CommonModule, MatCardModule, MatTooltipModule],
   templateUrl: './usage-summary-cards.component.html',
   styleUrls: ['./usage-summary-cards.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

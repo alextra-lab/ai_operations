@@ -26,7 +26,9 @@
           <lucide-icon
             *ngIf="template.is_active_version"
             class="text-green-600 text-base"
-            matTooltip="Active Version" name="circle-check"></lucide-icon>
+            matTooltip="Active Version"
+            name="circle-check"
+          ></lucide-icon>
         </div>
       </div>
     </div>
@@ -91,7 +93,9 @@
                     >
                     <lucide-icon
                       *ngIf="version.is_active_version"
-                      class="text-green-600 text-sm" name="circle-check"></lucide-icon>
+                      class="text-green-600 text-sm"
+                      name="circle-check"
+                    ></lucide-icon>
                     <span
                       [class]="getStatusClass(version.deployment_status)"
                       class="px-2 py-1 rounded-full text-xs"
@@ -121,7 +125,13 @@
                     matTooltip="Select for comparison"
                     (click)="toggleVersionSelection(1, version.version_number)"
                   >
-                    <lucide-icon [name]="selectedVersion1 === version.version_number ? 'square-check' : 'square'"></lucide-icon>
+                    <lucide-icon
+                      [name]="
+                        selectedVersion1 === version.version_number
+                          ? 'square-check'
+                          : 'square'
+                      "
+                    ></lucide-icon>
                   </button>
                 </div>
               </div>

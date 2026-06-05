@@ -13,12 +13,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   GroupingRoleInfo,
   SYSTEM_ROLES,
 } from '../role-management/models/role-management.models';
 import { GroupingRolesService } from './services/grouping-roles.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 const ROLE_PATTERN = /^[a-z][a-z0-9_-]{1,49}$/;
 

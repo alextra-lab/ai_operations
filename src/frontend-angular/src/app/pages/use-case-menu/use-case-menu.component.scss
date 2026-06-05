@@ -18,9 +18,8 @@
 .page-header-section {
   flex: 0 0 auto;
   z-index: 100;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-bottom: 1px solid var(--border);
 
   .page-title {
     padding: 16px 24px 12px 24px;
@@ -30,21 +29,22 @@
       align-items: center;
       gap: 10px;
       margin: 0;
-      font-size: 24px;
-      font-weight: 500;
+      font-size: var(--h1-size);
+      font-weight: var(--h1-weight);
+      letter-spacing: -0.01em;
       height: 36px;
 
       :is(mat-icon, lucide-icon) {
         font-size: 28px;
         width: 28px;
         height: 28px;
-        color: #1976d2;
+        color: var(--primary);
       }
     }
 
     .subtitle {
       margin: 4px 0 0 0;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--fg-3);
       font-size: 13px;
     }
   }
@@ -53,7 +53,7 @@
     padding: 0 24px 12px 24px;
 
     .controls-container {
-      background: #f5f5f5;
+      background: var(--surface-2);
       border-radius: 6px;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       padding: 8px 16px 8px 16px;
@@ -75,7 +75,7 @@
         gap: 0;
         border-radius: 6px;
         overflow: hidden;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--border);
         height: 40px;
 
         button {
@@ -87,11 +87,11 @@
           height: 40px;
 
           &:hover {
-            background: #f5f5f5;
+            background: var(--surface-2);
           }
 
           &.active {
-            background: #1976d2;
+            background: var(--primary);
             color: white;
 
             :is(mat-icon, lucide-icon) {
@@ -100,7 +100,7 @@
           }
 
           :is(mat-icon, lucide-icon) {
-            color: rgba(0, 0, 0, 0.6);
+            color: var(--fg-3);
             transition: color 0.2s ease;
           }
         }
@@ -124,7 +124,7 @@
   flex: 0 0 auto;
   z-index: 90;
   background: white;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border);
   box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.08);
 
   mat-paginator {
@@ -280,7 +280,7 @@
           height: 24px;
 
           &.more-chip {
-            background-color: #e0e0e0;
+            background-color: var(--border);
             color: #666;
           }
         }
@@ -393,7 +393,7 @@
   .page-header-section {
     .page-controls {
       .controls-container {
-        form>div {
+        form > div {
           flex-wrap: wrap;
         }
       }
@@ -433,7 +433,7 @@
       .controls-container {
         padding: 8px 12px;
 
-        form>div {
+        form > div {
           flex-direction: column;
           align-items: stretch;
 

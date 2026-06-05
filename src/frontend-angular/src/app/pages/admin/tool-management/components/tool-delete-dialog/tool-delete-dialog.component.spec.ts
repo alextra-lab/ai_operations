@@ -6,7 +6,7 @@ import {
   ComponentFixture,
   fakeAsync,
   flush,
-  TestBed
+  TestBed,
 } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';

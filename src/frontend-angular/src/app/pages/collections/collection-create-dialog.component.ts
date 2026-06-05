@@ -25,12 +25,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { CollectionCreate } from '../../api/models/collection.models';
 import { Model } from '../../api/models/model-registry.models';
 import { CollectionService } from '../../api/services/collection.service';
 import { ModelRegistryService } from '../../api/services/model-registry.service';
 import { SystemConfigService } from '../admin/system-config/services/system-config.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-collection-create-dialog',

@@ -19,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Subject, forkJoin, takeUntil } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { GatewayCostChartComponent } from './components/charts/gateway-cost-chart.component';
 import { GatewayLatencyChartComponent } from './components/charts/gateway-latency-chart.component';
 import { GatewayTokenChartComponent } from './components/charts/gateway-token-chart.component';
@@ -32,7 +33,6 @@ import {
   TimeSeriesData,
 } from './models/gateway-metrics.models';
 import { GatewayMetricsService } from './services/gateway-metrics.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-gateway-metrics',

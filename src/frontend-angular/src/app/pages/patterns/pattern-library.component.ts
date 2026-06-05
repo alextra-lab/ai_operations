@@ -20,6 +20,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   PATTERN_CATEGORIES,
   PromptPattern,
@@ -27,7 +28,6 @@ import {
 } from '../../api/models/prompt-patterns.models';
 import { PromptPatternsService } from '../../api/services/prompt-patterns.service';
 import { PatternDetailDialogComponent } from './pattern-detail-dialog.component';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-pattern-library',
@@ -81,7 +81,7 @@ export class PatternLibraryComponent implements OnInit, OnDestroy {
   constructor(
     private patternsService: PromptPatternsService,
     private dialog: MatDialog
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // Load saved preferences

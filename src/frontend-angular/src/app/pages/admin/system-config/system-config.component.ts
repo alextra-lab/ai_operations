@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ModelRegistryService } from '../../../api/services/model-registry.service';
 import { ConfigImportExportComponent } from './components/config-import-export/config-import-export.component';
 import { ConfigSectionComponent } from './components/config-section/config-section.component';
@@ -24,7 +25,6 @@ import {
   SystemConfigFull,
 } from './models/system-config.models';
 import { SystemConfigService } from './services/system-config.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * System Configuration Component

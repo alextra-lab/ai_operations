@@ -17,7 +17,7 @@ mat-dialog-content {
   display: flex;
   gap: 12px;
   padding: 8px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border);
 }
 
 .detail-label {
@@ -56,7 +56,7 @@ mat-chip {
 .additional-details {
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 2px solid #e0e0e0;
+  border-top: 2px solid var(--border);
 }
 
 .additional-details h3 {
@@ -82,6 +82,6 @@ mat-chip {
 
 /* WCAG 2.1 AA Compliance */
 button:focus {
-  outline: 2px solid #1976d2;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }

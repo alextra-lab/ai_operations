@@ -42,7 +42,7 @@
   }
 
   &.blue {
-    background: linear-gradient(135deg, #2196f3, #1976d2);
+    background: linear-gradient(135deg, #2196f3, var(--primary));
   }
 
   &.green,

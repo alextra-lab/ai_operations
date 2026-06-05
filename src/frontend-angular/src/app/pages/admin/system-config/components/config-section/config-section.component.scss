@@ -12,7 +12,7 @@
     font-size: 32px;
     width: 32px;
     height: 32px;
-    color: #1976d2;
+    color: var(--primary);
 
     &.restart-required {
       color: #ff9800;

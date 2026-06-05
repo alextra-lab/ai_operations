@@ -17,11 +17,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import type { ChartConfiguration, ChartOptions } from 'chart.js/auto';
+import { LucideAngularModule } from 'lucide-angular';
 import { BaseChartDirective } from 'ng2-charts';
 import { Subject, interval, takeUntil } from 'rxjs';
 import { UsageStatsResponse } from '../../api/models/analytics.models';
 import { AnalyticsService } from '../../api/services/analytics.service';
-import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-performance-metrics',
@@ -103,7 +103,10 @@ import { LucideAngularModule } from 'lucide-angular';
 
           <mat-card class="stat-card">
             <div class="stat-icon" style="background-color: #f3e5f5;">
-              <lucide-icon style="color: #6a1b9a;" name="chart-column"></lucide-icon>
+              <lucide-icon
+                style="color: #6a1b9a;"
+                name="chart-column"
+              ></lucide-icon>
             </div>
             <div class="stat-content">
               <h3>{{ formatPercent(performanceStats.avg_relevancy_score) }}</h3>
@@ -113,7 +116,10 @@ import { LucideAngularModule } from 'lucide-angular';
 
           <mat-card class="stat-card">
             <div class="stat-icon" style="background-color: #e8f5e9;">
-              <lucide-icon style="color: #2e7d32;" name="trending-up"></lucide-icon>
+              <lucide-icon
+                style="color: #2e7d32;"
+                name="trending-up"
+              ></lucide-icon>
             </div>
             <div class="stat-content">
               <h3>{{ performanceStats.total_retrievals }}</h3>
@@ -123,7 +129,10 @@ import { LucideAngularModule } from 'lucide-angular';
 
           <mat-card class="stat-card">
             <div class="stat-icon" style="background-color: #fff8e1;">
-              <lucide-icon style="color: #f57f17;" name="database"></lucide-icon>
+              <lucide-icon
+                style="color: #f57f17;"
+                name="database"
+              ></lucide-icon>
             </div>
             <div class="stat-content">
               <h3>{{ performanceStats.unique_documents_accessed }}</h3>

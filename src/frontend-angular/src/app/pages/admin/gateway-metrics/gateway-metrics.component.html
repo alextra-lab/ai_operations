@@ -15,14 +15,25 @@
       <div class="header-actions">
         <mat-form-field class="time-range-selector" appearance="outline">
           <mat-label>Time Range</mat-label>
-          <mat-select [(ngModel)]="selectedTimeRange" (selectionChange)="onTimeRangeChange()">
-            <mat-option *ngFor="let option of timeRangeOptions" [value]="option.value">
+          <mat-select
+            [(ngModel)]="selectedTimeRange"
+            (selectionChange)="onTimeRangeChange()"
+          >
+            <mat-option
+              *ngFor="let option of timeRangeOptions"
+              [value]="option.value"
+            >
               {{ option.label }}
             </mat-option>
           </mat-select>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" (click)="refreshMetrics()" [disabled]="isLoading">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="refreshMetrics()"
+          [disabled]="isLoading"
+        >
           <lucide-icon name="refresh-cw"></lucide-icon>
           Refresh
         </button>
@@ -116,10 +127,10 @@
           <div class="metric-content">
             <div class="metric-value">
               {{
-              formatNumber(
-              aggregateMetrics.total_input_tokens +
-              aggregateMetrics.total_output_tokens
-              )
+                formatNumber(
+                  aggregateMetrics.total_input_tokens +
+                    aggregateMetrics.total_output_tokens
+                )
               }}
             </div>
             <div class="metric-label">Total Tokens</div>
@@ -222,7 +233,10 @@
             <ng-container matColumnDef="success_rate">
               <th mat-header-cell *matHeaderCellDef>Success Rate</th>
               <td mat-cell *matCellDef="let provider">
-                <span class="success-badge" [class.high]="provider.success_rate >= 95">
+                <span
+                  class="success-badge"
+                  [class.high]="provider.success_rate >= 95"
+                >
                   {{ formatPercent(provider.success_rate) }}
                 </span>
               </td>
@@ -295,7 +309,10 @@
       </mat-card>
 
       <!-- No Data Message -->
-      <mat-card *ngIf="aggregateMetrics?.total_requests === 0" class="no-data-card">
+      <mat-card
+        *ngIf="aggregateMetrics?.total_requests === 0"
+        class="no-data-card"
+      >
         <lucide-icon class="no-data-icon" name="info"></lucide-icon>
         <p class="no-data-text">
           No Gateway usage data available for the selected time range.

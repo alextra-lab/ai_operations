@@ -14,18 +14,34 @@
       <div class="controls-container">
         <mat-form-field appearance="outline" class="flex-1 min-w-[200px]">
           <mat-label>Team ID</mat-label>
-          <input matInput [(ngModel)]="newTeamId" [disabled]="isSaving || isLoading" aria-label="Team ID"
-            placeholder="team:csirt_security" />
+          <input
+            matInput
+            [(ngModel)]="newTeamId"
+            [disabled]="isSaving || isLoading"
+            aria-label="Team ID"
+            placeholder="team:csirt_security"
+          />
           <mat-hint>Format: team:name (1-64 chars after team:)</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="w-56 shrink-0">
           <mat-label>Initial member (optional)</mat-label>
-          <input matInput [(ngModel)]="initialMemberId" [disabled]="isSaving || isLoading"
-            aria-label="Initial member user ID" placeholder="user UUID" />
+          <input
+            matInput
+            [(ngModel)]="initialMemberId"
+            [disabled]="isSaving || isLoading"
+            aria-label="Initial member user ID"
+            placeholder="user UUID"
+          />
         </mat-form-field>
 
-        <button mat-flat-button color="primary" (click)="createTeam()" [disabled]="isSaving || isLoading" class="h-14">
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="createTeam()"
+          [disabled]="isSaving || isLoading"
+          class="h-14"
+        >
           <lucide-icon aria-hidden="true" name="plus"></lucide-icon>
           Create Team
         </button>
@@ -36,7 +52,10 @@
   <div class="content-area">
     @if (isLoading) {
       <div class="status">
-        <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+        <mat-progress-spinner
+          mode="indeterminate"
+          diameter="32"
+        ></mat-progress-spinner>
         <span>Loading teams...</span>
       </div>
     }
@@ -50,49 +69,55 @@
 
     @if (!isLoading) {
       <div class="table-wrapper">
-      <table mat-table [dataSource]="teams" class="mat-elevation-z1">
-        <ng-container matColumnDef="team_id">
-          <th mat-header-cell *matHeaderCellDef>Team</th>
-          <td mat-cell *matCellDef="let team">
-            <span class="team-id">{{ team.team_id }}</span>
-          </td>
-        </ng-container>
+        <table mat-table [dataSource]="teams" class="mat-elevation-z1">
+          <ng-container matColumnDef="team_id">
+            <th mat-header-cell *matHeaderCellDef>Team</th>
+            <td mat-cell *matCellDef="let team">
+              <span class="team-id">{{ team.team_id }}</span>
+            </td>
+          </ng-container>
 
-        <ng-container matColumnDef="member_count">
-          <th mat-header-cell *matHeaderCellDef>Members</th>
-          <td mat-cell *matCellDef="let team">{{ team.member_count }}</td>
-        </ng-container>
+          <ng-container matColumnDef="member_count">
+            <th mat-header-cell *matHeaderCellDef>Members</th>
+            <td mat-cell *matCellDef="let team">{{ team.member_count }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="draft_count">
-          <th mat-header-cell *matHeaderCellDef>Drafts</th>
-          <td mat-cell *matCellDef="let team">{{ team.draft_count }}</td>
-        </ng-container>
+          <ng-container matColumnDef="draft_count">
+            <th mat-header-cell *matHeaderCellDef>Drafts</th>
+            <td mat-cell *matCellDef="let team">{{ team.draft_count }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="published_count">
-          <th mat-header-cell *matHeaderCellDef>Published</th>
-          <td mat-cell *matCellDef="let team">{{ team.published_count }}</td>
-        </ng-container>
+          <ng-container matColumnDef="published_count">
+            <th mat-header-cell *matHeaderCellDef>Published</th>
+            <td mat-cell *matCellDef="let team">{{ team.published_count }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Actions</th>
-          <td mat-cell *matCellDef="let team">
-            <button mat-icon-button color="warn" [disabled]="isSaving" aria-label="Remove member"
-              matTooltip="Enter member ID above, then click to remove" (click)="removeMember(team, initialMemberId)">
-              <lucide-icon name="user-minus"></lucide-icon>
-            </button>
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let team">
+              <button
+                mat-icon-button
+                color="warn"
+                [disabled]="isSaving"
+                aria-label="Remove member"
+                matTooltip="Enter member ID above, then click to remove"
+                (click)="removeMember(team, initialMemberId)"
+              >
+                <lucide-icon name="user-minus"></lucide-icon>
+              </button>
+            </td>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
 
-      @if (!teams.length && !error) {
-        <div class="empty">
-          <lucide-icon aria-hidden="true" name="info"></lucide-icon>
-          <span>No teams yet. Create the first one above.</span>
-        </div>
-      }
+        @if (!teams.length && !error) {
+          <div class="empty">
+            <lucide-icon aria-hidden="true" name="info"></lucide-icon>
+            <span>No teams yet. Create the first one above.</span>
+          </div>
+        }
       </div>
     }
   </div>

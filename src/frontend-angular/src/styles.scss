@@ -17,7 +17,6 @@
 @import 'styles/tokens.css';
 
 // Define design tokens before usage
-$background-gradient: radial-gradient(circle at top, #f0f4ff, #e6f9f7 70%);
 $body-font:
   'Plus Jakarta Sans',
   -apple-system,
@@ -46,8 +45,8 @@ $aio-ui-theme: mat.define-theme(
 :root {
   @include mat.all-component-themes($aio-ui-theme);
   font-family: $body-font;
-  color: #12355b;
-  background: $background-gradient;
+  color: var(--fg-1);
+  background: var(--bg-app);
   min-height: 100%;
 }
 
@@ -85,6 +84,34 @@ $aio-ui-theme: mat.define-theme(
 // LAYER 4: Global App Overrides & Custom Styles
 // ============================================================================
 
+// ----------------------------------------------------------------------------
+// Design-system bridge: route Material system variables through the design
+// tokens (src/styles/tokens.css) so Material components and the Tailwind
+// utilities (mapped to --mat-sys-* in tailwind.config.js) pick up the new
+// slate + cobalt palette without redefining the Material theme itself.
+// ----------------------------------------------------------------------------
+:root {
+  --mat-sys-primary: var(--primary);
+  --mat-sys-on-primary: var(--on-primary);
+  --mat-sys-primary-container: var(--primary-container);
+  --mat-sys-on-primary-container: var(--on-primary-container);
+  --mat-sys-surface: var(--surface);
+  --mat-sys-surface-container: var(--surface-2);
+  --mat-sys-surface-container-low: var(--surface);
+  --mat-sys-surface-container-high: var(--surface-variant);
+  --mat-sys-on-surface: var(--fg-1);
+  --mat-sys-on-surface-variant: var(--fg-3);
+  --mat-sys-outline: var(--border);
+  --mat-sys-outline-variant: var(--border);
+  --mat-sys-error: var(--error);
+  --mat-sys-error-container: var(--error-bg);
+  --mat-sys-on-error-container: var(--error-fg);
+}
+
+::selection {
+  background: var(--primary-200);
+}
+
 html,
 body {
   height: 100%;
@@ -94,6 +121,10 @@ body {
   margin: 0;
   min-height: 100%;
   background: transparent;
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 // ============================================================================

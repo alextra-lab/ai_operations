@@ -263,6 +263,15 @@ body {
   height: 100%;
 }
 
+// Compact 14px base (design system spec: body 14 / h1 22 / h2 18 …). Material
+// and Tailwind size their type + spacing in rem off the root, which defaults
+// to 16px and renders the whole UI ~15% too large. 14/16 = 87.5% drops the
+// app onto the design's compact scale proportionally. Fixed-px design tokens
+// (--toolbar-h, --sidebar-w, icon sizes) are unaffected and stay exact.
+html {
+  font-size: 87.5%;
+}
+
 body {
   margin: 0;
   min-height: 100%;

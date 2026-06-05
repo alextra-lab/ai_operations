@@ -54,7 +54,7 @@ describe('UseCaseListComponent', () => {
       ),
       getAllowedNextStates: jest.fn().mockReturnValue([LifecycleState.REVIEW]),
       getLifecycleStateName: jest.fn().mockReturnValue('Draft'),
-      getLifecycleStateIcon: jest.fn().mockReturnValue('edit_note'),
+      getLifecycleStateIcon: jest.fn().mockReturnValue('pencil'),
       getLifecycleStateClass: jest.fn().mockReturnValue('bg-gray-100'),
       deleteUseCase: jest.fn(),
       cloneUseCase: jest.fn(),

@@ -9,9 +9,7 @@
       <!-- Mobile: Show only current page -->
       <span class="current-page md:hidden" [attr.aria-current]="'page'">
         @if (getLastBreadcrumb()?.icon) {
-          <mat-icon class="text-base w-4 h-4 mr-1">{{
-            getLastBreadcrumb()?.icon
-          }}</mat-icon>
+          <lucide-icon class="text-base w-4 h-4 mr-1" [name]="getLastBreadcrumb()?.icon"></lucide-icon>
         }
         {{ getLastBreadcrumb()?.label }}
       </span>
@@ -41,9 +39,7 @@
             </button>
 
             <!-- Separator -->
-            <mat-icon class="text-base w-4 h-4 mx-1" aria-hidden="true">
-              chevron_right
-            </mat-icon>
+            <lucide-icon class="text-base w-4 h-4 mx-1" aria-hidden="true" name="chevron-right"></lucide-icon>
           </li>
 
           <!-- Current page -->

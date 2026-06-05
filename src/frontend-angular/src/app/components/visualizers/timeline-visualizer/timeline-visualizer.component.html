@@ -16,7 +16,7 @@
       <!-- Marker -->
       <div class="timeline-marker">
         <div class="marker-icon">
-          <mat-icon>{{ getSeverityIcon(getEventSeverity(event)) }}</mat-icon>
+          <lucide-icon [name]="getSeverityIcon(getEventSeverity(event))"></lucide-icon>
         </div>
         <div class="marker-line" *ngIf="!last"></div>
       </div>
@@ -43,7 +43,7 @@
 
   <!-- Empty state -->
   <div *ngIf="sortedEvents.length === 0" class="empty-state">
-    <mat-icon>event</mat-icon>
+    <lucide-icon name="calendar"></lucide-icon>
     <p>No events to display</p>
   </div>
 </div>

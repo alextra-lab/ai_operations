@@ -5,7 +5,7 @@
   <div class="page-header-section">
     <div class="page-title">
       <h1>
-        <mat-icon>psychology</mat-icon>
+        <lucide-icon name="brain-circuit"></lucide-icon>
         AIOps Library
       </h1>
       <p class="subtitle">
@@ -57,17 +57,15 @@
 
             <!-- Sort Order Button -->
             <button mat-icon-button [matMenuTriggerFor]="sortMenu" class="shrink-0" matTooltip="Sort order">
-              <mat-icon>{{
-                sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward'
-                }}</mat-icon>
+              <lucide-icon [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"></lucide-icon>
             </button>
             <mat-menu #sortMenu="matMenu">
               <button mat-menu-item (click)="onSortChange(sortBy, 'asc')">
-                <mat-icon>arrow_upward</mat-icon>
+                <lucide-icon name="arrow-up"></lucide-icon>
                 <span>Ascending</span>
               </button>
               <button mat-menu-item (click)="onSortChange(sortBy, 'desc')">
-                <mat-icon>arrow_downward</mat-icon>
+                <lucide-icon name="arrow-down"></lucide-icon>
                 <span>Descending</span>
               </button>
             </mat-menu>
@@ -79,11 +77,11 @@
             <div class="view-controls">
               <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="onViewModeChange('grid')"
                 matTooltip="Grid View">
-                <mat-icon>grid_view</mat-icon>
+                <lucide-icon name="layout-grid"></lucide-icon>
               </button>
               <button mat-icon-button [class.active]="viewMode === 'list'" (click)="onViewModeChange('list')"
                 matTooltip="List View">
-                <mat-icon>view_list</mat-icon>
+                <lucide-icon name="list"></lucide-icon>
               </button>
             </div>
 
@@ -100,13 +98,13 @@
 
             <!-- Clear Filters -->
             <button mat-button type="button" (click)="searchForm.reset()" *ngIf="hasFilters">
-              <mat-icon>clear</mat-icon>
+              <lucide-icon name="x"></lucide-icon>
               Clear Filters
             </button>
 
             <!-- Refresh -->
             <button mat-button type="button" (click)="refresh()" [disabled]="isLoading">
-              <mat-icon>refresh</mat-icon>
+              <lucide-icon name="refresh-cw"></lucide-icon>
               Refresh
             </button>
 
@@ -136,7 +134,7 @@
 
     <!-- Error State -->
     <div class="error-container" *ngIf="error && !isLoading">
-      <mat-icon class="error-icon">error_outline</mat-icon>
+      <lucide-icon class="error-icon" name="circle-alert"></lucide-icon>
       <h3>Error Loading Use Cases</h3>
       <p>{{ error }}</p>
       <button mat-raised-button color="primary" (click)="refresh()">
@@ -146,7 +144,7 @@
 
     <!-- Empty State -->
     <div class="empty-container" *ngIf="isEmpty && !isLoading && !error">
-      <mat-icon class="empty-icon">inbox</mat-icon>
+      <lucide-icon class="empty-icon" name="inbox"></lucide-icon>
       <h3>No Use Cases Found</h3>
       <p *ngIf="!hasFilters">No use cases are available for your role.</p>
       <p *ngIf="hasFilters">No use cases match your current filters.</p>
@@ -161,9 +159,7 @@
         [style.border-left-color]="getUseCaseColor(useCase.category)">
         <mat-card-header>
           <div mat-card-avatar class="use-case-avatar">
-            <mat-icon [style.color]="getUseCaseColor(useCase.category)">
-              {{ getUseCaseIcon(useCase.category) }}
-            </mat-icon>
+            <lucide-icon [style.color]="getUseCaseColor(useCase.category)" [name]="getUseCaseIcon(useCase.category)"></lucide-icon>
           </div>
           <mat-card-title>{{ useCase.name }}</mat-card-title>
           <mat-card-subtitle>{{
@@ -176,11 +172,11 @@
 
           <div class="use-case-meta">
             <div class="meta-item">
-              <mat-icon>category</mat-icon>
+              <lucide-icon name="shapes"></lucide-icon>
               <span>{{ getCategoryDisplayName(useCase.category) }}</span>
             </div>
             <div class="meta-item" *ngIf="useCase.tags?.length">
-              <mat-icon>label</mat-icon>
+              <lucide-icon name="tag"></lucide-icon>
               <span>{{ useCase.tags?.length }} tag{{
                 useCase.tags?.length !== 1 ? 's' : ''
                 }}</span>
@@ -201,19 +197,19 @@
 
         <mat-card-actions>
           <button mat-button color="primary">
-            <mat-icon>play_arrow</mat-icon>
+            <lucide-icon name="play"></lucide-icon>
             Execute
           </button>
           <button mat-icon-button [matMenuTriggerFor]="cardMenu">
-            <mat-icon>more_vert</mat-icon>
+            <lucide-icon name="ellipsis-vertical"></lucide-icon>
           </button>
           <mat-menu #cardMenu="matMenu">
             <button mat-menu-item>
-              <mat-icon>info</mat-icon>
+              <lucide-icon name="info"></lucide-icon>
               <span>Details</span>
             </button>
             <button mat-menu-item>
-              <mat-icon>history</mat-icon>
+              <lucide-icon name="history"></lucide-icon>
               <span>History</span>
             </button>
           </mat-menu>
@@ -227,9 +223,7 @@
         <mat-list-item *ngFor="let useCase of paginatedUseCases" class="use-case-list-item"
           (click)="openUseCase(useCase)">
           <div matListItemAvatar class="list-avatar">
-            <mat-icon [style.color]="getUseCaseColor(useCase.category)">
-              {{ getUseCaseIcon(useCase.category) }}
-            </mat-icon>
+            <lucide-icon [style.color]="getUseCaseColor(useCase.category)" [name]="getUseCaseIcon(useCase.category)"></lucide-icon>
           </div>
 
           <div matListItemTitle class="list-title">{{ useCase.name }}</div>
@@ -249,19 +243,19 @@
               </span>
             </div>
             <button mat-icon-button [matMenuTriggerFor]="listMenu">
-              <mat-icon>more_vert</mat-icon>
+              <lucide-icon name="ellipsis-vertical"></lucide-icon>
             </button>
             <mat-menu #listMenu="matMenu">
               <button mat-menu-item>
-                <mat-icon>play_arrow</mat-icon>
+                <lucide-icon name="play"></lucide-icon>
                 <span>Execute</span>
               </button>
               <button mat-menu-item>
-                <mat-icon>info</mat-icon>
+                <lucide-icon name="info"></lucide-icon>
                 <span>Details</span>
               </button>
               <button mat-menu-item>
-                <mat-icon>history</mat-icon>
+                <lucide-icon name="history"></lucide-icon>
                 <span>History</span>
               </button>
             </mat-menu>

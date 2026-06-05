@@ -74,12 +74,9 @@
     <div class="detail-row">
       <span class="detail-label">Status:</span>
       <span class="detail-value">
-        <mat-icon
+        <lucide-icon
           [class.success]="data.log.success"
-          [class.failure]="!data.log.success"
-        >
-          {{ data.log.success ? 'check_circle' : 'error' }}
-        </mat-icon>
+          [class.failure]="!data.log.success" [name]="data.log.success ? 'circle-check' : 'circle-alert'"></lucide-icon>
         {{ data.log.success ? 'Success' : 'Failure' }}
       </span>
     </div>

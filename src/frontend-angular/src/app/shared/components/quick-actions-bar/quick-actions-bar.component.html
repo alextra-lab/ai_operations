@@ -3,7 +3,7 @@
   <div class="quick-actions-bar">
     <div class="quick-actions-container">
       <div class="quick-actions-title">
-        <mat-icon class="title-icon">flash_on</mat-icon>
+        <lucide-icon class="title-icon" name="zap"></lucide-icon>
         <span class="title-text">Quick Actions</span>
       </div>
 
@@ -19,7 +19,7 @@
           (click)="onActionClick(action)"
           type="button"
         >
-          <mat-icon class="action-icon">{{ getActionIcon(action) }}</mat-icon>
+          <lucide-icon class="action-icon" [name]="getActionIcon(action)"></lucide-icon>
           <span class="action-label">{{ getActionLabel(action) }}</span>
         </button>
       </div>

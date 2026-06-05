@@ -18,7 +18,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -43,17 +42,18 @@ import {
   TIME_RANGE_OPTIONS,
   ToolUsageSummary,
 } from './models/tool-analytics.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-tool-analytics',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     RouterLink,
     MatButtonModule,
     MatCardModule,
-    MatIconModule,
     MatMenuModule,
     MatProgressSpinnerModule,
     MatSelectModule,

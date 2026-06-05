@@ -54,11 +54,13 @@ import { MetricsService } from '../../services/metrics.service';
 import { CostChartComponent } from './charts/cost-chart.component';
 import { LatencyChartComponent } from './charts/latency-chart.component';
 import { TokenUsageChartComponent } from './charts/token-usage-chart.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-metrics-dashboard',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatButtonModule,
@@ -267,11 +269,11 @@ export class MetricsDashboardComponent implements OnInit, OnChanges, OnDestroy {
   getRecommendationIcon(type: string): string {
     switch (type) {
       case 'performance':
-        return 'speed';
+        return 'gauge';
       case 'consistency':
-        return 'check_circle';
+        return 'circle-check';
       case 'cost':
-        return 'attach_money';
+        return 'dollar-sign';
       case 'quality':
         return 'star';
       default:

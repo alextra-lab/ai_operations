@@ -12,7 +12,6 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -21,16 +20,17 @@ import {
   PATTERN_CATEGORIES,
   PromptPattern,
 } from '../../api/models/prompt-patterns.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-pattern-detail-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
     MatChipsModule,
     MatDialogModule,
-    MatIconModule,
     MatSnackBarModule,
     MatTabsModule,
     MatTooltipModule,
@@ -53,7 +53,7 @@ export class PatternDetailDialogComponent {
     ) || {
       id: this.pattern.category,
       label: this.pattern.category,
-      icon: 'category',
+      icon: 'shapes',
       description: '',
       color: '#757575',
     };

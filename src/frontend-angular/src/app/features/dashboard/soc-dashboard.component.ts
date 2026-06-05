@@ -16,7 +16,6 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -33,6 +32,7 @@ import { SystemHealthWidgetComponent } from './widgets/system-health-widget.comp
 import { ThreatFeedWidgetComponent } from './widgets/threat-feed-widget.component';
 import { UserActivityWidgetComponent } from './widgets/user-activity-widget.component';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { WebSocketConnectionState } from '../../api/services/websocket.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { DashboardWidget, WidgetType } from './models/dashboard.models';
@@ -43,9 +43,9 @@ import { RealTimeDataService } from './services/real-time-data.service';
   selector: 'app-soc-dashboard',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
-    MatIconModule,
     MatToolbarModule,
     MatMenuModule,
     MatCardModule,
@@ -76,7 +76,7 @@ import { RealTimeDataService } from './services/real-time-data.service';
           <div class="header-left">
             <h1>Security Operations Center Dashboard</h1>
             <div class="connection-status" [class]="connectionState">
-              <mat-icon>{{ getConnectionIcon() }}</mat-icon>
+              <lucide-icon [name]="getConnectionIcon()"></lucide-icon>
               <span>{{ getConnectionText() }}</span>
             </div>
           </div>
@@ -87,39 +87,39 @@ import { RealTimeDataService } from './services/real-time-data.service';
               (click)="toggleEditing()"
               [class.active]="isEditing"
             >
-              <mat-icon>edit</mat-icon>
+              <lucide-icon name="pencil"></lucide-icon>
             </button>
 
             <button mat-icon-button (click)="toggleFullscreen()">
-              <mat-icon>{{
-                isFullscreen ? 'fullscreen_exit' : 'fullscreen'
-              }}</mat-icon>
+              <lucide-icon
+                [name]="isFullscreen ? 'minimize' : 'maximize'"
+              ></lucide-icon>
             </button>
 
             <button mat-icon-button [matMenuTriggerFor]="dashboardMenu">
-              <mat-icon>more_vert</mat-icon>
+              <lucide-icon name="ellipsis-vertical"></lucide-icon>
             </button>
 
             <mat-menu #dashboardMenu="matMenu">
               <button mat-menu-item (click)="addWidget()">
-                <mat-icon>add</mat-icon>
+                <lucide-icon name="plus"></lucide-icon>
                 <span>Add Widget</span>
               </button>
               <button mat-menu-item (click)="resetLayout()">
-                <mat-icon>refresh</mat-icon>
+                <lucide-icon name="refresh-cw"></lucide-icon>
                 <span>Reset Layout</span>
               </button>
               <button mat-menu-item (click)="saveLayout()">
-                <mat-icon>save</mat-icon>
+                <lucide-icon name="save"></lucide-icon>
                 <span>Save Layout</span>
               </button>
               <mat-divider></mat-divider>
               <button mat-menu-item (click)="exportLayout()">
-                <mat-icon>download</mat-icon>
+                <lucide-icon name="download"></lucide-icon>
                 <span>Export Layout</span>
               </button>
               <button mat-menu-item (click)="importLayout()">
-                <mat-icon>upload</mat-icon>
+                <lucide-icon name="upload"></lucide-icon>
                 <span>Import Layout</span>
               </button>
             </mat-menu>
@@ -157,7 +157,7 @@ import { RealTimeDataService } from './services/real-time-data.service';
             <!-- Widget Header -->
             <div class="widget-header" *ngIf="widget.config.showHeader">
               <div class="widget-title">
-                <mat-icon>{{ getWidgetIcon(widget.type) }}</mat-icon>
+                <lucide-icon [name]="getWidgetIcon(widget.type)"></lucide-icon>
                 <span>{{ widget.title }}</span>
               </div>
 
@@ -170,9 +170,9 @@ import { RealTimeDataService } from './services/real-time-data.service';
                   (click)="toggleWidgetCollapsed(widget.id)"
                   [matTooltip]="widget.isCollapsed ? 'Expand' : 'Collapse'"
                 >
-                  <mat-icon>{{
-                    widget.isCollapsed ? 'expand_more' : 'expand_less'
-                  }}</mat-icon>
+                  <lucide-icon
+                    [name]="widget.isCollapsed ? 'chevron-down' : 'chevron-up'"
+                  ></lucide-icon>
                 </button>
 
                 <button
@@ -180,7 +180,7 @@ import { RealTimeDataService } from './services/real-time-data.service';
                   (click)="refreshWidget(widget.id)"
                   [matTooltip]="'Refresh'"
                 >
-                  <mat-icon>refresh</mat-icon>
+                  <lucide-icon name="refresh-cw"></lucide-icon>
                 </button>
 
                 <button
@@ -188,7 +188,7 @@ import { RealTimeDataService } from './services/real-time-data.service';
                   (click)="configureWidget(widget.id)"
                   [matTooltip]="'Configure'"
                 >
-                  <mat-icon>settings</mat-icon>
+                  <lucide-icon name="settings"></lucide-icon>
                 </button>
 
                 <button
@@ -197,7 +197,7 @@ import { RealTimeDataService } from './services/real-time-data.service';
                   [matTooltip]="'Remove'"
                   *ngIf="isEditing"
                 >
-                  <mat-icon>close</mat-icon>
+                  <lucide-icon name="x"></lucide-icon>
                 </button>
               </div>
             </div>
@@ -263,7 +263,7 @@ import { RealTimeDataService } from './services/real-time-data.service';
 
                 <!-- Default Widget -->
                 <div *ngSwitchDefault class="widget-placeholder">
-                  <mat-icon>widgets</mat-icon>
+                  <lucide-icon name="blocks"></lucide-icon>
                   <p>{{ widget.title }}</p>
                   <small>Widget type: {{ widget.type }}</small>
                 </div>
@@ -272,7 +272,7 @@ import { RealTimeDataService } from './services/real-time-data.service';
 
             <!-- Widget Resize Handle -->
             <div class="widget-resize-handle" *ngIf="isEditing" cdkDragHandle>
-              <mat-icon>open_with</mat-icon>
+              <lucide-icon name="move"></lucide-icon>
             </div>
           </div>
 
@@ -282,7 +282,7 @@ import { RealTimeDataService } from './services/real-time-data.service';
             class="add-widget-button"
             (click)="addWidget()"
           >
-            <mat-icon>add</mat-icon>
+            <lucide-icon name="plus"></lucide-icon>
             <span>Add Widget</span>
           </div>
         </div>
@@ -904,17 +904,17 @@ export class SocDashboardComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   getWidgetIcon(type: WidgetType): string {
     const iconMap: Record<WidgetType, string> = {
-      [WidgetType.THREAT_FEED]: 'security',
-      [WidgetType.SYSTEM_HEALTH]: 'monitor_heart',
-      [WidgetType.QUERY_STATS]: 'query_stats',
-      [WidgetType.USER_ACTIVITY]: 'people',
-      [WidgetType.SECURITY_ALERTS]: 'warning',
-      [WidgetType.PERFORMANCE_METRICS]: 'speed',
-      [WidgetType.DOCUMENT_PROCESSING]: 'description',
-      [WidgetType.CUSTOM_CHART]: 'bar_chart',
+      [WidgetType.THREAT_FEED]: 'shield',
+      [WidgetType.SYSTEM_HEALTH]: 'activity',
+      [WidgetType.QUERY_STATS]: 'chart-column',
+      [WidgetType.USER_ACTIVITY]: 'users',
+      [WidgetType.SECURITY_ALERTS]: 'triangle-alert',
+      [WidgetType.PERFORMANCE_METRICS]: 'gauge',
+      [WidgetType.DOCUMENT_PROCESSING]: 'file-text',
+      [WidgetType.CUSTOM_CHART]: 'chart-column',
     };
 
-    return iconMap[type] || 'widgets';
+    return iconMap[type] || 'blocks';
   }
 
   /**
@@ -926,12 +926,12 @@ export class SocDashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return 'wifi';
       case WebSocketConnectionState.CONNECTING:
       case WebSocketConnectionState.RECONNECTING:
-        return 'wifi_find';
+        return 'wifi';
       case WebSocketConnectionState.DISCONNECTED:
       case WebSocketConnectionState.ERROR:
-        return 'wifi_off';
+        return 'wifi-off';
       default:
-        return 'wifi_off';
+        return 'wifi-off';
     }
   }
 

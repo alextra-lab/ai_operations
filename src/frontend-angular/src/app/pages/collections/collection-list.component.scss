@@ -37,7 +37,7 @@
       gap: 10px;
       height: 36px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 28px;
         width: 28px;
         height: 28px;
@@ -103,7 +103,7 @@
           }
 
           .create-btn {
-            mat-icon {
+            :is(mat-icon, lucide-icon) {
               margin-right: 8px;
             }
           }
@@ -176,7 +176,7 @@
     align-self: center;
     white-space: nowrap;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       margin-right: 4px;
     }
   }
@@ -273,7 +273,7 @@
   padding: 64px 24px;
   gap: 16px;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 64px;
     width: 64px;
     height: 64px;
@@ -298,7 +298,7 @@
     gap: 8px;
     margin-bottom: 12px;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       color: #2196f3;
     }
 

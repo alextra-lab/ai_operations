@@ -2,18 +2,18 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { UserActivity, WidgetConfig } from '../models/dashboard.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-user-activity-widget',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatChipsModule,
     MatProgressSpinnerModule,
   ],
@@ -21,7 +21,7 @@ import { UserActivity, WidgetConfig } from '../models/dashboard.models';
     <div class="user-activity-widget">
       <div class="header">
         <div class="title">
-          <mat-icon aria-hidden="true">people</mat-icon>
+          <lucide-icon aria-hidden="true" name="users"></lucide-icon>
           <div class="text">
             <p>Recent User Activity</p>
             <small>{{ activities.length }} events</small>
@@ -39,7 +39,7 @@ import { UserActivity, WidgetConfig } from '../models/dashboard.models';
         >
           <div class="activity-main">
             <div class="avatar">
-              <mat-icon aria-hidden="true">person</mat-icon>
+              <lucide-icon aria-hidden="true" name="user"></lucide-icon>
             </div>
             <div class="details">
               <div class="top-line">
@@ -65,7 +65,7 @@ import { UserActivity, WidgetConfig } from '../models/dashboard.models';
 
       <ng-template #emptyState>
         <div class="empty-state">
-          <mat-icon aria-hidden="true">people</mat-icon>
+          <lucide-icon aria-hidden="true" name="users"></lucide-icon>
           <p>No recent activity</p>
           <small>Events will appear as users interact</small>
         </div>

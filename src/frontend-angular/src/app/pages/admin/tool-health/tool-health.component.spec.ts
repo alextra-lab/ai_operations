@@ -338,12 +338,12 @@ describe('ToolHealthComponent', () => {
 
     it('should return correct icon for disabled status', () => {
       const tool = component.tools()[2];
-      expect(component.getStatusIcon(tool)).toBe('power_off');
+      expect(component.getStatusIcon(tool)).toBe('power-off');
     });
 
-    it('should return help_outline icon for unknown status', () => {
+    it('should return circle-help icon for unknown status', () => {
       const tool = component.tools()[0];
-      expect(component.getStatusIcon(tool)).toBe('help_outline');
+      expect(component.getStatusIcon(tool)).toBe('circle-help');
     });
   });
 

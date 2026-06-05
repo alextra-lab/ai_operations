@@ -44,6 +44,7 @@ import {
   StateTransitionDialogComponent,
   StateTransitionDialogResult,
 } from './state-transition-dialog.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-use-case-list',
@@ -51,6 +52,7 @@ import {
   styleUrls: ['./use-case-list.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,

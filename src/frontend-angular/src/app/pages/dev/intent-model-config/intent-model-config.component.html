@@ -1,7 +1,7 @@
 <div class="intent-model-config-container">
   <mat-card class="header-card">
     <mat-card-header>
-      <mat-icon mat-card-avatar>tune</mat-icon>
+      <lucide-icon mat-card-avatar name="sliders-horizontal"></lucide-icon>
       <mat-card-title>Intent Model Configuration</mat-card-title>
       <mat-card-subtitle>
         Configure which models are used for each intent type (ADR-069) - Developer Tool
@@ -25,7 +25,7 @@
       </div>
 
       <div *ngIf="!allConfigured" class="warning-message">
-        <mat-icon>warning</mat-icon>
+        <lucide-icon name="triangle-alert"></lucide-icon>
         <span
           >Some intents do not have configured defaults. They will fall back
           to the QUERY model.</span
@@ -51,9 +51,7 @@
         <ng-container matColumnDef="icon">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let intent">
-            <mat-icon [style.color]="intent.color" class="intent-icon">
-              {{ intent.icon }}
-            </mat-icon>
+            <lucide-icon [style.color]="intent.color" class="intent-icon" [name]="intent.icon"></lucide-icon>
           </td>
         </ng-container>
 
@@ -180,7 +178,7 @@
                 (click)="startEdit(intent)"
                 matTooltip="Configure model"
               >
-                <mat-icon>edit</mat-icon>
+                <lucide-icon name="pencil"></lucide-icon>
                 {{
                   intent.has_default ? "Change" : "Configure"
                 }}
@@ -192,7 +190,7 @@
                 (click)="viewHistory(intent)"
                 matTooltip="View configuration history"
               >
-                <mat-icon>history</mat-icon>
+                <lucide-icon name="history"></lucide-icon>
                 History
               </button>
 
@@ -204,7 +202,7 @@
                 (click)="saveConfiguration(intent)"
                 matTooltip="Save configuration"
               >
-                <mat-icon>save</mat-icon>
+                <lucide-icon name="save"></lucide-icon>
                 Save
               </button>
 
@@ -214,7 +212,7 @@
                 (click)="cancelEdit(intent)"
                 matTooltip="Cancel changes"
               >
-                <mat-icon>cancel</mat-icon>
+                <lucide-icon name="circle-x"></lucide-icon>
                 Cancel
               </button>
             </div>

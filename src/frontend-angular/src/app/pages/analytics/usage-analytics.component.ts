@@ -13,7 +13,6 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
@@ -25,16 +24,17 @@ import {
   UsageStatsResponse,
 } from '../../api/models/analytics.models';
 import { AnalyticsService } from '../../api/services/analytics.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-usage-analytics',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,

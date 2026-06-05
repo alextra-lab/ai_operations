@@ -21,17 +21,18 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Tool, ToolUpdateRequest } from '../../models/tool-management.models';
 import { ToolAdminService } from '../../services/tool-admin.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-tool-edit-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -40,7 +41,6 @@ import { ToolAdminService } from '../../services/tool-admin.service';
     MatFormFieldModule,
     MatInputModule,
     MatChipsModule,
-    MatIconModule,
     MatProgressSpinnerModule,
   ],
   templateUrl: './tool-edit-dialog.component.html',

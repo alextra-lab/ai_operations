@@ -11,11 +11,11 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subject } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ServiceStatus,
   SystemHealth,
@@ -27,8 +27,8 @@ import {
   selector: 'app-system-health-widget',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
-    MatIconModule,
     MatChipsModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
@@ -42,7 +42,9 @@ import {
       <div *ngIf="!isLoading" class="health-content">
         <!-- Compact header -->
         <div class="status-header" [class]="'status-' + systemHealth?.status">
-          <mat-icon>{{ getStatusIcon(systemHealth?.status) }}</mat-icon>
+          <lucide-icon
+            [name]="getStatusIcon(systemHealth?.status)"
+          ></lucide-icon>
           <span class="status-text">{{
             systemHealth?.status?.toUpperCase()
           }}</span>
@@ -60,7 +62,10 @@ import {
             [class]="'svc-' + svc.status"
             [matTooltip]="svc.name + ': ' + svc.status"
           >
-            <mat-icon class="svc-icon">{{ getSvcIcon(svc.status) }}</mat-icon>
+            <lucide-icon
+              class="svc-icon"
+              [name]="getSvcIcon(svc.status)"
+            ></lucide-icon>
             <span class="svc-name">{{ svc.name }}</span>
             <span class="svc-status">{{ svc.status }}</span>
           </div>
@@ -68,7 +73,7 @@ import {
 
         <!-- Last check footer -->
         <div class="footer">
-          <mat-icon>schedule</mat-icon>
+          <lucide-icon name="clock"></lucide-icon>
           <span>{{ formatLastCheck(systemHealth?.last_check) }}</span>
         </div>
       </div>
@@ -277,12 +282,12 @@ export class SystemHealthWidgetComponent
 
   getStatusIcon(status?: SystemStatus): string {
     const icons: Record<SystemStatus, string> = {
-      [SystemStatus.HEALTHY]: 'check_circle',
-      [SystemStatus.WARNING]: 'warning',
-      [SystemStatus.CRITICAL]: 'error',
-      [SystemStatus.OFFLINE]: 'cloud_off',
+      [SystemStatus.HEALTHY]: 'circle-check',
+      [SystemStatus.WARNING]: 'triangle-alert',
+      [SystemStatus.CRITICAL]: 'circle-alert',
+      [SystemStatus.OFFLINE]: 'cloud-off',
     };
-    return icons[status || SystemStatus.OFFLINE] || 'help';
+    return icons[status || SystemStatus.OFFLINE] || 'circle-help';
   }
 
   getSvcIcon(status: SystemStatus): string {

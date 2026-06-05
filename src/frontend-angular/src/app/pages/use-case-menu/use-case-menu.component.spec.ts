@@ -207,7 +207,7 @@ describe('UseCaseMenuComponent', () => {
 
   it('should get use case icon', () => {
     const icon = component.getUseCaseIcon('threat_analysis');
-    expect(icon).toBe('security');
+    expect(icon).toBe('shield');
   });
 
   it('should get use case color', () => {

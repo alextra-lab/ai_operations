@@ -4,12 +4,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import {
   ValidationIssue,
   ValidationReport,
 } from '../../models/validation-report.model';
+import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * Component to display Use Case validation report with issues and auto-fix options.
@@ -23,9 +23,9 @@ import {
   selector: 'app-validation-report',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatChipsModule,
     MatExpansionModule,
     MatListModule,

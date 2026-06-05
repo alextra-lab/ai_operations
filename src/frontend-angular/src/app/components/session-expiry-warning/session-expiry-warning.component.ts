@@ -7,28 +7,29 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { interval, Subscription } from 'rxjs';
 import { ExportService } from '../../services/export.service';
 import { SessionStorageService } from '../../services/session-storage.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-session-expiry-warning',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, MatButtonModule, MatIconModule],
+  imports: [
+    LucideAngularModule,CommonModule, MatSnackBarModule, MatButtonModule],
   template: `
     <div class="session-expiry-container" *ngIf="warningVisible">
-      <mat-icon class="warning-icon">warning</mat-icon>
+      <lucide-icon class="warning-icon" name="triangle-alert"></lucide-icon>
       <span class="warning-text">
         {{ warningMessage }}
       </span>
       <button mat-button (click)="onExport()">
-        <mat-icon>download</mat-icon>
+        <lucide-icon name="download"></lucide-icon>
         Export
       </button>
       <button mat-icon-button (click)="onDismiss()">
-        <mat-icon>close</mat-icon>
+        <lucide-icon name="x"></lucide-icon>
       </button>
     </div>
   `,

@@ -22,7 +22,6 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -32,6 +31,7 @@ import {
   InputField,
   SelectOption,
 } from '../../api/models/use-case.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 const NAME_PATTERN = /^[a-z_][a-z0-9_]*$/;
 
@@ -41,11 +41,11 @@ const NAME_PATTERN = /^[a-z_][a-z0-9_]*$/;
   styleUrls: ['./input-field-editor.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
     MatSelectModule,
     MatSlideToggleModule,
@@ -63,12 +63,12 @@ export class InputFieldEditorComponent implements OnChanges, OnDestroy {
   private valueSub: Subscription | null = null;
 
   fieldTypes = [
-    { value: 'text', label: 'Text', icon: 'text_fields' },
-    { value: 'textarea', label: 'Text Area', icon: 'notes' },
-    { value: 'select', label: 'Dropdown', icon: 'arrow_drop_down_circle' },
+    { value: 'text', label: 'Text', icon: 'type' },
+    { value: 'textarea', label: 'Text Area', icon: 'sticky-note' },
+    { value: 'select', label: 'Dropdown', icon: 'circle-chevron-down' },
     { value: 'number', label: 'Number', icon: 'pin' },
-    { value: 'checkbox', label: 'Checkbox', icon: 'check_box' },
-    { value: 'date', label: 'Date', icon: 'calendar_today' },
+    { value: 'checkbox', label: 'Checkbox', icon: 'square-check' },
+    { value: 'date', label: 'Date', icon: 'calendar' },
   ];
 
   constructor(private fb: FormBuilder) {}

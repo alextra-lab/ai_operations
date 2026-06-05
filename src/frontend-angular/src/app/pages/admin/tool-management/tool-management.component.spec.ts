@@ -117,8 +117,7 @@ describe('ToolManagementComponent', () => {
     dialog = TestBed.inject(MatDialog) as jest.Mocked<MatDialog>;
     snackBar = TestBed.inject(MatSnackBar) as jest.Mocked<MatSnackBar>;
     router = TestBed.inject(Router) as jest.Mocked<Router>;
-    (component as unknown as { snackBar: typeof snackBar }).snackBar =
-      snackBar;
+    (component as unknown as { snackBar: typeof snackBar }).snackBar = snackBar;
 
     // Initialize component to set up searchSubject subscription
     // But don't trigger ngOnInit yet (tests will call it explicitly)
@@ -440,11 +439,11 @@ describe('ToolManagementComponent', () => {
   describe('getHealthIcon', () => {
     it('should return error icon for unhealthy tool', () => {
       const tool = { ...mockTools[0], is_healthy: false };
-      expect(component.getHealthIcon(tool)).toBe('error');
+      expect(component.getHealthIcon(tool)).toBe('circle-alert');
     });
 
     it('should return check icon for healthy tool', () => {
-      expect(component.getHealthIcon(mockTools[0])).toBe('check_circle');
+      expect(component.getHealthIcon(mockTools[0])).toBe('circle-check');
     });
   });
 

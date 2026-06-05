@@ -6,19 +6,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { SourceMetadata } from '../../api/models/use-case.models';
 
 @Component({
   selector: 'app-source-citation',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatButtonModule,
     MatChipsModule,
     MatTooltipModule,
@@ -73,24 +73,24 @@ export class SourceCitationComponent implements OnInit {
 
   private setDocumentTypeIcon(): void {
     if (!this.source.document_type) {
-      this.documentTypeIcon = 'insert_drive_file';
+      this.documentTypeIcon = 'file';
       return;
     }
 
     const type = this.source.document_type.toLowerCase();
 
     if (type.includes('pdf')) {
-      this.documentTypeIcon = 'picture_as_pdf';
+      this.documentTypeIcon = 'file-text';
     } else if (type.includes('doc') || type.includes('docx')) {
-      this.documentTypeIcon = 'description';
+      this.documentTypeIcon = 'file-text';
     } else if (type.includes('txt') || type.includes('text')) {
-      this.documentTypeIcon = 'article';
+      this.documentTypeIcon = 'file-text';
     } else if (type.includes('html') || type.includes('htm')) {
-      this.documentTypeIcon = 'language';
+      this.documentTypeIcon = 'globe';
     } else if (type.includes('md') || type.includes('markdown')) {
       this.documentTypeIcon = 'code';
     } else {
-      this.documentTypeIcon = 'insert_drive_file';
+      this.documentTypeIcon = 'file';
     }
   }
 
@@ -264,7 +264,7 @@ export class SourceCitationComponent implements OnInit {
   // ============================================================================
 
   getClassificationIcon(): string {
-    if (!this.source.classification) return 'security';
+    if (!this.source.classification) return 'shield';
 
     const classification = this.source.classification.toLowerCase();
 
@@ -277,14 +277,14 @@ export class SourceCitationComponent implements OnInit {
       classification.includes('internal') ||
       classification.includes('restricted')
     ) {
-      return 'business';
+      return 'building-2';
     } else if (
       classification.includes('public') ||
       classification.includes('unclassified')
     ) {
-      return 'public';
+      return 'globe';
     } else {
-      return 'security';
+      return 'shield';
     }
   }
 

@@ -4,7 +4,7 @@
   <div class="page-header-section">
     <div class="page-title">
       <h1>
-        <mat-icon>psychology</mat-icon>
+        <lucide-icon name="brain-circuit"></lucide-icon>
         Model Registry Management
       </h1>
       <p class="subtitle">
@@ -19,12 +19,12 @@
         (click)="syncModels()"
         [disabled]="syncing"
       >
-        <mat-icon>sync</mat-icon>
+        <lucide-icon name="refresh-cw"></lucide-icon>
         <span *ngIf="!syncing">Sync with Inference Server</span>
         <span *ngIf="syncing">Syncing...</span>
       </button>
       <button mat-raised-button (click)="loadModels()">
-        <mat-icon>refresh</mat-icon>
+        <lucide-icon name="refresh-cw"></lucide-icon>
         Refresh
       </button>
     </div>
@@ -65,7 +65,7 @@
         </mat-checkbox>
 
         <button mat-button (click)="clearFilters()">
-          <mat-icon>clear</mat-icon>
+          <lucide-icon name="x"></lucide-icon>
           Clear Filters
         </button>
       </div>
@@ -75,28 +75,28 @@
     <div class="stats-section">
       <div class="stats-grid">
         <div class="stat-item">
-          <mat-icon>psychology</mat-icon>
+          <lucide-icon name="brain-circuit"></lucide-icon>
           <div class="stat-content">
             <span class="stat-label">Total Models</span>
             <span class="stat-value">{{ totalModels }}</span>
           </div>
         </div>
         <div class="stat-item">
-          <mat-icon>check_circle</mat-icon>
+          <lucide-icon name="circle-check"></lucide-icon>
           <div class="stat-content">
             <span class="stat-label">Available</span>
             <span class="stat-value">{{ getAvailableCount() }}</span>
           </div>
         </div>
         <div class="stat-item">
-          <mat-icon>data_object</mat-icon>
+          <lucide-icon name="braces"></lucide-icon>
           <div class="stat-content">
             <span class="stat-label">LLM Models</span>
             <span class="stat-value">{{ getLLMCount() }}</span>
           </div>
         </div>
         <div class="stat-item">
-          <mat-icon>analytics</mat-icon>
+          <lucide-icon name="chart-column"></lucide-icon>
           <div class="stat-content">
             <span class="stat-label">Embedding Models</span>
             <span class="stat-value">{{ getEmbeddingCount() }}</span>
@@ -151,7 +151,7 @@
               {{ model.provider }}
             </mat-chip>
             <mat-chip *ngIf="!model.provider" class="local-model-chip">
-              <mat-icon>computer</mat-icon>
+              <lucide-icon name="monitor"></lucide-icon>
               Local
             </mat-chip>
           </td>
@@ -191,7 +191,7 @@
           <th mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let model">
             <mat-chip [class]="getAvailabilityClass(model.is_available)">
-              <mat-icon>{{ getAvailabilityIcon(model.is_available) }}</mat-icon>
+              <lucide-icon [name]="getAvailabilityIcon(model.is_available)"></lucide-icon>
               {{ model.is_available ? 'Available' : 'Unavailable' }}
             </mat-chip>
           </td>
@@ -206,14 +206,14 @@
               (click)="viewModelDetails(model.id)"
               matTooltip="View Details"
             >
-              <mat-icon>visibility</mat-icon>
+              <lucide-icon name="eye"></lucide-icon>
             </button>
             <button
               mat-icon-button
               (click)="editModel(model.id)"
               matTooltip="Edit Metadata"
             >
-              <mat-icon>edit</mat-icon>
+              <lucide-icon name="pencil"></lucide-icon>
             </button>
             <button
               mat-icon-button
@@ -221,16 +221,14 @@
               matTooltip="Manage Pricing"
               matTooltipHideDelay="0"
             >
-              <mat-icon>euro</mat-icon>
+              <lucide-icon name="euro"></lucide-icon>
             </button>
             <button
               mat-icon-button
               (click)="toggleHidden(model)"
               [matTooltip]="model.is_hidden ? 'Unhide Model' : 'Hide Model'"
             >
-              <mat-icon>{{
-                model.is_hidden ? 'visibility' : 'visibility_off'
-              }}</mat-icon>
+              <lucide-icon [name]="model.is_hidden ? 'eye' : 'eye-off'"></lucide-icon>
             </button>
             <button
               mat-icon-button
@@ -238,7 +236,7 @@
               matTooltip="Delete Model"
               color="warn"
             >
-              <mat-icon>delete</mat-icon>
+              <lucide-icon name="trash-2"></lucide-icon>
             </button>
           </td>
         </ng-container>
@@ -250,7 +248,7 @@
 
     <!-- Empty State -->
     <div *ngIf="!loading && models.length === 0" class="empty-state">
-      <mat-icon>psychology</mat-icon>
+      <lucide-icon name="brain-circuit"></lucide-icon>
       <h2>No models found</h2>
       <p>Try adjusting your filters or sync with the inference server.</p>
     </div>

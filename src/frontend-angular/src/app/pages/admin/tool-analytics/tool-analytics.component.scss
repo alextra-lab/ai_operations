@@ -42,7 +42,7 @@
   font-weight: 500;
   color: #333;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     color: #1976d2;
     font-size: 28px;
     width: 28px;
@@ -229,7 +229,7 @@
   .page-title {
     font-size: 1.25rem;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 24px;
       width: 24px;
       height: 24px;

@@ -84,10 +84,10 @@ describe('QueryDeveloperToolsComponent', () => {
     it('should render page title with icon', () => {
       const compiled = fixture.nativeElement as HTMLElement;
       const title = compiled.querySelector('h1');
-      const icon = compiled.querySelector('mat-icon');
+      const icon = compiled.querySelector('lucide-icon');
 
       expect(title?.textContent).toContain('Query Developer Tools');
-      expect(icon?.textContent).toContain('science');
+      expect(icon?.getAttribute('name')).toContain('flask-conical');
     });
 
     it('should render subtitle', () => {
@@ -220,7 +220,7 @@ describe('QueryDeveloperToolsComponent', () => {
 
     it('should have icons with proper attributes', () => {
       const compiled = fixture.nativeElement as HTMLElement;
-      const icons = compiled.querySelectorAll('mat-icon');
+      const icons = compiled.querySelectorAll('lucide-icon');
 
       // Should have at least the main icon
       expect(icons.length).toBeGreaterThan(0);

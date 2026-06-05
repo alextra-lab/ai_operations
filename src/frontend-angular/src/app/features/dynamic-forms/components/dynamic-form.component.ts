@@ -18,7 +18,6 @@ import {
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   InputField,
@@ -26,16 +25,17 @@ import {
 } from '../../../api/models/use-case.models';
 import { DynamicFormService } from '../services/dynamic-form.service';
 import { DynamicFieldComponent } from './dynamic-field.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-dynamic-form',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     DynamicFieldComponent,
   ],
@@ -64,20 +64,14 @@ import { DynamicFieldComponent } from './dynamic-field.component';
         <div class="mt-6 flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <!-- Form Status Indicator -->
-            <mat-icon
+            <lucide-icon
               *ngIf="form.valid && form.dirty"
               class="text-green-600"
-              matTooltip="Form is valid"
-            >
-              check_circle
-            </mat-icon>
-            <mat-icon
+              matTooltip="Form is valid" name="circle-check"></lucide-icon>
+            <lucide-icon
               *ngIf="form.invalid && form.dirty"
               class="text-red-600"
-              matTooltip="Form has errors"
-            >
-              error
-            </mat-icon>
+              matTooltip="Form has errors" name="circle-alert"></lucide-icon>
             <span
               *ngIf="form.dirty"
               class="text-sm"
@@ -96,7 +90,7 @@ import { DynamicFieldComponent } from './dynamic-field.component';
               (click)="onReset()"
               [disabled]="isSubmitting || !form.dirty"
             >
-              <mat-icon>refresh</mat-icon>
+              <lucide-icon name="refresh-cw"></lucide-icon>
               Reset
             </button>
 
@@ -113,7 +107,7 @@ import { DynamicFieldComponent } from './dynamic-field.component';
                 class="inline-block mr-2"
               >
               </mat-spinner>
-              <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+              <lucide-icon *ngIf="!isSubmitting" name="send"></lucide-icon>
               {{ submitButtonText }}
             </button>
           </div>
@@ -125,7 +119,7 @@ import { DynamicFieldComponent } from './dynamic-field.component';
           class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg"
         >
           <div class="flex items-start">
-            <mat-icon class="text-red-600 mt-0.5">error_outline</mat-icon>
+            <lucide-icon class="text-red-600 mt-0.5" name="circle-alert"></lucide-icon>
             <div class="ml-3 flex-1">
               <h4 class="text-sm font-medium text-red-800">
                 Please fix the following errors:
@@ -147,7 +141,7 @@ import { DynamicFieldComponent } from './dynamic-field.component';
           class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg"
         >
           <div class="flex items-start">
-            <mat-icon class="text-blue-600 mt-0.5">lightbulb</mat-icon>
+            <lucide-icon class="text-blue-600 mt-0.5" name="lightbulb"></lucide-icon>
             <div class="ml-3 flex-1">
               <h4 class="text-sm font-medium text-blue-800">Examples:</h4>
               <div class="mt-2 space-y-2">

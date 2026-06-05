@@ -6,12 +6,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { TestQueryResult } from '../../models/test-query-result.model';
 import { UseCaseValidationService } from '../../services/use-case-validation.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * Component for testing Use Cases with sample queries.
@@ -25,10 +25,10 @@ import { UseCaseValidationService } from '../../services/use-case-validation.ser
   selector: 'app-use-case-test-panel',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatCardModule,
-    MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,

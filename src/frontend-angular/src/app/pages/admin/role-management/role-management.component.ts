@@ -21,6 +21,7 @@ import {
   SYSTEM_ROLES,
 } from './models/role-management.models';
 import { RoleManagementService } from './services/role-management.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * Role Management Component
@@ -33,6 +34,7 @@ import { RoleManagementService } from './services/role-management.service';
   selector: 'app-role-management',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatTableModule,

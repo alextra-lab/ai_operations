@@ -11,7 +11,7 @@
     margin-bottom: 16px;
   }
 
-  mat-icon[mat-card-avatar] {
+  :is(mat-icon, lucide-icon)[mat-card-avatar] {
     font-size: 40px;
     width: 40px;
     height: 40px;
@@ -60,7 +60,7 @@
   border-radius: 4px;
   color: #e65100;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     color: #ff9800;
   }
 }
@@ -200,7 +200,7 @@
     gap: 8px;
 
     button {
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         margin-right: 4px;
       }
     }

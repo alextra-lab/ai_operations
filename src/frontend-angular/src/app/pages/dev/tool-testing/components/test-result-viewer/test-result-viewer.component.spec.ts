@@ -61,7 +61,7 @@ describe('TestResultViewerComponent', () => {
 
     it('should display success status', () => {
       expect(component.statusText).toBe('Success');
-      expect(component.statusIcon).toBe('check_circle');
+      expect(component.statusIcon).toBe('circle-check');
       expect(component.statusClass).toBe('success');
     });
 
@@ -88,7 +88,7 @@ describe('TestResultViewerComponent', () => {
 
     it('should display error status', () => {
       expect(component.statusText).toBe('Failed');
-      expect(component.statusIcon).toBe('error');
+      expect(component.statusIcon).toBe('circle-alert');
       expect(component.statusClass).toBe('error');
     });
 

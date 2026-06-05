@@ -4,7 +4,7 @@
   <div class="page-header-section">
     <div class="page-title">
       <h1>
-        <mat-icon>assignment</mat-icon>
+        <lucide-icon name="clipboard-list"></lucide-icon>
         Audit Logs
       </h1>
       <p class="subtitle">
@@ -18,7 +18,7 @@
         (click)="toggleStats()"
         aria-label="Toggle statistics"
       >
-        <mat-icon>{{ showStats ? 'visibility_off' : 'analytics' }}</mat-icon>
+        <lucide-icon [name]="showStats ? 'eye-off' : 'chart-column'"></lucide-icon>
         {{ showStats ? 'Hide Stats' : 'Show Stats' }}
       </button>
       <button
@@ -27,7 +27,7 @@
         (click)="clearFilters()"
         aria-label="Clear all filters"
       >
-        <mat-icon>filter_alt_off</mat-icon>
+        <lucide-icon name="filter-x"></lucide-icon>
         Clear Filters
       </button>
     </div>
@@ -243,12 +243,9 @@
         <ng-container matColumnDef="success">
           <th mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let log">
-            <mat-icon
+            <lucide-icon
               [color]="getStatusColor(log.success)"
-              [matTooltip]="log.success ? 'Success' : 'Failure'"
-            >
-              {{ getStatusIcon(log.success) }}
-            </mat-icon>
+              [matTooltip]="log.success ? 'Success' : 'Failure'" [name]="getStatusIcon(log.success)"></lucide-icon>
           </td>
         </ng-container>
 
@@ -262,7 +259,7 @@
               matTooltip="View details"
               aria-label="View log details"
             >
-              <mat-icon>info</mat-icon>
+              <lucide-icon name="info"></lucide-icon>
             </button>
           </td>
         </ng-container>

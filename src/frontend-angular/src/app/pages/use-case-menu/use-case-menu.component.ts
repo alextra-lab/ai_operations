@@ -22,11 +22,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { UseCase } from '../../api/models/use-case.models';
 import { UseCaseService } from '../../api/services/use-case.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-use-case-menu',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatCardModule,
@@ -315,15 +317,15 @@ export class UseCaseMenuComponent implements OnInit, OnDestroy {
 
   getUseCaseIcon(category: string): string {
     const iconMap: Record<string, string> = {
-      threat_analysis: 'security',
-      incident_response: 'emergency',
-      vulnerability_assessment: 'bug_report',
-      compliance_check: 'verified_user',
-      data_analysis: 'analytics',
-      report_generation: 'description',
-      network_monitoring: 'network_check',
-      user_behavior: 'person_search',
-      default: 'psychology',
+      threat_analysis: 'shield',
+      incident_response: 'siren',
+      vulnerability_assessment: 'bug',
+      compliance_check: 'shield-check',
+      data_analysis: 'chart-column',
+      report_generation: 'file-text',
+      network_monitoring: 'network',
+      user_behavior: 'user-search',
+      default: 'brain-circuit',
     };
 
     return iconMap[category] || iconMap['default'];

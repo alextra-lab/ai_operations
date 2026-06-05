@@ -24,6 +24,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Observable, debounceTime, startWith, switchMap } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { Collection } from '../../api/models/collection.models';
 import {
   Document,
@@ -39,6 +40,7 @@ import { DocumentMetadataComponent } from './document-metadata.component';
   selector: 'app-document-library',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -67,7 +69,7 @@ import { DocumentMetadataComponent } from './document-metadata.component';
       <div class="page-header-section">
         <div class="page-title">
           <h1>
-            <mat-icon>library_books</mat-icon>
+            <lucide-icon name="library"></lucide-icon>
             Document Library
           </h1>
           <p class="subtitle">
@@ -88,7 +90,10 @@ import { DocumentMetadataComponent } from './document-metadata.component';
             <form [formGroup]="searchForm" class="flex flex-col gap-2">
               <div class="flex gap-3 items-center">
                 <!-- Search: flexible width, takes remaining space -->
-                <mat-form-field appearance="outline" class="flex-1 min-w-[200px]">
+                <mat-form-field
+                  appearance="outline"
+                  class="flex-1 min-w-[200px]"
+                >
                   <mat-label>Search documents</mat-label>
                   <input
                     matInput
@@ -178,7 +183,7 @@ import { DocumentMetadataComponent } from './document-metadata.component';
 
                 <!-- Clear Filters button aligned right -->
                 <button mat-button (click)="clearFilters()">
-                  <mat-icon>clear</mat-icon>
+                  <lucide-icon name="x"></lucide-icon>
                   Clear Filters
                 </button>
               </div>
@@ -205,16 +210,16 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                 (click)="toggleView()"
                 [matTooltip]="viewType === 'grid' ? 'List View' : 'Grid View'"
               >
-                <mat-icon>{{
-                  viewType === 'grid' ? 'view_list' : 'view_module'
-                }}</mat-icon>
+                <lucide-icon
+                  [name]="viewType === 'grid' ? 'list' : 'layout-grid'"
+                ></lucide-icon>
               </button>
               <button
                 mat-icon-button
                 (click)="refreshDocuments()"
                 matTooltip="Refresh"
               >
-                <mat-icon>refresh</mat-icon>
+                <lucide-icon name="refresh-cw"></lucide-icon>
               </button>
             </div>
           </mat-card-header>
@@ -231,7 +236,7 @@ import { DocumentMetadataComponent } from './document-metadata.component';
               *ngIf="!isLoading && documents && documents.length === 0"
               class="empty-state"
             >
-              <mat-icon>folder_open</mat-icon>
+              <lucide-icon name="folder-open"></lucide-icon>
               <h3>No documents found</h3>
               <p>
                 Try adjusting your search criteria or upload some documents.
@@ -254,9 +259,10 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                 (click)="selectDocument(document)"
               >
                 <div class="document-header">
-                  <mat-icon class="document-icon">{{
-                    getDocumentIcon(document.file_type)
-                  }}</mat-icon>
+                  <lucide-icon
+                    class="document-icon"
+                    [name]="getDocumentIcon(document.file_type)"
+                  ></lucide-icon>
                   <div class="document-actions">
                     <button
                       mat-icon-button
@@ -265,14 +271,14 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                       "
                       matTooltip="Download"
                     >
-                      <mat-icon>download</mat-icon>
+                      <lucide-icon name="download"></lucide-icon>
                     </button>
                     <button
                       mat-icon-button
                       (click)="editDocument(document); $event.stopPropagation()"
                       matTooltip="Edit"
                     >
-                      <mat-icon>edit</mat-icon>
+                      <lucide-icon name="pencil"></lucide-icon>
                     </button>
                     <button
                       mat-icon-button
@@ -282,7 +288,7 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                       matTooltip="Delete"
                       color="warn"
                     >
-                      <mat-icon>delete</mat-icon>
+                      <lucide-icon name="trash-2"></lucide-icon>
                     </button>
                   </div>
                 </div>
@@ -305,9 +311,10 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                       class="metadata-item-small"
                       *ngIf="getCollectionName(document)"
                     >
-                      <mat-icon class="metadata-icon-small text-blue-600"
-                        >folder</mat-icon
-                      >
+                      <lucide-icon
+                        class="metadata-icon-small text-blue-600"
+                        name="folder"
+                      ></lucide-icon>
                       <span class="font-medium">{{
                         getCollectionName(document)
                       }}</span>
@@ -317,9 +324,10 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                       *ngIf="getChunkCount(document)"
                       [matTooltip]="getChunkingTooltip(document)"
                     >
-                      <mat-icon class="metadata-icon-small text-green-600"
-                        >analytics</mat-icon
-                      >
+                      <lucide-icon
+                        class="metadata-icon-small text-green-600"
+                        name="chart-column"
+                      ></lucide-icon>
                       <span>{{ getChunkCount(document) }} chunks</span>
                       <span
                         class="text-xs text-gray-500 ml-1"
@@ -330,7 +338,9 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                     </div>
                   </div>
                   <div class="document-status" [class]="document.status">
-                    <mat-icon>{{ getStatusIcon(document.status) }}</mat-icon>
+                    <lucide-icon
+                      [name]="getStatusIcon(document.status)"
+                    ></lucide-icon>
                     {{ document.status }}
                   </div>
                 </div>
@@ -363,9 +373,10 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                 (click)="selectDocument(document)"
               >
                 <div class="col-filename">
-                  <mat-icon class="file-icon">{{
-                    getDocumentIcon(document.file_type)
-                  }}</mat-icon>
+                  <lucide-icon
+                    class="file-icon"
+                    [name]="getDocumentIcon(document.file_type)"
+                  ></lucide-icon>
                   <span class="filename">{{
                     document.title || document.original_file_name
                   }}</span>
@@ -379,7 +390,10 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                     *ngIf="getChunkCount(document)"
                     [matTooltip]="getChunkingTooltip(document)"
                   >
-                    <mat-icon class="small-icon">analytics</mat-icon>
+                    <lucide-icon
+                      class="small-icon"
+                      name="chart-column"
+                    ></lucide-icon>
                     {{ getChunkCount(document) }}
                     <span
                       class="text-xs text-gray-500 ml-1"
@@ -420,14 +434,14 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                     "
                     matTooltip="Download"
                   >
-                    <mat-icon>download</mat-icon>
+                    <lucide-icon name="download"></lucide-icon>
                   </button>
                   <button
                     mat-icon-button
                     (click)="editDocument(document); $event.stopPropagation()"
                     matTooltip="Edit"
                   >
-                    <mat-icon>edit</mat-icon>
+                    <lucide-icon name="pencil"></lucide-icon>
                   </button>
                   <button
                     mat-icon-button
@@ -435,7 +449,7 @@ import { DocumentMetadataComponent } from './document-metadata.component';
                     matTooltip="Delete"
                     color="warn"
                   >
-                    <mat-icon>delete</mat-icon>
+                    <lucide-icon name="trash-2"></lucide-icon>
                   </button>
                 </div>
               </div>
@@ -1013,25 +1027,25 @@ export class DocumentLibraryComponent implements OnInit {
   }
 
   getDocumentIcon(mimeType: string): string {
-    if (!mimeType) return 'description';
-    if (mimeType.includes('pdf')) return 'picture_as_pdf';
-    if (mimeType.includes('word')) return 'description';
-    if (mimeType.includes('text')) return 'text_snippet';
-    return 'description';
+    if (!mimeType) return 'file-text';
+    if (mimeType.includes('pdf')) return 'file-text';
+    if (mimeType.includes('word')) return 'file-text';
+    if (mimeType.includes('text')) return 'file-text';
+    return 'file-text';
   }
 
   getStatusIcon(status: DocumentState): string {
     switch (status) {
       case DocumentState.PROCESSED:
-        return 'check_circle';
+        return 'circle-check';
       case 'processing':
-        return 'hourglass_empty';
+        return 'hourglass';
       case 'failed':
-        return 'error';
+        return 'circle-alert';
       case DocumentState.PENDING:
         return 'upload';
       default:
-        return 'description';
+        return 'file-text';
     }
   }
 

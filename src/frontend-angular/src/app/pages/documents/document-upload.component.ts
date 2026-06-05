@@ -17,7 +17,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -28,6 +27,7 @@ import { Router, RouterLink } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { Collection } from '../../api/models/collection.models';
 import {
   Document,
@@ -43,6 +43,7 @@ import { DocumentService } from '../../api/services/document.service';
   selector: 'app-document-upload',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
@@ -52,7 +53,6 @@ import { DocumentService } from '../../api/services/document.service';
     MatSelectModule,
     MatOptionModule,
     MatButtonModule,
-    MatIconModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatCheckboxModule,
@@ -66,7 +66,7 @@ import { DocumentService } from '../../api/services/document.service';
       <div class="page-header-section">
         <div class="page-title">
           <h1>
-            <mat-icon>cloud_upload</mat-icon>
+            <lucide-icon name="cloud-upload"></lucide-icon>
             Document Upload
           </h1>
           <p class="subtitle">
@@ -87,7 +87,10 @@ import { DocumentService } from '../../api/services/document.service';
                 (drop)="onDrop($event)"
               >
                 <div class="flex items-center gap-3">
-                  <mat-icon class="text-blue-600">cloud_upload</mat-icon>
+                  <lucide-icon
+                    class="text-blue-600"
+                    name="cloud-upload"
+                  ></lucide-icon>
                   <div class="flex-1">
                     <p class="m-0 font-medium">
                       Drag & drop files or click to browse
@@ -103,7 +106,7 @@ import { DocumentService } from '../../api/services/document.service';
                     class="shrink-0"
                     (click)="fileInput.click()"
                   >
-                    <mat-icon>folder_open</mat-icon>
+                    <lucide-icon name="folder-open"></lucide-icon>
                     Browse
                   </button>
                 </div>
@@ -137,16 +140,17 @@ import { DocumentService } from '../../api/services/document.service';
                   *ngFor="let file of selectedFiles; let i = index"
                   class="flex items-center gap-1 px-2 py-1 bg-white border border-blue-300 rounded text-xs"
                 >
-                  <mat-icon class="text-base text-gray-600"
-                    >description</mat-icon
-                  >
+                  <lucide-icon
+                    class="text-base text-gray-600"
+                    name="file-text"
+                  ></lucide-icon>
                   <span class="max-w-32 truncate">{{ file.name }}</span>
                   <button
                     mat-icon-button
                     (click)="removeFile(i)"
                     class="w-5 h-5"
                   >
-                    <mat-icon class="text-sm">close</mat-icon>
+                    <lucide-icon class="text-sm" name="x"></lucide-icon>
                   </button>
                 </div>
               </div>
@@ -174,14 +178,20 @@ import { DocumentService } from '../../api/services/document.service';
                           class="flex items-center gap-1 text-xs text-blue-600"
                           *ngIf="getSelectedCollection()"
                         >
-                          <mat-icon class="text-base">psychology</mat-icon>
+                          <lucide-icon
+                            class="text-base"
+                            name="brain-circuit"
+                          ></lucide-icon>
                           {{ getSelectedCollection()?.embedding_model }}
                         </span>
                         <span
                           class="flex items-center gap-1 text-xs text-yellow-600"
                           *ngIf="getSelectedCollection()?.is_default"
                         >
-                          <mat-icon class="text-base">star</mat-icon>
+                          <lucide-icon
+                            class="text-base"
+                            name="star"
+                          ></lucide-icon>
                           Default
                         </span>
                       </div>
@@ -201,14 +211,20 @@ import { DocumentService } from '../../api/services/document.service';
                           <span
                             class="flex items-center gap-1 text-xs text-blue-600"
                           >
-                            <mat-icon class="text-base">psychology</mat-icon>
+                            <lucide-icon
+                              class="text-base"
+                              name="brain-circuit"
+                            ></lucide-icon>
                             {{ collection.embedding_model }}
                           </span>
                           <span
                             *ngIf="collection.is_default"
                             class="flex items-center gap-1 text-xs text-yellow-600"
                           >
-                            <mat-icon class="text-base">star</mat-icon>
+                            <lucide-icon
+                              class="text-base"
+                              name="star"
+                            ></lucide-icon>
                             Default
                           </span>
                         </div>
@@ -236,7 +252,7 @@ import { DocumentService } from '../../api/services/document.service';
 
               <!-- Chunking Status Indicator (Compact) -->
               <div class="flex items-center gap-2 text-xs text-gray-600">
-                <mat-icon
+                <lucide-icon
                   [class.text-green-600]="
                     uploadForm.value.chunkingStrategy === 'auto'
                   "
@@ -245,13 +261,12 @@ import { DocumentService } from '../../api/services/document.service';
                   "
                   class="text-base"
                   [matTooltip]="getChunkingTooltip()"
-                >
-                  {{
+                  [name]="
                     uploadForm.value.chunkingStrategy === 'auto'
-                      ? 'auto_awesome'
+                      ? 'sparkles'
                       : 'settings'
-                  }}
-                </mat-icon>
+                  "
+                ></lucide-icon>
                 <span
                   [class.text-green-700]="
                     uploadForm.value.chunkingStrategy === 'auto'
@@ -279,7 +294,10 @@ import { DocumentService } from '../../api/services/document.service';
                 *ngIf="collectionError"
                 class="flex items-center gap-2 p-2 bg-red-50 border border-red-200 rounded"
               >
-                <mat-icon class="text-red-600">error</mat-icon>
+                <lucide-icon
+                  class="text-red-600"
+                  name="circle-alert"
+                ></lucide-icon>
                 <span class="text-sm text-red-800">{{ collectionError }}</span>
               </div>
 
@@ -291,7 +309,7 @@ import { DocumentService } from '../../api/services/document.service';
                   (click)="uploadFiles()"
                   [disabled]="selectedFiles.length === 0 || isUploading"
                 >
-                  <mat-icon>upload</mat-icon>
+                  <lucide-icon name="upload"></lucide-icon>
                   Upload {{ selectedFiles.length }} File(s)
                 </button>
 
@@ -314,7 +332,7 @@ import { DocumentService } from '../../api/services/document.service';
                   matTooltip="Advanced workflow: See metrics, compare strategies, and manually configure chunking"
                   class="text-sm"
                 >
-                  <mat-icon>science</mat-icon>
+                  <lucide-icon name="flask-conical"></lucide-icon>
                   Advanced Analysis
                 </button>
               </div>
@@ -327,9 +345,9 @@ import { DocumentService } from '../../api/services/document.service';
                   (click)="showAdvancedOptions = !showAdvancedOptions"
                   class="text-sm"
                 >
-                  <mat-icon>{{
-                    showAdvancedOptions ? 'expand_less' : 'expand_more'
-                  }}</mat-icon>
+                  <lucide-icon
+                    [name]="showAdvancedOptions ? 'chevron-up' : 'chevron-down'"
+                  ></lucide-icon>
                   {{ showAdvancedOptions ? 'Hide' : 'Show' }} Advanced Metadata
                   & Chunking Options
                 </button>
@@ -401,16 +419,16 @@ import { DocumentService } from '../../api/services/document.service';
                     <mat-select formControlName="chunkingStrategy">
                       <mat-select-trigger>
                         <div class="flex items-center gap-2">
-                          <mat-icon
+                          <lucide-icon
                             class="text-green-600 text-base"
                             *ngIf="uploadForm.value.chunkingStrategy === 'auto'"
-                            >auto_awesome</mat-icon
-                          >
-                          <mat-icon
+                            name="sparkles"
+                          ></lucide-icon>
+                          <lucide-icon
                             class="text-blue-600 text-base"
                             *ngIf="uploadForm.value.chunkingStrategy !== 'auto'"
-                            >settings</mat-icon
-                          >
+                            name="settings"
+                          ></lucide-icon>
                           <span>{{
                             formatStrategyName(
                               uploadForm.value.chunkingStrategy || 'auto'
@@ -425,9 +443,10 @@ import { DocumentService } from '../../api/services/document.service';
                       </mat-select-trigger>
                       <mat-option value="auto">
                         <div class="flex items-center gap-2">
-                          <mat-icon class="text-green-600 text-base"
-                            >auto_awesome</mat-icon
-                          >
+                          <lucide-icon
+                            class="text-green-600 text-base"
+                            name="sparkles"
+                          ></lucide-icon>
                           <span class="font-medium"
                             >Auto-Detect (Recommended)</span
                           >
@@ -551,7 +570,7 @@ import { DocumentService } from '../../api/services/document.service';
                 *ngIf="progress.status === 'analyzing'"
                 class="mt-1 text-xs text-blue-700 flex items-center gap-1"
               >
-                <mat-icon class="text-sm">science</mat-icon>
+                <lucide-icon class="text-sm" name="flask-conical"></lucide-icon>
                 <span>{{
                   progress.message || 'Analyzing document structure...'
                 }}</span>
@@ -565,7 +584,7 @@ import { DocumentService } from '../../api/services/document.service';
                 *ngIf="progress.selected_strategy"
                 class="mt-1 text-xs text-green-700 flex items-center gap-1"
               >
-                <mat-icon class="text-sm">check_circle</mat-icon>
+                <lucide-icon class="text-sm" name="circle-check"></lucide-icon>
                 <span
                   >Selected:
                   {{ formatStrategyName(progress.selected_strategy) }}</span
@@ -580,7 +599,10 @@ import { DocumentService } from '../../api/services/document.service';
                 *ngIf="progress.error"
                 class="flex items-center gap-1 mt-1 text-xs text-red-700"
               >
-                <mat-icon class="text-base">error</mat-icon>
+                <lucide-icon
+                  class="text-base"
+                  name="circle-alert"
+                ></lucide-icon>
                 {{ progress.error }}
               </div>
             </div>
@@ -598,7 +620,7 @@ import { DocumentService } from '../../api/services/document.service';
               *ngIf="recentUploads && recentUploads.length === 0"
               class="text-center p-6 text-gray-600"
             >
-              <mat-icon class="text-4xl">history</mat-icon>
+              <lucide-icon class="text-4xl" name="history"></lucide-icon>
               <p class="m-0">No recent uploads</p>
             </div>
 
@@ -606,7 +628,10 @@ import { DocumentService } from '../../api/services/document.service';
               *ngFor="let upload of recentUploads"
               class="flex items-center py-3 border-b border-gray-200 last:border-b-0"
             >
-              <mat-icon class="mr-3 text-gray-600">description</mat-icon>
+              <lucide-icon
+                class="mr-3 text-gray-600"
+                name="file-text"
+              ></lucide-icon>
               <div class="flex-1 ml-3">
                 <span class="font-medium block">{{
                   upload.original_file_name
@@ -619,9 +644,10 @@ import { DocumentService } from '../../api/services/document.service';
                 class="upload-status flex items-center gap-1 text-xs"
                 [class]="upload.status"
               >
-                <mat-icon class="text-base">{{
-                  getStatusIcon(upload.status)
-                }}</mat-icon>
+                <lucide-icon
+                  class="text-base"
+                  [name]="getStatusIcon(upload.status)"
+                ></lucide-icon>
                 {{ upload.status }}
               </div>
             </div>
@@ -1026,8 +1052,8 @@ export class DocumentUploadComponent implements OnInit, OnDestroy {
           classification: this.uploadForm.value.classification || undefined,
           tags: this.uploadForm.value.tags
             ? this.uploadForm.value.tags
-              .split(',')
-              .map((tag: string) => tag.trim())
+                .split(',')
+                .map((tag: string) => tag.trim())
             : undefined,
           process_async: this.uploadForm.value.processAsync,
           // Chunking configuration
@@ -1117,17 +1143,17 @@ export class DocumentUploadComponent implements OnInit, OnDestroy {
   getStatusIcon(status: DocumentState): string {
     switch (status) {
       case DocumentState.PROCESSED:
-        return 'check_circle';
+        return 'circle-check';
       case DocumentState.PROCESSING:
-        return 'hourglass_empty';
+        return 'hourglass';
       case DocumentState.FAILED:
-        return 'error';
+        return 'circle-alert';
       case DocumentState.PENDING:
         return 'upload';
       case DocumentState.DELETED:
-        return 'delete';
+        return 'trash-2';
       default:
-        return 'description';
+        return 'file-text';
     }
   }
 

@@ -25,7 +25,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -43,17 +42,18 @@ import {
   TemplateVersionResponse,
 } from '../../api/models/template.models';
 import { TemplateService } from '../../api/services/template.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-template-detail',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule,
     MatTabsModule,
     MatChipsModule,
     MatDividerModule,

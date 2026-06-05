@@ -105,7 +105,7 @@
   background-color: #ffebee;
   border-radius: 4px;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 1.25rem;
     width: 1.25rem;
     height: 1.25rem;

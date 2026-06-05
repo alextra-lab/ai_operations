@@ -12,7 +12,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -33,16 +32,17 @@ import {
   TimeSeriesData,
 } from './models/gateway-metrics.models';
 import { GatewayMetricsService } from './services/gateway-metrics.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-gateway-metrics',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSnackBarModule,

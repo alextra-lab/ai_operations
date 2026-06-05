@@ -331,10 +331,10 @@ describe('QueryResultsPanelComponent', () => {
 
   describe('Helper Methods', () => {
     it('should get role icon', () => {
-      expect(component.getRoleIcon('user')).toBe('person');
-      expect(component.getRoleIcon('assistant')).toBe('smart_toy');
+      expect(component.getRoleIcon('user')).toBe('user');
+      expect(component.getRoleIcon('assistant')).toBe('bot');
       expect(component.getRoleIcon('system')).toBe('settings');
-      expect(component.getRoleIcon('unknown')).toBe('help');
+      expect(component.getRoleIcon('unknown')).toBe('circle-help');
     });
 
     it('should get role name', () => {

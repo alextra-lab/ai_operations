@@ -12,7 +12,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -31,6 +30,7 @@ import {
   DraftStorageService,
   RegistrationDraft,
 } from '../../../services/draft-storage.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-tool-registration-wizard',
@@ -38,13 +38,13 @@ import {
   styleUrls: ['./tool-registration-wizard.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,

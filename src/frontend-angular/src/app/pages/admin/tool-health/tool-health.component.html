@@ -6,7 +6,7 @@
   <div class="page-header-section">
     <div class="page-title">
       <h1>
-        <mat-icon aria-hidden="true">monitor_heart</mat-icon>
+        <lucide-icon aria-hidden="true" name="activity"></lucide-icon>
         Tool Health
       </h1>
       <p class="subtitle">Monitor MCP tool availability and performance</p>
@@ -31,7 +31,7 @@
             [disabled]="isLoading"
             aria-label="Refresh health data"
           >
-            <mat-icon>refresh</mat-icon>
+            <lucide-icon name="refresh-cw"></lucide-icon>
             Refresh
           </button>
 
@@ -41,7 +41,7 @@
             routerLink="/admin/tools"
             aria-label="Back to Tool Management"
           >
-            <mat-icon>arrow_back</mat-icon>
+            <lucide-icon name="arrow-left"></lucide-icon>
             Tool Management
           </a>
         </div>
@@ -77,7 +77,7 @@
             *ngIf="!isLoading && sortedTools().length === 0"
             class="empty-state"
           >
-            <mat-icon class="empty-icon">build</mat-icon>
+            <lucide-icon class="empty-icon" name="wrench"></lucide-icon>
             <h3>No tools registered</h3>
             <p>Register your first tool to start monitoring health.</p>
             <a
@@ -85,7 +85,7 @@
               color="primary"
               routerLink="/admin/tools/register"
             >
-              <mat-icon>add_circle</mat-icon>
+              <lucide-icon name="circle-plus"></lucide-icon>
               Register Tool
             </a>
           </div>
@@ -126,10 +126,10 @@
                   [ngClass]="getStatusClass(tool)"
                   [attr.aria-label]="getStatus(tool)"
                 >
-                  <mat-icon
-                    [fontIcon]="getStatusIcon(tool)"
+                  <lucide-icon
+                    [name]="getStatusIcon(tool)"
                     aria-hidden="true"
-                  ></mat-icon>
+                  ></lucide-icon>
                   <span class="status-text">{{
                     getStatus(tool) | titlecase
                   }}</span>
@@ -175,9 +175,10 @@
                     *ngIf="isChecking(tool.id)"
                     diameter="20"
                   ></mat-spinner>
-                  <mat-icon *ngIf="!isChecking(tool.id)">
-                    health_and_safety
-                  </mat-icon>
+                  <lucide-icon
+                    *ngIf="!isChecking(tool.id)"
+                    name="shield-plus"
+                  ></lucide-icon>
                 </button>
                 <button
                   mat-icon-button
@@ -185,7 +186,7 @@
                   (click)="onToolSelect(tool)"
                   aria-label="View health history"
                 >
-                  <mat-icon>history</mat-icon>
+                  <lucide-icon name="history"></lucide-icon>
                 </button>
               </td>
             </ng-container>
@@ -217,7 +218,7 @@
         <mat-card-content>
           <!-- No tool selected -->
           <div *ngIf="!selectedTool()" class="empty-state">
-            <mat-icon class="empty-icon">timeline</mat-icon>
+            <lucide-icon class="empty-icon" name="chart-line"></lucide-icon>
             <p>Select a tool to view health history</p>
           </div>
 
@@ -302,9 +303,10 @@
                   *ngIf="isChecking(selectedTool()!.id)"
                   diameter="18"
                 ></mat-spinner>
-                <mat-icon *ngIf="!isChecking(selectedTool()!.id)">
-                  health_and_safety
-                </mat-icon>
+                <lucide-icon
+                  *ngIf="!isChecking(selectedTool()!.id)"
+                  name="shield-plus"
+                ></lucide-icon>
                 Trigger Health Check
               </button>
               <a
@@ -312,7 +314,7 @@
                 [routerLink]="['/admin/tools/analytics']"
                 [queryParams]="{ tool_id: selectedTool()?.id }"
               >
-                <mat-icon>analytics</mat-icon>
+                <lucide-icon name="chart-column"></lucide-icon>
                 View Full Analytics
               </a>
             </div>

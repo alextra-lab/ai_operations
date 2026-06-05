@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -27,18 +26,19 @@ import {
   ProviderFilters,
 } from './models/provider-management.models';
 import { ProviderManagementService } from './services/provider-management.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-provider-management',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatTableModule,
     MatPaginatorModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule,
     MatSelectModule,
     MatChipsModule,
     MatTooltipModule,
@@ -222,8 +222,8 @@ export class ProviderManagementComponent implements OnInit {
   }
 
   getHealthStatusIcon(provider: ProviderConfig): string {
-    if (!provider.last_health_check) return 'help_outline';
-    return provider.last_health_status ? 'check_circle' : 'error';
+    if (!provider.last_health_check) return 'circle-help';
+    return provider.last_health_status ? 'circle-check' : 'circle-alert';
   }
 
   getHealthStatusClass(provider: ProviderConfig): string {

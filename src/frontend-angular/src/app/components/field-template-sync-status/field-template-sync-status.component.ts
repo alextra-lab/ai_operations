@@ -5,10 +5,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import type { FieldSyncStatus } from '../user-interaction-config/user-interaction-config.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-field-template-sync-status',
@@ -16,9 +16,9 @@ import type { FieldSyncStatus } from '../user-interaction-config/user-interactio
   styleUrls: ['./field-template-sync-status.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
-    MatIconModule,
     MatTooltipModule,
   ],
 })
@@ -47,11 +47,11 @@ export class FieldTemplateSyncStatusComponent {
   getIcon(status: FieldSyncStatus['status']): string {
     switch (status) {
       case 'synced':
-        return 'check_circle';
+        return 'circle-check';
       case 'field_only':
-        return 'warning';
+        return 'triangle-alert';
       case 'template_only':
-        return 'error';
+        return 'circle-alert';
     }
   }
 

@@ -39,7 +39,7 @@
       align-items: center;
       gap: 12px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 32px;
         width: 32px;
         height: 32px;
@@ -60,7 +60,7 @@
     right: 24px;
 
     .close-btn {
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 28px;
         width: 28px;
         height: 28px;
@@ -183,7 +183,7 @@
       color: #757575;
     }
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       margin-left: auto;
       color: #ff9800;
     }
@@ -206,7 +206,7 @@
     background-color: #e3f2fd;
     border-left: 4px solid #2196f3;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       color: #2196f3;
     }
 
@@ -279,7 +279,7 @@
     font-size: 12px;
     color: #2e7d32;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 16px;
       width: 16px;
       height: 16px;
@@ -321,7 +321,7 @@
       font-weight: 500;
       color: #616161;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 18px;
         width: 18px;
         height: 18px;
@@ -382,7 +382,7 @@
     border-radius: 4px;
     color: #1976d2;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 24px;
       width: 24px;
       height: 24px;
@@ -400,21 +400,21 @@
       gap: 12px;
       padding: 8px 0;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 20px;
         width: 20px;
         height: 20px;
       }
 
-      &.passed mat-icon {
+      &.passed :is(mat-icon, lucide-icon) {
         color: #4caf50;
       }
 
-      &.warning mat-icon {
+      &.warning :is(mat-icon, lucide-icon) {
         color: #ff9800;
       }
 
-      &.failed mat-icon {
+      &.failed :is(mat-icon, lucide-icon) {
         color: #f44336;
       }
     }
@@ -437,7 +437,7 @@
       background-color: #e3f2fd;
       border-radius: 4px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         color: #2196f3;
         flex-shrink: 0;
       }
@@ -481,7 +481,7 @@
       font-weight: 500;
       color: #c62828;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         color: #f44336;
       }
     }
@@ -513,7 +513,7 @@
   border-left: 4px solid #4caf50;
   border-radius: 4px;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     color: #388e3c;
     flex-shrink: 0;
     margin-top: 2px;

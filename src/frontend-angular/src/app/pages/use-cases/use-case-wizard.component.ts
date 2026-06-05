@@ -29,7 +29,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -90,6 +89,7 @@ import {
 import { FormattedOutput } from '../../models/output-format.model';
 import { StructuredOutputRendererComponent } from '../../components/structured-output-renderer/structured-output-renderer.component';
 import { CompatibilityStatus } from '../../components/schema-editor/schema-editor.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 type StartingPoint = 'blank' | 'pattern' | 'clone';
 
@@ -108,6 +108,7 @@ const DEFAULT_QUERY_FIELD: InputField = {
   styleUrls: ['./use-case-wizard.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -116,7 +117,6 @@ const DEFAULT_QUERY_FIELD: InputField = {
     MatChipsModule,
     MatExpansionModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
@@ -2180,7 +2180,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
       PATTERN_CATEGORIES.find((c) => c.id === categoryId) || {
         id: categoryId,
         label: categoryId,
-        icon: 'category',
+        icon: 'shapes',
         description: '',
         color: '#757575',
       }

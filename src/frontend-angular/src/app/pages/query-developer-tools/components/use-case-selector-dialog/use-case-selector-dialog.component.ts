@@ -47,6 +47,7 @@ import {
 import { UseCaseManagementService } from '../../../../api/services/use-case-management.service';
 import { UserProfile } from '../../../../core/auth/auth.models';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 export interface UseCaseSelectorDialogData {
   mode: 'update' | 'clone';
@@ -64,6 +65,7 @@ export interface UseCaseSelectorDialogResult {
   selector: 'app-use-case-selector-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,

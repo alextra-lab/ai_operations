@@ -17,7 +17,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -34,11 +33,13 @@ import {
   TemplateUpdate,
 } from '../../api/models/template.models';
 import { TemplateService } from '../../api/services/template.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-prompt-template-editor',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatCardModule,
@@ -46,7 +47,6 @@ import { TemplateService } from '../../api/services/template.service';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatIconModule,
     MatSnackBarModule,
     MatTooltipModule,
     MatChipsModule,

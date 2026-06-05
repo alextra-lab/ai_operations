@@ -18,7 +18,6 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -29,6 +28,7 @@ import {
   CollectionUpdate,
 } from '../../api/models/collection.models';
 import { CollectionService } from '../../api/services/collection.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-collection-edit-dialog',
@@ -36,12 +36,12 @@ import { CollectionService } from '../../api/services/collection.service';
   styleUrls: ['./collection-edit-dialog.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,

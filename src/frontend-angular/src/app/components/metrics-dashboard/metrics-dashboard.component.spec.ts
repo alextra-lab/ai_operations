@@ -324,11 +324,11 @@ describe('MetricsDashboardComponent', () => {
     });
 
     it('should get correct icon for recommendation type', () => {
-      expect(component.getRecommendationIcon('performance')).toBe('speed');
+      expect(component.getRecommendationIcon('performance')).toBe('gauge');
       expect(component.getRecommendationIcon('consistency')).toBe(
-        'check_circle'
+        'circle-check'
       );
-      expect(component.getRecommendationIcon('cost')).toBe('attach_money');
+      expect(component.getRecommendationIcon('cost')).toBe('dollar-sign');
       expect(component.getRecommendationIcon('quality')).toBe('star');
       expect(component.getRecommendationIcon('unknown')).toBe('lightbulb');
     });

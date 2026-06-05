@@ -1,17 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-unauthorized',
   standalone: true,
-  imports: [MatCardModule, MatIconModule, MatButtonModule],
+  imports: [
+    LucideAngularModule,MatCardModule, MatButtonModule],
   template: `
     <mat-card class="unauthorized-card">
       <mat-card-header>
-        <mat-icon mat-card-avatar color="warn">block</mat-icon>
+        <lucide-icon mat-card-avatar color="warn" name="ban"></lucide-icon>
         <mat-card-title>Access Denied</mat-card-title>
         <mat-card-subtitle
           >You don't have permission to access this resource</mat-card-subtitle
@@ -24,11 +25,11 @@ import { Router } from '@angular/router';
         </p>
         <div class="actions">
           <button mat-raised-button color="primary" (click)="goBack()">
-            <mat-icon>arrow_back</mat-icon>
+            <lucide-icon name="arrow-left"></lucide-icon>
             Go Back
           </button>
           <button mat-button (click)="goHome()">
-            <mat-icon>home</mat-icon>
+            <lucide-icon name="home"></lucide-icon>
             Home
           </button>
         </div>

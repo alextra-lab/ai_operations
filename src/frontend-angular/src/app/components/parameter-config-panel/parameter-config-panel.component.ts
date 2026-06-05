@@ -48,7 +48,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -68,6 +67,7 @@ import {
 } from '../../api/models/query-config.models';
 import { CollectionService } from '../../api/services/collection.service';
 import { ModelRegistryService } from '../../api/services/model-registry.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 const STORAGE_KEY_EXPANDED = 'paramConfigExpanded';
 
@@ -75,13 +75,13 @@ const STORAGE_KEY_EXPANDED = 'paramConfigExpanded';
   selector: 'app-parameter-config-panel',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatCheckboxModule,
     MatExpansionModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
     MatSelectModule,
     MatSlideToggleModule,

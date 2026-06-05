@@ -3,7 +3,7 @@
   <mat-card class="header-card">
     <mat-card-header>
       <mat-card-title>
-        <mat-icon>edit_note</mat-icon>
+        <lucide-icon name="square-pen"></lucide-icon>
         Use Case Template Editor
       </mat-card-title>
       <mat-card-subtitle>
@@ -123,13 +123,13 @@
             (click)="saveTemplate()"
             [disabled]="templateForm.invalid || saving"
           >
-            <mat-icon>save</mat-icon>
+            <lucide-icon name="save"></lucide-icon>
             <span *ngIf="!saving">Save Template</span>
             <span *ngIf="saving">Saving...</span>
           </button>
 
           <button mat-button type="button" (click)="resetForm()">
-            <mat-icon>refresh</mat-icon>
+            <lucide-icon name="refresh-cw"></lucide-icon>
             Reset
           </button>
         </div>

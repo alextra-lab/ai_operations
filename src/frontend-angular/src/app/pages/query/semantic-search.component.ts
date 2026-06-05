@@ -29,6 +29,7 @@ import {
   takeUntil,
 } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ExecutionMetrics,
   getDefaultQueryConfig,
@@ -63,6 +64,7 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
   selector: 'app-semantic-search',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -104,7 +106,7 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
             class="m-0 text-[28px] md:text-[28px] font-medium
                                flex items-center gap-3"
           >
-            <mat-icon class="text-blue-600">search</mat-icon>
+            <lucide-icon class="text-blue-600" name="search"></lucide-icon>
             Semantic Search
           </h1>
           <p class="m-0 mt-2 text-gray-600 text-sm">
@@ -164,7 +166,7 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
         <mat-card *ngIf="errorMessage" class="error-card">
           <mat-card-content>
             <div class="error-content">
-              <mat-icon color="warn">error</mat-icon>
+              <lucide-icon color="warn" name="circle-alert"></lucide-icon>
               <h3>Search Error</h3>
               <p>{{ errorMessage }}</p>
               <button mat-button (click)="clearError()">Dismiss</button>
@@ -186,26 +188,32 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
             (click)="onSearch()"
             [disabled]="!canSearch || isSearching"
           >
-            <mat-icon>search</mat-icon>
+            <lucide-icon name="search"></lucide-icon>
             {{ isSearching ? 'Searching...' : 'Search' }}
           </button>
           <button mat-button (click)="reset()">
-            <mat-icon>refresh</mat-icon>
+            <lucide-icon name="refresh-cw"></lucide-icon>
             Reset
           </button>
           <button mat-button (click)="exportConfiguration()">
-            <mat-icon>download</mat-icon>
+            <lucide-icon name="download"></lucide-icon>
             Export Config
           </button>
         </div>
 
         <div class="flex gap-4 mb-3 text-gray-600 text-sm status-info">
           <span *ngIf="lastSearchTimeMs" class="flex items-center gap-1">
-            <mat-icon class="!text-base !w-4 !h-4">schedule</mat-icon>
+            <lucide-icon
+              class="!text-base !w-4 !h-4"
+              name="clock"
+            ></lucide-icon>
             {{ lastSearchTimeMs }}ms
           </span>
           <span *ngIf="resultCount !== null" class="flex items-center gap-1">
-            <mat-icon class="!text-base !w-4 !h-4">description</mat-icon>
+            <lucide-icon
+              class="!text-base !w-4 !h-4"
+              name="file-text"
+            ></lucide-icon>
             {{ resultCount }} results
           </span>
         </div>
@@ -225,7 +233,7 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
             [disabled]="!selectedUseCaseId"
             class="flex-none"
           >
-            <mat-icon>playlist_add</mat-icon>
+            <lucide-icon name="list-plus"></lucide-icon>
             Apply
           </button>
         </div>
@@ -550,15 +558,15 @@ export class SemanticSearchComponent implements OnInit, OnDestroy {
   getResultTypeIcon(sourceType: string): string {
     switch (sourceType) {
       case 'DOCUMENT':
-        return 'description';
+        return 'file-text';
       case 'CHUNK':
-        return 'text_snippet';
+        return 'file-text';
       case 'METADATA':
         return 'info';
       case 'SUMMARY':
-        return 'summarize';
+        return 'file-text';
       default:
-        return 'description';
+        return 'file-text';
     }
   }
 

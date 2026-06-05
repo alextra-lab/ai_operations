@@ -17,7 +17,7 @@
           (click)="openCreateDialog()"
           class="create-button"
         >
-          <mat-icon>add</mat-icon>
+          <lucide-icon name="plus"></lucide-icon>
           Add Provider
         </button>
       </div>
@@ -51,7 +51,7 @@
 
       <!-- Error State -->
       <div *ngIf="error && !isLoading" class="error-container">
-        <mat-icon class="error-icon">error</mat-icon>
+        <lucide-icon class="error-icon" name="circle-alert"></lucide-icon>
         <p class="error-text">{{ error }}</p>
         <button mat-raised-button color="primary" (click)="loadProviders()">
           Retry
@@ -104,16 +104,13 @@
           <ng-container matColumnDef="health">
             <th mat-header-cell *matHeaderCellDef>Health</th>
             <td mat-cell *matCellDef="let provider">
-              <mat-icon
+              <lucide-icon
                 [ngClass]="getHealthStatusClass(provider)"
                 [matTooltip]="
                   provider.last_health_check
                     ? 'Last check: ' + provider.last_health_check
                     : 'Never checked'
-                "
-              >
-                {{ getHealthStatusIcon(provider) }}
-              </mat-icon>
+                " [name]="getHealthStatusIcon(provider)"></lucide-icon>
             </td>
           </ng-container>
 
@@ -158,7 +155,7 @@
                 matTooltip="Test connectivity"
                 class="action-button"
               >
-                <mat-icon>wifi_tethering</mat-icon>
+                <lucide-icon name="radio-tower"></lucide-icon>
               </button>
               <button
                 mat-icon-button
@@ -166,7 +163,7 @@
                 matTooltip="Edit provider"
                 class="action-button"
               >
-                <mat-icon>edit</mat-icon>
+                <lucide-icon name="pencil"></lucide-icon>
               </button>
               <button
                 mat-icon-button
@@ -174,7 +171,7 @@
                 matTooltip="Delete provider"
                 class="action-button action-button-danger"
               >
-                <mat-icon>delete</mat-icon>
+                <lucide-icon name="trash-2"></lucide-icon>
               </button>
             </td>
           </ng-container>

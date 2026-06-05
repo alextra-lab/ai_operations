@@ -20,6 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 
 import { ModelDetailedResponse } from '../../../../api/models/model-registry.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 export interface ModelEditDialogData {
   modelId: string;
@@ -30,6 +31,7 @@ export interface ModelEditDialogData {
   selector: 'app-model-edit-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -44,7 +46,7 @@ export interface ModelEditDialogData {
   template: `
     <div class="model-edit-dialog">
       <h2 mat-dialog-title>
-        <mat-icon>edit</mat-icon>
+        <lucide-icon name="pencil"></lucide-icon>
         Edit Model Metadata
       </h2>
 
@@ -208,7 +210,7 @@ export interface ModelEditDialogData {
           (click)="save()"
           [disabled]="!editForm || editForm.invalid || saving"
         >
-          <mat-icon>save</mat-icon>
+          <lucide-icon name="save"></lucide-icon>
           {{ saving ? 'Saving...' : 'Save Changes' }}
         </button>
       </mat-dialog-actions>

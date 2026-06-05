@@ -48,7 +48,7 @@
             "
             class="mr-2"
           >
-            <mat-icon>{{ isSidebarOpen() ? 'menu_open' : 'menu' }}</mat-icon>
+            <lucide-icon [name]="isSidebarOpen() ? 'panel-left-close' : 'menu'"></lucide-icon>
           </button>
 
           <!-- Breadcrumb Navigation -->
@@ -80,7 +80,7 @@
             matTooltip="Logout"
             *ngIf="currentUser()"
           >
-            <mat-icon>logout</mat-icon>
+            <lucide-icon name="log-out"></lucide-icon>
           </button>
 
           <ng-template #notAuthenticated>

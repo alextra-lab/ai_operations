@@ -18,14 +18,14 @@
       [attr.aria-label]="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
       class="collapse-toggle"
     >
-      <mat-icon>{{ isCollapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      <lucide-icon [name]="isCollapsed ? 'chevron-right' : 'chevron-left'"></lucide-icon>
     </button>
   </div>
 
   <!-- User Info Section -->
   <div class="user-section" *ngIf="currentUser">
     <div class="user-avatar">
-      <mat-icon>account_circle</mat-icon>
+      <lucide-icon name="circle-user"></lucide-icon>
     </div>
     <div class="user-details" *ngIf="!isCollapsed">
       <div class="user-name">
@@ -53,14 +53,11 @@
             [attr.aria-label]="menuItem.label"
           >
             <mat-expansion-panel-header class="menu-panel-header">
-              <mat-icon
+              <lucide-icon
                 class="menu-icon"
                 [matTooltip]="getTooltipText(menuItem)"
                 [matTooltipDisabled]="!isCollapsed"
-                [attr.aria-hidden]="true"
-              >
-                {{ getMenuItemIcon(menuItem) }}
-              </mat-icon>
+                [attr.aria-hidden]="true" [name]="getMenuItemIcon(menuItem)"></lucide-icon>
               <span class="menu-label" *ngIf="!isCollapsed">{{
                 getMenuItemLabel(menuItem)
               }}</span>

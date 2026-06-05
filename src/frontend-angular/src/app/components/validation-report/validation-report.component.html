@@ -1,12 +1,9 @@
 <mat-card class="validation-report">
   <mat-card-header class="flex items-center justify-between">
     <mat-card-title class="flex items-center gap-2">
-      <mat-icon
+      <lucide-icon
         [class.text-green-600]="report.is_valid"
-        [class.text-red-600]="!report.is_valid"
-      >
-        {{ report.is_valid ? 'check_circle' : 'error' }}
-      </mat-icon>
+        [class.text-red-600]="!report.is_valid" [name]="report.is_valid ? 'circle-check' : 'circle-alert'"></lucide-icon>
       <span>Validation Report</span>
     </mat-card-title>
     <span class="text-sm text-gray-600">
@@ -47,7 +44,7 @@
         class="publish-blocker bg-red-50 border-l-4 border-red-500 p-4 mb-4"
       >
         <div class="flex items-center gap-2">
-          <mat-icon class="text-red-600">block</mat-icon>
+          <lucide-icon class="text-red-600" name="ban"></lucide-icon>
           <strong>Cannot publish:</strong>
           <span>Fix all errors before publishing</span>
         </div>
@@ -61,7 +58,7 @@
         <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title class="flex items-center gap-2">
-              <mat-icon class="text-red-600">error</mat-icon>
+              <lucide-icon class="text-red-600" name="circle-alert"></lucide-icon>
               <span>Errors ({{ report.errors.length }})</span>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -94,7 +91,7 @@
                       (click)="applyAutoFix(issue)"
                       class="mt-2"
                     >
-                      <mat-icon>auto_fix_high</mat-icon>
+                      <lucide-icon name="wand-sparkles"></lucide-icon>
                       Auto-Fix
                     </button>
                   }
@@ -110,7 +107,7 @@
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title class="flex items-center gap-2">
-              <mat-icon class="text-yellow-600">warning</mat-icon>
+              <lucide-icon class="text-yellow-600" name="triangle-alert"></lucide-icon>
               <span>Warnings ({{ report.warnings.length }})</span>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -132,7 +129,7 @@
                       (click)="applyAutoFix(issue)"
                       class="mt-2"
                     >
-                      <mat-icon>auto_fix_high</mat-icon>
+                      <lucide-icon name="wand-sparkles"></lucide-icon>
                       Auto-Fix
                     </button>
                   }
@@ -148,7 +145,7 @@
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title class="flex items-center gap-2">
-              <mat-icon class="text-blue-600">info</mat-icon>
+              <lucide-icon class="text-blue-600" name="info"></lucide-icon>
               <span>Suggestions ({{ report.infos.length }})</span>
             </mat-panel-title>
           </mat-expansion-panel-header>

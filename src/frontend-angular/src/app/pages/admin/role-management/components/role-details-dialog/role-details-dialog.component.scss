@@ -120,7 +120,7 @@
   padding: 48px;
   text-align: center;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 48px;
     width: 48px;
     height: 48px;

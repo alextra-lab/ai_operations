@@ -26,7 +26,6 @@ import {
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Subscription } from 'rxjs';
@@ -39,11 +38,13 @@ import {
   SchemaProperty,
 } from '../../models/system-config.models';
 import { SystemConfigService } from '../../services/system-config.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-config-editor',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -51,7 +52,6 @@ import { SystemConfigService } from '../../services/system-config.service';
     MatSelectModule,
     MatCheckboxModule,
     MatChipsModule,
-    MatIconModule,
   ],
   templateUrl: './config-editor.component.html',
   styleUrls: ['./config-editor.component.scss'],

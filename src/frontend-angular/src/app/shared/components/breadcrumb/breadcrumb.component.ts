@@ -2,17 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, startWith } from 'rxjs/operators';
 
 import { Breadcrumb } from '../../../core/models/navigation.models';
 import { NavigationService } from '../../../core/services/navigation.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-breadcrumb',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [
+    LucideAngularModule,CommonModule, MatButtonModule],
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss'],
 })

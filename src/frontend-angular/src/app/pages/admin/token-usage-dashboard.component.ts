@@ -13,7 +13,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -30,16 +29,17 @@ import {
   TokenUsageSummary,
 } from '../../api/models/token-usage.models';
 import { AdminAnalyticsService } from '../../api/services/admin-analytics.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-token-usage-dashboard',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
@@ -110,7 +110,7 @@ import { AdminAnalyticsService } from '../../api/services/admin-analytics.servic
             [disabled]="isLoading"
             matTooltip="Refresh Data"
           >
-            <mat-icon>refresh</mat-icon>
+            <lucide-icon name="refresh-cw"></lucide-icon>
             Refresh
           </button>
         </div>
@@ -124,7 +124,7 @@ import { AdminAnalyticsService } from '../../api/services/admin-analytics.servic
 
       <!-- Error State -->
       <div *ngIf="!isLoading && errorMessage" class="error-message">
-        <mat-icon color="warn">error</mat-icon>
+        <lucide-icon color="warn" name="circle-alert"></lucide-icon>
         <p>{{ errorMessage }}</p>
         <button mat-button (click)="refreshData()">Try Again</button>
       </div>

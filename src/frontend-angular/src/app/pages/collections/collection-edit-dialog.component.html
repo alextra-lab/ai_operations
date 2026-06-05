@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-  <mat-icon>edit</mat-icon>
+  <lucide-icon name="pencil"></lucide-icon>
   Edit Collection: {{ collection.name }}
 </h2>
 
@@ -8,7 +8,7 @@
     <!-- Immutable Fields Display -->
     <div class="immutable-section">
       <div class="section-header">
-        <mat-icon>lock</mat-icon>
+        <lucide-icon name="lock"></lucide-icon>
         <h3>Immutable Properties</h3>
       </div>
 
@@ -41,7 +41,7 @@
     <!-- Editable Fields -->
     <div class="editable-section">
       <div class="section-header">
-        <mat-icon>edit_note</mat-icon>
+        <lucide-icon name="square-pen"></lucide-icon>
         <h3>Editable Properties</h3>
       </div>
 
@@ -74,7 +74,7 @@
 
       <!-- Auto-Chunking Configuration (P4-DOC-07) -->
       <div class="section-header mt-4">
-        <mat-icon>auto_fix_high</mat-icon>
+        <lucide-icon name="wand-sparkles"></lucide-icon>
         <h3>Auto-Chunking Detection</h3>
       </div>
 
@@ -110,7 +110,7 @@
 
     <!-- Error Message -->
     <div *ngIf="errorMessage" class="error-message">
-      <mat-icon>error</mat-icon>
+      <lucide-icon name="circle-alert"></lucide-icon>
       {{ errorMessage }}
     </div>
   </form>

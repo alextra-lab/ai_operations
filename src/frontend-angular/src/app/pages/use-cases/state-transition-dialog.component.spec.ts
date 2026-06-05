@@ -103,9 +103,11 @@ describe('StateTransitionDialogComponent', () => {
 
   describe('getStateIcon', () => {
     it('should return correct icons for all states', () => {
-      expect(component.getStateIcon(LifecycleState.DRAFT)).toBe('edit_note');
-      expect(component.getStateIcon(LifecycleState.REVIEW)).toBe('rate_review');
-      expect(component.getStateIcon(LifecycleState.PUBLISHED)).toBe('publish');
+      expect(component.getStateIcon(LifecycleState.DRAFT)).toBe('square-pen');
+      expect(component.getStateIcon(LifecycleState.REVIEW)).toBe(
+        'message-square-text'
+      );
+      expect(component.getStateIcon(LifecycleState.PUBLISHED)).toBe('upload');
       expect(component.getStateIcon(LifecycleState.ARCHIVED)).toBe('archive');
     });
   });

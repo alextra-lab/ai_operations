@@ -15,17 +15,18 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ToolListItem } from '../../models/tool-management.models';
 import { ToolAdminService } from '../../services/tool-admin.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-tool-delete-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatDialogModule,
@@ -33,7 +34,6 @@ import { ToolAdminService } from '../../services/tool-admin.service';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIconModule,
     MatSnackBarModule,
   ],
   templateUrl: './tool-delete-dialog.component.html',

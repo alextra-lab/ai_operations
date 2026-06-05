@@ -4,9 +4,7 @@
   <mat-expansion-panel-header>
     <mat-panel-title>
       <div class="section-header">
-        <mat-icon [class.restart-required]="metadata.restart_required">
-          {{ metadata.icon }}
-        </mat-icon>
+        <lucide-icon [class.restart-required]="metadata.restart_required" [name]="metadata.icon"></lucide-icon>
         <div class="section-info">
           <span class="section-title">{{ metadata.title }}</span>
           <span class="section-description">{{ metadata.description }}</span>
@@ -23,7 +21,7 @@
     </div>
   } @else if (error) {
     <div class="error-message">
-      <mat-icon color="warn">error</mat-icon>
+      <lucide-icon color="warn" name="circle-alert"></lucide-icon>
       <span>{{ error }}</span>
     </div>
   } @else if (config) {
@@ -35,7 +33,7 @@
 
     @if (metadata.restart_required) {
       <div class="restart-notice">
-        <mat-icon>info</mat-icon>
+        <lucide-icon name="info"></lucide-icon>
         <span>Changes to this section require a service restart</span>
       </div>
     }

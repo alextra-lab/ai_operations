@@ -18,7 +18,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
@@ -32,16 +31,17 @@ import { SharedConfigService } from './services/shared-config.service';
 import { RagQaTabComponent } from './tabs/rag-qa-tab.component';
 import { SemanticSearchTabComponent } from './tabs/semantic-search-tab.component';
 import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-query-developer-tools',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
     MatDialogModule,
     MatDividerModule,
-    MatIconModule,
     MatMenuModule,
     MatTabsModule,
     SemanticSearchTabComponent,
@@ -57,7 +57,7 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
         <!-- Page Title - December 2025 Standard -->
         <div class="page-title">
           <h1>
-            <mat-icon>science</mat-icon>
+            <lucide-icon name="flask-conical"></lucide-icon>
             Query Developer Tools
           </h1>
           <p class="subtitle">
@@ -75,7 +75,7 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
           <!-- Tab 1: Semantic Search -->
           <mat-tab>
             <ng-template mat-tab-label>
-              <mat-icon class="tab-icon">search</mat-icon>
+              <lucide-icon class="tab-icon" name="search"></lucide-icon>
               Semantic Search
             </ng-template>
             <ng-template matTabContent>
@@ -86,7 +86,7 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
           <!-- Tab 2: RAG Q&A -->
           <mat-tab>
             <ng-template mat-tab-label>
-              <mat-icon class="tab-icon">quiz</mat-icon>
+              <lucide-icon class="tab-icon" name="circle-help"></lucide-icon>
               RAG Q&A
             </ng-template>
             <ng-template matTabContent>
@@ -97,7 +97,7 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
           <!-- Tab 3: Use Case Tester -->
           <mat-tab>
             <ng-template mat-tab-label>
-              <mat-icon class="tab-icon">construction</mat-icon>
+              <lucide-icon class="tab-icon" name="hammer"></lucide-icon>
               Use Case Tester
             </ng-template>
             <ng-template matTabContent>
@@ -116,23 +116,23 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
           color="accent"
           aria-label="Apply parameters to use case"
         >
-          <mat-icon class="mr-2">check_circle</mat-icon>
+          <lucide-icon class="mr-2" name="circle-check"></lucide-icon>
           Apply to Use Case
         </button>
 
         <!-- Apply Menu -->
         <mat-menu #applyMenu="matMenu">
           <button mat-menu-item (click)="openUseCaseSelector('update')">
-            <mat-icon>edit</mat-icon>
+            <lucide-icon name="pencil"></lucide-icon>
             <span>Update Existing Draft</span>
           </button>
           <button mat-menu-item (click)="openUseCaseSelector('clone')">
-            <mat-icon>content_copy</mat-icon>
+            <lucide-icon name="copy"></lucide-icon>
             <span>Clone Published & Apply</span>
           </button>
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="createNewUseCase()">
-            <mat-icon>add_circle</mat-icon>
+            <lucide-icon name="circle-plus"></lucide-icon>
             <span>Create New Use Case</span>
           </button>
         </mat-menu>

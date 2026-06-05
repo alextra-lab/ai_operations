@@ -157,7 +157,7 @@
                       {{ model.provider }} • {{ model.embedding_dimensions }}D
                     </span>
                     @if (!model.is_available) {
-                      <mat-icon class="unavailable-icon">warning</mat-icon>
+                      <lucide-icon class="unavailable-icon" name="triangle-alert"></lucide-icon>
                     }
                   </div>
                 </mat-option>
@@ -168,7 +168,7 @@
             }
             @if (selectedModelInvalid) {
               <mat-error>
-                <mat-icon>error</mat-icon>
+                <lucide-icon name="circle-alert"></lucide-icon>
                 Selected model is no longer available
               </mat-error>
             }

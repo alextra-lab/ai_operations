@@ -7,8 +7,8 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { AuditLogEntry } from '../../models/audit-logs.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * Dialog component for displaying detailed audit log information.
@@ -17,10 +17,10 @@ import { AuditLogEntry } from '../../models/audit-logs.models';
   selector: 'app-audit-log-details-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule,
     MatChipsModule,
   ],
   templateUrl: './audit-log-details-dialog.component.html',

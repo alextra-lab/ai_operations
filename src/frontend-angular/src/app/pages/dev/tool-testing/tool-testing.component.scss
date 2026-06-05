@@ -31,7 +31,7 @@
     font-size: 1.5rem;
     font-weight: 500;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       color: var(--mat-primary-color, #1976d2);
     }
   }
@@ -253,7 +253,7 @@
   border-radius: 4px;
   font-size: 0.875rem;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 1.125rem;
     width: 1.125rem;
     height: 1.125rem;
@@ -263,7 +263,7 @@
     background: #e8f5e9;
     color: #2e7d32;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       color: #4caf50;
     }
   }
@@ -272,7 +272,7 @@
     background: #ffebee;
     color: #c62828;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       color: #f44336;
     }
   }
@@ -329,7 +329,7 @@
 }
 
 .entry-status {
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 1.25rem;
     width: 1.25rem;
     height: 1.25rem;

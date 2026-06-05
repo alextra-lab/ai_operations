@@ -6,13 +6,13 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { interval, Subscription } from 'rxjs';
 
 import { SessionInfo, UserListItem } from '../../models/user-management.models';
 import { UserManagementService } from '../../services/user-management.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * Session Viewer Component
@@ -25,11 +25,11 @@ import { UserManagementService } from '../../services/user-management.service';
   selector: 'app-session-viewer',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatDialogModule,
     MatButtonModule,
     MatTableModule,
-    MatIconModule,
     MatTooltipModule,
   ],
   templateUrl: './session-viewer.component.html',

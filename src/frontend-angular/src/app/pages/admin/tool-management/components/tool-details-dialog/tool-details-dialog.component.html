@@ -3,7 +3,7 @@
   <div class="dialog-header">
     <h2 mat-dialog-title>Tool Details</h2>
     <button mat-icon-button (click)="onClose()" class="close-button">
-      <mat-icon>close</mat-icon>
+      <lucide-icon name="x"></lucide-icon>
     </button>
   </div>
 
@@ -16,7 +16,7 @@
 
     <!-- Error State -->
     <div *ngIf="error && !isLoading" class="error-container">
-      <mat-icon class="error-icon">error</mat-icon>
+      <lucide-icon class="error-icon" name="circle-alert"></lucide-icon>
       <p>{{ error }}</p>
     </div>
 
@@ -107,7 +107,7 @@
             </div>
 
             <div class="security-info">
-              <mat-icon class="info-icon">info</mat-icon>
+              <lucide-icon class="info-icon" name="info"></lucide-icon>
               <span class="info-text">
                 Security classification determines which Use Cases can access
                 this tool based on their tool restriction policies.

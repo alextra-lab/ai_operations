@@ -1,6 +1,6 @@
 <div class="sync-status-container" *ngIf="hasAnyItems">
   <div class="sync-status-header">
-    <mat-icon aria-hidden="true">sync</mat-icon>
+    <lucide-icon aria-hidden="true" name="refresh-cw"></lucide-icon>
     <span>Field & Template Sync Status</span>
     <span class="status-summary">
       <span *ngIf="errorItems.length > 0" class="error-count">
@@ -19,9 +19,7 @@
       *ngFor="let item of errorItems"
       class="sync-status-item error"
     >
-      <mat-icon [class]="getIconClass(item.status)" aria-hidden="true">
-        {{ getIcon(item.status) }}
-      </mat-icon>
+      <lucide-icon [class]="getIconClass(item.status)" aria-hidden="true" [name]="getIcon(item.status)"></lucide-icon>
       <span class="field-name">{{ item.fieldName }}</span>
       <span class="status-message">{{ item.message }}</span>
       <button
@@ -31,7 +29,7 @@
         matTooltip="Create input field for this variable"
         type="button"
       >
-        <mat-icon>add</mat-icon>
+        <lucide-icon name="plus"></lucide-icon>
         Create Field
       </button>
     </div>
@@ -40,9 +38,7 @@
       *ngFor="let item of warningItems"
       class="sync-status-item warning"
     >
-      <mat-icon [class]="getIconClass(item.status)" aria-hidden="true">
-        {{ getIcon(item.status) }}
-      </mat-icon>
+      <lucide-icon [class]="getIconClass(item.status)" aria-hidden="true" [name]="getIcon(item.status)"></lucide-icon>
       <span class="field-name">{{ item.fieldName }}</span>
       <span class="status-message">{{ item.message }}</span>
       <button
@@ -51,7 +47,7 @@
         matTooltip="Insert this field into the template"
         type="button"
       >
-        <mat-icon>add</mat-icon>
+        <lucide-icon name="plus"></lucide-icon>
         Insert
       </button>
     </div>
@@ -60,9 +56,7 @@
       *ngFor="let item of syncedItems"
       class="sync-status-item synced"
     >
-      <mat-icon [class]="getIconClass(item.status)" aria-hidden="true">
-        {{ getIcon(item.status) }}
-      </mat-icon>
+      <lucide-icon [class]="getIconClass(item.status)" aria-hidden="true" [name]="getIcon(item.status)"></lucide-icon>
       <span class="field-name">{{ item.fieldName }}</span>
       <span class="status-message">{{ item.message }}</span>
     </div>
@@ -70,6 +64,6 @@
 </div>
 
 <div class="sync-status-empty" *ngIf="!hasAnyItems">
-  <mat-icon aria-hidden="true">info</mat-icon>
+  <lucide-icon aria-hidden="true" name="info"></lucide-icon>
   <span>Define input fields and a template to see sync status.</span>
 </div>

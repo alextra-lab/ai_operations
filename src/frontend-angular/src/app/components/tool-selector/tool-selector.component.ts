@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ToolCategory,
   ToolListItem,
@@ -23,6 +24,7 @@ import { ToolDeveloperService } from '../../api/services/tool-developer.service'
   selector: 'app-tool-selector',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatButtonModule,
@@ -120,23 +122,23 @@ export class ToolSelectorComponent implements OnInit {
   getCategoryIcon(category: string): string {
     switch (category) {
       case ToolCategory.DATABASE:
-        return 'dns';
+        return 'server';
       case ToolCategory.VECTOR_DB:
-        return 'storage';
+        return 'database';
       case ToolCategory.WEB_SCRAPING:
-        return 'public';
+        return 'globe';
       case ToolCategory.REASONING:
-        return 'psychology';
+        return 'brain-circuit';
       case ToolCategory.DOCUMENTATION:
-        return 'description';
+        return 'file-text';
       case ToolCategory.CODE_ANALYSIS:
         return 'code';
       case ToolCategory.THREAT_INTEL:
-        return 'security';
+        return 'shield';
       case ToolCategory.CUSTOM:
-        return 'extension';
+        return 'blocks';
       default:
-        return 'build';
+        return 'wrench';
     }
   }
 

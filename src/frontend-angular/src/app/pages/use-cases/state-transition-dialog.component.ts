@@ -22,10 +22,10 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   LifecycleState,
   UseCaseResponse,
@@ -49,12 +49,12 @@ export interface StateTransitionDialogResult {
   styleUrls: ['./state-transition-dialog.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
     MatSelectModule,
   ],
@@ -83,12 +83,12 @@ export class StateTransitionDialogComponent {
 
   getStateIcon(state: string): string {
     const icons: Record<string, string> = {
-      draft: 'edit_note',
-      review: 'rate_review',
-      published: 'publish',
+      draft: 'square-pen',
+      review: 'message-square-text',
+      published: 'upload',
       archived: 'archive',
     };
-    return icons[state] || 'help';
+    return icons[state] || 'circle-help';
   }
 
   getStateName(state: string): string {

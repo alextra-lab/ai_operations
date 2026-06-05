@@ -34,7 +34,7 @@
       font-weight: 500;
       height: 36px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 28px;
         width: 28px;
         height: 28px;
@@ -94,12 +94,12 @@
             background: #1976d2;
             color: white;
 
-            mat-icon {
+            :is(mat-icon, lucide-icon) {
               color: white;
             }
           }
 
-          mat-icon {
+          :is(mat-icon, lucide-icon) {
             color: rgba(0, 0, 0, 0.6);
             transition: color 0.2s ease;
           }
@@ -229,7 +229,7 @@
       align-items: center;
       justify-content: center;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 24px;
         width: 24px;
         height: 24px;
@@ -259,7 +259,7 @@
         font-size: 0.9rem;
         color: #666;
 
-        mat-icon {
+        :is(mat-icon, lucide-icon) {
           font-size: 18px;
           width: 18px;
           height: 18px;
@@ -335,7 +335,7 @@
       align-items: center;
       justify-content: center;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 24px;
         width: 24px;
         height: 24px;
@@ -415,7 +415,7 @@
         font-size: 20px;
         height: 32px;
 
-        mat-icon {
+        :is(mat-icon, lucide-icon) {
           font-size: 24px;
           width: 24px;
           height: 24px;

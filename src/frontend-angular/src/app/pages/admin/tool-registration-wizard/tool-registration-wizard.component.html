@@ -3,7 +3,7 @@
   <div class="page-header-section">
     <div class="page-title">
       <h1>
-        <mat-icon>add_circle</mat-icon>
+        <lucide-icon name="circle-plus"></lucide-icon>
         Register New MCP Tool
       </h1>
       <p class="subtitle">
@@ -416,7 +416,7 @@
                 [disabled]="loading"
                 class="test-button"
               >
-                <mat-icon>network_check</mat-icon>
+                <lucide-icon name="network"></lucide-icon>
                 Test Connection
               </button>
 
@@ -430,12 +430,12 @@
                   *ngIf="connectionResult['success']"
                   class="success-message"
                 >
-                  <mat-icon>check_circle</mat-icon>
+                  <lucide-icon name="circle-check"></lucide-icon>
                   Connection successful! Discovered
                   {{ connectionResult['tool_count'] }} tools.
                 </div>
                 <div *ngIf="!connectionResult['success']" class="error-message">
-                  <mat-icon>error</mat-icon>
+                  <lucide-icon name="circle-alert"></lucide-icon>
                   Connection failed: {{ connectionResult['error'] }}
                 </div>
               </div>
@@ -604,7 +604,7 @@
                 (click)="onReviewConfirm()"
                 [disabled]="loading"
               >
-                <mat-icon>check_circle</mat-icon>
+                <lucide-icon name="circle-check"></lucide-icon>
                 Register Tool
               </button>
             </div>
@@ -621,7 +621,7 @@
 
     <!-- Error Message -->
     <div *ngIf="error" class="error-message">
-      <mat-icon>error</mat-icon>
+      <lucide-icon name="circle-alert"></lucide-icon>
       <span>{{ error }}</span>
     </div>
   </div>

@@ -14,7 +14,6 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -25,13 +24,14 @@ import {
   getSuccessRateClass,
   ToolUsageSummary,
 } from '../../models/tool-analytics.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-usage-by-tool-table',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
-    MatIconModule,
     MatSortModule,
     MatTableModule,
     MatTooltipModule,

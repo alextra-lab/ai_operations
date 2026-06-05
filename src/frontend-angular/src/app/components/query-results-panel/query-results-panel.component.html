@@ -15,9 +15,7 @@
   >
     <div class="message-bubble">
       <div class="message-header">
-        <mat-icon [attr.aria-label]="getRoleName(message.role)">
-          {{ getRoleIcon(message.role) }}
-        </mat-icon>
+        <lucide-icon [attr.aria-label]="getRoleName(message.role)" [name]="getRoleIcon(message.role)"></lucide-icon>
         <span class="role-name">{{ getRoleName(message.role) }}</span>
         <span class="timestamp">{{ message.created_at | date: 'short' }}</span>
       </div>
@@ -42,7 +40,7 @@
   >
     <div class="message-bubble">
       <div class="message-header">
-        <mat-icon aria-label="Assistant">smart_toy</mat-icon>
+        <lucide-icon aria-label="Assistant" name="bot"></lucide-icon>
         <span class="role-name">Assistant</span>
         <mat-spinner
           diameter="16"
@@ -61,7 +59,7 @@
   <!-- Sources (if provided) -->
   <div *ngIf="sources.length > 0" class="sources-section">
     <h4 id="sources-heading">
-      <mat-icon aria-hidden="true">source</mat-icon>
+      <lucide-icon aria-hidden="true" name="folder-code"></lucide-icon>
       Sources ({{ sources.length }})
     </h4>
     <div class="sources-list" role="list" aria-labelledby="sources-heading">
@@ -91,11 +89,11 @@
           <p class="source-snippet">{{ source.content_snippet }}</p>
           <div class="source-meta" *ngIf="source.metadata">
             <span *ngIf="source.metadata['author']" class="meta-item">
-              <mat-icon aria-hidden="true">person</mat-icon>
+              <lucide-icon aria-hidden="true" name="user"></lucide-icon>
               {{ source.metadata['author'] }}
             </span>
             <span *ngIf="source.page_number" class="meta-item">
-              <mat-icon aria-hidden="true">book</mat-icon>
+              <lucide-icon aria-hidden="true" name="book"></lucide-icon>
               Page {{ source.page_number }}
             </span>
           </div>
@@ -113,7 +111,7 @@
   >
     <mat-card-content>
       <h4 class="metrics-title">
-        <mat-icon aria-hidden="true">analytics</mat-icon>
+        <lucide-icon aria-hidden="true" name="chart-column"></lucide-icon>
         Execution Metrics
       </h4>
       <div class="metrics-grid">
@@ -157,7 +155,7 @@
       <div class="metrics-details" *ngIf="metrics.retrieval || metrics.guard">
         <div class="detail-row" *ngIf="metrics.retrieval">
           <span class="detail-label">
-            <mat-icon aria-hidden="true">search</mat-icon>
+            <lucide-icon aria-hidden="true" name="search"></lucide-icon>
             Chunks Retrieved:
           </span>
           <span class="detail-value">{{
@@ -166,7 +164,7 @@
         </div>
         <div class="detail-row" *ngIf="metrics.retrieval">
           <span class="detail-label">
-            <mat-icon aria-hidden="true">percent</mat-icon>
+            <lucide-icon aria-hidden="true" name="percent"></lucide-icon>
             Avg Similarity:
           </span>
           <span class="detail-value">{{
@@ -175,7 +173,7 @@
         </div>
         <div class="detail-row" *ngIf="metrics.guard">
           <span class="detail-label">
-            <mat-icon aria-hidden="true">security</mat-icon>
+            <lucide-icon aria-hidden="true" name="shield"></lucide-icon>
             Risk Score:
           </span>
           <span

@@ -33,7 +33,7 @@
       gap: 12px;
       height: 36px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 28px;
         width: 28px;
         height: 28px;
@@ -254,7 +254,7 @@
         font-size: 20px;
         height: 32px;
 
-        mat-icon {
+        :is(mat-icon, lucide-icon) {
           font-size: 24px;
           width: 24px;
           height: 24px;

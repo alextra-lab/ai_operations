@@ -11,7 +11,7 @@
   <!-- Panel Header -->
   <mat-expansion-panel-header class="metrics-panel-header">
     <mat-panel-title class="flex items-center gap-2">
-      <mat-icon class="text-blue-600">analytics</mat-icon>
+      <lucide-icon class="text-blue-600" name="chart-column"></lucide-icon>
       <span class="font-medium">Metrics & Analytics</span>
     </mat-panel-title>
     <mat-panel-description class="text-gray-600">
@@ -31,7 +31,7 @@
       *ngIf="!aggregateMetrics"
       class="flex flex-col items-center justify-center py-12 text-center text-gray-500"
     >
-      <mat-icon class="text-6xl mb-4 text-gray-400"> bar_chart </mat-icon>
+      <lucide-icon class="text-6xl mb-4 text-gray-400" name="chart-column"></lucide-icon>
       <p class="text-lg font-medium mb-2">No Metrics Yet</p>
       <p class="text-sm max-w-md">
         Execute queries to start collecting performance metrics, cost estimates,
@@ -46,7 +46,7 @@
         <!-- Latency Card -->
         <mat-card class="metric-card">
           <div class="metric-icon-wrapper latency">
-            <mat-icon>schedule</mat-icon>
+            <lucide-icon name="clock"></lucide-icon>
           </div>
           <div class="metric-content">
             <div class="metric-value">
@@ -63,7 +63,7 @@
         <!-- Tokens Card -->
         <mat-card class="metric-card">
           <div class="metric-icon-wrapper tokens">
-            <mat-icon>token</mat-icon>
+            <lucide-icon name="coins"></lucide-icon>
           </div>
           <div class="metric-content">
             <div class="metric-value">
@@ -80,7 +80,7 @@
         <!-- Consistency Card -->
         <mat-card class="metric-card">
           <div class="metric-icon-wrapper consistency">
-            <mat-icon>check_circle</mat-icon>
+            <lucide-icon name="circle-check"></lucide-icon>
           </div>
           <div class="metric-content">
             <div class="metric-value">
@@ -96,7 +96,7 @@
         <!-- Cost Card -->
         <mat-card class="metric-card">
           <div class="metric-icon-wrapper cost">
-            <mat-icon>attach_money</mat-icon>
+            <lucide-icon name="dollar-sign"></lucide-icon>
           </div>
           <div class="metric-content">
             <div class="metric-value">
@@ -117,7 +117,7 @@
         <mat-card class="charts-card">
           <mat-card-header>
             <mat-card-title class="flex items-center gap-2">
-              <mat-icon class="text-blue-600">show_chart</mat-icon>
+              <lucide-icon class="text-blue-600" name="chart-line"></lucide-icon>
               <span>Performance Trends</span>
             </mat-card-title>
           </mat-card-header>
@@ -126,7 +126,7 @@
               <!-- Latency Chart Tab -->
               <mat-tab>
                 <ng-template mat-tab-label>
-                  <mat-icon class="tab-icon">schedule</mat-icon>
+                  <lucide-icon class="tab-icon" name="clock"></lucide-icon>
                   Latency
                 </ng-template>
                 <div class="chart-tab-content">
@@ -138,7 +138,7 @@
               <!-- Token Usage Chart Tab -->
               <mat-tab>
                 <ng-template mat-tab-label>
-                  <mat-icon class="tab-icon">token</mat-icon>
+                  <lucide-icon class="tab-icon" name="coins"></lucide-icon>
                   Tokens
                 </ng-template>
                 <div class="chart-tab-content">
@@ -150,7 +150,7 @@
               <!-- Cost Chart Tab -->
               <mat-tab>
                 <ng-template mat-tab-label>
-                  <mat-icon class="tab-icon">attach_money</mat-icon>
+                  <lucide-icon class="tab-icon" name="dollar-sign"></lucide-icon>
                   Cost
                 </ng-template>
                 <div class="chart-tab-content">
@@ -168,7 +168,7 @@
         <mat-card class="recommendations-card">
           <mat-card-header>
             <mat-card-title class="flex items-center gap-2">
-              <mat-icon class="text-yellow-600">lightbulb</mat-icon>
+              <lucide-icon class="text-yellow-600" name="lightbulb"></lucide-icon>
               <span>Parameter Recommendations</span>
             </mat-card-title>
           </mat-card-header>
@@ -199,7 +199,7 @@
                     [matTooltip]="'Apply this recommendation'"
                     color="primary"
                   >
-                    <mat-icon>check</mat-icon>
+                    <lucide-icon name="check"></lucide-icon>
                   </button>
                 </div>
               </mat-list-item>
@@ -213,7 +213,7 @@
         <mat-card class="repeatability-card">
           <mat-card-header>
             <mat-card-title class="flex items-center gap-2">
-              <mat-icon class="text-purple-600">repeat</mat-icon>
+              <lucide-icon class="text-purple-600" name="repeat"></lucide-icon>
               <span>Repeatability Test</span>
             </mat-card-title>
           </mat-card-header>
@@ -244,9 +244,7 @@
                 [disabled]="isRunningRepeatabilityTest || !onExecuteQuery"
                 (click)="runRepeatabilityTest()"
               >
-                <mat-icon *ngIf="!isRunningRepeatabilityTest">
-                  play_arrow
-                </mat-icon>
+                <lucide-icon *ngIf="!isRunningRepeatabilityTest" name="play"></lucide-icon>
                 <mat-spinner
                   *ngIf="isRunningRepeatabilityTest"
                   diameter="20"
@@ -337,17 +335,17 @@
       <!-- Export Actions -->
       <div class="export-actions flex justify-end gap-3">
         <button mat-button (click)="clearMetrics()" class="text-gray-700">
-          <mat-icon>delete_outline</mat-icon>
+          <lucide-icon name="trash-2"></lucide-icon>
           Clear Metrics
         </button>
 
         <button mat-stroked-button (click)="exportAsCSV()">
-          <mat-icon>download</mat-icon>
+          <lucide-icon name="download"></lucide-icon>
           Export CSV
         </button>
 
         <button mat-stroked-button (click)="exportAsJSON()">
-          <mat-icon>code</mat-icon>
+          <lucide-icon name="code"></lucide-icon>
           Export JSON
         </button>
       </div>

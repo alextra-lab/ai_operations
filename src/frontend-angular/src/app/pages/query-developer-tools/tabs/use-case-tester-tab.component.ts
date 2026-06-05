@@ -8,12 +8,13 @@
  */
 
 import { Component } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-use-case-tester-tab',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [
+    LucideAngularModule],
   template: `
     <div
       class="flex flex-col items-center justify-center
@@ -21,12 +22,10 @@ import { MatIconModule } from '@angular/material/icon';
                     text-gray-600
                     placeholder-content"
     >
-      <mat-icon
+      <lucide-icon
         class="!text-[120px] !w-[120px] !h-[120px]
                              text-gray-400 mb-6
-                             placeholder-icon"
-        >construction</mat-icon
-      >
+                             placeholder-icon" name="hammer"></lucide-icon>
       <h2 class="m-0 mb-2 text-3xl font-medium text-gray-800">
         Use Case Tester
       </h2>

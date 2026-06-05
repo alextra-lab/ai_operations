@@ -58,7 +58,7 @@ import { DocumentService } from '../../api/services/document.service';
               (click)="refreshStatus()"
               matTooltip="Refresh"
             >
-              <mat-icon>refresh</mat-icon>
+              <lucide-icon name="refresh-cw"></lucide-icon>
             </button>
             <button
               mat-icon-button
@@ -67,7 +67,9 @@ import { DocumentService } from '../../api/services/document.service';
                 autoRefresh ? 'Stop Auto-refresh' : 'Start Auto-refresh'
               "
             >
-              <mat-icon>{{ autoRefresh ? 'pause' : 'play_arrow' }}</mat-icon>
+              <lucide-icon
+                [name]="autoRefresh ? 'pause' : 'play'"
+              ></lucide-icon>
             </button>
           </div>
         </mat-card-header>
@@ -84,7 +86,7 @@ import { DocumentService } from '../../api/services/document.service';
             *ngIf="!isLoading && (processingStatuses?.length ?? 0) === 0"
             class="empty-state"
           >
-            <mat-icon>hourglass_empty</mat-icon>
+            <lucide-icon name="hourglass"></lucide-icon>
             <h3>No documents processing</h3>
             <p>
               All documents have been processed or no documents are currently in
@@ -103,9 +105,10 @@ import { DocumentService } from '../../api/services/document.service';
             >
               <div class="item-header">
                 <div class="document-info">
-                  <mat-icon class="document-icon">{{
-                    getStatusIcon(status.status)
-                  }}</mat-icon>
+                  <lucide-icon
+                    class="document-icon"
+                    [name]="getStatusIcon(status.status)"
+                  ></lucide-icon>
                   <div class="document-details">
                     <h4 class="document-name">{{ status.document_id }}</h4>
                     <p class="current-step">{{ status.current_step }}</p>
@@ -158,7 +161,7 @@ import { DocumentService } from '../../api/services/document.service';
 
               <!-- Error Message -->
               <div *ngIf="status.error_message" class="error-message">
-                <mat-icon>error</mat-icon>
+                <lucide-icon name="circle-alert"></lucide-icon>
                 <span>{{ status.error_message }}</span>
               </div>
 
@@ -169,7 +172,7 @@ import { DocumentService } from '../../api/services/document.service';
                   (click)="reprocessDocument(status.document_id)"
                   [disabled]="status.status === 'processing'"
                 >
-                  <mat-icon>refresh</mat-icon>
+                  <lucide-icon name="refresh-cw"></lucide-icon>
                   Reprocess
                 </button>
 
@@ -178,7 +181,7 @@ import { DocumentService } from '../../api/services/document.service';
                   (click)="viewDocument(status.document_id)"
                   [disabled]="status.status !== 'completed'"
                 >
-                  <mat-icon>visibility</mat-icon>
+                  <lucide-icon name="eye"></lucide-icon>
                   View Document
                 </button>
               </div>
@@ -195,14 +198,16 @@ import { DocumentService } from '../../api/services/document.service';
 
         <mat-card-content>
           <div *ngIf="(recentHistory?.length ?? 0) === 0" class="no-history">
-            <mat-icon>history</mat-icon>
+            <lucide-icon name="history"></lucide-icon>
             <p>No recent processing history</p>
           </div>
 
           <div *ngFor="let item of recentHistory" class="history-item">
-            <mat-icon class="status-icon" [class]="item.status">{{
-              getStatusIcon(item.status)
-            }}</mat-icon>
+            <lucide-icon
+              class="status-icon"
+              [class]="item.status"
+              [name]="getStatusIcon(item.status)"
+            ></lucide-icon>
             <div class="history-info">
               <span class="document-name">{{ item.document_id }}</span>
               <span class="history-time">{{
@@ -542,7 +547,7 @@ export class DocumentProcessingComponent implements OnInit, OnDestroy {
   constructor(
     private documentService: DocumentService,
     private snackBar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadProcessingStatus();
@@ -597,17 +602,17 @@ export class DocumentProcessingComponent implements OnInit, OnDestroy {
   getStatusIcon(status: DocumentState): string {
     switch (status) {
       case DocumentState.PROCESSED:
-        return 'check_circle';
+        return 'circle-check';
       case 'processing':
-        return 'hourglass_empty';
+        return 'hourglass';
       case 'failed':
-        return 'error';
+        return 'circle-alert';
       case 'queued':
-        return 'schedule';
+        return 'clock';
       case DocumentState.PENDING:
         return 'upload';
       default:
-        return 'description';
+        return 'file-text';
     }
   }
 

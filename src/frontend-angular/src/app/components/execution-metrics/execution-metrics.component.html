@@ -4,7 +4,7 @@
   <div class="overall-status">
     <div class="status-header">
       <div class="status-indicator" [style.color]="getOverallStatusColor()">
-        <mat-icon>{{ overallStatusIcon }}</mat-icon>
+        <lucide-icon [name]="overallStatusIcon"></lucide-icon>
       </div>
       <div class="status-info">
         <h3 class="status-title">Overall Status</h3>
@@ -28,7 +28,7 @@
           class="metric-icon"
           [style.color]="getRetrievalStatusColor()"
         >
-          <mat-icon>{{ performanceIndicators.retrieval.icon }}</mat-icon>
+          <lucide-icon [name]="performanceIndicators.retrieval.icon"></lucide-icon>
         </div>
         <mat-card-title>Retrieval Metrics</mat-card-title>
         <mat-card-subtitle>Document search and ranking</mat-card-subtitle>
@@ -74,7 +74,7 @@
           class="metric-icon"
           [style.color]="getGuardStatusColor()"
         >
-          <mat-icon>{{ performanceIndicators.guard.icon }}</mat-icon>
+          <lucide-icon [name]="performanceIndicators.guard.icon"></lucide-icon>
         </div>
         <mat-card-title>Security Guard</mat-card-title>
         <mat-card-subtitle
@@ -94,11 +94,8 @@
           <div class="stat-item">
             <div class="stat-label">Content Modified</div>
             <div class="stat-value">
-              <mat-icon
-                [style.color]="metrics.guard.modified ? '#f44336' : '#4caf50'"
-              >
-                {{ metrics.guard.modified ? 'warning' : 'check_circle' }}
-              </mat-icon>
+              <lucide-icon
+                [style.color]="metrics.guard.modified ? '#f44336' : '#4caf50'" [name]="metrics.guard.modified ? 'triangle-alert' : 'circle-check'"></lucide-icon>
               {{ metrics.guard.modified ? 'Yes' : 'No' }}
             </div>
           </div>
@@ -109,32 +106,32 @@
           <h4>Security Analysis</h4>
           <div class="detail-items">
             <div class="detail-item" *ngIf="hasPIIDetected">
-              <mat-icon color="warn">person_off</mat-icon>
+              <lucide-icon color="warn" name="user-x"></lucide-icon>
               <span>PII detected & anonymized</span>
             </div>
 
             <div class="detail-item" *ngIf="hasJailbreakAttempt">
-              <mat-icon color="warn">security</mat-icon>
+              <lucide-icon color="warn" name="shield"></lucide-icon>
               <span>Prompt injection attempt detected</span>
             </div>
 
             <div class="detail-item" *ngIf="hasSecretsDetected">
-              <mat-icon color="warn">vpn_key</mat-icon>
+              <lucide-icon color="warn" name="key-round"></lucide-icon>
               <span>Secrets detected (API keys, passwords)</span>
             </div>
 
             <div class="detail-item" *ngIf="hasGibberishDetected">
-              <mat-icon color="warn">text_snippet</mat-icon>
+              <lucide-icon color="warn" name="file-text"></lucide-icon>
               <span>Gibberish/nonsense detected</span>
             </div>
 
             <div class="detail-item" *ngIf="hasInvalidLanguage">
-              <mat-icon color="warn">language</mat-icon>
+              <lucide-icon color="warn" name="globe"></lucide-icon>
               <span>Invalid or unsupported language</span>
             </div>
 
             <div class="detail-item" *ngIf="hasBlockedCategories">
-              <mat-icon color="warn">block</mat-icon>
+              <lucide-icon color="warn" name="ban"></lucide-icon>
               <span
                 >Blocked scanners: {{ blockedCategoriesList.join(', ') }}</span
               >
@@ -151,7 +148,7 @@
                 !hasBlockedCategories
               "
             >
-              <mat-icon color="primary">check_circle</mat-icon>
+              <lucide-icon color="primary" name="circle-check"></lucide-icon>
               <span>All security scans passed</span>
             </div>
           </div>
@@ -167,7 +164,7 @@
           class="metric-icon"
           [style.color]="getModelStatusColor()"
         >
-          <mat-icon>{{ performanceIndicators.model.icon }}</mat-icon>
+          <lucide-icon [name]="performanceIndicators.model.icon"></lucide-icon>
         </div>
         <mat-card-title>Model Performance</mat-card-title>
         <mat-card-subtitle>AI model execution statistics</mat-card-subtitle>
@@ -342,7 +339,7 @@
     <div class="summary-grid">
       <div class="summary-item">
         <div class="summary-icon" [style.color]="getRetrievalStatusColor()">
-          <mat-icon>{{ performanceIndicators.retrieval.icon }}</mat-icon>
+          <lucide-icon [name]="performanceIndicators.retrieval.icon"></lucide-icon>
         </div>
         <div class="summary-info">
           <div class="summary-label">Retrieval</div>
@@ -354,7 +351,7 @@
 
       <div class="summary-item">
         <div class="summary-icon" [style.color]="getGuardStatusColor()">
-          <mat-icon>{{ performanceIndicators.guard.icon }}</mat-icon>
+          <lucide-icon [name]="performanceIndicators.guard.icon"></lucide-icon>
         </div>
         <div class="summary-info">
           <div class="summary-label">Security</div>
@@ -366,7 +363,7 @@
 
       <div class="summary-item">
         <div class="summary-icon" [style.color]="getModelStatusColor()">
-          <mat-icon>{{ performanceIndicators.model.icon }}</mat-icon>
+          <lucide-icon [name]="performanceIndicators.model.icon"></lucide-icon>
         </div>
         <div class="summary-info">
           <div class="summary-label">Model</div>

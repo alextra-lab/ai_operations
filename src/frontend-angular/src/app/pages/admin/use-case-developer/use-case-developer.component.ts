@@ -9,7 +9,6 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -25,6 +24,7 @@ import { UseCaseManagementService } from '../../../api/services/use-case-managem
 import { UserProfile } from '../../../core/auth/auth.models';
 import { AuthService } from '../../../core/auth/auth.service';
 import { UserManagementService } from '../user-management/services/user-management.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 interface TabState {
   data: UseCaseResponse[];
@@ -36,11 +36,11 @@ interface TabState {
   selector: 'app-use-case-developer',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatTabsModule,
     MatListModule,
     MatButtonModule,
-    MatIconModule,
     MatChipsModule,
     MatProgressSpinnerModule,
     MatCardModule,

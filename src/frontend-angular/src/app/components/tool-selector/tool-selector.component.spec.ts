@@ -140,21 +140,19 @@ describe('ToolSelectorComponent', () => {
   });
 
   it('should get category icon for all categories', () => {
-    expect(component.getCategoryIcon(ToolCategory.DATABASE)).toBe('dns');
-    expect(component.getCategoryIcon(ToolCategory.VECTOR_DB)).toBe('storage');
-    expect(component.getCategoryIcon(ToolCategory.WEB_SCRAPING)).toBe('public');
+    expect(component.getCategoryIcon(ToolCategory.DATABASE)).toBe('server');
+    expect(component.getCategoryIcon(ToolCategory.VECTOR_DB)).toBe('database');
+    expect(component.getCategoryIcon(ToolCategory.WEB_SCRAPING)).toBe('globe');
     expect(component.getCategoryIcon(ToolCategory.REASONING)).toBe(
-      'psychology'
+      'brain-circuit'
     );
     expect(component.getCategoryIcon(ToolCategory.DOCUMENTATION)).toBe(
-      'description'
+      'file-text'
     );
     expect(component.getCategoryIcon(ToolCategory.CODE_ANALYSIS)).toBe('code');
-    expect(component.getCategoryIcon(ToolCategory.THREAT_INTEL)).toBe(
-      'security'
-    );
-    expect(component.getCategoryIcon(ToolCategory.CUSTOM)).toBe('extension');
-    expect(component.getCategoryIcon('unknown')).toBe('build');
+    expect(component.getCategoryIcon(ToolCategory.THREAT_INTEL)).toBe('shield');
+    expect(component.getCategoryIcon(ToolCategory.CUSTOM)).toBe('blocks');
+    expect(component.getCategoryIcon('unknown')).toBe('wrench');
   });
 
   it('should format category labels correctly', () => {

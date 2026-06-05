@@ -45,7 +45,7 @@
         align-items: center;
         gap: 12px;
 
-        mat-icon {
+        :is(mat-icon, lucide-icon) {
           font-size: 32px;
           width: 32px;
           height: 32px;
@@ -170,7 +170,7 @@
       padding: 0 16px;
       height: 56px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         margin-right: 8px;
       }
     }
@@ -376,7 +376,7 @@
           align-items: center;
           justify-content: center;
 
-          mat-icon {
+          :is(mat-icon, lucide-icon) {
             color: white;
           }
         }
@@ -499,7 +499,7 @@
         h1 {
           font-size: 24px;
 
-          mat-icon {
+          :is(mat-icon, lucide-icon) {
             font-size: 28px;
             width: 28px;
             height: 28px;

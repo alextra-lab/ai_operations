@@ -23,17 +23,17 @@
         </mat-form-field>
 
         <button mat-raised-button color="primary" (click)="refreshMetrics()" [disabled]="isLoading">
-          <mat-icon>refresh</mat-icon>
+          <lucide-icon name="refresh-cw"></lucide-icon>
           Refresh
         </button>
 
         <button mat-raised-button (click)="exportCSV()" [disabled]="isLoading">
-          <mat-icon>download</mat-icon>
+          <lucide-icon name="download"></lucide-icon>
           Export CSV
         </button>
 
         <button mat-raised-button (click)="exportJSON()" [disabled]="isLoading">
-          <mat-icon>download</mat-icon>
+          <lucide-icon name="download"></lucide-icon>
           Export JSON
         </button>
       </div>
@@ -50,7 +50,7 @@
 
     <!-- Error State -->
     <div *ngIf="error && !isLoading" class="error-container">
-      <mat-icon class="error-icon">error</mat-icon>
+      <lucide-icon class="error-icon" name="circle-alert"></lucide-icon>
       <p class="error-text">{{ error }}</p>
       <button mat-raised-button color="primary" (click)="refreshMetrics()">
         Retry
@@ -63,7 +63,7 @@
       <div class="metrics-grid" *ngIf="aggregateMetrics">
         <mat-card class="metric-card">
           <div class="metric-icon-wrapper blue">
-            <mat-icon>analytics</mat-icon>
+            <lucide-icon name="chart-column"></lucide-icon>
           </div>
           <div class="metric-content">
             <div class="metric-value">
@@ -75,7 +75,7 @@
 
         <mat-card class="metric-card">
           <div class="metric-icon-wrapper green">
-            <mat-icon>check_circle</mat-icon>
+            <lucide-icon name="circle-check"></lucide-icon>
           </div>
           <div class="metric-content">
             <div class="metric-value">
@@ -87,7 +87,7 @@
 
         <mat-card class="metric-card">
           <div class="metric-icon-wrapper orange">
-            <mat-icon>schedule</mat-icon>
+            <lucide-icon name="clock"></lucide-icon>
           </div>
           <div class="metric-content">
             <div class="metric-value">
@@ -99,7 +99,7 @@
 
         <mat-card class="metric-card">
           <div class="metric-icon-wrapper purple">
-            <mat-icon>euro</mat-icon>
+            <lucide-icon name="euro"></lucide-icon>
           </div>
           <div class="metric-content">
             <div class="metric-value">
@@ -111,7 +111,7 @@
 
         <mat-card class="metric-card">
           <div class="metric-icon-wrapper teal">
-            <mat-icon>token</mat-icon>
+            <lucide-icon name="coins"></lucide-icon>
           </div>
           <div class="metric-content">
             <div class="metric-value">
@@ -128,7 +128,7 @@
 
         <mat-card class="metric-card">
           <div class="metric-icon-wrapper indigo">
-            <mat-icon>dns</mat-icon>
+            <lucide-icon name="server"></lucide-icon>
           </div>
           <div class="metric-content">
             <div class="metric-value">{{ aggregateMetrics.unique_models }}</div>
@@ -296,7 +296,7 @@
 
       <!-- No Data Message -->
       <mat-card *ngIf="aggregateMetrics?.total_requests === 0" class="no-data-card">
-        <mat-icon class="no-data-icon">info</mat-icon>
+        <lucide-icon class="no-data-icon" name="info"></lucide-icon>
         <p class="no-data-text">
           No Gateway usage data available for the selected time range.
         </p>

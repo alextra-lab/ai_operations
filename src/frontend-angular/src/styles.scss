@@ -114,8 +114,11 @@ $aio-ui-theme: mat.define-theme(
 
 // ----------------------------------------------------------------------------
 // Lucide icons — make <lucide-icon> behave like the inline mat-icon it
-// replaces (2px outline, currentColor). Default size 20; size utilities per
-// the design spec: 18–22 in UI, 25 in page titles, 52 in empty states.
+// replaces (2px outline, currentColor). The svg tracks font-size (1em), so
+// existing icon sizing rules (font-size on the icon element/class) keep
+// working after the mat-icon -> lucide-icon migration. Default 20px; size
+// utilities per the design spec: 18–22 in UI, 25 in page titles, 52 in
+// empty states.
 // ----------------------------------------------------------------------------
 lucide-icon {
   display: inline-flex;
@@ -124,35 +127,31 @@ lucide-icon {
   vertical-align: middle;
   flex-shrink: 0;
   line-height: 0;
+  font-size: 20px;
 
   svg.lucide {
-    width: 20px;
-    height: 20px;
+    width: 1em;
+    height: 1em;
   }
 
-  &.icon-16 svg.lucide {
-    width: 16px;
-    height: 16px;
+  &.icon-16 {
+    font-size: 16px;
   }
 
-  &.icon-18 svg.lucide {
-    width: 18px;
-    height: 18px;
+  &.icon-18 {
+    font-size: 18px;
   }
 
-  &.icon-22 svg.lucide {
-    width: 22px;
-    height: 22px;
+  &.icon-22 {
+    font-size: 22px;
   }
 
-  &.icon-25 svg.lucide {
-    width: 25px;
-    height: 25px;
+  &.icon-25 {
+    font-size: 25px;
   }
 
-  &.icon-52 svg.lucide {
-    width: 52px;
-    height: 52px;
+  &.icon-52 {
+    font-size: 52px;
   }
 }
 

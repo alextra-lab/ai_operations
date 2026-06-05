@@ -39,6 +39,7 @@ import {
 import { CollectionService } from '../../api/services/collection.service';
 import { CollectionCreateDialogComponent } from './collection-create-dialog.component';
 import { CollectionEditDialogComponent } from './collection-edit-dialog.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-collection-list',
@@ -46,6 +47,7 @@ import { CollectionEditDialogComponent } from './collection-edit-dialog.componen
   styleUrls: ['./collection-list.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,

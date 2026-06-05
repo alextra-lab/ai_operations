@@ -8,7 +8,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -16,6 +15,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { DeveloperTeamInfo } from '../role-management/models/role-management.models';
 import { DeveloperTeamsService } from './services/developer-teams.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 const TEAM_PATTERN = /^team:[a-z0-9_-]{1,64}$/;
 
@@ -24,13 +24,13 @@ const TEAM_PATTERN = /^team:[a-z0-9_-]{1,64}$/;
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
   ],

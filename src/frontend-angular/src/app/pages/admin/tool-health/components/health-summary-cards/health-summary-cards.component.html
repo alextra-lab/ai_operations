@@ -8,7 +8,7 @@
   <mat-card class="summary-card">
     <mat-card-content>
       <div class="card-content">
-        <mat-icon class="card-icon total">build</mat-icon>
+        <lucide-icon class="card-icon total" name="wrench"></lucide-icon>
         <div class="card-info">
           <span class="card-value" *ngIf="!isLoading">
             {{ summary?.total_tools ?? 0 }}
@@ -28,7 +28,7 @@
   <mat-card class="summary-card online">
     <mat-card-content>
       <div class="card-content">
-        <mat-icon class="card-icon online">check_circle</mat-icon>
+        <lucide-icon class="card-icon online" name="circle-check"></lucide-icon>
         <div class="card-info">
           <span class="card-value" *ngIf="!isLoading">
             {{ summary?.online ?? 0 }}
@@ -48,7 +48,7 @@
   <mat-card class="summary-card offline">
     <mat-card-content>
       <div class="card-content">
-        <mat-icon class="card-icon offline">error</mat-icon>
+        <lucide-icon class="card-icon offline" name="circle-alert"></lucide-icon>
         <div class="card-info">
           <span class="card-value" *ngIf="!isLoading">
             {{ summary?.offline ?? 0 }}
@@ -68,7 +68,7 @@
   <mat-card class="summary-card health" [ngClass]="getHealthColor()">
     <mat-card-content>
       <div class="card-content">
-        <mat-icon class="card-icon health">speed</mat-icon>
+        <lucide-icon class="card-icon health" name="gauge"></lucide-icon>
         <div class="card-info">
           <span class="card-value" *ngIf="!isLoading">
             {{ summary?.health_percentage ?? 0 | number: '1.0-1' }}%
@@ -87,6 +87,6 @@
 
 <!-- Last Check Timestamp -->
 <div class="last-check-info" *ngIf="!isLoading">
-  <mat-icon class="timestamp-icon">schedule</mat-icon>
+  <lucide-icon class="timestamp-icon" name="clock"></lucide-icon>
   <span class="timestamp-text">Last health check: {{ formatLastCheck() }}</span>
 </div>

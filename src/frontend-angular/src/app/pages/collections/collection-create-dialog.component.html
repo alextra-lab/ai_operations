@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-  <mat-icon>add</mat-icon>
+  <lucide-icon name="plus"></lucide-icon>
   Create New Collection
 </h2>
 
@@ -46,7 +46,7 @@
 
     <!-- Embedding Model Selection -->
     <div class="flex items-center gap-2 mb-2">
-      <mat-icon class="text-gray-600">psychology</mat-icon>
+      <lucide-icon class="text-gray-600" name="brain-circuit"></lucide-icon>
       <h3 class="text-base font-medium text-gray-800 m-0">Embedding Model</h3>
     </div>
 
@@ -73,7 +73,7 @@
                   >{{ model.embedding_dimensions }}D</span
                 >
                 @if (!model.is_available) {
-                  <mat-icon class="unavailable-icon">warning</mat-icon>
+                  <lucide-icon class="unavailable-icon" name="triangle-alert"></lucide-icon>
                 }
               </div>
             </div>
@@ -124,7 +124,7 @@
     <!-- Information Note -->
     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
       <div class="flex items-start gap-2">
-        <mat-icon class="text-yellow-600 text-lg">lightbulb</mat-icon>
+        <lucide-icon class="text-yellow-600 text-lg" name="lightbulb"></lucide-icon>
         <p class="text-xs text-yellow-900 m-0 leading-relaxed">
           The embedding model is <strong>immutable</strong> after collection
           creation. Use Cases can search multiple collections only if they share
@@ -136,7 +136,7 @@
     <!-- Auto-Chunking Configuration Section (P4-DOC-07) -->
     <div class="mt-4">
       <div class="flex items-center gap-2 mb-3">
-        <mat-icon class="text-gray-600">auto_fix_high</mat-icon>
+        <lucide-icon class="text-gray-600" name="wand-sparkles"></lucide-icon>
         <h3 class="text-base font-medium text-gray-800 m-0">
           Auto-Chunking Detection
         </h3>
@@ -183,7 +183,7 @@
         class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded"
       >
         <div class="flex items-start gap-2">
-          <mat-icon class="text-blue-600 text-sm">info</mat-icon>
+          <lucide-icon class="text-blue-600 text-sm" name="info"></lucide-icon>
           <p class="text-xs text-blue-900 m-0 leading-relaxed">
             When enabled, the system will analyze document structure and
             automatically select the optimal chunking strategy (heading-aware,
@@ -195,7 +195,7 @@
 
     <!-- Error Message -->
     <div *ngIf="errorMessage" class="error-message">
-      <mat-icon>error</mat-icon>
+      <lucide-icon name="circle-alert"></lucide-icon>
       {{ errorMessage }}
     </div>
   </form>

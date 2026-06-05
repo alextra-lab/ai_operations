@@ -44,11 +44,14 @@ import { DocumentService } from '../../api/services/document.service';
             (click)="fileInput.click()"
           >
             <div class="upload-content">
-              <mat-icon class="upload-icon">cloud_upload</mat-icon>
+              <lucide-icon
+                class="upload-icon"
+                name="cloud-upload"
+              ></lucide-icon>
               <h3>Drag & Drop Files Here</h3>
               <p>or click to browse files</p>
               <button mat-raised-button color="primary" type="button">
-                <mat-icon>folder_open</mat-icon>
+                <lucide-icon name="folder-open"></lucide-icon>
                 Choose Files
               </button>
             </div>
@@ -71,13 +74,13 @@ import { DocumentService } from '../../api/services/document.service';
                 *ngFor="let file of selectedFiles; let i = index"
                 class="file-item"
               >
-                <mat-icon class="file-icon">description</mat-icon>
+                <lucide-icon class="file-icon" name="file-text"></lucide-icon>
                 <div class="file-info">
                   <span class="file-name">{{ file.name }}</span>
                   <span class="file-size">{{ formatFileSize(file.size) }}</span>
                 </div>
                 <button mat-icon-button (click)="removeFile(i)" color="warn">
-                  <mat-icon>close</mat-icon>
+                  <lucide-icon name="x"></lucide-icon>
                 </button>
               </div>
             </div>
@@ -153,7 +156,7 @@ import { DocumentService } from '../../api/services/document.service';
             [disabled]="selectedFiles.length === 0 || isUploading"
             [loading]="isUploading"
           >
-            <mat-icon>upload</mat-icon>
+            <lucide-icon name="upload"></lucide-icon>
             Upload {{ selectedFiles.length }} File(s)
           </button>
 
@@ -193,7 +196,7 @@ import { DocumentService } from '../../api/services/document.service';
             </div>
 
             <div *ngIf="progress.error" class="error-message">
-              <mat-icon>error</mat-icon>
+              <lucide-icon name="circle-alert"></lucide-icon>
               {{ progress.error }}
             </div>
           </div>
@@ -208,12 +211,12 @@ import { DocumentService } from '../../api/services/document.service';
 
         <mat-card-content>
           <div *ngIf="recentUploads.length === 0" class="no-uploads">
-            <mat-icon>history</mat-icon>
+            <lucide-icon name="history"></lucide-icon>
             <p>No recent uploads</p>
           </div>
 
           <div *ngFor="let upload of recentUploads" class="upload-item">
-            <mat-icon class="file-icon">description</mat-icon>
+            <lucide-icon class="file-icon" name="file-text"></lucide-icon>
             <div class="upload-info">
               <span class="file-name">{{ upload.filename }}</span>
               <span class="upload-time">{{
@@ -221,7 +224,7 @@ import { DocumentService } from '../../api/services/document.service';
               }}</span>
             </div>
             <div class="upload-status" [class]="upload.status">
-              <mat-icon>{{ getStatusIcon(upload.status) }}</mat-icon>
+              <lucide-icon [name]="getStatusIcon(upload.status)"></lucide-icon>
               {{ upload.status }}
             </div>
           </div>
@@ -635,15 +638,15 @@ export class DocumentUploadComponent implements OnInit {
   getStatusIcon(status: DocumentState): string {
     switch (status) {
       case DocumentState.PROCESSED:
-        return 'check_circle';
+        return 'circle-check';
       case 'processing':
-        return 'hourglass_empty';
+        return 'hourglass';
       case 'failed':
-        return 'error';
+        return 'circle-alert';
       case DocumentState.PENDING:
         return 'upload';
       default:
-        return 'description';
+        return 'file-text';
     }
   }
 

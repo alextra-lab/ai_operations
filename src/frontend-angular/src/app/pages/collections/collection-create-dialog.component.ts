@@ -18,7 +18,6 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
@@ -31,6 +30,7 @@ import { Model } from '../../api/models/model-registry.models';
 import { CollectionService } from '../../api/services/collection.service';
 import { ModelRegistryService } from '../../api/services/model-registry.service';
 import { SystemConfigService } from '../admin/system-config/services/system-config.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-collection-create-dialog',
@@ -38,12 +38,12 @@ import { SystemConfigService } from '../admin/system-config/services/system-conf
   styleUrls: ['./collection-create-dialog.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
     MatRadioModule,

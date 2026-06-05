@@ -12,7 +12,7 @@
   margin-bottom: 0.75rem;
   font-weight: 500;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     color: var(--mat-app-secondary-text-color, #666);
   }
 

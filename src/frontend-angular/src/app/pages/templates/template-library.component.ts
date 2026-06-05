@@ -32,11 +32,13 @@ import {
   TemplateResponse,
 } from '../../api/models/template.models';
 import { TemplateService } from '../../api/services/template.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-template-library',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatTableModule,

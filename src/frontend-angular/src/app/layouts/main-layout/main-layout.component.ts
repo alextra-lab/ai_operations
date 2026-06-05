@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -16,16 +15,17 @@ import { NavigationService } from '../../core/services/navigation.service';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { QuickActionsBarComponent } from '../../shared/components/quick-actions-bar/quick-actions-bar.component';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     RouterOutlet,
     MatSidenavModule,
     MatToolbarModule,
-    MatIconModule,
     MatButtonModule,
     MatTooltipModule,
     SidebarComponent,

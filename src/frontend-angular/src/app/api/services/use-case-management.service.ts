@@ -313,12 +313,12 @@ export class UseCaseManagementService {
    */
   getLifecycleStateIcon(state: string): string {
     const iconMap: Record<string, string> = {
-      draft: 'edit',
-      review: 'pending',
-      published: 'check_circle',
+      draft: 'pencil',
+      review: 'clock',
+      published: 'circle-check',
       archived: 'archive',
     };
-    return iconMap[state] || 'help';
+    return iconMap[state] || 'circle-help';
   }
 
   /**

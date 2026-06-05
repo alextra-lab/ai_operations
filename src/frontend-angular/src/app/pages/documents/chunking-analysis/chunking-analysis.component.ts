@@ -26,7 +26,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -35,6 +34,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 import { Collection } from '../../../api/models/collection.models';
 import {
   ChunkingConfigOverride,
@@ -60,12 +60,12 @@ enum AnalysisStep {
   selector: 'app-chunking-analysis',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
     MatCardModule,
     MatButtonModule,
-    MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -84,7 +84,7 @@ enum AnalysisStep {
       <div class="page-header-section">
         <div class="page-title">
           <h1 class="flex items-center gap-3">
-            <mat-icon>analytics</mat-icon>
+            <lucide-icon name="chart-column"></lucide-icon>
             Document Chunking Analysis
           </h1>
           <p class="subtitle">
@@ -104,44 +104,55 @@ enum AnalysisStep {
                   [class.text-blue-600]="currentStep === 'upload'"
                   [class.font-medium]="currentStep === 'upload'"
                 >
-                  <mat-icon [class.text-blue-600]="currentStep === 'upload'">{{
-                    getStepIcon('upload')
-                  }}</mat-icon>
+                  <lucide-icon
+                    [class.text-blue-600]="currentStep === 'upload'"
+                    [name]="getStepIcon('upload')"
+                  ></lucide-icon>
                   <span class="text-sm">Upload</span>
                 </div>
-                <mat-icon class="text-gray-400">chevron_right</mat-icon>
+                <lucide-icon
+                  class="text-gray-400"
+                  name="chevron-right"
+                ></lucide-icon>
                 <div
                   class="flex items-center gap-2"
                   [class.text-blue-600]="currentStep === 'analyzing'"
                   [class.font-medium]="currentStep === 'analyzing'"
                 >
-                  <mat-icon
+                  <lucide-icon
                     [class.text-blue-600]="currentStep === 'analyzing'"
-                    >{{ getStepIcon('analyzing') }}</mat-icon
-                  >
+                    [name]="getStepIcon('analyzing')"
+                  ></lucide-icon>
                   <span class="text-sm">Analyze</span>
                 </div>
-                <mat-icon class="text-gray-400">chevron_right</mat-icon>
+                <lucide-icon
+                  class="text-gray-400"
+                  name="chevron-right"
+                ></lucide-icon>
                 <div
                   class="flex items-center gap-2"
                   [class.text-blue-600]="currentStep === 'report'"
                   [class.font-medium]="currentStep === 'report'"
                 >
-                  <mat-icon [class.text-blue-600]="currentStep === 'report'">{{
-                    getStepIcon('report')
-                  }}</mat-icon>
+                  <lucide-icon
+                    [class.text-blue-600]="currentStep === 'report'"
+                    [name]="getStepIcon('report')"
+                  ></lucide-icon>
                   <span class="text-sm">Report</span>
                 </div>
-                <mat-icon class="text-gray-400">chevron_right</mat-icon>
+                <lucide-icon
+                  class="text-gray-400"
+                  name="chevron-right"
+                ></lucide-icon>
                 <div
                   class="flex items-center gap-2"
                   [class.text-blue-600]="currentStep === 'configure'"
                   [class.font-medium]="currentStep === 'configure'"
                 >
-                  <mat-icon
+                  <lucide-icon
                     [class.text-blue-600]="currentStep === 'configure'"
-                    >{{ getStepIcon('configure') }}</mat-icon
-                  >
+                    [name]="getStepIcon('configure')"
+                  ></lucide-icon>
                   <span class="text-sm">Configure</span>
                 </div>
               </div>
@@ -151,7 +162,7 @@ enum AnalysisStep {
                 (click)="reset()"
                 *ngIf="currentStep !== 'upload'"
               >
-                <mat-icon>refresh</mat-icon>
+                <lucide-icon name="refresh-cw"></lucide-icon>
                 Start Over
               </button>
             </div>
@@ -175,9 +186,10 @@ enum AnalysisStep {
           <div
             class="mx-6 mt-4 p-3 bg-amber-50 border border-amber-200 rounded flex items-start gap-2 text-sm"
           >
-            <mat-icon class="text-amber-700 text-base mt-0.5"
-              >lightbulb</mat-icon
-            >
+            <lucide-icon
+              class="text-amber-700 text-base mt-0.5"
+              name="lightbulb"
+            ></lucide-icon>
             <div>
               <div class="font-medium text-amber-900 mb-1">
                 When to use this tool:
@@ -218,9 +230,10 @@ enum AnalysisStep {
                 (click)="fileInput.click()"
               >
                 <div class="flex items-center gap-3">
-                  <mat-icon class="text-blue-600 text-4xl w-10 h-10"
-                    >cloud_upload</mat-icon
-                  >
+                  <lucide-icon
+                    class="text-blue-600 text-4xl w-10 h-10"
+                    name="cloud-upload"
+                  ></lucide-icon>
                   <div class="flex-1">
                     <p class="m-0 font-medium">
                       {{
@@ -243,7 +256,7 @@ enum AnalysisStep {
                     type="button"
                     class="shrink-0"
                   >
-                    <mat-icon>folder_open</mat-icon>
+                    <lucide-icon name="folder-open"></lucide-icon>
                     Browse
                   </button>
                 </div>
@@ -286,7 +299,10 @@ enum AnalysisStep {
                 class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded"
               >
                 <div class="flex items-center gap-2">
-                  <mat-icon class="text-gray-600">tune</mat-icon>
+                  <lucide-icon
+                    class="text-gray-600"
+                    name="sliders-horizontal"
+                  ></lucide-icon>
                   <span class="text-sm font-medium">Test Suite (Optional)</span>
                 </div>
                 <mat-form-field appearance="outline" class="w-64">
@@ -311,7 +327,7 @@ enum AnalysisStep {
               [disabled]="!selectedFile || !uploadForm.valid"
               (click)="startAnalysis()"
             >
-              <mat-icon>play_arrow</mat-icon>
+              <lucide-icon name="play"></lucide-icon>
               Start Analysis
             </button>
           </mat-card-actions>
@@ -400,7 +416,7 @@ enum AnalysisStep {
                     </div>
                   </div>
                   <button mat-button color="primary" (click)="backToReport()">
-                    <mat-icon>edit</mat-icon>
+                    <lucide-icon name="pencil"></lucide-icon>
                     Change
                   </button>
                 </div>
@@ -438,7 +454,10 @@ enum AnalysisStep {
               <div
                 class="flex items-center gap-3 p-3 border border-gray-200 rounded"
               >
-                <mat-icon class="text-gray-600">bookmark</mat-icon>
+                <lucide-icon
+                  class="text-gray-600"
+                  name="bookmark"
+                ></lucide-icon>
                 <div class="flex-1">
                   <div class="text-sm font-medium">Save as Preset</div>
                   <div class="text-xs text-gray-600">
@@ -454,7 +473,7 @@ enum AnalysisStep {
 
           <mat-card-actions class="flex justify-between">
             <button mat-button (click)="backToReport()">
-              <mat-icon>arrow_back</mat-icon>
+              <lucide-icon name="arrow-left"></lucide-icon>
               Back to Report
             </button>
             <div class="flex gap-2">
@@ -464,7 +483,7 @@ enum AnalysisStep {
                 color="primary"
                 (click)="applyConfiguration()"
               >
-                <mat-icon>check_circle</mat-icon>
+                <lucide-icon name="circle-check"></lucide-icon>
                 Apply & Upload
               </button>
             </div>
@@ -800,30 +819,30 @@ export class ChunkingAnalysisComponent implements OnInit {
     const icons: Record<string, string> = {
       upload:
         this.currentStep === 'upload'
-          ? 'upload_file'
+          ? 'file-up'
           : this.getStepIndex(step) < this.getStepIndex(this.currentStep)
-            ? 'check_circle'
-            : 'radio_button_unchecked',
+            ? 'circle-check'
+            : 'circle',
       analyzing:
         this.currentStep === 'analyzing'
-          ? 'hourglass_empty'
+          ? 'hourglass'
           : this.getStepIndex(step) < this.getStepIndex(this.currentStep)
-            ? 'check_circle'
-            : 'radio_button_unchecked',
+            ? 'circle-check'
+            : 'circle',
       report:
         this.currentStep === 'report'
-          ? 'analytics'
+          ? 'chart-column'
           : this.getStepIndex(step) < this.getStepIndex(this.currentStep)
-            ? 'check_circle'
-            : 'radio_button_unchecked',
+            ? 'circle-check'
+            : 'circle',
       configure:
         this.currentStep === 'configure'
           ? 'settings'
           : this.getStepIndex(step) < this.getStepIndex(this.currentStep)
-            ? 'check_circle'
-            : 'radio_button_unchecked',
+            ? 'circle-check'
+            : 'circle',
     };
-    return icons[step] || 'radio_button_unchecked';
+    return icons[step] || 'circle';
   }
 
   private getStepIndex(step: string): number {

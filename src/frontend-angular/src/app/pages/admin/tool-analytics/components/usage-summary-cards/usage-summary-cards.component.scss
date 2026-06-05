@@ -34,7 +34,7 @@
   border-radius: 12px;
   flex-shrink: 0;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 28px;
     width: 28px;
     height: 28px;
@@ -122,7 +122,7 @@
   padding: 48px;
   color: #999;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 48px;
     width: 48px;
     height: 48px;
@@ -152,7 +152,7 @@
     width: 48px;
     height: 48px;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 24px;
       width: 24px;
       height: 24px;

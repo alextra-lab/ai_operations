@@ -13,7 +13,6 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
@@ -23,6 +22,7 @@ import {
   ModelPriceHistoryEntry,
 } from '../../../../api/models/pricing.models';
 import { AdminPricingService } from '../../../../api/services/admin-pricing.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 export interface ModelPricingDialogData {
   modelId: string; // external model_id string
@@ -32,20 +32,20 @@ export interface ModelPricingDialogData {
   selector: 'app-model-pricing-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIconModule,
     MatTableModule,
     MatProgressSpinnerModule,
   ],
   template: `
     <div class="pricing-dialog">
       <h2 mat-dialog-title>
-        <mat-icon>euro</mat-icon>
+        <lucide-icon name="euro"></lucide-icon>
         Model Pricing
       </h2>
 
@@ -162,7 +162,7 @@ export interface ModelPricingDialogData {
           (click)="save()"
           [disabled]="priceForm.invalid || saving"
         >
-          <mat-icon>save</mat-icon>
+          <lucide-icon name="save"></lucide-icon>
           {{ saving ? 'Saving...' : 'Save Price' }}
         </button>
       </mat-dialog-actions>

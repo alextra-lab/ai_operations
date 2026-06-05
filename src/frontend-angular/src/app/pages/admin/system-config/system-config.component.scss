@@ -34,7 +34,7 @@
     height: 36px;
     color: #1a1a1a;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -60,7 +60,7 @@
   gap: 12px;
   align-items: flex-start;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     color: #f44336;
     font-size: 24px;
     width: 24px;
@@ -120,7 +120,7 @@
     align-items: center;
     gap: 8px;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 20px;
       width: 20px;
       height: 20px;
@@ -139,7 +139,7 @@
   border-radius: 4px;
   color: #856404;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     color: #ffc107;
     font-size: 24px;
     width: 24px;
@@ -170,7 +170,7 @@
   padding: 48px 24px;
   text-align: center;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 64px;
     width: 64px;
     height: 64px;
@@ -227,7 +227,7 @@
   .page-title h1 {
     font-size: 24px;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 28px;
       width: 28px;
       height: 28px;

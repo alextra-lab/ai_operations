@@ -6,7 +6,7 @@ h2[mat-dialog-title] {
   font-size: 24px;
   font-weight: 500;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 28px;
     width: 28px;
     height: 28px;
@@ -28,7 +28,7 @@ mat-dialog-content {
       gap: 8px;
       margin-bottom: 12px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         color: rgba(0, 0, 0, 0.54);
         font-size: 20px;
         width: 20px;
@@ -109,7 +109,7 @@ mat-dialog-content {
       border-radius: 4px;
       font-size: 14px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 20px;
         width: 20px;
         height: 20px;

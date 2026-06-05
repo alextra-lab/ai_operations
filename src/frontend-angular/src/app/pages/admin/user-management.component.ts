@@ -25,6 +25,7 @@ import {
   UserListItem,
 } from './user-management/models/user-management.models';
 import { UserManagementService } from './user-management/services/user-management.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * User Management Component
@@ -36,6 +37,7 @@ import { UserManagementService } from './user-management/services/user-managemen
   selector: 'app-user-management',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,

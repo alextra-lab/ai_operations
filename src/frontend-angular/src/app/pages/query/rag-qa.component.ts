@@ -32,11 +32,13 @@ import { ParameterConfigPanelComponent } from '../../components/parameter-config
 import { QueryResultsPanelComponent } from '../../components/query-results-panel/query-results-panel.component';
 import { EnterToExecuteDirective } from '../../directives/enter-to-execute.directive';
 import { AutoScrollService } from '../../services/auto-scroll.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-rag-qa',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -74,7 +76,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             class="m-0 text-[28px] font-medium
                                flex items-center gap-3"
           >
-            <mat-icon class="text-blue-600">quiz</mat-icon>
+            <lucide-icon class="text-blue-600" name="circle-help"></lucide-icon>
             RAG Q&A System
           </h1>
           <p class="m-0 mt-2 text-gray-600 text-sm">
@@ -127,7 +129,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             >
               <mat-card-content>
                 <div class="flex items-center gap-3 warning-content">
-                  <mat-icon color="warn" aria-hidden="true">warning</mat-icon>
+                  <lucide-icon color="warn" aria-hidden="true" name="triangle-alert"></lucide-icon>
                   <span class="text-sm"
                     >High-entropy configuration detected (temp > 0.9 AND top_p >
                     0.97). This may cause inconsistent outputs.</span
@@ -163,9 +165,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
                             text-center p-12 text-gray-500
                             empty-state"
         >
-          <mat-icon class="!text-[80px] !w-20 !h-20 mb-4 text-gray-400"
-            >quiz</mat-icon
-          >
+          <lucide-icon class="!text-[80px] !w-20 !h-20 mb-4 text-gray-400" name="circle-help"></lucide-icon>
           <h3 class="text-xl font-medium mb-2 text-gray-700">
             Ready to Answer Questions
           </h3>
@@ -194,7 +194,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             [disabled]="!canAsk || isAsking"
             aria-label="Ask question"
           >
-            <mat-icon>quiz</mat-icon>
+            <lucide-icon name="circle-help"></lucide-icon>
             <span *ngIf="!isAsking">Ask Question</span>
             <span *ngIf="isAsking">Generating Answer...</span>
           </button>
@@ -205,7 +205,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             [disabled]="isAsking"
             aria-label="Reset conversation"
           >
-            <mat-icon>refresh</mat-icon>
+            <lucide-icon name="refresh-cw"></lucide-icon>
             Reset
           </button>
 
@@ -215,7 +215,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             [disabled]="isAsking"
             aria-label="Export configuration"
           >
-            <mat-icon>download</mat-icon>
+            <lucide-icon name="download"></lucide-icon>
             Export Config
           </button>
         </div>
@@ -234,9 +234,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             class="flex items-center gap-1 px-2 py-1 bg-blue-50
                                  rounded text-blue-700 metric-badge"
           >
-            <mat-icon class="!text-base !w-4 !h-4" aria-hidden="true"
-              >schedule</mat-icon
-            >
+            <lucide-icon class="!text-base !w-4 !h-4" aria-hidden="true" name="clock"></lucide-icon>
             {{ lastExecutionTime }}ms
           </span>
 
@@ -245,9 +243,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             class="flex items-center gap-1 px-2 py-1 bg-purple-50
                                  rounded text-purple-700 metric-badge"
           >
-            <mat-icon class="!text-base !w-4 !h-4" aria-hidden="true"
-              >token</mat-icon
-            >
+            <lucide-icon class="!text-base !w-4 !h-4" aria-hidden="true" name="coins"></lucide-icon>
             {{ tokensUsed }} tokens
           </span>
 
@@ -256,9 +252,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             class="flex items-center gap-1 px-2 py-1 bg-green-50
                                  rounded text-green-700 metric-badge"
           >
-            <mat-icon class="!text-base !w-4 !h-4" aria-hidden="true"
-              >attach_money</mat-icon
-            >
+            <lucide-icon class="!text-base !w-4 !h-4" aria-hidden="true" name="dollar-sign"></lucide-icon>
             {{ currentCost | currency: 'USD' : 'symbol' : '1.4-4' }}
           </span>
         </div>

@@ -5,7 +5,7 @@
   <!-- Total Invocations -->
   <mat-card class="metric-card">
     <div class="metric-icon-wrapper blue">
-      <mat-icon aria-hidden="true">call_made</mat-icon>
+      <lucide-icon aria-hidden="true" name="arrow-up-right"></lucide-icon>
     </div>
     <div class="metric-content">
       <div class="metric-value">
@@ -19,7 +19,7 @@
   <!-- Average Success Rate -->
   <mat-card class="metric-card">
     <div class="metric-icon-wrapper" [ngClass]="getSuccessClass()">
-      <mat-icon aria-hidden="true">check_circle</mat-icon>
+      <lucide-icon aria-hidden="true" name="circle-check"></lucide-icon>
     </div>
     <div class="metric-content">
       <div class="metric-value" [ngClass]="getSuccessClass()">
@@ -35,7 +35,7 @@
   <!-- Total Cost -->
   <mat-card class="metric-card">
     <div class="metric-icon-wrapper purple">
-      <mat-icon aria-hidden="true">euro</mat-icon>
+      <lucide-icon aria-hidden="true" name="euro"></lucide-icon>
     </div>
     <div class="metric-content">
       <div class="metric-value">
@@ -53,7 +53,7 @@
     matTooltipPosition="above"
   >
     <div class="metric-icon-wrapper teal">
-      <mat-icon aria-hidden="true">trending_up</mat-icon>
+      <lucide-icon aria-hidden="true" name="trending-up"></lucide-icon>
     </div>
     <div class="metric-content">
       <div class="metric-value tool-name">
@@ -69,6 +69,6 @@
 
 <!-- Empty State -->
 <div class="empty-state" *ngIf="!aggregates">
-  <mat-icon>analytics</mat-icon>
+  <lucide-icon name="chart-column"></lucide-icon>
   <p>No analytics data available</p>
 </div>

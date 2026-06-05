@@ -27,11 +27,13 @@ import {
 } from '../../api/models/prompt-patterns.models';
 import { PromptPatternsService } from '../../api/services/prompt-patterns.service';
 import { PatternDetailDialogComponent } from './pattern-detail-dialog.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-pattern-library',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -178,7 +180,7 @@ export class PatternLibraryComponent implements OnInit, OnDestroy {
       this.categories.find((c) => c.id === categoryId) || {
         id: categoryId,
         label: categoryId,
-        icon: 'category',
+        icon: 'shapes',
         description: '',
         color: '#757575',
       }

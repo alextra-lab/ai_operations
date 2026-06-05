@@ -6,7 +6,7 @@
     <!-- Page Title -->
     <div class="page-title">
       <h1>
-        <mat-icon>library_books</mat-icon>
+        <lucide-icon name="library"></lucide-icon>
         Pattern Library
       </h1>
       <p class="subtitle">
@@ -41,7 +41,7 @@
             <mat-select [formControl]="categoryControl">
               <mat-option [value]="null">All Categories</mat-option>
               <mat-option *ngFor="let cat of categories" [value]="cat.id">
-                <mat-icon [style.color]="cat.color">{{ cat.icon }}</mat-icon>
+                <lucide-icon [style.color]="cat.color" [name]="cat.icon"></lucide-icon>
                 {{ cat.label }}
               </mat-option>
             </mat-select>
@@ -74,11 +74,11 @@
           <div class="view-controls">
             <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="onViewModeChange('grid')"
               matTooltip="Grid View">
-              <mat-icon>grid_view</mat-icon>
+              <lucide-icon name="layout-grid"></lucide-icon>
             </button>
             <button mat-icon-button [class.active]="viewMode === 'list'" (click)="onViewModeChange('list')"
               matTooltip="List View">
-              <mat-icon>view_list</mat-icon>
+              <lucide-icon name="list"></lucide-icon>
             </button>
           </div>
 
@@ -94,7 +94,7 @@
 
           <!-- Clear button -->
           <button mat-button (click)="clearFilters()">
-            <mat-icon>clear</mat-icon>
+            <lucide-icon name="x"></lucide-icon>
             Clear Filters
           </button>
 
@@ -122,17 +122,17 @@
 
     <!-- Error state -->
     <mat-card *ngIf="error && !loading" class="error-card">
-      <mat-icon>error</mat-icon>
+      <lucide-icon name="circle-alert"></lucide-icon>
       <p>{{ error }}</p>
       <button mat-raised-button color="primary" (click)="loadPatterns()">
-        <mat-icon>refresh</mat-icon>
+        <lucide-icon name="refresh-cw"></lucide-icon>
         Retry
       </button>
     </mat-card>
 
     <!-- Empty state -->
     <mat-card *ngIf="!loading && !error && patterns.length === 0" class="empty-state">
-      <mat-icon>search_off</mat-icon>
+      <lucide-icon name="search-x"></lucide-icon>
       <h2>No patterns found</h2>
       <p>Try adjusting your filters or search query.</p>
       <button mat-raised-button color="primary" (click)="clearFilters()">
@@ -145,7 +145,7 @@
       <mat-card *ngFor="let pattern of patterns" class="pattern-card" (click)="viewPattern(pattern)">
         <!-- Category badge -->
         <div class="category-badge" [style.background-color]="getCategoryInfo(pattern.category).color">
-          <mat-icon>{{ getCategoryInfo(pattern.category).icon }}</mat-icon>
+          <lucide-icon [name]="getCategoryInfo(pattern.category).icon"></lucide-icon>
           <span>{{ getCategoryInfo(pattern.category).label }}</span>
         </div>
 
@@ -167,12 +167,12 @@
         <!-- Footer -->
         <div class="pattern-footer">
           <div class="use-count" matTooltip="Times used">
-            <mat-icon>trending_up</mat-icon>
+            <lucide-icon name="trending-up"></lucide-icon>
             <span>{{ pattern.use_count }}</span>
           </div>
 
           <button mat-icon-button (click)="viewPattern(pattern); $event.stopPropagation()" matTooltip="View details">
-            <mat-icon>visibility</mat-icon>
+            <lucide-icon name="eye"></lucide-icon>
           </button>
         </div>
       </mat-card>
@@ -182,9 +182,7 @@
     <div *ngIf="!loading && !error && viewMode === 'list' && patterns.length > 0" class="patterns-list">
       <div *ngFor="let pattern of patterns" class="pattern-list-item" (click)="viewPattern(pattern)">
         <div class="pattern-icon">
-          <mat-icon [style.color]="getCategoryInfo(pattern.category).color">
-            {{ getCategoryInfo(pattern.category).icon }}
-          </mat-icon>
+          <lucide-icon [style.color]="getCategoryInfo(pattern.category).color" [name]="getCategoryInfo(pattern.category).icon"></lucide-icon>
         </div>
 
         <div class="pattern-info">

@@ -69,7 +69,7 @@
                 (click)="toggleDataSource(option.value)"
                 [disabled]="disabled"
               >
-                <mat-icon matChipAvatar>{{ option.icon }}</mat-icon>
+                <lucide-icon matChipAvatar [name]="option.icon"></lucide-icon>
                 {{ option.label }}
               </mat-chip-option>
             </mat-chip-listbox>
@@ -90,7 +90,7 @@
                 (click)="toggleDataFlow(option.value)"
                 [disabled]="disabled"
               >
-                <mat-icon matChipAvatar>{{ option.icon }}</mat-icon>
+                <lucide-icon matChipAvatar [name]="option.icon"></lucide-icon>
                 {{ option.label }}
               </mat-chip-option>
             </mat-chip-listbox>
@@ -111,7 +111,7 @@
                 (click)="toggleNetworkLevel(option.value)"
                 [disabled]="disabled"
               >
-                <mat-icon matChipAvatar>{{ option.icon }}</mat-icon>
+                <lucide-icon matChipAvatar [name]="option.icon"></lucide-icon>
                 {{ option.label }}
               </mat-chip-option>
             </mat-chip-listbox>

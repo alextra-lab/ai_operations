@@ -85,13 +85,12 @@
                 (click)="!isMenuItemDisabled(child) && onMenuItemClick(child)"
                 role="menuitem"
               >
-                <mat-icon
+                <lucide-icon
                   matListItemIcon
                   class="submenu-icon"
                   [attr.aria-hidden]="true"
-                >
-                  {{ getMenuItemIcon(child) }}
-                </mat-icon>
+                  [name]="getMenuItemIcon(child)"
+                ></lucide-icon>
 
                 <span matListItemTitle class="submenu-label">{{
                   getMenuItemLabel(child)
@@ -119,15 +118,14 @@
           (click)="!isMenuItemDisabled(menuItem) && onMenuItemClick(menuItem)"
           role="menuitem"
         >
-          <mat-icon
+          <lucide-icon
             matListItemIcon
             class="menu-icon"
             [matTooltip]="getTooltipText(menuItem)"
             [matTooltipDisabled]="!isCollapsed"
             [attr.aria-hidden]="true"
-          >
-            {{ getMenuItemIcon(menuItem) }}
-          </mat-icon>
+            [name]="getMenuItemIcon(menuItem)"
+          ></lucide-icon>
 
           <span matListItemTitle class="menu-label" *ngIf="!isCollapsed">{{
             getMenuItemLabel(menuItem)

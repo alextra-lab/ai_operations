@@ -14,6 +14,13 @@
   --mat-list-list-item-hover-leading-icon-color: #fff;
   --mat-list-list-item-hover-state-layer-color: rgba(255, 255, 255, 0.07);
   --mat-list-list-item-focus-label-text-color: #fff;
+  // Icon spacing for list-item nav entries (Dashboard, Analyst Console, all
+  // sub-items). These drive the icon box + the icon→label gap so list items
+  // match the expansion-header items (which use flex gap). Kept in sync with
+  // .mat-expansion-panel-header-title { gap } below.
+  --mat-list-list-item-leading-icon-start-space: 16px;
+  --mat-list-list-item-leading-icon-end-space: 14px;
+  --mat-list-list-item-leading-icon-size: 21px;
   --mat-expansion-container-background-color: transparent;
   --mat-expansion-container-text-color: rgba(255, 255, 255, 0.74);
   --mat-expansion-header-text-color: rgba(255, 255, 255, 0.74);
@@ -216,7 +223,7 @@
 
         .menu-icon {
           color: rgba(255, 255, 255, 0.55);
-          margin-right: 16px;
+          // gap handled by --mat-list-list-item-leading-icon-end-space
           transition: color 0.2s ease;
         }
 
@@ -283,54 +290,53 @@
             }
           }
 
-          .mat-expansion-panel-header-title {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex: 1;
+          // The icon/label/badge are projected into Material's .mat-content
+          // (a flex row), NOT a .mat-expansion-panel-header-title. Target them
+          // as direct descendants of the in-scope .menu-panel-header so the
+          // selector pierces Material's wrapper.
+          .menu-icon {
+            color: rgba(255, 255, 255, 0.55);
+            margin-right: 14px; // icon→label gap
+            flex: 0 0 auto;
+            transition: color 0.2s ease;
+          }
 
-            .menu-icon {
-              color: rgba(255, 255, 255, 0.55);
-              transition: color 0.2s ease;
+          .menu-label {
+            color: rgba(255, 255, 255, 0.74);
+            font-weight: 500;
+          }
+
+          .menu-badge {
+            margin-left: auto;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+
+            &.badge-primary {
+              background-color: rgba(47, 98, 240, 0.28);
+              border: 1px solid rgba(47, 98, 240, 0.55);
+              color: #fff;
             }
 
-            .menu-label {
-              color: rgba(255, 255, 255, 0.74);
-              font-weight: 500;
+            &.badge-accent {
+              background-color: rgba(17, 160, 138, 0.22);
+              border: 1px solid rgba(17, 160, 138, 0.5);
+              color: #fff;
             }
 
-            .menu-badge {
-              margin-left: auto;
-              padding: 2px 8px;
-              border-radius: 12px;
-              font-size: 11px;
-              font-weight: 600;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
+            &.badge-warn {
+              background-color: rgba(210, 32, 48, 0.22);
+              border: 1px solid rgba(210, 32, 48, 0.5);
+              color: #fff;
+            }
 
-              &.badge-primary {
-                background-color: rgba(47, 98, 240, 0.28);
-                border: 1px solid rgba(47, 98, 240, 0.55);
-                color: #fff;
-              }
-
-              &.badge-accent {
-                background-color: rgba(17, 160, 138, 0.22);
-                border: 1px solid rgba(17, 160, 138, 0.5);
-                color: #fff;
-              }
-
-              &.badge-warn {
-                background-color: rgba(210, 32, 48, 0.22);
-                border: 1px solid rgba(210, 32, 48, 0.5);
-                color: #fff;
-              }
-
-              &.badge-success {
-                background-color: rgba(31, 157, 87, 0.22);
-                border: 1px solid rgba(31, 157, 87, 0.5);
-                color: #fff;
-              }
+            &.badge-success {
+              background-color: rgba(31, 157, 87, 0.22);
+              border: 1px solid rgba(31, 157, 87, 0.5);
+              color: #fff;
             }
           }
 
@@ -342,9 +348,15 @@
         .submenu-list {
           padding: 0;
           background: transparent;
+          // Sub-items sit only slightly indented from their parent; reduce the
+          // leading-icon start-space so the icon+label don't push right and
+          // truncate (top-level keeps the 16px start-space set above), and a
+          // tighter icon→label gap than the top level.
+          --mat-list-list-item-leading-icon-start-space: 8px;
+          --mat-list-list-item-leading-icon-end-space: 10px;
 
           .submenu-item {
-            margin: 1px 8px 1px 16px;
+            margin: 1px 8px 1px 12px;
             border-radius: var(--radius-sm, 7px);
             cursor: pointer;
             transition:
@@ -382,7 +394,7 @@
 
             .submenu-icon {
               color: rgba(255, 255, 255, 0.42);
-              margin-right: 12px;
+              // gap handled by --mat-list-list-item-leading-icon-end-space
               font-size: 19px;
               width: 19px;
               height: 19px;

@@ -35,6 +35,10 @@ $aio-ui-theme: mat.define-theme(
       primary: mat.$azure-palette,
       tertiary: mat.$blue-palette,
     ),
+    typography: (
+      plain-family: 'Plus Jakarta Sans',
+      brand-family: 'Plus Jakarta Sans',
+    ),
     density: (
       scale: 0,
     ),
@@ -110,6 +114,101 @@ $aio-ui-theme: mat.define-theme(
   --mat-sys-error: var(--error);
   --mat-sys-error-container: var(--error-bg);
   --mat-sys-on-error-container: var(--error-fg);
+
+  // Component skins per the design spec (kit.css), via Material's validated
+  // token-override mixins (Material 21 --mat-<component>-* tokens).
+  @include mat.button-overrides(
+    (
+      filled-container-color: var(--primary),
+      filled-label-text-color: #fff,
+      filled-container-shape: var(--radius-sm),
+      filled-container-height: 40px,
+      protected-container-color: var(--primary),
+      protected-label-text-color: #fff,
+      protected-container-shape: var(--radius-sm),
+      protected-container-height: 40px,
+      outlined-label-text-color: var(--primary),
+      outlined-outline-color: var(--n-300),
+      outlined-container-shape: var(--radius-sm),
+      outlined-container-height: 40px,
+      text-label-text-color: var(--primary),
+      text-container-shape: var(--radius-sm),
+    )
+  );
+  @include mat.icon-button-overrides(
+    (
+      icon-color: var(--fg-3),
+    )
+  );
+  @include mat.card-overrides(
+    (
+      elevated-container-color: var(--surface),
+      elevated-container-shape: var(--radius-md),
+      outlined-container-color: var(--surface),
+      outlined-container-shape: var(--radius-md),
+      outlined-outline-color: var(--border),
+    )
+  );
+  @include mat.form-field-overrides(
+    (
+      outlined-outline-color: var(--n-300),
+      outlined-hover-outline-color: var(--n-400),
+      outlined-focus-outline-color: var(--primary),
+      outlined-container-shape: var(--radius-sm),
+      outlined-label-text-color: var(--fg-3),
+      outlined-focus-label-text-color: var(--primary),
+      outlined-input-text-color: var(--fg-1),
+    )
+  );
+  @include mat.table-overrides(
+    (
+      background-color: var(--surface),
+      header-headline-color: var(--fg-3),
+      header-headline-size: 12px,
+      header-headline-weight: 600,
+      row-item-label-text-color: var(--fg-2),
+      row-item-label-text-size: 13.5px,
+      row-item-outline-color: var(--border-soft),
+    )
+  );
+  @include mat.chips-overrides(
+    (
+      container-shape-radius: var(--radius-pill),
+      elevated-container-color: var(--surface),
+      outline-color: #d7dee8,
+      label-text-color: var(--fg-2),
+    )
+  );
+  @include mat.slide-toggle-overrides(
+    (
+      selected-track-color: var(--success),
+      selected-hover-track-color: var(--success),
+      selected-focus-track-color: var(--success),
+      selected-pressed-track-color: var(--success),
+      selected-handle-color: #fff,
+      selected-hover-handle-color: #fff,
+      selected-focus-handle-color: #fff,
+      selected-pressed-handle-color: #fff,
+    )
+  );
+  @include mat.dialog-overrides(
+    (
+      container-color: var(--surface),
+      container-shape: var(--radius-lg),
+    )
+  );
+  @include mat.menu-overrides(
+    (
+      container-color: var(--surface),
+      container-shape: var(--radius-sm),
+    )
+  );
+  @include mat.snack-bar-overrides(
+    (
+      container-color: var(--n-800),
+      container-shape: var(--radius-sm),
+    )
+  );
 }
 
 ::selection {

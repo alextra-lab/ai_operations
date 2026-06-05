@@ -5,81 +5,28 @@
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// Buttons — raised: cobalt, h40, radius-sm; stroked: white + primary text,
-// n-300 border; text: primary; icon-button: 40px round fg-3. Focus: --ring.
+// NOTE: token-level component overrides (buttons, cards, form fields, tables,
+// chips, slide-toggle, dialogs, menus, snackbar) live in styles.scss via the
+// validated mat.*-overrides mixins. This partial holds class-level rules that
+// Material exposes no token for, plus app-level badge conventions.
 // ----------------------------------------------------------------------------
 :root {
-  --mdc-filled-button-container-color: var(--primary);
-  --mdc-filled-button-label-text-color: #fff;
-  --mdc-filled-button-container-shape: var(--radius-sm);
-  --mdc-filled-button-container-height: 40px;
-  --mdc-protected-button-container-color: var(--primary);
-  --mdc-protected-button-label-text-color: #fff;
-  --mdc-protected-button-container-shape: var(--radius-sm);
-  --mdc-protected-button-container-height: 40px;
-  --mdc-outlined-button-label-text-color: var(--primary);
-  --mdc-outlined-button-outline-color: var(--n-300);
-  --mdc-outlined-button-container-shape: var(--radius-sm);
-  --mdc-outlined-button-container-height: 40px;
-  --mdc-text-button-label-text-color: var(--primary);
-  --mdc-text-button-container-shape: var(--radius-sm);
-  --mat-icon-button-icon-color: var(--fg-3);
-
-  // Cards / panels
-  --mdc-elevated-card-container-color: var(--surface);
-  --mdc-elevated-card-container-shape: var(--radius-md);
-  --mdc-elevated-card-container-elevation: var(--shadow-1);
-  --mdc-outlined-card-container-color: var(--surface);
-  --mdc-outlined-card-container-shape: var(--radius-md);
-  --mdc-outlined-card-outline-color: var(--border);
-
-  // Form fields — outline 1px n-300, radius-sm; focus primary
-  --mdc-outlined-text-field-outline-color: var(--n-300);
-  --mdc-outlined-text-field-hover-outline-color: var(--n-400);
-  --mdc-outlined-text-field-focus-outline-color: var(--primary);
-  --mdc-outlined-text-field-container-shape: var(--radius-sm);
-  --mdc-outlined-text-field-label-text-color: var(--fg-3);
-  --mdc-outlined-text-field-focus-label-text-color: var(--primary);
-  --mdc-outlined-text-field-input-text-color: var(--fg-1);
-
-  // Tables — header surface-2, hairline rows
-  --mat-table-background-color: var(--surface);
-  --mat-table-header-headline-color: var(--fg-3);
-  --mat-table-header-headline-size: 12px;
-  --mat-table-header-headline-weight: 600;
-  --mat-table-row-item-label-text-color: var(--fg-2);
-  --mat-table-row-item-label-text-size: 13.5px;
-  --mat-table-row-item-outline-color: var(--border-soft);
-
-  // Slide toggle — on = success, off = muted
-  --mdc-switch-selected-track-color: var(--success);
-  --mdc-switch-selected-hover-track-color: var(--success);
-  --mdc-switch-selected-focus-track-color: var(--success);
-  --mdc-switch-selected-pressed-track-color: var(--success);
-  --mdc-switch-selected-handle-color: #fff;
-  --mdc-switch-selected-hover-handle-color: #fff;
-  --mdc-switch-selected-focus-handle-color: #fff;
-  --mdc-switch-selected-pressed-handle-color: #fff;
-
-  // Chips — bordered, not flat fills
-  --mdc-chip-container-shape-radius: var(--radius-pill);
-  --mdc-chip-elevated-container-color: var(--surface);
-  --mdc-chip-outline-color: #d7dee8;
-  --mdc-chip-label-text-color: var(--fg-2);
-
-  // Dialogs
-  --mdc-dialog-container-color: var(--surface);
-  --mdc-dialog-container-shape: var(--radius-lg);
-
-  // Expansion panels / menus / tooltips
+  // Expansion panels (token names per Material 21 built output)
   --mat-expansion-container-background-color: var(--surface);
   --mat-expansion-container-shape: var(--radius-md);
-  --mat-menu-container-color: var(--surface);
-  --mat-menu-container-shape: var(--radius-sm);
+}
 
-  // Snackbar on ink
-  --mdc-snackbar-container-color: var(--n-800);
-  --mdc-snackbar-container-shape: var(--radius-sm);
+// Suppress the browser autofill highlight (Chrome paints inputs #e8f0fe),
+// which clashes with the clean white fields. Keep the surface + token text.
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--fg-1);
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset;
+  caret-color: var(--fg-1);
+  transition: background-color 9999s ease-out 0s;
 }
 
 // Focus ring on all Material buttons

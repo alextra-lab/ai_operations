@@ -50,9 +50,9 @@ export class MainLayoutComponent {
   readonly isSidebarOpen = signal(true);
   readonly isSidebarCollapsed = signal(false);
 
-  // Layout configuration
-  readonly sidebarWidth = 280;
-  readonly collapsedSidebarWidth = 64;
+  // Layout configuration (design-system layout tokens: --sidebar-w / --sidebar-w-collapsed)
+  readonly sidebarWidth = 264;
+  readonly collapsedSidebarWidth = 68;
 
   constructor() {
     this.initializeLayout();

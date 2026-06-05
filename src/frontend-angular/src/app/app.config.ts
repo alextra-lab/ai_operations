@@ -1,7 +1,12 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
+import { LucideAngularModule } from 'lucide-angular';
 
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { environment } from '../environments/environment';
@@ -10,10 +15,12 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loggingInterceptor } from './core/interceptors/logging.interceptor';
 import { securityInterceptor } from './core/interceptors/security.interceptor';
+import { APP_ICONS } from './shared/icons/lucide-icons';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+    importProvidersFrom(LucideAngularModule.pick(APP_ICONS)),
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(

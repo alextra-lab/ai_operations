@@ -49,6 +49,7 @@
     "idb": "^8.0.0",
     "jsonpath-plus": "^10.3.0",
     "katex": "^0.17.0",
+    "lucide-angular": "^1.0.0",
     "marked": "^18.0.4",
     "material-icons": "^1.13.14",
     "mermaid": "^11.15.0",

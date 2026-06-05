@@ -13,7 +13,7 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "postinstall": "npm run copy-fonts",
-    "copy-fonts": "mkdir -p public/fonts/material-icons public/fonts/roboto && cp -f node_modules/material-icons/iconfont/*.woff* public/fonts/material-icons/ 2>/dev/null || true && cp -f node_modules/typeface-roboto/files/roboto-latin-{300,400,500}.{woff,woff2} public/fonts/roboto/ 2>/dev/null || true",
+    "copy-fonts": "mkdir -p public/fonts/material-icons public/fonts/roboto public/fonts/plus-jakarta-sans public/fonts/dm-mono && cp -f node_modules/material-icons/iconfont/*.woff* public/fonts/material-icons/ 2>/dev/null || true && cp -f node_modules/typeface-roboto/files/roboto-latin-{300,400,500}.{woff,woff2} public/fonts/roboto/ 2>/dev/null || true && cp -f node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-{400,500,600,700}-normal.{woff,woff2} public/fonts/plus-jakarta-sans/ 2>/dev/null || true && cp -f node_modules/@fontsource/dm-mono/files/dm-mono-latin-{400,500}-normal.{woff,woff2} public/fonts/dm-mono/ 2>/dev/null || true",
     "e2e": "ng e2e",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
@@ -39,6 +39,8 @@
     "@angular/platform-browser-dynamic": "^21.1.2",
     "@angular/router": "^21.1.2",
     "@angular/service-worker": "^21.1.2",
+    "@fontsource/dm-mono": "^5.2.7",
+    "@fontsource/plus-jakarta-sans": "^5.2.8",
     "@swimlane/ngx-graph": "^11.0.0",
     "ajv": "^8.17.1",
     "chart.js": "^4.4.4",

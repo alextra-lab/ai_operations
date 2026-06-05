@@ -1,0 +1,43 @@
+/* Plus Jakarta Sans - Local Font Files for Air-Gapped Deployment */
+/* Weights: 400 (Regular), 500 (Medium), 600 (SemiBold), 700 (Bold) */
+/* SIL OFL — design-system UI/body family */
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src:
+    url('/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-400-normal.woff2') format('woff2'),
+    url('/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-400-normal.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src:
+    url('/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-500-normal.woff2') format('woff2'),
+    url('/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-500-normal.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src:
+    url('/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-600-normal.woff2') format('woff2'),
+    url('/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-600-normal.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src:
+    url('/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-700-normal.woff2') format('woff2'),
+    url('/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-700-normal.woff') format('woff');
+}

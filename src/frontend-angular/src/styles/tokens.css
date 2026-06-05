@@ -1,0 +1,188 @@
+/* ============================================================================
+   AI OPERATIONS PLATFORM — Design Tokens  (v2)
+   Colors + Typography + Layout foundations.
+
+   Derived from the Angular Material + Tailwind frontend
+   (alextra-lab/ai_operations · src/frontend-angular), then refined into a
+   consistent, open-licensed system:
+     · Fonts:   Plus Jakarta Sans (UI/body) + DM Mono (code) — SIL OFL,
+                fully free to use & embed. Material Icons — Apache 2.0.
+     · Color:   slate-neutral base + a single cobalt accent (the saturated
+                Material palette and indigo→teal gradient were retired in
+                favor of one confident, consistently-applied accent).
+
+   Load fonts in <head>:
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   ============================================================================ */
+
+:root {
+  /* ---------------------------------------------------------------------
+     NEUTRALS — cool slate ramp. The UI is neutral-heavy; lean on these.
+     --------------------------------------------------------------------- */
+  --n-0:   #ffffff;
+  --n-50:  #f7f9fc;
+  --n-100: #eef2f7;
+  --n-200: #e2e8f0;
+  --n-300: #cdd6e2;
+  --n-400: #9aa7b8;
+  --n-500: #697587;
+  --n-600: #4d5869;
+  --n-700: #36404f;
+  --n-800: #222b38;
+  --n-900: #121925;   /* ink — top bar, darkest text */
+
+  /* ---------------------------------------------------------------------
+     PRIMARY — cobalt accent. One accent, used consistently for actions,
+     links, focus, active state. Not a gradient.
+     --------------------------------------------------------------------- */
+  --primary-50:  #eef3ff;
+  --primary-100: #dbe6ff;
+  --primary-200: #b9ccff;
+  --primary:     #2f62f0;   /* main action */
+  --primary-hover: #2150d8;
+  --primary-dark:  #1a3fae;
+  --primary-container:   #e3ecff;   /* soft fills, quick-action pills */
+  --on-primary:          #ffffff;
+  --on-primary-container:#1a3fae;
+
+  /* Brand identity color (solid). Logo mark + accents. Equals primary,
+     with a single supporting teal kept only for data/heritage moments. */
+  --brand:        #2f62f0;
+  --brand-ink:    #121925;   /* top bar background */
+  --brand-teal:   #11a08a;   /* supporting accent (data, compliance vibe) */
+  /* Back-compat: a subtle brand gradient is still available for the logo
+     tile only — avoid on large surfaces. */
+  --brand-gradient:      linear-gradient(135deg, #2f62f0, #11a08a);
+  --brand-gradient-diag: linear-gradient(135deg, #2f62f0, #11a08a);
+
+  /* ---------------------------------------------------------------------
+     TEXT / INK
+     --------------------------------------------------------------------- */
+  --navy:    #121925;   /* legacy alias → ink */
+  --fg-1:    #1a2230;   /* headings, strong body */
+  --fg-2:    #45505f;   /* body, secondary */
+  --fg-3:    #697587;   /* captions, tertiary */
+  --fg-muted:#9aa7b8;   /* disabled, placeholder */
+
+  /* ---------------------------------------------------------------------
+     SURFACES & LINES
+     --------------------------------------------------------------------- */
+  --bg-app:          #e3e9f1;   /* app canvas (cool slate, sets panel contrast) */
+  --bg-login:        #e1e8f1;
+  --surface:         #ffffff;   /* cards, panels */
+  --surface-2:       #edf1f7;   /* controls container, inset */
+  --surface-3:       #e6ecf4;   /* scroll content area — darker so panels pop */
+  --surface-variant: #e8edf5;   /* widget / section headers */
+  --border:          #d3dce8;
+  --border-soft:     #e3eaf3;
+  --divider:         #d9e1ec;
+
+  /* ---------------------------------------------------------------------
+     SEMANTIC STATUS — calmer than Material; consistent fg/bg pairs.
+     --------------------------------------------------------------------- */
+  --success:    #1f9d57;  --success-fg: #157f45;  --success-bg: #dcf3e6;
+  --warning:    #d68310;  --warning-fg: #a9620a;  --warning-bg: #fbeecd;
+  --error:      #d22030;  --error-fg:   #b01627;  --error-bg:   #fbe9eb;
+  --info:       #2f62f0;  --info-fg:    #1a3fae;  --info-bg:    #e3ecff;
+  --neutral-fg: #4d5869;  --neutral-bg: #eaeef4;
+
+  /* Role / info badge */
+  --badge-bg: #e3ecff;
+  --badge-fg: #1a3fae;
+
+  /* ---------------------------------------------------------------------
+     CATEGORY ACCENTS — SOC use-case taxonomy, retuned to harmonize with
+     the cobalt+slate system. Each carries a fixed Material icon.
+     --------------------------------------------------------------------- */
+  --cat-threat:     #e0484b;   /* threat_analysis        · security */
+  --cat-incident:   #ef7a2f;   /* incident_response      · emergency */
+  --cat-vuln:       #e0603a;   /* vulnerability_assess.  · bug_report */
+  --cat-compliance: #1f9d57;   /* compliance_check       · verified_user */
+  --cat-data:       #2f62f0;   /* data_analysis          · analytics */
+  --cat-report:     #7c5cf0;   /* report_generation      · description */
+  --cat-network:    #119ab0;   /* network_monitoring     · network_check */
+  --cat-behavior:   #8a6b3f;   /* user_behavior          · person_search */
+  --cat-default:    #697587;   /* default                · psychology */
+
+  /* ---------------------------------------------------------------------
+     TYPOGRAPHY — one open family, hierarchy via weight.
+     --------------------------------------------------------------------- */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+               Helvetica, Arial, sans-serif;
+  --font-mat:  var(--font-sans);
+  --font-mono: 'DM Mono', 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* ---------------------------------------------------------------------
+     RADII · SHADOWS · SPACING (8px grid)
+     --------------------------------------------------------------------- */
+  --radius-xs:  5px;
+  --radius-sm:  7px;
+  --radius-md:  10px;   /* cards, panels, inputs */
+  --radius-lg:  14px;
+  --radius-pill: 999px;
+  --radius-round: 9999px;
+
+  --shadow-1: 0 1px 2px rgba(18,25,37,.06), 0 2px 6px rgba(18,25,37,.08);
+  --shadow-2: 0 1px 2px rgba(18,25,37,.06), 0 4px 10px rgba(18,25,37,.08);
+  --shadow-3: 0 8px 20px rgba(18,25,37,.12), 0 2px 6px rgba(18,25,37,.07);
+  --shadow-card-soft: 0 1px 2px rgba(18,25,37,.05);
+  --shadow-elevated:  0 18px 44px rgba(18,25,37,.16);
+  --ring: 0 0 0 3px rgba(47,98,240,.28);   /* focus ring */
+
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
+
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---------------------------------------------------------------------
+     LAYOUT — consistency tokens (window sizes, margins, title sections).
+     Use these everywhere so every screen lines up.
+     --------------------------------------------------------------------- */
+  --sidebar-w: 264px;
+  --sidebar-w-collapsed: 68px;
+  --toolbar-h: 60px;
+  --qa-bar-h: 56px;
+  --page-max: 1200px;       /* max content width, centered */
+  --page-pad-x: 32px;       /* horizontal page gutter */
+  --page-pad-y: 28px;       /* vertical page padding */
+  --page-pad-x-sm: 20px;
+  --section-gap: 24px;      /* gap between page sections */
+  --card-pad: 20px;         /* standard card interior padding */
+
+  /* ---------------------------------------------------------------------
+     SEMANTIC TYPE ROLES — hierarchy by weight on one family.
+     --------------------------------------------------------------------- */
+  --display-size: 32px; --display-weight: 600; --display-lh: 1.18;
+  --h1-size: 22px;  --h1-weight: 600;  --h1-lh: 1.3;
+  --h2-size: 18px;  --h2-weight: 600;  --h2-lh: 1.35;
+  --h3-size: 15px;  --h3-weight: 600;  --h3-lh: 1.4;
+  --p-size: 14px;   --p-weight: 400;   --p-lh: 1.6;
+  --small-size: 13px; --small-weight: 400; --small-lh: 1.5;
+  --caption-size: 12px; --caption-weight: 500; --caption-lh: 1.4;
+  --label-size: 11px; --label-weight: 600;
+}
+
+/* ============================================================================
+   SEMANTIC TYPE HELPERS — opt in via .aio-type, or copy into components.
+   ============================================================================ */
+.aio-type {
+  font-family: var(--font-sans); color: var(--fg-1);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+.aio-type h1, .aio-h1 { font-size: var(--h1-size); font-weight: var(--h1-weight); line-height: var(--h1-lh); color: var(--fg-1); margin: 0; letter-spacing: -0.01em; }
+.aio-type h2, .aio-h2 { font-size: var(--h2-size); font-weight: var(--h2-weight); line-height: var(--h2-lh); color: var(--fg-1); margin: 0; }
+.aio-type h3, .aio-h3 { font-size: var(--h3-size); font-weight: var(--h3-weight); line-height: var(--h3-lh); color: var(--fg-1); margin: 0; }
+.aio-display { font-size: var(--display-size); font-weight: var(--display-weight); line-height: var(--display-lh); color: var(--fg-1); letter-spacing: -0.02em; }
+.aio-type p, .aio-p { font-size: var(--p-size); font-weight: 400; line-height: var(--p-lh); color: var(--fg-2); margin: 0; }
+.aio-small { font-size: var(--small-size); line-height: var(--small-lh); color: var(--fg-3); }
+.aio-caption { font-size: var(--caption-size); font-weight: 500; color: var(--fg-3); }
+.aio-label { font-size: var(--label-size); font-weight: var(--label-weight); text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-muted); }
+.aio-code, code.aio-code { font-family: var(--font-mono); font-size: 13px; background: var(--surface-2); padding: 2px 6px; border-radius: var(--radius-xs); color: var(--primary-dark); }

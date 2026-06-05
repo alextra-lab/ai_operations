@@ -212,7 +212,7 @@ describe('UseCaseMenuComponent', () => {
 
   it('should get use case color', () => {
     const color = component.getUseCaseColor('threat_analysis');
-    expect(color).toBe('#f44336');
+    expect(color).toBe('var(--cat-threat)');
   });
 
   it('should calculate total pages correctly', () => {

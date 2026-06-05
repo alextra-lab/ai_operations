@@ -332,16 +332,17 @@ export class UseCaseMenuComponent implements OnInit, OnDestroy {
   }
 
   getUseCaseColor(category: string): string {
+    // Design-system SOC category accents (tokens.css --cat-*)
     const colorMap: Record<string, string> = {
-      threat_analysis: '#f44336',
-      incident_response: '#ff9800',
-      vulnerability_assessment: '#ff5722',
-      compliance_check: '#4caf50',
-      data_analysis: '#2196f3',
-      report_generation: '#9c27b0',
-      network_monitoring: '#00bcd4',
-      user_behavior: '#795548',
-      default: '#607d8b',
+      threat_analysis: 'var(--cat-threat)',
+      incident_response: 'var(--cat-incident)',
+      vulnerability_assessment: 'var(--cat-vuln)',
+      compliance_check: 'var(--cat-compliance)',
+      data_analysis: 'var(--cat-data)',
+      report_generation: 'var(--cat-report)',
+      network_monitoring: 'var(--cat-network)',
+      user_behavior: 'var(--cat-behavior)',
+      default: 'var(--cat-default)',
     };
 
     return colorMap[category] || colorMap['default'];

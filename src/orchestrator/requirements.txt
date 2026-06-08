@@ -1,5 +1,5 @@
 fastapi>=0.117.1
-uvicorn[standard]==0.48.0
+uvicorn[standard]==0.49.0
 starlette>=1.2.1
 # websockets>=12.0  # Included in uvicorn[standard]
 # langchain==0.1.15  # REMOVED - Not used in backend code
@@ -8,16 +8,16 @@ pydantic>=2.12.5,<3.0.0
 python-jose[cryptography]>=3.3.0
 bcrypt>=5.0.0,<6.0.0
 passlib==1.7.4 # Changed from passlib[bcrypt]==1.7.4
-python-multipart>=0.0.30
+python-multipart>=0.0.32
 sqlalchemy>=2.0.43
 psycopg>=3.3.2
 psycopg[binary]>=3.3.2
 alembic
 pandas
 numpy<3.0.0
-structlog>=25.5.0
+structlog>=26.1.0
 httpx>=0.28.1
-openai>=2.40.0,<3.0.0
+openai>=2.41.0,<3.0.0
 tiktoken>=0.13.0
 backoff>=2.2.1
 

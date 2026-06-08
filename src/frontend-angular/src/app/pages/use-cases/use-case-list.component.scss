@@ -17,7 +17,7 @@
 .page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px); // Adjust based on app header height
+  height: calc(100vh - var(--chrome-h)); // Adjust based on app header height
   margin: -24px -32px; // Offset main layout padding
   padding: 0;
   overflow: hidden; // CRITICAL: Prevent parent from scrolling
@@ -297,7 +297,7 @@
 
 @media (max-width: 768px) {
   .page-container {
-    height: calc(100vh - 150px); // Adjust for mobile
+    height: calc(100vh - var(--chrome-h)); // Adjust for mobile
     margin: -16px;
   }
 

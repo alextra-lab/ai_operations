@@ -7,7 +7,7 @@
 .page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
+  height: calc(100vh - var(--chrome-h));
   margin: -24px -32px;
   padding: 0;
   overflow: hidden; // CRITICAL: Prevent parent from scrolling
@@ -456,7 +456,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - 200px);
+  height: calc(100vh - var(--chrome-h));
   text-align: center;
   padding: 48px 24px;
 
@@ -488,7 +488,7 @@
 
 @media (max-width: 768px) {
   .page-container {
-    height: calc(100vh - 150px);
+    height: calc(100vh - var(--chrome-h));
     margin: -16px;
   }
 

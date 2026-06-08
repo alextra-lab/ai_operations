@@ -9,7 +9,7 @@
 .page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px); // Account for main layout header and padding
+  height: calc(100vh - var(--chrome-h)); // Account for main layout header and padding
   margin: -24px -32px; // Offset main layout padding
   padding: 0;
   overflow: hidden; // Prevent this from scrolling
@@ -413,7 +413,7 @@
 
 @media (max-width: 768px) {
   .page-container {
-    height: calc(100vh - 150px);
+    height: calc(100vh - var(--chrome-h));
     margin: -16px;
   }
 

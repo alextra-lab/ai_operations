@@ -148,7 +148,7 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
       .page-container {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 200px);
+        height: calc(100vh - var(--chrome-h));
         margin: -24px -32px;
         padding: 0;
         overflow: hidden;
@@ -285,7 +285,7 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
 
       @media (max-width: 768px) {
         .page-container {
-          height: calc(100vh - 150px);
+          height: calc(100vh - var(--chrome-h));
           margin: -16px;
         }
 

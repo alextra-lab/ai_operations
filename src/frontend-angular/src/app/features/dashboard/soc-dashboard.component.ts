@@ -382,7 +382,7 @@ import { RealTimeDataService } from './services/real-time-data.service';
         flex: 1;
         overflow: hidden;
         padding: 16px;
-        height: calc(100vh - 80px);
+        height: calc(100vh - var(--chrome-h));
       }
 
       .loading-container {

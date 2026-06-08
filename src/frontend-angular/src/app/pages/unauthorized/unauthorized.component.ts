@@ -41,7 +41,7 @@ import { LucideAngularModule } from 'lucide-angular';
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: calc(100vh - 64px);
+        min-height: calc(100vh - var(--chrome-h));
         background: radial-gradient(circle at top, #f0f4ff, #e6f9f7 70%);
       }
       .unauthorized-card {

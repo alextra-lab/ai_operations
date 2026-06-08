@@ -6,7 +6,7 @@
 .page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px); // Account for main toolbar
+  height: calc(100vh - var(--chrome-h)); // Account for main toolbar
   overflow: hidden;
 }
 

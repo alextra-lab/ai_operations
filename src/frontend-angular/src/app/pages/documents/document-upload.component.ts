@@ -674,7 +674,7 @@ import { DocumentService } from '../../api/services/document.service';
       .page-container {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 200px);
+        height: calc(100vh - var(--chrome-h));
         margin: -24px -32px;
         padding: 0;
         overflow: hidden; // CRITICAL: Prevents double scrollbars

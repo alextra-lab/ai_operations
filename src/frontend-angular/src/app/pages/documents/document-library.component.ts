@@ -482,7 +482,7 @@ import { DocumentMetadataComponent } from './document-metadata.component';
       .page-container {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 200px);
+        height: calc(100vh - var(--chrome-h));
         margin: -24px -32px;
         padding: 0;
         overflow: hidden;

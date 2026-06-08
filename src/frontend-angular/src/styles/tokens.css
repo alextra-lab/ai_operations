@@ -150,6 +150,7 @@
   --sidebar-w-collapsed: 68px;
   --toolbar-h: 60px;
   --qa-bar-h: 56px;
+  --chrome-h: calc(var(--toolbar-h) + var(--qa-bar-h)); /* fixed chrome above page content */
   --page-max: 1200px;       /* max content width, centered */
   --page-pad-x: 32px;       /* horizontal page gutter */
   --page-pad-y: 28px;       /* vertical page padding */

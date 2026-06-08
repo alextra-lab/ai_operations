@@ -88,11 +88,9 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
   template: `
     <!-- Layer 2: Page Container - Tailwind utilities -->
     <div
-      class="flex flex-col overflow-hidden
+      class="flex flex-col
                     -my-4 -mr-4 -mb-4
                     md:-my-6 md:-mr-8 md:-mb-6
-                    h-[calc(100vh-150px)]
-                    md:h-[calc(100vh-200px)]
                     page-container"
     >
       <!-- Layer 2: Configuration Header -->
@@ -116,7 +114,7 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
 
         <!-- Query input + config panel -->
         <div class="px-4 pb-4 md:px-6 md:pb-4">
-          <div class="bg-gray-100 rounded-lg shadow-md p-5">
+          <div class="config-card">
             <mat-form-field appearance="outline" class="search-input-field">
               <mat-label>Enter your search query</mat-label>
               <textarea
@@ -148,9 +146,7 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
 
       <!-- Layer 3: Results -->
       <div
-        class="flex-1 overflow-y-auto overflow-x-hidden
-                        px-4 py-4 md:px-6 md:py-6
-                        min-h-0 bg-gray-50
+        class="px-4 py-4 md:px-6 md:py-6
                         content-area"
       >
         <app-query-results-panel
@@ -275,6 +271,22 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
       // Form field sizing (Material component override)
       .search-input-field {
         width: 100%;
+      }
+
+      // Tokenized config card (replaces raw bg-gray-100 / shadow-md / p-5)
+      .config-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md, 10px);
+        box-shadow: var(--shadow-1);
+        padding: 16px;
+      }
+
+      // Results canvas on the slate surface (replaces bg-gray-50). The parent
+      // query-tools page-container handles scrolling, so this just fills.
+      .content-area {
+        flex: 1 0 auto;
+        background: var(--surface-3);
       }
 
       // Error card styling (complex border-left pattern)

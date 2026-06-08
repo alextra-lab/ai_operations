@@ -23,6 +23,7 @@ import {
   tap,
 } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { toLucideIconName } from '../../shared/icons/material-icon-map';
 import {
   CategoriesListResponse,
   CategoryConfig,
@@ -34,25 +35,18 @@ import {
   providedIn: 'root',
 })
 export class PlatformConfigService {
-  private readonly baseUrl =
-    `${environment.apiBaseUrl}/config`;
+  private readonly baseUrl = `${environment.apiBaseUrl}/config`;
 
-  private categoriesSubject =
-    new BehaviorSubject<CategoryConfig[]>([]);
-  private intentTypesSubject =
-    new BehaviorSubject<IntentTypeConfig[]>([]);
+  private categoriesSubject = new BehaviorSubject<CategoryConfig[]>([]);
+  private intentTypesSubject = new BehaviorSubject<IntentTypeConfig[]>([]);
 
   /** Observable of loaded categories. */
-  readonly categories$ =
-    this.categoriesSubject.asObservable();
+  readonly categories$ = this.categoriesSubject.asObservable();
   /** Observable of loaded intent types. */
-  readonly intentTypes$ =
-    this.intentTypesSubject.asObservable();
+  readonly intentTypes$ = this.intentTypesSubject.asObservable();
 
-  private categoriesCache$:
-    Observable<CategoryConfig[]> | null = null;
-  private intentTypesCache$:
-    Observable<IntentTypeConfig[]> | null = null;
+  private categoriesCache$: Observable<CategoryConfig[]> | null = null;
+  private intentTypesCache$: Observable<IntentTypeConfig[]> | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -69,18 +63,18 @@ export class PlatformConfigService {
       return this.categoriesCache$;
     }
     this.categoriesCache$ = this.http
-      .get<CategoriesListResponse>(
-        `${this.baseUrl}/categories`
-      )
+      .get<CategoriesListResponse>(`${this.baseUrl}/categories`)
       .pipe(
-        map((res) => res.categories),
+        map((res) =>
+          res.categories.map((c) => ({
+            ...c,
+            icon: toLucideIconName(c.icon),
+          }))
+        ),
         tap((cats) => this.categoriesSubject.next(cats)),
         shareReplay(1),
         catchError((err) => {
-          console.error(
-            'Failed to load categories:',
-            err
-          );
+          console.error('Failed to load categories:', err);
           this.categoriesCache$ = null;
           return of(this.getFallbackCategories());
         })
@@ -98,20 +92,18 @@ export class PlatformConfigService {
       return this.intentTypesCache$;
     }
     this.intentTypesCache$ = this.http
-      .get<IntentTypesListResponse>(
-        `${this.baseUrl}/intent-types`
-      )
+      .get<IntentTypesListResponse>(`${this.baseUrl}/intent-types`)
       .pipe(
-        map((res) => res.intent_types),
-        tap((types) =>
-          this.intentTypesSubject.next(types)
+        map((res) =>
+          res.intent_types.map((t) => ({
+            ...t,
+            icon: toLucideIconName(t.icon),
+          }))
         ),
+        tap((types) => this.intentTypesSubject.next(types)),
         shareReplay(1),
         catchError((err) => {
-          console.error(
-            'Failed to load intent types:',
-            err
-          );
+          console.error('Failed to load intent types:', err);
           this.intentTypesCache$ = null;
           return of(this.getFallbackIntentTypes());
         })
@@ -123,12 +115,8 @@ export class PlatformConfigService {
    * Get an intent type config by code.
    * Returns undefined if not yet loaded or not found.
    */
-  getIntentType(
-    code: string
-  ): IntentTypeConfig | undefined {
-    return this.intentTypesSubject.value.find(
-      (t) => t.intent_code === code
-    );
+  getIntentType(code: string): IntentTypeConfig | undefined {
+    return this.intentTypesSubject.value.find((t) => t.intent_code === code);
   }
 
   /**
@@ -149,8 +137,7 @@ export class PlatformConfigService {
       {
         category_code: 'GENERAL',
         display_name: 'General Purpose',
-        description:
-          'General-purpose AI assistant capabilities',
+        description: 'General-purpose AI assistant capabilities',
         icon: 'message-square',
         color: '#607D8B',
         sort_order: 1,
@@ -166,8 +153,7 @@ export class PlatformConfigService {
       {
         category_code: 'COMPLIANCE',
         display_name: 'Compliance & Risk',
-        description:
-          'Regulatory compliance and risk management',
+        description: 'Regulatory compliance and risk management',
         icon: 'shield-alert',
         color: '#3F51B5',
         sort_order: 3,
@@ -206,8 +192,7 @@ export class PlatformConfigService {
       {
         intent_code: 'EXTRACTION',
         display_name: 'Data Extraction',
-        description:
-          'Structured data extraction from content',
+        description: 'Structured data extraction from content',
         category_code: 'GENERAL',
         icon: 'file-search',
         color: '#009688',

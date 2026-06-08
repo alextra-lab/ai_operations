@@ -9,8 +9,9 @@ setupZoneTestEnv();
 // <lucide-icon> throws. Inject the app registry into every testing module.
 // ============================================================================
 import { TestBed } from '@angular/core/testing';
-import { LUCIDE_ICONS, LucideIconProvider } from 'lucide-angular';
+import { LUCIDE_ICONS } from 'lucide-angular';
 import { APP_ICONS } from './app/shared/icons/lucide-icons';
+import { SafeLucideIconProvider } from './app/shared/icons/safe-lucide-icon-provider';
 
 const originalConfigureTestingModule =
   TestBed.configureTestingModule.bind(TestBed);
@@ -22,7 +23,7 @@ TestBed.configureTestingModule = (
     {
       provide: LUCIDE_ICONS,
       multi: true,
-      useValue: new LucideIconProvider(APP_ICONS),
+      useValue: new SafeLucideIconProvider(APP_ICONS),
     },
   ];
   return originalConfigureTestingModule(moduleDef);

@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
-import { LucideAngularModule } from 'lucide-angular';
+import { LUCIDE_ICONS, LucideAngularModule } from 'lucide-angular';
 
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { environment } from '../environments/environment';
@@ -16,11 +16,20 @@ import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loggingInterceptor } from './core/interceptors/logging.interceptor';
 import { securityInterceptor } from './core/interceptors/security.interceptor';
 import { APP_ICONS } from './shared/icons/lucide-icons';
+import { SafeLucideIconProvider } from './shared/icons/safe-lucide-icon-provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     importProvidersFrom(LucideAngularModule.pick(APP_ICONS)),
+    // Safety net: registered icons resolve via the provider above; any
+    // unregistered name falls through to this provider and renders a neutral
+    // fallback glyph instead of throwing and aborting change detection.
+    {
+      provide: LUCIDE_ICONS,
+      multi: true,
+      useValue: new SafeLucideIconProvider(APP_ICONS),
+    },
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(

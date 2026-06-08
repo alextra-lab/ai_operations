@@ -20,6 +20,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { LucideAngularModule } from 'lucide-angular';
+import { toLucideIconName } from '../../../shared/icons/material-icon-map';
 import {
   AvailableModel,
   IntentConfigRow,
@@ -61,29 +62,12 @@ export class IntentModelConfigComponent implements OnInit {
   ];
 
   /**
-   * Maps legacy Material icon names returned by the intent summary API to the
-   * Lucide kebab-case names registered in the icon registry. Names that are
-   * already kebab-case (or unknown) pass through unchanged.
+   * Normalize a Material icon name from the intent summary API to a registered
+   * Lucide name via the shared map (with a safe registered fallback so an
+   * unmapped value can never throw during render).
    */
-  private static readonly MATERIAL_TO_LUCIDE_ICON: Record<string, string> = {
-    chat: 'message-square',
-    shield: 'shield',
-    policy: 'shield-alert',
-    question_answer: 'messages-square',
-    description: 'file-text',
-    find_in_page: 'file-search',
-    psychology: 'brain-circuit',
-    auto_awesome: 'sparkles',
-    summarize: 'file-text',
-    category: 'shapes',
-    tune: 'sliders-horizontal',
-  };
-
-  private normalizeIcon(icon: string | null): string | null {
-    if (!icon) {
-      return icon;
-    }
-    return IntentModelConfigComponent.MATERIAL_TO_LUCIDE_ICON[icon] ?? icon;
+  private normalizeIcon(icon: string | null): string {
+    return toLucideIconName(icon);
   }
 
   constructor(

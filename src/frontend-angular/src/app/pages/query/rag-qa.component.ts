@@ -59,10 +59,9 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
   template: `
     <!-- Layer 2: Page Container - Tailwind utilities -->
     <div
-      class="flex flex-col overflow-hidden
+      class="flex flex-col
                     -my-4 -mr-4 -mb-4
                     md:-my-6 md:-mr-8 md:-mb-6
-                    h-full
                     page-container"
     >
       <!-- Layer 2: Page Header + Controls -->
@@ -86,7 +85,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
 
         <!-- Question Input + Config Panel -->
         <div class="px-4 pb-4 md:px-6 md:pb-4">
-          <div class="bg-gray-100 rounded-lg shadow-md p-5">
+          <div class="config-card">
             <!-- Question Input -->
             <div class="question-input-section">
               <mat-form-field appearance="outline" class="full-width">
@@ -145,11 +144,9 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
         </div>
       </div>
 
-      <!-- Layer 3: Results (SCROLLS) -->
+      <!-- Layer 3: Results -->
       <div
-        class="flex-1 overflow-y-auto overflow-x-hidden
-                        px-4 py-4 md:px-6 md:py-6
-                        min-h-0 bg-gray-50
+        class="px-4 py-4 md:px-6 md:py-6
                         content-area"
       >
         <app-query-results-panel
@@ -326,9 +323,23 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
       .page-container {
         display: flex;
         flex-direction: column;
+        // Single scroll model: fill the tab body and let the whole page
+        // (question + config + results) scroll together. Needs a constrained
+        // height (not min-height) for overflow-y:auto to actually scroll.
+        // The old overflow:hidden trapped the config panel in a non-scrolling
+        // header, so expanding it overflowed off-screen with no way to reach it.
         height: 100%;
-        overflow: hidden; // CRITICAL: Prevents parent scrolling
-        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      // Tokenized config card (replaces raw bg-gray-100 / shadow-md / p-5)
+      .config-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md, 10px);
+        box-shadow: var(--shadow-1);
+        padding: 16px;
       }
 
       // Layer 2: Page Header (NEVER SCROLLS)
@@ -340,14 +351,9 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
       // This is the scrollable area for conversation results
       // CRITICAL: min-height: 0 allows flex child to shrink below content size
       .content-area {
-        flex: 1 1 0% !important; // Take remaining space, allow shrinking
-        overflow-y: auto !important; // Enable vertical scrolling
-        overflow-x: hidden !important; // Prevent horizontal scroll
-        min-height: 0 !important; // CRITICAL: Enables flex child scrolling
-        -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
+        flex: 1 0 auto; // fill remaining space when short, grow when tall
         position: relative;
-        // Ensure proper height constraint
-        max-height: 100%;
+        background: var(--surface-3); // slate canvas (replaces bg-gray-50)
       }
 
       // Layer 4: Footer (NEVER SCROLLS)

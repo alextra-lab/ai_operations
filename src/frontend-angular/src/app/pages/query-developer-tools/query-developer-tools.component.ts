@@ -151,8 +151,13 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
         height: calc(100vh - var(--chrome-h));
         margin: -24px -32px;
         padding: 0;
-        overflow: hidden;
-        background: #fafafa;
+        // Scroll the whole page (header + tabs + content) so tall tab content
+        // — e.g. an expanded config panel — is always reachable. The mat-tab
+        // flex chain doesn't reliably constrain tab-body-content for an inner
+        // scroll, so scroll at this level instead.
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: var(--surface-3);
       }
 
       // Layer 2: Page Header + Tabs (NEVER SCROLLS)

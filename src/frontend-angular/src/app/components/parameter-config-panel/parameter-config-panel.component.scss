@@ -94,6 +94,31 @@
   }
 }
 
+// Two form-sections side by side (LLM model + sampling) to use horizontal
+// space and save a row of vertical height.
+.form-section-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+
+  > .form-section {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 0;
+
+    > .form-section {
+      margin-bottom: 24px;
+    }
+  }
+}
+
 .flex-1 {
   flex: 1;
   min-width: 0; // Prevent flex item overflow

@@ -130,8 +130,9 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
         </div>
       </div>
 
-      <!-- Layer 3: Results -->
+      <!-- Layer 3: Results (only rendered once there is something to show) -->
       <div
+        *ngIf="messages.length > 0 || isAsking"
         class="px-4 py-4 md:px-6 md:py-6
                         content-area"
       >

@@ -130,8 +130,9 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
         </div>
       </div>
 
-      <!-- Layer 3: Results -->
+      <!-- Layer 3: Results (only rendered once there is something to show) -->
       <div
+        *ngIf="messages.length > 0 || isSearching || errorMessage"
         class="px-4 py-4 md:px-6 md:py-6
                         content-area"
       >

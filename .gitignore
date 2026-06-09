@@ -125,3 +125,7 @@ corpus_docs/
 docs/development/temp_orchestrator_refactoring/
 temp_scripts/
 config/env/env.test.bak.20251211_210006
+
+# Local QA / manual-testing artifacts (screenshots, Playwright MCP output)
+qa-*.png
+.playwright-mcp/

@@ -43,8 +43,8 @@ See [Dependency Management Guide](docs/development/guidelines/Dependency_Managem
 - Docker (with the Compose v2 plugin) or Docker Desktop.
 - Python **3.12** for running validation scripts on the host.
 - Node **24** if you plan to develop the Angular frontend on the host.
-- An external Docker network named `observability` (the compose file expects
-  it). Create it once:
+- An external Docker network named `observability` (the compose file expects it).
+  `make setup` (Step 1) creates it for you; to create it manually:
 
   ```bash
   docker network create observability
@@ -62,31 +62,66 @@ See [Dependency Management Guide](docs/development/guidelines/Dependency_Managem
 
 ### Steps
 
-1. **Set up environment variables:**
+> Condensed flow. For the full local walkthrough — including health checks and
+> troubleshooting — see **[GETTING_STARTED.md](GETTING_STARTED.md)**.
+
+1. **One-time setup** — creates the `observability` network, the `data/` directory
+   tree, and `config/env/.env` from the template:
 
    ```bash
-   # Copy the template and customize
-   cp config/env/env.template config/env/.env
-   # Edit config/env/.env with your values
+   make setup
    ```
 
-2. **Load environment variables:**
+2. **Edit secrets** in `config/env/.env` — set `POSTGRES_PASSWORD`, `JWT_SECRET`, and
+   `TOOL_SECRETS_KEY`. Generate values with:
 
    ```bash
-   export $(grep -v '^#' config/env/.env | xargs)
+   python3 -c "import secrets; print(secrets.token_hex(32))"
    ```
 
-3. **Validate configuration:**
+3. **Set up the host Python environment and validate the config.** Use Python 3.12 and
+   an isolated virtualenv so dependencies stay off your system Python:
 
    ```bash
+   python3.12 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements-ops.txt
    python ops/validate_configuration.py
    ```
 
-4. **Start services:**
+4. **Build, fetch models, and start the stack:**
 
    ```bash
-   docker compose -f deploy/docker-compose.yml up
+   make build         # build service images
+   make models        # download embedding + llm-guard models into data/
+   make up            # start backend-core; or `make up-full` for llm-guard + UI
    ```
+
+   `make up` wraps `docker compose` with the correct `--env-file` and local override —
+   prefer it over a raw `docker compose up`, which skips both.
+
+## Developer setup (host)
+
+Running the test suites, linters, or `python ops/...` scripts **on the host** (rather than
+inside the containers) needs the Python dependencies installed in a virtualenv. Use Python
+**3.12** and keep dependencies off your system Python:
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+
+# Lightweight — only the host ops scripts (config validation, etc.)
+pip install -r requirements-ops.txt
+
+# Full — everything needed to run the service test suites on the host
+pip install -r requirements-all.txt
+pip install -e ".[dev]"          # black, ruff, mypy, pre-commit
+```
+
+> The full install pulls the complete ML stack (torch, transformers) and is large. You do
+> **not** need it just to run the platform — each service ships its own dependencies inside
+> Docker (see [GETTING_STARTED.md](GETTING_STARTED.md)). Install `requirements-all.txt` only
+> when you intend to run tests or develop service code directly on the host.
 
 ## Pre-commit hooks
 
@@ -197,27 +232,20 @@ python ops/validate_configuration.py
 
 ### Environment Setup
 
-**For Docker Compose (Recommended):**
+The `make` targets load `config/env/.env` for you via `--env-file`, so you don't need to
+export anything manually:
 
 ```bash
-# Load environment variables
-export $(grep -v '^#' config/env/.env | xargs)
-
-# Start all services
-docker-compose -f deploy/docker-compose.yml up
+make up          # start backend-core services
+make up-full     # full stack incl. llm-guard + UI
 ```
 
-**For Host Development:**
+**For host development** (running a service directly on the host rather than in Docker), point
+it at the host-published Postgres port in `config/env/.env`:
 
 ```bash
-# Update POSTGRES_HOST and POSTGRES_PORT in config/env/.env
 # POSTGRES_HOST=localhost
 # POSTGRES_PORT=5532
-
-# Load environment variables
-export $(grep -v '^#' config/env/.env | xargs)
-
-# Run services individually
 ```
 
 ## Documentation

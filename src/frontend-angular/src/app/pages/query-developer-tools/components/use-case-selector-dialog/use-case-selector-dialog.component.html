@@ -1,6 +1,8 @@
 <!-- Use Case Selector Dialog -->
 <h2 mat-dialog-title class="flex items-center gap-3">
-  <mat-icon>{{ data.mode === 'update' ? 'edit' : 'content_copy' }}</mat-icon>
+  <lucide-icon
+    [name]="data.mode === 'update' ? 'pencil' : 'copy'"
+  ></lucide-icon>
   {{
     data.mode === 'update'
       ? 'Select Draft Use Case'
@@ -56,15 +58,15 @@
         </div>
         <div class="uc-meta">
           <span class="uc-category" *ngIf="uc.category">
-            <mat-icon>category</mat-icon>
+            <lucide-icon name="shapes"></lucide-icon>
             {{ uc.category }}
           </span>
           <span class="uc-id">
-            <mat-icon>label</mat-icon>
+            <lucide-icon name="tag"></lucide-icon>
             {{ uc.use_case_id }}
           </span>
           <span class="uc-modified">
-            <mat-icon>schedule</mat-icon>
+            <lucide-icon name="clock"></lucide-icon>
             Modified: {{ uc.updated_at | date: 'short' }}
           </span>
         </div>
@@ -80,7 +82,10 @@
     *ngIf="!isLoading && (useCases$ | async)?.length === 0"
     class="flex flex-col items-center justify-center py-15 text-center text-gray-400"
   >
-    <mat-icon class="text-6xl w-16 h-16 mb-4 text-gray-300">inbox</mat-icon>
+    <lucide-icon
+      class="text-6xl w-16 h-16 mb-4 text-gray-300"
+      name="inbox"
+    ></lucide-icon>
     <p
       class="m-0 text-sm text-gray-500 max-w-md"
       *ngIf="data.mode === 'update'"
@@ -99,7 +104,10 @@
   >
     <mat-card-header class="px-4 pt-4 pb-0">
       <mat-card-title class="flex items-center gap-2 text-sm font-medium m-0">
-        <mat-icon class="text-blue-600">tune</mat-icon>
+        <lucide-icon
+          class="text-blue-600"
+          name="sliders-horizontal"
+        ></lucide-icon>
         Parameters to Apply
       </mat-card-title>
     </mat-card-header>
@@ -145,9 +153,11 @@
     "
     class="min-w-[100px]"
   >
-    <mat-icon *ngIf="!isLoading" class="mr-1">
-      {{ data.mode === 'update' ? 'check' : 'content_copy' }}
-    </mat-icon>
+    <lucide-icon
+      *ngIf="!isLoading"
+      class="mr-1"
+      [name]="data.mode === 'update' ? 'check' : 'copy'"
+    ></lucide-icon>
     <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
     {{ data.mode === 'update' ? 'Apply Parameters' : 'Clone & Apply' }}
   </button>

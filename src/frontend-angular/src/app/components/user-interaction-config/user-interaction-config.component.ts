@@ -15,7 +15,6 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -26,6 +25,7 @@ import {
 import { InputFieldBuilderComponent } from '../input-field-builder/input-field-builder.component';
 import { UserPromptTemplateEditorComponent } from '../user-prompt-template-editor/user-prompt-template-editor.component';
 import { FieldTemplateSyncStatusComponent } from '../field-template-sync-status/field-template-sync-status.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 /** Sync status for a single field/variable */
 export interface FieldSyncStatus {
@@ -60,10 +60,10 @@ function extractTemplateVariables(template: string): string[] {
   styleUrls: ['./user-interaction-config.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
     MatExpansionModule,
-    MatIconModule,
     MatTabsModule,
     MatTooltipModule,
     InputFieldBuilderComponent,

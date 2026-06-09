@@ -5,11 +5,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-layout-demo',
   standalone: true,
   imports: [
+    LucideAngularModule,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
@@ -22,7 +24,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
       <!-- Top Toolbar -->
       <mat-toolbar color="primary" class="demo-toolbar">
         <button mat-icon-button>
-          <mat-icon>menu</mat-icon>
+          <lucide-icon name="menu"></lucide-icon>
         </button>
         <span>AI Operations Platform - P1-F3 Layout Demo</span>
         <span class="spacer"></span>
@@ -33,28 +35,28 @@ import { MatToolbarModule } from '@angular/material/toolbar';
       <div class="quick-actions-bar">
         <div class="quick-actions-container">
           <span class="quick-actions-title">
-            <mat-icon>flash_on</mat-icon>
+            <lucide-icon name="zap"></lucide-icon>
             Quick Actions
           </span>
           <div class="quick-actions-list">
             <button mat-raised-button color="primary">
-              <mat-icon>search</mat-icon>
+              <lucide-icon name="search"></lucide-icon>
               New Query
             </button>
             <button mat-raised-button color="accent">
-              <mat-icon>upload</mat-icon>
+              <lucide-icon name="upload"></lucide-icon>
               Upload Document
             </button>
             <button mat-raised-button>
-              <mat-icon>analytics</mat-icon>
+              <lucide-icon name="chart-column"></lucide-icon>
               View Analytics
             </button>
             <button mat-raised-button>
-              <mat-icon>add_task</mat-icon>
+              <lucide-icon name="list-plus"></lucide-icon>
               Create Template
             </button>
             <button mat-raised-button>
-              <mat-icon>admin_panel_settings</mat-icon>
+              <lucide-icon name="user-cog"></lucide-icon>
               Admin Panel
             </button>
           </div>
@@ -68,7 +70,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
           <mat-card class="demo-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>menu</mat-icon>
+                <lucide-icon name="menu"></lucide-icon>
                 Sidebar Navigation
               </mat-card-title>
             </mat-card-header>
@@ -106,40 +108,40 @@ import { MatToolbarModule } from '@angular/material/toolbar';
           <mat-card class="demo-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>check_circle</mat-icon>
+                <lucide-icon name="circle-check"></lucide-icon>
                 P1-F3 Implementation Status
               </mat-card-title>
             </mat-card-header>
             <mat-card-content>
               <div class="feature-list">
                 <div class="feature-item">
-                  <mat-icon class="feature-icon">check</mat-icon>
+                  <lucide-icon class="feature-icon" name="check"></lucide-icon>
                   <span
                     >Main Layout Component - Responsive sidebar navigation</span
                   >
                 </div>
                 <div class="feature-item">
-                  <mat-icon class="feature-icon">check</mat-icon>
+                  <lucide-icon class="feature-icon" name="check"></lucide-icon>
                   <span>Navigation Service - Role-based menu generation</span>
                 </div>
                 <div class="feature-item">
-                  <mat-icon class="feature-icon">check</mat-icon>
+                  <lucide-icon class="feature-icon" name="check"></lucide-icon>
                   <span>Sidebar Component - Dynamic menu items</span>
                 </div>
                 <div class="feature-item">
-                  <mat-icon class="feature-icon">check</mat-icon>
+                  <lucide-icon class="feature-icon" name="check"></lucide-icon>
                   <span>Breadcrumb Navigation - Deep workflow support</span>
                 </div>
                 <div class="feature-item">
-                  <mat-icon class="feature-icon">check</mat-icon>
+                  <lucide-icon class="feature-icon" name="check"></lucide-icon>
                   <span>Quick Actions Bar - Common actions toolbar</span>
                 </div>
                 <div class="feature-item">
-                  <mat-icon class="feature-icon">check</mat-icon>
+                  <lucide-icon class="feature-icon" name="check"></lucide-icon>
                   <span>Keyboard Shortcuts - Power user support</span>
                 </div>
                 <div class="feature-item">
-                  <mat-icon class="feature-icon">check</mat-icon>
+                  <lucide-icon class="feature-icon" name="check"></lucide-icon>
                   <span>Accessibility - WCAG 2.1 AA compliance</span>
                 </div>
               </div>
@@ -150,7 +152,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
           <mat-card class="demo-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>account_circle</mat-icon>
+                <lucide-icon name="circle-user"></lucide-icon>
                 User Information
               </mat-card-title>
             </mat-card-header>
@@ -171,7 +173,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
           <mat-card class="demo-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>dashboard</mat-icon>
+                <lucide-icon name="layout-dashboard"></lucide-icon>
                 System Overview
               </mat-card-title>
             </mat-card-header>

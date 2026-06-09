@@ -12,6 +12,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ChunkingStrategy,
   PreflightReport,
@@ -35,6 +36,7 @@ import {
   selector: 'app-preflight-report',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
     MatButtonModule,
@@ -48,7 +50,7 @@ import {
     <mat-card class="preflight-report">
       <mat-card-header>
         <mat-card-title class="flex items-center gap-2">
-          <mat-icon aria-hidden="true">analytics</mat-icon>
+          <lucide-icon aria-hidden="true" name="chart-column"></lucide-icon>
           <span>Preflight Analysis Report</span>
         </mat-card-title>
         <mat-card-subtitle>
@@ -83,12 +85,11 @@ import {
             </div>
             <div *ngIf="report.test_suite_id">
               <span class="text-sm text-gray-600">Test Suite:</span>
-              <mat-icon
+              <lucide-icon
                 class="align-middle text-green-600"
                 matTooltip="Retrieval metrics available"
-              >
-                check_circle
-              </mat-icon>
+                name="circle-check"
+              ></lucide-icon>
             </div>
           </div>
         </section>
@@ -200,9 +201,11 @@ import {
             id="recommendation-heading"
             class="text-base font-medium mb-3 flex items-center gap-2"
           >
-            <mat-icon class="text-blue-600" aria-hidden="true"
-              >recommend</mat-icon
-            >
+            <lucide-icon
+              class="text-blue-600"
+              aria-hidden="true"
+              name="thumbs-up"
+            ></lucide-icon>
             Recommended Strategy
           </h3>
           <div class="mb-3">

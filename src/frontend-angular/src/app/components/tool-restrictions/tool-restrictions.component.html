@@ -10,12 +10,9 @@
     >
       Enable Security Restrictions
     </mat-slide-toggle>
-    <mat-icon
+    <lucide-icon
       class="info-icon"
-      matTooltip="When enabled, tools must match security criteria to be available in this Use Case"
-    >
-      info
-    </mat-icon>
+      matTooltip="When enabled, tools must match security criteria to be available in this Use Case" name="info"></lucide-icon>
   </div>
 
   <!-- Restrictions Configuration -->
@@ -49,7 +46,7 @@
     >
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <mat-icon>tune</mat-icon>
+          <lucide-icon name="sliders-horizontal"></lucide-icon>
           Custom Configuration
         </mat-panel-title>
         <mat-panel-description>
@@ -61,7 +58,7 @@
         <!-- Data Sources -->
         <div class="config-section">
           <h4>
-            <mat-icon>storage</mat-icon>
+            <lucide-icon name="database"></lucide-icon>
             Allowed Data Sources
           </h4>
           <div class="chip-group">
@@ -72,7 +69,7 @@
                 (click)="toggleDataSource(option.value)"
                 [disabled]="disabled"
               >
-                <mat-icon matChipAvatar>{{ option.icon }}</mat-icon>
+                <lucide-icon matChipAvatar [name]="option.icon"></lucide-icon>
                 {{ option.label }}
               </mat-chip-option>
             </mat-chip-listbox>
@@ -82,7 +79,7 @@
         <!-- Data Flow -->
         <div class="config-section">
           <h4>
-            <mat-icon>swap_horiz</mat-icon>
+            <lucide-icon name="arrow-left-right"></lucide-icon>
             Allowed Data Flows
           </h4>
           <div class="chip-group">
@@ -93,7 +90,7 @@
                 (click)="toggleDataFlow(option.value)"
                 [disabled]="disabled"
               >
-                <mat-icon matChipAvatar>{{ option.icon }}</mat-icon>
+                <lucide-icon matChipAvatar [name]="option.icon"></lucide-icon>
                 {{ option.label }}
               </mat-chip-option>
             </mat-chip-listbox>
@@ -103,7 +100,7 @@
         <!-- Network Access -->
         <div class="config-section">
           <h4>
-            <mat-icon>wifi</mat-icon>
+            <lucide-icon name="wifi"></lucide-icon>
             Allowed Network Access
           </h4>
           <div class="chip-group">
@@ -114,7 +111,7 @@
                 (click)="toggleNetworkLevel(option.value)"
                 [disabled]="disabled"
               >
-                <mat-icon matChipAvatar>{{ option.icon }}</mat-icon>
+                <lucide-icon matChipAvatar [name]="option.icon"></lucide-icon>
                 {{ option.label }}
               </mat-chip-option>
             </mat-chip-listbox>
@@ -124,7 +121,7 @@
         <!-- Required Sensitivity -->
         <div class="config-section">
           <h4>
-            <mat-icon>security</mat-icon>
+            <lucide-icon name="shield"></lucide-icon>
             Required Data Sensitivity
           </h4>
           <mat-form-field appearance="outline" class="sensitivity-select">

@@ -11,12 +11,12 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ModelDetailedResponse } from '../../api/models/model-registry.models';
 import { ModelSelectorComponent } from '../../components/model-selector/model-selector.component';
 
@@ -24,6 +24,7 @@ import { ModelSelectorComponent } from '../../components/model-selector/model-se
   selector: 'app-template-editor',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatCardModule,
@@ -31,7 +32,6 @@ import { ModelSelectorComponent } from '../../components/model-selector/model-se
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatIconModule,
     MatSnackBarModule,
     ModelSelectorComponent,
   ],

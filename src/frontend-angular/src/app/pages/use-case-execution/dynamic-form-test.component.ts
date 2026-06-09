@@ -86,19 +86,19 @@ import { DynamicFormComponent } from '../../features/dynamic-forms/components/dy
           <!-- Config Display -->
           @if (currentConfig && !isLoadingConfig) {
             <div class="config-info">
-            <h4>Configuration Loaded:</h4>
-            <div class="config-chips">
-              <mat-chip
-                >{{
-                  currentConfig.template_config.input_fields.length
-                }}
-                fields</mat-chip
-              >
-              <mat-chip>{{ currentConfig.intent_type }}</mat-chip>
-              <mat-chip>{{
-                currentConfig.template_config.output_format
-              }}</mat-chip>
-            </div>
+              <h4>Configuration Loaded:</h4>
+              <div class="config-chips">
+                <mat-chip
+                  >{{
+                    currentConfig.template_config.input_fields.length
+                  }}
+                  fields</mat-chip
+                >
+                <mat-chip>{{ currentConfig.intent_type }}</mat-chip>
+                <mat-chip>{{
+                  currentConfig.template_config.output_format
+                }}</mat-chip>
+              </div>
             </div>
           }
         </mat-card-content>
@@ -107,69 +107,73 @@ import { DynamicFormComponent } from '../../features/dynamic-forms/components/dy
       <!-- Dynamic Form -->
       @if (currentConfig && !isLoadingConfig) {
         <mat-card class="form-card">
-        <mat-card-content>
-          <app-dynamic-form
-            [templateConfig]="currentConfig.template_config"
-            [title]="currentConfig.name"
-            [description]="currentConfig.description"
-            submitButtonText="Execute Use Case"
-            (formSubmit)="onFormSubmit($event)"
-            (formChange)="onFormChange($event)"
-          >
-          </app-dynamic-form>
-        </mat-card-content>
+          <mat-card-content>
+            <app-dynamic-form
+              [templateConfig]="currentConfig.template_config"
+              [title]="currentConfig.name"
+              [description]="currentConfig.description"
+              submitButtonText="Execute Use Case"
+              (formSubmit)="onFormSubmit($event)"
+              (formChange)="onFormChange($event)"
+            >
+            </app-dynamic-form>
+          </mat-card-content>
         </mat-card>
       }
 
       <!-- Execution Results -->
       @if (executionResult) {
         <mat-card class="results-card">
-        <mat-card-header>
-          <mat-card-title>Execution Results</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <!-- Response -->
-          <div class="result-section">
-            <h3>Response</h3>
-            <app-llm-content-renderer [content]="executionResult.response">
-            </app-llm-content-renderer>
-          </div>
-
-          <mat-divider></mat-divider>
-
-          <!-- Metrics -->
-          <div class="result-section">
-            <h3>Execution Metrics</h3>
-            <app-execution-metrics [metrics]="executionResult.metrics">
-            </app-execution-metrics>
-          </div>
-
-          <mat-divider></mat-divider>
-
-          <!-- Sources -->
-          @if (executionResult.sources && executionResult.sources.length > 0) {
+          <mat-card-header>
+            <mat-card-title>Execution Results</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <!-- Response -->
             <div class="result-section">
-              <h3>Retrieved Sources ({{ executionResult.sources.length }})</h3>
-              <app-source-citation
-                *ngFor="let source of executionResult.sources"
-                [source]="source"
-              >
-              </app-source-citation>
+              <h3>Response</h3>
+              <app-llm-content-renderer [content]="executionResult.response">
+              </app-llm-content-renderer>
             </div>
-          }
-        </mat-card-content>
+
+            <mat-divider></mat-divider>
+
+            <!-- Metrics -->
+            <div class="result-section">
+              <h3>Execution Metrics</h3>
+              <app-execution-metrics [metrics]="executionResult.metrics">
+              </app-execution-metrics>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <!-- Sources -->
+            @if (
+              executionResult.sources && executionResult.sources.length > 0
+            ) {
+              <div class="result-section">
+                <h3>
+                  Retrieved Sources ({{ executionResult.sources.length }})
+                </h3>
+                <app-source-citation
+                  *ngFor="let source of executionResult.sources"
+                  [source]="source"
+                >
+                </app-source-citation>
+              </div>
+            }
+          </mat-card-content>
         </mat-card>
       }
 
       <!-- Form Values Debug (Development Only) -->
       @if (currentFormValues && showDebug) {
         <mat-card class="debug-card">
-        <mat-card-header>
-          <mat-card-title>Debug: Form Values</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <pre>{{ currentFormValues | json }}</pre>
-        </mat-card-content>
+          <mat-card-header>
+            <mat-card-title>Debug: Form Values</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <pre>{{ currentFormValues | json }}</pre>
+          </mat-card-content>
         </mat-card>
       }
     </div>
@@ -284,7 +288,7 @@ export class DynamicFormTestComponent implements OnInit {
     private useCaseService: UseCaseService,
     private executionService: UseCaseExecutionService,
     private snackBar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadUseCases();

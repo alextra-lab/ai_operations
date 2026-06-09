@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -11,14 +10,15 @@ import {
   RecentDocument,
   WidgetConfig,
 } from '../models/dashboard.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-document-processing-widget',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatChipsModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
@@ -27,7 +27,7 @@ import {
     <div class="document-processing-widget">
       <div class="header">
         <div class="title">
-          <mat-icon aria-hidden="true">description</mat-icon>
+          <lucide-icon aria-hidden="true" name="file-text"></lucide-icon>
           <div>
             <p>Document Processing</p>
             <small>{{ stats?.total_documents || 0 }} total</small>
@@ -76,7 +76,7 @@ import {
           *ngFor="let doc of recentDocuments; trackBy: trackByDoc"
         >
           <div class="doc-main">
-            <mat-icon aria-hidden="true">article</mat-icon>
+            <lucide-icon aria-hidden="true" name="file-text"></lucide-icon>
             <div class="doc-text">
               <span class="name">{{ doc.filename }}</span>
               <small>
@@ -93,7 +93,7 @@ import {
 
       <ng-template #emptyState>
         <div class="empty-state">
-          <mat-icon aria-hidden="true">description</mat-icon>
+          <lucide-icon aria-hidden="true" name="file-text"></lucide-icon>
           <p>No documents yet</p>
           <small>Upload documents to see processing status</small>
         </div>

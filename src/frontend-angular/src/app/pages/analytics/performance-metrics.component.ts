@@ -13,11 +13,11 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import type { ChartConfiguration, ChartOptions } from 'chart.js/auto';
+import { LucideAngularModule } from 'lucide-angular';
 import { BaseChartDirective } from 'ng2-charts';
 import { Subject, interval, takeUntil } from 'rxjs';
 import { UsageStatsResponse } from '../../api/models/analytics.models';
@@ -27,11 +27,11 @@ import { AnalyticsService } from '../../api/services/analytics.service';
   selector: 'app-performance-metrics',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
@@ -42,7 +42,7 @@ import { AnalyticsService } from '../../api/services/analytics.service';
       <!-- Header -->
       <div class="metrics-header">
         <h1>
-          <mat-icon>speed</mat-icon>
+          <lucide-icon name="gauge"></lucide-icon>
           Corpus Performance
         </h1>
         <div class="header-actions">
@@ -66,7 +66,7 @@ import { AnalyticsService } from '../../api/services/analytics.service';
             (click)="refreshData()"
             [disabled]="isLoading"
           >
-            <mat-icon>refresh</mat-icon>
+            <lucide-icon name="refresh-cw"></lucide-icon>
             Refresh
           </button>
         </div>
@@ -80,7 +80,7 @@ import { AnalyticsService } from '../../api/services/analytics.service';
 
       <!-- Error Message -->
       <mat-card *ngIf="errorMessage && !isLoading" class="error-card">
-        <mat-icon color="warn">error</mat-icon>
+        <lucide-icon color="warn" name="circle-alert"></lucide-icon>
         <p>{{ errorMessage }}</p>
         <button mat-button (click)="refreshData()">Retry</button>
       </mat-card>
@@ -91,7 +91,7 @@ import { AnalyticsService } from '../../api/services/analytics.service';
         <div class="stats-grid" *ngIf="performanceStats">
           <mat-card class="stat-card">
             <div class="stat-icon" style="background-color: #e1f5fe;">
-              <mat-icon style="color: #0277bd;">bolt</mat-icon>
+              <lucide-icon style="color: #0277bd;" name="zap"></lucide-icon>
             </div>
             <div class="stat-content">
               <h3>
@@ -103,7 +103,10 @@ import { AnalyticsService } from '../../api/services/analytics.service';
 
           <mat-card class="stat-card">
             <div class="stat-icon" style="background-color: #f3e5f5;">
-              <mat-icon style="color: #6a1b9a;">assessment</mat-icon>
+              <lucide-icon
+                style="color: #6a1b9a;"
+                name="chart-column"
+              ></lucide-icon>
             </div>
             <div class="stat-content">
               <h3>{{ formatPercent(performanceStats.avg_relevancy_score) }}</h3>
@@ -113,7 +116,10 @@ import { AnalyticsService } from '../../api/services/analytics.service';
 
           <mat-card class="stat-card">
             <div class="stat-icon" style="background-color: #e8f5e9;">
-              <mat-icon style="color: #2e7d32;">trending_up</mat-icon>
+              <lucide-icon
+                style="color: #2e7d32;"
+                name="trending-up"
+              ></lucide-icon>
             </div>
             <div class="stat-content">
               <h3>{{ performanceStats.total_retrievals }}</h3>
@@ -123,7 +129,10 @@ import { AnalyticsService } from '../../api/services/analytics.service';
 
           <mat-card class="stat-card">
             <div class="stat-icon" style="background-color: #fff8e1;">
-              <mat-icon style="color: #f57f17;">storage</mat-icon>
+              <lucide-icon
+                style="color: #f57f17;"
+                name="database"
+              ></lucide-icon>
             </div>
             <div class="stat-content">
               <h3>{{ performanceStats.unique_documents_accessed }}</h3>
@@ -153,7 +162,7 @@ import { AnalyticsService } from '../../api/services/analytics.service';
                 </canvas>
               </div>
               <div *ngIf="!relevancyChartData" class="no-data">
-                <mat-icon>info</mat-icon>
+                <lucide-icon name="info"></lucide-icon>
                 <p>No data available</p>
               </div>
             </mat-card-content>
@@ -176,7 +185,7 @@ import { AnalyticsService } from '../../api/services/analytics.service';
                 </canvas>
               </div>
               <div *ngIf="!volumeChartData" class="no-data">
-                <mat-icon>info</mat-icon>
+                <lucide-icon name="info"></lucide-icon>
                 <p>No data available</p>
               </div>
             </mat-card-content>

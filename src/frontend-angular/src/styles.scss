@@ -12,10 +12,13 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
+// Design tokens (colors, type scale, radii, shadows, spacing, layout) — must be
+// available before the Material theme bridge below. Inlined at compile time.
+@import 'styles/tokens.css';
+
 // Define design tokens before usage
-$background-gradient: radial-gradient(circle at top, #f0f4ff, #e6f9f7 70%);
 $body-font:
-  'Inter',
+  'Plus Jakarta Sans',
   -apple-system,
   BlinkMacSystemFont,
   'Segoe UI',
@@ -32,6 +35,10 @@ $aio-ui-theme: mat.define-theme(
       primary: mat.$azure-palette,
       tertiary: mat.$blue-palette,
     ),
+    typography: (
+      plain-family: 'Plus Jakarta Sans',
+      brand-family: 'Plus Jakarta Sans',
+    ),
     density: (
       scale: 0,
     ),
@@ -42,8 +49,8 @@ $aio-ui-theme: mat.define-theme(
 :root {
   @include mat.all-component-themes($aio-ui-theme);
   font-family: $body-font;
-  color: #12355b;
-  background: $background-gradient;
+  color: var(--fg-1);
+  background: var(--bg-app);
   min-height: 100%;
 }
 
@@ -67,6 +74,10 @@ $aio-ui-theme: mat.define-theme(
 // Roboto Font - Local fonts for air-gapped deployment
 @import 'styles/roboto-local.css';
 
+// Design-system fonts - Local fonts for air-gapped deployment
+@import 'styles/plus-jakarta-sans-local.css';
+@import 'styles/dm-mono-local.css';
+
 // KaTeX CSS for math rendering
 @import 'katex/dist/katex.min.css';
 
@@ -77,15 +88,198 @@ $aio-ui-theme: mat.define-theme(
 // LAYER 4: Global App Overrides & Custom Styles
 // ============================================================================
 
+// Design-system component skins + page scaffold defaults
+@import 'styles/material-overrides';
+@import 'styles/page-scaffold';
+
+// ----------------------------------------------------------------------------
+// Design-system bridge: route Material system variables through the design
+// tokens (src/styles/tokens.css) so Material components and the Tailwind
+// utilities (mapped to --mat-sys-* in tailwind.config.js) pick up the new
+// slate + cobalt palette without redefining the Material theme itself.
+// ----------------------------------------------------------------------------
+:root {
+  --mat-sys-primary: var(--primary);
+  --mat-sys-on-primary: var(--on-primary);
+  --mat-sys-primary-container: var(--primary-container);
+  --mat-sys-on-primary-container: var(--on-primary-container);
+  --mat-sys-surface: var(--surface);
+  --mat-sys-surface-container: var(--surface-2);
+  --mat-sys-surface-container-low: var(--surface);
+  --mat-sys-surface-container-high: var(--surface-variant);
+  --mat-sys-on-surface: var(--fg-1);
+  --mat-sys-on-surface-variant: var(--fg-3);
+  --mat-sys-outline: var(--border);
+  --mat-sys-outline-variant: var(--border);
+  --mat-sys-error: var(--error);
+  --mat-sys-error-container: var(--error-bg);
+  --mat-sys-on-error-container: var(--error-fg);
+
+  // Component skins per the design spec (kit.css), via Material's validated
+  // token-override mixins (Material 21 --mat-<component>-* tokens).
+  @include mat.button-overrides(
+    (
+      filled-container-color: var(--primary),
+      filled-label-text-color: #fff,
+      filled-container-shape: var(--radius-sm),
+      filled-container-height: 40px,
+      protected-container-color: var(--primary),
+      protected-label-text-color: #fff,
+      protected-container-shape: var(--radius-sm),
+      protected-container-height: 40px,
+      outlined-label-text-color: var(--primary),
+      outlined-outline-color: var(--n-300),
+      outlined-container-shape: var(--radius-sm),
+      outlined-container-height: 40px,
+      text-label-text-color: var(--primary),
+      text-container-shape: var(--radius-sm),
+    )
+  );
+  @include mat.icon-button-overrides(
+    (
+      icon-color: var(--fg-3),
+    )
+  );
+  @include mat.card-overrides(
+    (
+      elevated-container-color: var(--surface),
+      elevated-container-shape: var(--radius-md),
+      outlined-container-color: var(--surface),
+      outlined-container-shape: var(--radius-md),
+      outlined-outline-color: var(--border),
+    )
+  );
+  @include mat.form-field-overrides(
+    (
+      outlined-outline-color: var(--n-300),
+      outlined-hover-outline-color: var(--n-400),
+      outlined-focus-outline-color: var(--primary),
+      outlined-container-shape: var(--radius-sm),
+      outlined-label-text-color: var(--fg-3),
+      outlined-focus-label-text-color: var(--primary),
+      outlined-input-text-color: var(--fg-1),
+    )
+  );
+  @include mat.table-overrides(
+    (
+      background-color: var(--surface),
+      header-headline-color: var(--fg-3),
+      header-headline-size: 12px,
+      header-headline-weight: 600,
+      row-item-label-text-color: var(--fg-2),
+      row-item-label-text-size: 13.5px,
+      row-item-outline-color: var(--border-soft),
+    )
+  );
+  @include mat.chips-overrides(
+    (
+      container-shape-radius: var(--radius-pill),
+      elevated-container-color: var(--surface),
+      outline-color: #d7dee8,
+      label-text-color: var(--fg-2),
+    )
+  );
+  @include mat.slide-toggle-overrides(
+    (
+      selected-track-color: var(--success),
+      selected-hover-track-color: var(--success),
+      selected-focus-track-color: var(--success),
+      selected-pressed-track-color: var(--success),
+      selected-handle-color: #fff,
+      selected-hover-handle-color: #fff,
+      selected-focus-handle-color: #fff,
+      selected-pressed-handle-color: #fff,
+    )
+  );
+  @include mat.dialog-overrides(
+    (
+      container-color: var(--surface),
+      container-shape: var(--radius-lg),
+    )
+  );
+  @include mat.menu-overrides(
+    (
+      container-color: var(--surface),
+      container-shape: var(--radius-sm),
+    )
+  );
+  @include mat.snack-bar-overrides(
+    (
+      container-color: var(--n-800),
+      container-shape: var(--radius-sm),
+    )
+  );
+}
+
+::selection {
+  background: var(--primary-200);
+}
+
+// ----------------------------------------------------------------------------
+// Lucide icons — make <lucide-icon> behave like the inline mat-icon it
+// replaces (2px outline, currentColor). The svg tracks font-size (1em), so
+// existing icon sizing rules (font-size on the icon element/class) keep
+// working after the mat-icon -> lucide-icon migration. Default 20px; size
+// utilities per the design spec: 18–22 in UI, 25 in page titles, 52 in
+// empty states.
+// ----------------------------------------------------------------------------
+lucide-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  flex-shrink: 0;
+  line-height: 0;
+  font-size: 20px;
+
+  svg.lucide {
+    width: 1em;
+    height: 1em;
+  }
+
+  &.icon-16 {
+    font-size: 16px;
+  }
+
+  &.icon-18 {
+    font-size: 18px;
+  }
+
+  &.icon-22 {
+    font-size: 22px;
+  }
+
+  &.icon-25 {
+    font-size: 25px;
+  }
+
+  &.icon-52 {
+    font-size: 52px;
+  }
+}
+
 html,
 body {
   height: 100%;
+}
+
+// Compact 14px base (design system spec: body 14 / h1 22 / h2 18 …). Material
+// and Tailwind size their type + spacing in rem off the root, which defaults
+// to 16px and renders the whole UI ~15% too large. 14/16 = 87.5% drops the
+// app onto the design's compact scale proportionally. Fixed-px design tokens
+// (--toolbar-h, --sidebar-w, icon sizes) are unaffected and stay exact.
+html {
+  font-size: 87.5%;
 }
 
 body {
   margin: 0;
   min-height: 100%;
   background: transparent;
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 // ============================================================================

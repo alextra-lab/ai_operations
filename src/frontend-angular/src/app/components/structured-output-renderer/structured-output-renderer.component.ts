@@ -21,7 +21,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 // Angular Material
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 
 // Internal imports
 import {
@@ -36,15 +35,16 @@ import { ChartVisualizerComponent } from '../visualizers/chart-visualizer/chart-
 import { GaugeVisualizerComponent } from '../visualizers/gauge-visualizer/gauge-visualizer.component';
 import { TableVisualizerComponent } from '../visualizers/table-visualizer/table-visualizer.component';
 import { TimelineVisualizerComponent } from '../visualizers/timeline-visualizer/timeline-visualizer.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-structured-output-renderer',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
     MatDividerModule,
-    MatIconModule,
     TableVisualizerComponent,
     ChartVisualizerComponent,
     GaugeVisualizerComponent,
@@ -122,17 +122,17 @@ export class StructuredOutputRendererComponent implements OnInit {
   getComponentIcon(type: string): string {
     switch (type) {
       case 'table':
-        return 'table_chart';
+        return 'table';
       case 'chart':
-        return 'bar_chart';
+        return 'chart-column';
       case 'gauge':
-        return 'speed';
+        return 'gauge';
       case 'timeline':
-        return 'timeline';
+        return 'chart-line';
       case 'text':
-        return 'subject';
+        return 'file-text';
       default:
-        return 'dashboard';
+        return 'layout-dashboard';
     }
   }
 

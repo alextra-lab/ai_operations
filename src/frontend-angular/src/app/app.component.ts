@@ -7,7 +7,6 @@ import { SecurityInitializationService } from './core/security/security-initiali
   standalone: true,
   imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   readonly title = 'AI Operations Platform';

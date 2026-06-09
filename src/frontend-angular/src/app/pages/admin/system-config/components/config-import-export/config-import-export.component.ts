@@ -15,12 +15,12 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { SystemConfigService } from '../../services/system-config.service';
 
 export interface ConfigImportExportDialogData {
@@ -31,11 +31,11 @@ export interface ConfigImportExportDialogData {
   selector: 'app-config-import-export',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatTabsModule,

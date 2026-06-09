@@ -62,7 +62,7 @@
                 [attr.colspan]="tab.displayedColumns.length"
               >
                 <div class="no-data-message">
-                  <mat-icon>info</mat-icon>
+                  <lucide-icon name="info"></lucide-icon>
                   <span>No data available</span>
                 </div>
               </td>
@@ -131,9 +131,7 @@
               "
             >
               {{ formatCellDisplay(getCellValue(row, col.field)) }}
-              <mat-icon *ngIf="col.copyable" class="copy-icon" inline
-                >content_copy</mat-icon
-              >
+              <lucide-icon *ngIf="col.copyable" class="copy-icon" inline name="copy"></lucide-icon>
             </span>
           </td>
         </ng-container>
@@ -148,7 +146,7 @@
               [matTooltip]="action.label"
               (click)="handleAction(action.handler, row)"
             >
-              <mat-icon>{{ action.icon }}</mat-icon>
+              <lucide-icon [name]="action.icon"></lucide-icon>
             </button>
           </td>
         </ng-container>
@@ -161,7 +159,7 @@
         <tr class="mat-row" *matNoDataRow>
           <td class="mat-cell" [attr.colspan]="displayedColumns.length">
             <div class="no-data-message">
-              <mat-icon>info</mat-icon>
+              <lucide-icon name="info"></lucide-icon>
               <span>No data available</span>
             </div>
           </td>
@@ -187,7 +185,7 @@
       mat-stroked-button
       (click)="exportData(format)"
     >
-      <mat-icon>download</mat-icon>
+      <lucide-icon name="download"></lucide-icon>
       Export {{ format.toUpperCase() }}
     </button>
   </div>

@@ -19,7 +19,6 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -28,6 +27,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   TestExecutionResult,
   ToolTestingService,
@@ -47,13 +47,13 @@ import {
   selector: 'app-tool-testing',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     RouterLink,
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
@@ -456,7 +456,7 @@ export class ToolTestingComponent implements OnInit, OnDestroy {
    * Get status icon for history entry
    */
   getStatusIcon(entry: TestHistoryEntry): string {
-    return entry.result.success ? 'check_circle' : 'error';
+    return entry.result.success ? 'circle-check' : 'circle-alert';
   }
 
   /**

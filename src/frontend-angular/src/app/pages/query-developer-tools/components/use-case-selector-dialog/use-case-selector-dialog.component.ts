@@ -37,6 +37,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { map, Observable, startWith, switchMap } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { QueryConfig } from '../../../../api/models/query-config.models';
 import {
   CloneRequest,
@@ -64,6 +65,7 @@ export interface UseCaseSelectorDialogResult {
   selector: 'app-use-case-selector-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,

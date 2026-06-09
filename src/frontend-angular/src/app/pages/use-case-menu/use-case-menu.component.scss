@@ -8,7 +8,7 @@
 .page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
+  height: calc(100vh - var(--chrome-h));
   margin: -24px -32px;
   padding: 0;
   overflow: hidden;
@@ -18,9 +18,8 @@
 .page-header-section {
   flex: 0 0 auto;
   z-index: 100;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-bottom: 1px solid var(--border);
 
   .page-title {
     padding: 16px 24px 12px 24px;
@@ -30,21 +29,22 @@
       align-items: center;
       gap: 10px;
       margin: 0;
-      font-size: 24px;
-      font-weight: 500;
+      font-size: var(--h1-size);
+      font-weight: var(--h1-weight);
+      letter-spacing: -0.01em;
       height: 36px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 28px;
         width: 28px;
         height: 28px;
-        color: #1976d2;
+        color: var(--primary);
       }
     }
 
     .subtitle {
       margin: 4px 0 0 0;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--fg-3);
       font-size: 13px;
     }
   }
@@ -53,7 +53,7 @@
     padding: 0 24px 12px 24px;
 
     .controls-container {
-      background: #f5f5f5;
+      background: var(--surface-2);
       border-radius: 6px;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       padding: 8px 16px 8px 16px;
@@ -75,7 +75,7 @@
         gap: 0;
         border-radius: 6px;
         overflow: hidden;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--border);
         height: 40px;
 
         button {
@@ -87,20 +87,20 @@
           height: 40px;
 
           &:hover {
-            background: #f5f5f5;
+            background: var(--surface-2);
           }
 
           &.active {
-            background: #1976d2;
+            background: var(--primary);
             color: white;
 
-            mat-icon {
+            :is(mat-icon, lucide-icon) {
               color: white;
             }
           }
 
-          mat-icon {
-            color: rgba(0, 0, 0, 0.6);
+          :is(mat-icon, lucide-icon) {
+            color: var(--fg-3);
             transition: color 0.2s ease;
           }
         }
@@ -124,7 +124,7 @@
   flex: 0 0 auto;
   z-index: 90;
   background: white;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border);
   box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.08);
 
   mat-paginator {
@@ -212,32 +212,35 @@
 
   .use-case-card {
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition:
+      transform 0.22s var(--ease-standard),
+      box-shadow 0.22s var(--ease-standard);
     border-left: 4px solid transparent;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-3);
     }
 
     .use-case-avatar {
-      background-color: #f5f5f5;
-      border-radius: 50%;
-      width: 48px;
-      height: 48px;
+      // Tinted squircle holding the category icon (icon color = category accent)
+      background-color: var(--surface-2);
+      border-radius: var(--radius-md);
+      width: 46px;
+      height: 46px;
       display: flex;
       align-items: center;
       justify-content: center;
 
-      mat-icon {
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
+      :is(mat-icon, lucide-icon) {
+        font-size: 23px;
+        width: 23px;
+        height: 23px;
       }
     }
 
     .use-case-description {
-      color: #666;
+      color: var(--fg-2);
       line-height: 1.5;
       margin-bottom: 16px;
       display: -webkit-box;
@@ -259,7 +262,7 @@
         font-size: 0.9rem;
         color: #666;
 
-        mat-icon {
+        :is(mat-icon, lucide-icon) {
           font-size: 18px;
           width: 18px;
           height: 18px;
@@ -280,7 +283,7 @@
           height: 24px;
 
           &.more-chip {
-            background-color: #e0e0e0;
+            background-color: var(--border);
             color: #666;
           }
         }
@@ -335,7 +338,7 @@
       align-items: center;
       justify-content: center;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 24px;
         width: 24px;
         height: 24px;
@@ -393,7 +396,7 @@
   .page-header-section {
     .page-controls {
       .controls-container {
-        form>div {
+        form > div {
           flex-wrap: wrap;
         }
       }
@@ -403,7 +406,7 @@
 
 @media (max-width: 768px) {
   .page-container {
-    height: calc(100vh - 150px);
+    height: calc(100vh - var(--chrome-h));
     margin: -16px;
   }
 
@@ -415,7 +418,7 @@
         font-size: 20px;
         height: 32px;
 
-        mat-icon {
+        :is(mat-icon, lucide-icon) {
           font-size: 24px;
           width: 24px;
           height: 24px;
@@ -433,7 +436,7 @@
       .controls-container {
         padding: 8px 12px;
 
-        form>div {
+        form > div {
           flex-direction: column;
           align-items: stretch;
 

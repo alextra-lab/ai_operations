@@ -7,8 +7,8 @@
 
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { TimelineConfig } from '../../../models/output-format.model';
+import { LucideAngularModule } from 'lucide-angular';
 
 interface TimelineEvent {
   timestamp: string;
@@ -21,7 +21,8 @@ interface TimelineEvent {
 @Component({
   selector: 'app-timeline-visualizer',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [
+    LucideAngularModule,CommonModule],
   templateUrl: './timeline-visualizer.component.html',
   styleUrls: ['./timeline-visualizer.component.scss'],
 })
@@ -112,15 +113,15 @@ export class TimelineVisualizerComponent implements OnInit {
   getSeverityIcon(severity: string): string {
     switch (severity) {
       case 'critical':
-        return 'error';
+        return 'circle-alert';
       case 'high':
-        return 'warning';
+        return 'triangle-alert';
       case 'medium':
         return 'info';
       case 'low':
-        return 'check_circle';
+        return 'circle-check';
       default:
-        return 'fiber_manual_record';
+        return 'circle';
     }
   }
 }

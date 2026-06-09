@@ -184,19 +184,19 @@ describe('SourceCitationComponent', () => {
     it('should set correct icon for PDF', () => {
       component.source.document_type = 'pdf';
       component.setDocumentTypeIcon();
-      expect(component.documentTypeIcon).toBe('picture_as_pdf');
+      expect(component.documentTypeIcon).toBe('file-text');
     });
 
     it('should set correct icon for DOC', () => {
       component.source.document_type = 'docx';
       component.setDocumentTypeIcon();
-      expect(component.documentTypeIcon).toBe('description');
+      expect(component.documentTypeIcon).toBe('file-text');
     });
 
     it('should set default icon for unknown types', () => {
       component.source.document_type = 'unknown';
       component.setDocumentTypeIcon();
-      expect(component.documentTypeIcon).toBe('insert_drive_file');
+      expect(component.documentTypeIcon).toBe('file');
     });
   });
 });

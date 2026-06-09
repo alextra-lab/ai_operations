@@ -26,6 +26,7 @@ import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   DeploymentStatus,
   TemplateListResponse,
@@ -37,6 +38,7 @@ import { TemplateService } from '../../api/services/template.service';
   selector: 'app-template-library',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatTableModule,

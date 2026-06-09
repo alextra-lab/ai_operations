@@ -16,12 +16,12 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 
 import {
   MergeStrategy,
   SchemaInferenceService,
 } from '../../services/schema-inference.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 /** Roles that can modify the use case schema (Merge/Replace). */
 export const SCHEMA_MODIFY_ROLES = [
@@ -50,14 +50,14 @@ export interface SchemaRefineDialogResult {
   selector: 'app-schema-refine-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
     MatDialogModule,
-    MatIconModule,
   ],
   template: `
     <h2 mat-dialog-title>
-      <mat-icon>auto_fix_high</mat-icon>
+      <lucide-icon name="wand-sparkles"></lucide-icon>
       Refine Schema from Output
     </h2>
     <mat-dialog-content class="dialog-content">
@@ -77,7 +77,7 @@ export interface SchemaRefineDialogResult {
       </div>
       @if (diff.added.length > 0) {
         <div class="diff-summary">
-          <mat-icon>add_circle</mat-icon>
+          <lucide-icon name="circle-plus"></lucide-icon>
           <span>
             {{ diff.added.length }} new field(s):
             {{ diff.added.join(', ') }}
@@ -87,7 +87,7 @@ export interface SchemaRefineDialogResult {
       @if (diff.added.length === 0
         && diff.matching.length > 0) {
         <div class="diff-summary match">
-          <mat-icon>check_circle</mat-icon>
+          <lucide-icon name="circle-check"></lucide-icon>
           <span>
             Schemas already match on all
             {{ diff.matching.length }} fields.
@@ -109,7 +109,7 @@ export interface SchemaRefineDialogResult {
           (click)="close('merge')"
           [disabled]="diff.added.length === 0"
         >
-          <mat-icon>merge</mat-icon>
+          <lucide-icon name="merge"></lucide-icon>
           Merge (add missing)
         </button>
         <button
@@ -117,7 +117,7 @@ export interface SchemaRefineDialogResult {
           color="primary"
           (click)="close('replace')"
         >
-          <mat-icon>swap_horiz</mat-icon>
+          <lucide-icon name="arrow-left-right"></lucide-icon>
           Replace with inferred
         </button>
       }

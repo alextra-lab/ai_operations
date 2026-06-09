@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FieldTemplateSyncStatusComponent } from './field-template-sync-status.component';
 import type { FieldSyncStatus } from '../user-interaction-config/user-interaction-config.component';
+import { FieldTemplateSyncStatusComponent } from './field-template-sync-status.component';
 
 describe('FieldTemplateSyncStatusComponent', () => {
   let component: FieldTemplateSyncStatusComponent;
@@ -44,9 +44,9 @@ describe('FieldTemplateSyncStatusComponent', () => {
   });
 
   it('should return correct icon and class per status', () => {
-    expect(component.getIcon('synced')).toBe('check_circle');
-    expect(component.getIcon('field_only')).toBe('warning');
-    expect(component.getIcon('template_only')).toBe('error');
+    expect(component.getIcon('synced')).toBe('circle-check');
+    expect(component.getIcon('field_only')).toBe('triangle-alert');
+    expect(component.getIcon('template_only')).toBe('circle-alert');
     expect(component.getIconClass('synced')).toBe('text-green-600');
     expect(component.getIconClass('field_only')).toBe('text-amber-600');
     expect(component.getIconClass('template_only')).toBe('text-red-600');

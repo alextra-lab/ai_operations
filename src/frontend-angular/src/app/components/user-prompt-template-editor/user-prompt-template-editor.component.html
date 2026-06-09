@@ -1,7 +1,7 @@
 <mat-expansion-panel>
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <mat-icon>notes</mat-icon>
+      <lucide-icon name="sticky-note"></lucide-icon>
       User Prompt Template
     </mat-panel-title>
     <mat-panel-description>
@@ -70,9 +70,7 @@
     <span class="status-label">Variable status:</span>
     <ul aria-label="Template variable status">
       <li *ngFor="let s of variableStatus">
-        <mat-icon [class.warn]="!s.defined">{{
-          s.defined ? 'check_circle' : 'warning'
-        }}</mat-icon>
+        <lucide-icon [class.warn]="!s.defined" [name]="s.defined ? 'circle-check' : 'triangle-alert'"></lucide-icon>
         {{ s.name }} -
         {{ s.defined ? 'Defined in Input Fields' : 'Not in Input Fields' }}
       </li>
@@ -87,7 +85,7 @@
       (click)="togglePreview()"
       aria-label="Toggle template preview"
     >
-      <mat-icon>{{ showPreview() ? 'visibility_off' : 'visibility' }}</mat-icon>
+      <lucide-icon [name]="showPreview() ? 'eye-off' : 'eye'"></lucide-icon>
       {{ showPreview() ? 'Hide' : 'Show' }} Preview
     </button>
     <mat-card class="preview-card" *ngIf="showPreview() && template">
@@ -97,7 +95,7 @@
   </div>
 
   <p class="legacy-hint" *ngIf="!template">
-    <mat-icon>info</mat-icon>
+    <lucide-icon name="info"></lucide-icon>
     If no template is defined, inputs are sent as "field: value" (legacy).
   </p>
 </mat-expansion-panel>

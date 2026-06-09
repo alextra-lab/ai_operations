@@ -18,15 +18,15 @@ import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { QueryConfig } from '../../api/models/query-config.models';
 import {
   UseCaseSelectorDialogComponent,
-  UseCaseSelectorDialogData
+  UseCaseSelectorDialogData,
 } from './components/use-case-selector-dialog/use-case-selector-dialog.component';
 import { SharedConfigService } from './services/shared-config.service';
 import { RagQaTabComponent } from './tabs/rag-qa-tab.component';
@@ -37,11 +37,11 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
   selector: 'app-query-developer-tools',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
     MatDialogModule,
     MatDividerModule,
-    MatIconModule,
     MatMenuModule,
     MatTabsModule,
     SemanticSearchTabComponent,
@@ -57,55 +57,53 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
         <!-- Page Title - December 2025 Standard -->
         <div class="page-title">
           <h1>
-            <mat-icon>science</mat-icon>
+            <lucide-icon name="flask-conical"></lucide-icon>
             Query Developer Tools
           </h1>
-          <p class="subtitle">
-            Test, tune, and optimize query configurations
-          </p>
+          <p class="subtitle">Test, tune, and optimize query configurations</p>
         </div>
-
-        <!-- Material Tabs (part of Layer 2) -->
-        <mat-tab-group
-          [(selectedIndex)]="activeTab"
-          (selectedTabChange)="onTabChange($event)"
-          class="dev-tools-tabs"
-          animationDuration="300ms"
-        >
-          <!-- Tab 1: Semantic Search -->
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <mat-icon class="tab-icon">search</mat-icon>
-              Semantic Search
-            </ng-template>
-            <ng-template matTabContent>
-              <app-semantic-search-tab></app-semantic-search-tab>
-            </ng-template>
-          </mat-tab>
-
-          <!-- Tab 2: RAG Q&A -->
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <mat-icon class="tab-icon">quiz</mat-icon>
-              RAG Q&A
-            </ng-template>
-            <ng-template matTabContent>
-              <app-rag-qa-tab></app-rag-qa-tab>
-            </ng-template>
-          </mat-tab>
-
-          <!-- Tab 3: Use Case Tester -->
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <mat-icon class="tab-icon">construction</mat-icon>
-              Use Case Tester
-            </ng-template>
-            <ng-template matTabContent>
-              <app-use-case-tester-tab></app-use-case-tester-tab>
-            </ng-template>
-          </mat-tab>
-        </mat-tab-group>
       </div>
+
+      <!-- Tabs fill the remaining space; each tab body scrolls internally -->
+      <mat-tab-group
+        [(selectedIndex)]="activeTab"
+        (selectedTabChange)="onTabChange($event)"
+        class="dev-tools-tabs"
+        animationDuration="300ms"
+      >
+        <!-- Tab 1: Semantic Search -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <lucide-icon class="tab-icon" name="search"></lucide-icon>
+            Semantic Search
+          </ng-template>
+          <ng-template matTabContent>
+            <app-semantic-search-tab></app-semantic-search-tab>
+          </ng-template>
+        </mat-tab>
+
+        <!-- Tab 2: RAG Q&A -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <lucide-icon class="tab-icon" name="circle-help"></lucide-icon>
+            RAG Q&A
+          </ng-template>
+          <ng-template matTabContent>
+            <app-rag-qa-tab></app-rag-qa-tab>
+          </ng-template>
+        </mat-tab>
+
+        <!-- Tab 3: Use Case Tester -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <lucide-icon class="tab-icon" name="hammer"></lucide-icon>
+            Use Case Tester
+          </ng-template>
+          <ng-template matTabContent>
+            <app-use-case-tester-tab></app-use-case-tester-tab>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
 
       <!-- Layer 4: Page Footer (NEVER SCROLLS) - Apply to Use Case -->
       <div class="page-footer">
@@ -116,23 +114,23 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
           color="accent"
           aria-label="Apply parameters to use case"
         >
-          <mat-icon class="mr-2">check_circle</mat-icon>
+          <lucide-icon class="mr-2" name="circle-check"></lucide-icon>
           Apply to Use Case
         </button>
 
         <!-- Apply Menu -->
         <mat-menu #applyMenu="matMenu">
           <button mat-menu-item (click)="openUseCaseSelector('update')">
-            <mat-icon>edit</mat-icon>
+            <lucide-icon name="pencil"></lucide-icon>
             <span>Update Existing Draft</span>
           </button>
           <button mat-menu-item (click)="openUseCaseSelector('clone')">
-            <mat-icon>content_copy</mat-icon>
+            <lucide-icon name="copy"></lucide-icon>
             <span>Clone Published & Apply</span>
           </button>
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="createNewUseCase()">
-            <mat-icon>add_circle</mat-icon>
+            <lucide-icon name="circle-plus"></lucide-icon>
             <span>Create New Use Case</span>
           </button>
         </mat-menu>
@@ -150,11 +148,14 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
       .page-container {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 200px);
+        height: calc(100vh - var(--chrome-h));
         margin: -24px -32px;
         padding: 0;
+        // Fixed page; the tab group fills the remaining space and each tab
+        // body scrolls internally (the tab group is now a flex-1 sibling of
+        // the header, so the mat-tab flex chain constrains tab-body-content).
         overflow: hidden;
-        background: #fafafa;
+        background: var(--surface-3);
       }
 
       // Layer 2: Page Header + Tabs (NEVER SCROLLS)
@@ -287,7 +288,7 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
 
       @media (max-width: 768px) {
         .page-container {
-          height: calc(100vh - 150px);
+          height: calc(100vh - var(--chrome-h));
           margin: -16px;
         }
 
@@ -355,7 +356,7 @@ export class QueryDeveloperToolsComponent implements OnInit {
     private readonly sharedConfigService: SharedConfigService,
     private readonly dialog: MatDialog,
     private readonly router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // Load saved tab preference from localStorage

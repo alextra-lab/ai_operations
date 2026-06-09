@@ -18,7 +18,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -28,6 +27,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subject, Subscription, interval } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ContextService } from '../../api/services/context.service';
 import { SseStreamService } from '../../api/services/sse-stream.service';
 import { LLMContentRendererComponent } from '../../components/llm-content-renderer/llm-content-renderer.component';
@@ -57,11 +57,11 @@ interface TtlStatus {
   selector: 'app-conversation',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule,
     MatInputModule,
     MatFormFieldModule,
     MatChipsModule,
@@ -100,7 +100,7 @@ interface TtlStatus {
             aria-label="Rename current conversation"
             [disabled]="!currentSession"
           >
-            <mat-icon>edit</mat-icon>
+            <lucide-icon name="pencil"></lucide-icon>
           </button>
         </div>
 
@@ -111,7 +111,7 @@ interface TtlStatus {
             (click)="onNewConversation()"
             aria-label="Start new conversation"
           >
-            <mat-icon>add</mat-icon>
+            <lucide-icon name="plus"></lucide-icon>
             New
           </button>
           <button
@@ -121,7 +121,7 @@ interface TtlStatus {
             aria-label="Clear current conversation"
             [disabled]="!currentSession"
           >
-            <mat-icon>delete</mat-icon>
+            <lucide-icon name="trash-2"></lucide-icon>
             Clear
           </button>
           <button
@@ -129,7 +129,7 @@ interface TtlStatus {
             (click)="toggleHistory()"
             aria-label="Open conversation history"
           >
-            <mat-icon>folder_open</mat-icon>
+            <lucide-icon name="folder-open"></lucide-icon>
             History
           </button>
         </div>
@@ -140,13 +140,12 @@ interface TtlStatus {
             [ngClass]="ttlBadgeClass"
             aria-live="polite"
           >
-            <mat-icon
+            <lucide-icon
               [color]="ttlStatus.color"
               aria-hidden="true"
               class="!text-base"
-            >
-              timer
-            </mat-icon>
+              name="timer"
+            ></lucide-icon>
             {{ ttlStatus.label }}
           </span>
           <span class="text-sm text-gray-500">
@@ -163,7 +162,7 @@ interface TtlStatus {
         role="status"
         aria-live="polite"
       >
-        <mat-icon color="primary">info</mat-icon>
+        <lucide-icon color="primary" name="info"></lucide-icon>
         <div class="flex-1 text-sm">
           Conversations stored locally for 24 hours.
         </div>
@@ -185,7 +184,7 @@ interface TtlStatus {
         role="alert"
         aria-live="assertive"
       >
-        <mat-icon color="warn">warning</mat-icon>
+        <lucide-icon color="warn" name="triangle-alert"></lucide-icon>
         <div class="flex-1 text-sm">
           Current conversation expires in {{ criticalTtlLabel }}. Export before
           it is removed.
@@ -206,7 +205,10 @@ interface TtlStatus {
         #messagesContainer
       >
         <div *ngIf="!currentSession" class="text-center text-gray-500 py-12">
-          <mat-icon class="!text-6xl mb-4">forum</mat-icon>
+          <lucide-icon
+            class="!text-6xl mb-4"
+            name="messages-square"
+          ></lucide-icon>
           <p>Select a conversation or create a new one to get started.</p>
         </div>
 
@@ -225,9 +227,10 @@ interface TtlStatus {
               "
             >
               <div class="message-header">
-                <mat-icon class="role-icon">{{
-                  getRoleIcon(message.role)
-                }}</mat-icon>
+                <lucide-icon
+                  class="role-icon"
+                  [name]="getRoleIcon(message.role)"
+                ></lucide-icon>
                 <span class="role-name">{{ getRoleName(message.role) }}</span>
                 <span class="timestamp">{{
                   message.timestamp | date: 'short'
@@ -262,7 +265,7 @@ interface TtlStatus {
       <!-- Error Message -->
       <mat-card *ngIf="errorMessage" class="error-card mx-4">
         <div class="error-content">
-          <mat-icon class="error-icon">error</mat-icon>
+          <lucide-icon class="error-icon" name="circle-alert"></lucide-icon>
           <div class="error-text">
             <strong>Error:</strong> {{ errorMessage }}
           </div>
@@ -272,7 +275,7 @@ interface TtlStatus {
             class="error-dismiss"
             aria-label="Dismiss error message"
           >
-            <mat-icon>close</mat-icon>
+            <lucide-icon name="x"></lucide-icon>
           </button>
         </div>
       </mat-card>
@@ -303,7 +306,7 @@ interface TtlStatus {
               [disabled]="!messageForm.valid || isSending"
               aria-label="Send message"
             >
-              <mat-icon>send</mat-icon>
+              <lucide-icon name="send"></lucide-icon>
               Send
             </button>
           </div>
@@ -330,7 +333,7 @@ interface TtlStatus {
               (click)="closeHistory()"
               aria-label="Close history panel"
             >
-              <mat-icon>close</mat-icon>
+              <lucide-icon name="x"></lucide-icon>
             </button>
           </div>
 
@@ -366,7 +369,7 @@ interface TtlStatus {
                   (click)="onResumeSession(session.id)"
                   aria-label="Resume conversation"
                 >
-                  <mat-icon>play_arrow</mat-icon>
+                  <lucide-icon name="play"></lucide-icon>
                   Resume
                 </button>
                 <button
@@ -374,7 +377,7 @@ interface TtlStatus {
                   (click)="onRenameSessionFromHistory(session.id)"
                   aria-label="Rename conversation"
                 >
-                  <mat-icon>edit</mat-icon>
+                  <lucide-icon name="pencil"></lucide-icon>
                   Rename
                 </button>
                 <button
@@ -382,7 +385,7 @@ interface TtlStatus {
                   (click)="onExportSession(session.id)"
                   aria-label="Export conversation"
                 >
-                  <mat-icon>download</mat-icon>
+                  <lucide-icon name="download"></lucide-icon>
                   Export
                 </button>
                 <button
@@ -391,7 +394,7 @@ interface TtlStatus {
                   (click)="onDeleteSession(session.id)"
                   aria-label="Delete conversation"
                 >
-                  <mat-icon>delete</mat-icon>
+                  <lucide-icon name="trash-2"></lucide-icon>
                   Delete
                 </button>
               </div>
@@ -409,7 +412,7 @@ interface TtlStatus {
                 (click)="onCleanExpired()"
                 aria-label="Clean expired conversations"
               >
-                <mat-icon>cleaning_services</mat-icon>
+                <lucide-icon name="brush"></lucide-icon>
                 Clean Expired
               </button>
               <button
@@ -418,7 +421,7 @@ interface TtlStatus {
                 (click)="onClearAll()"
                 aria-label="Clear all conversations"
               >
-                <mat-icon>delete_sweep</mat-icon>
+                <lucide-icon name="trash"></lucide-icon>
                 Clear All
               </button>
             </div>
@@ -988,13 +991,13 @@ export class ConversationComponent implements OnInit, OnDestroy {
   getRoleIcon(role: string): string {
     switch (role) {
       case 'user':
-        return 'person';
+        return 'user';
       case 'assistant':
-        return 'smart_toy';
+        return 'bot';
       case 'system':
         return 'info';
       default:
-        return 'chat';
+        return 'message-square';
     }
   }
 

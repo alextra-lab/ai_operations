@@ -16,6 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { AuditLogDetailsDialogComponent } from './components/audit-log-details-dialog/audit-log-details-dialog.component';
 import {
   AuditLogDateRange,
@@ -44,6 +45,7 @@ import { AuditLogsService } from './services/audit-logs.service';
   selector: 'app-audit-logs',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatTableModule,
@@ -230,7 +232,7 @@ export class AuditLogsComponent implements OnInit {
   }
 
   getStatusIcon(success: boolean): string {
-    return success ? 'check_circle' : 'error';
+    return success ? 'circle-check' : 'circle-alert';
   }
 
   getSuccessRate(): number {

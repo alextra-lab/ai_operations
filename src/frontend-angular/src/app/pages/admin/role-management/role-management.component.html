@@ -4,7 +4,7 @@
   <div class="page-header-section">
     <div class="page-title">
       <h1>
-        <mat-icon>security</mat-icon>
+        <lucide-icon name="shield"></lucide-icon>
         Role Management
       </h1>
       <p class="subtitle">Manage role-based use case permissions (ADR-041)</p>
@@ -124,7 +124,7 @@
               (click)="openAssignDialog(role)"
               [attr.aria-label]="'Assign use cases to role ' + role.role_name"
             >
-              <mat-icon>add_circle_outline</mat-icon>
+              <lucide-icon name="circle-plus"></lucide-icon>
             </button>
             <button
               mat-icon-button
@@ -132,7 +132,7 @@
               (click)="openDetailsDialog(role)"
               [attr.aria-label]="'View details for role ' + role.role_name"
             >
-              <mat-icon>visibility</mat-icon>
+              <lucide-icon name="eye"></lucide-icon>
             </button>
           </td>
         </ng-container>
@@ -144,7 +144,7 @@
 
     <!-- Empty State -->
     <div *ngIf="!isLoading && !error && roles.length === 0" class="empty-state">
-      <mat-icon>security</mat-icon>
+      <lucide-icon name="shield"></lucide-icon>
       <h2>No roles found</h2>
       <p>Try adjusting your search or filter criteria.</p>
     </div>

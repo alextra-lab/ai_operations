@@ -14,6 +14,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ExecutionMetrics,
   isHighEntropyConfig,
@@ -37,6 +38,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
   selector: 'app-rag-qa',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -57,10 +59,9 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
   template: `
     <!-- Layer 2: Page Container - Tailwind utilities -->
     <div
-      class="flex flex-col overflow-hidden
+      class="flex flex-col
                     -my-4 -mr-4 -mb-4
                     md:-my-6 md:-mr-8 md:-mb-6
-                    h-full
                     page-container"
     >
       <!-- Layer 2: Page Header + Controls -->
@@ -68,23 +69,9 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
         class="flex-none z-[100] bg-white border-b border-gray-200
                         page-header-section"
       >
-        <!-- Page Title -->
-        <div class="px-4 pt-4 pb-3 md:px-6 md:pt-6 md:pb-4">
-          <h1
-            class="m-0 text-[28px] font-medium
-                               flex items-center gap-3"
-          >
-            <mat-icon class="text-blue-600">quiz</mat-icon>
-            RAG Q&A System
-          </h1>
-          <p class="m-0 mt-2 text-gray-600 text-sm">
-            Test full RAG pipeline with LLM generation and sampling controls
-          </p>
-        </div>
-
-        <!-- Question Input + Config Panel -->
-        <div class="px-4 pb-4 md:px-6 md:pb-4">
-          <div class="bg-gray-100 rounded-lg shadow-md p-5">
+        <!-- Question Input + Config Panel (tab name already labels the panel) -->
+        <div class="px-4 pt-4 pb-4 md:px-6 md:pt-6 md:pb-4">
+          <div class="config-card">
             <!-- Question Input -->
             <div class="question-input-section">
               <mat-form-field appearance="outline" class="full-width">
@@ -127,7 +114,11 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             >
               <mat-card-content>
                 <div class="flex items-center gap-3 warning-content">
-                  <mat-icon color="warn" aria-hidden="true">warning</mat-icon>
+                  <lucide-icon
+                    color="warn"
+                    aria-hidden="true"
+                    name="triangle-alert"
+                  ></lucide-icon>
                   <span class="text-sm"
                     >High-entropy configuration detected (temp > 0.9 AND top_p >
                     0.97). This may cause inconsistent outputs.</span
@@ -139,11 +130,10 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
         </div>
       </div>
 
-      <!-- Layer 3: Results (SCROLLS) -->
+      <!-- Layer 3: Results (only rendered once there is something to show) -->
       <div
-        class="flex-1 overflow-y-auto overflow-x-hidden
-                        px-4 py-4 md:px-6 md:py-6
-                        min-h-0 bg-gray-50
+        *ngIf="messages.length > 0 || isAsking"
+        class="px-4 py-4 md:px-6 md:py-6
                         content-area"
       >
         <app-query-results-panel
@@ -155,29 +145,6 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
           [autoScrollEnabled]="true"
         >
         </app-query-results-panel>
-
-        <!-- Empty State -->
-        <div
-          *ngIf="messages.length === 0 && !isAsking"
-          class="flex flex-col items-center justify-center
-                            text-center p-12 text-gray-500
-                            empty-state"
-        >
-          <mat-icon class="!text-[80px] !w-20 !h-20 mb-4 text-gray-400"
-            >quiz</mat-icon
-          >
-          <h3 class="text-xl font-medium mb-2 text-gray-700">
-            Ready to Answer Questions
-          </h3>
-          <p class="mb-2">
-            Enter a question above and press "Ask Question" or hit Enter to get
-            started.
-          </p>
-          <p class="text-sm italic hint">
-            Tip: Use the parameter panel to tune RAG retrieval and LLM
-            generation settings.
-          </p>
-        </div>
       </div>
 
       <!-- Layer 4: Footer -->
@@ -194,7 +161,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             [disabled]="!canAsk || isAsking"
             aria-label="Ask question"
           >
-            <mat-icon>quiz</mat-icon>
+            <lucide-icon name="circle-help"></lucide-icon>
             <span *ngIf="!isAsking">Ask Question</span>
             <span *ngIf="isAsking">Generating Answer...</span>
           </button>
@@ -205,7 +172,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             [disabled]="isAsking"
             aria-label="Reset conversation"
           >
-            <mat-icon>refresh</mat-icon>
+            <lucide-icon name="refresh-cw"></lucide-icon>
             Reset
           </button>
 
@@ -215,7 +182,7 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             [disabled]="isAsking"
             aria-label="Export configuration"
           >
-            <mat-icon>download</mat-icon>
+            <lucide-icon name="download"></lucide-icon>
             Export Config
           </button>
         </div>
@@ -234,9 +201,11 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             class="flex items-center gap-1 px-2 py-1 bg-blue-50
                                  rounded text-blue-700 metric-badge"
           >
-            <mat-icon class="!text-base !w-4 !h-4" aria-hidden="true"
-              >schedule</mat-icon
-            >
+            <lucide-icon
+              class="!text-base !w-4 !h-4"
+              aria-hidden="true"
+              name="clock"
+            ></lucide-icon>
             {{ lastExecutionTime }}ms
           </span>
 
@@ -245,9 +214,11 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             class="flex items-center gap-1 px-2 py-1 bg-purple-50
                                  rounded text-purple-700 metric-badge"
           >
-            <mat-icon class="!text-base !w-4 !h-4" aria-hidden="true"
-              >token</mat-icon
-            >
+            <lucide-icon
+              class="!text-base !w-4 !h-4"
+              aria-hidden="true"
+              name="coins"
+            ></lucide-icon>
             {{ tokensUsed }} tokens
           </span>
 
@@ -256,9 +227,11 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
             class="flex items-center gap-1 px-2 py-1 bg-green-50
                                  rounded text-green-700 metric-badge"
           >
-            <mat-icon class="!text-base !w-4 !h-4" aria-hidden="true"
-              >attach_money</mat-icon
-            >
+            <lucide-icon
+              class="!text-base !w-4 !h-4"
+              aria-hidden="true"
+              name="dollar-sign"
+            ></lucide-icon>
             {{ currentCost | currency: 'USD' : 'symbol' : '1.4-4' }}
           </span>
         </div>
@@ -313,9 +286,23 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
       .page-container {
         display: flex;
         flex-direction: column;
+        // Single scroll model: fill the tab body and let the whole page
+        // (question + config + results) scroll together. Needs a constrained
+        // height (not min-height) for overflow-y:auto to actually scroll.
+        // The old overflow:hidden trapped the config panel in a non-scrolling
+        // header, so expanding it overflowed off-screen with no way to reach it.
         height: 100%;
-        overflow: hidden; // CRITICAL: Prevents parent scrolling
-        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      // Tokenized config card (replaces raw bg-gray-100 / shadow-md / p-5)
+      .config-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md, 10px);
+        box-shadow: var(--shadow-1);
+        padding: 16px;
       }
 
       // Layer 2: Page Header (NEVER SCROLLS)
@@ -327,14 +314,9 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
       // This is the scrollable area for conversation results
       // CRITICAL: min-height: 0 allows flex child to shrink below content size
       .content-area {
-        flex: 1 1 0% !important; // Take remaining space, allow shrinking
-        overflow-y: auto !important; // Enable vertical scrolling
-        overflow-x: hidden !important; // Prevent horizontal scroll
-        min-height: 0 !important; // CRITICAL: Enables flex child scrolling
-        -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
+        flex: 1 0 auto; // fill remaining space when short, grow when tall
         position: relative;
-        // Ensure proper height constraint
-        max-height: 100%;
+        background: var(--surface-3); // slate canvas (replaces bg-gray-50)
       }
 
       // Layer 4: Footer (NEVER SCROLLS)
@@ -357,7 +339,6 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
           width: 28px;
           height: 28px;
         }
-
       }
 
       // ====================================================================
@@ -412,7 +393,7 @@ export class RagQaComponent implements OnInit, OnDestroy {
     private ragService: RagService,
     private autoScrollService: AutoScrollService,
     private snackBar: MatSnackBar
-  ) { }
+  ) {}
 
   // ========================================================================
   // Lifecycle Hooks

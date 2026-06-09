@@ -7,7 +7,7 @@
       class="document-icon"
       [style.color]="classificationColor"
     >
-      <mat-icon>{{ documentTypeIcon }}</mat-icon>
+      <lucide-icon [name]="documentTypeIcon"></lucide-icon>
     </div>
 
     <mat-card-title class="document-title">
@@ -17,24 +17,24 @@
     <mat-card-subtitle class="document-meta">
       <div class="meta-row">
         <span class="source-info">
-          <mat-icon class="meta-icon">source</mat-icon>
+          <lucide-icon class="meta-icon" name="folder-code"></lucide-icon>
           {{ source.source }}
         </span>
 
         <span class="similarity-score" [style.color]="confidenceColor">
-          <mat-icon class="meta-icon">trending_up</mat-icon>
+          <lucide-icon class="meta-icon" name="trending-up"></lucide-icon>
           {{ formatSimilarityScore(source.similarity_score) }}
         </span>
       </div>
 
       <div class="meta-row" *ngIf="hasAuthor || hasPageNumber">
         <span *ngIf="hasAuthor" class="author-info">
-          <mat-icon class="meta-icon">person</mat-icon>
+          <lucide-icon class="meta-icon" name="user"></lucide-icon>
           {{ source.author }}
         </span>
 
         <span *ngIf="hasPageNumber" class="page-info">
-          <mat-icon class="meta-icon">pages</mat-icon>
+          <lucide-icon class="meta-icon" name="files"></lucide-icon>
           Page {{ source.page_number }}
         </span>
       </div>
@@ -49,9 +49,7 @@
         class="classification-badge"
         [style.background-color]="classificationColor"
       >
-        <mat-icon class="classification-icon">{{
-          getClassificationIcon()
-        }}</mat-icon>
+        <lucide-icon class="classification-icon" [name]="getClassificationIcon()"></lucide-icon>
         <span class="classification-label">{{ getClassificationLabel() }}</span>
       </div>
     </div>
@@ -67,7 +65,7 @@
             matTooltip="Copy text"
             class="copy-button"
           >
-            <mat-icon>content_copy</mat-icon>
+            <lucide-icon name="copy"></lucide-icon>
           </button>
 
           <button
@@ -77,9 +75,7 @@
             matTooltip="{{ isExpanded ? 'Show less' : 'Show more' }}"
             class="expand-button"
           >
-            <mat-icon>{{
-              isExpanded ? 'expand_less' : 'expand_more'
-            }}</mat-icon>
+            <lucide-icon [name]="isExpanded ? 'chevron-up' : 'chevron-down'"></lucide-icon>
           </button>
         </div>
       </div>
@@ -95,7 +91,7 @@
     <div class="document-details">
       <div class="detail-grid">
         <div class="detail-item">
-          <mat-icon class="detail-icon">description</mat-icon>
+          <lucide-icon class="detail-icon" name="file-text"></lucide-icon>
           <div class="detail-info">
             <div class="detail-label">Document Type</div>
             <div class="detail-value">
@@ -109,7 +105,7 @@
         </div>
 
         <div class="detail-item">
-          <mat-icon class="detail-icon">code</mat-icon>
+          <lucide-icon class="detail-icon" name="code"></lucide-icon>
           <div class="detail-info">
             <div class="detail-label">Chunk Index</div>
             <div class="detail-value">{{ source.chunk_index }}</div>
@@ -117,7 +113,7 @@
         </div>
 
         <div class="detail-item">
-          <mat-icon class="detail-icon">schedule</mat-icon>
+          <lucide-icon class="detail-icon" name="clock"></lucide-icon>
           <div class="detail-info">
             <div class="detail-label">Created</div>
             <div class="detail-value">{{ formatDate(source.created_at) }}</div>
@@ -146,17 +142,17 @@
   <!-- Actions -->
   <mat-card-actions>
     <button mat-button color="primary" (click)="openDocument()">
-      <mat-icon>visibility</mat-icon>
+      <lucide-icon name="eye"></lucide-icon>
       View Document
     </button>
 
     <button mat-button (click)="downloadDocument()">
-      <mat-icon>download</mat-icon>
+      <lucide-icon name="download"></lucide-icon>
       Download
     </button>
 
     <button mat-icon-button [matMenuTriggerFor]="moreMenu" class="more-menu">
-      <mat-icon>more_vert</mat-icon>
+      <lucide-icon name="ellipsis-vertical"></lucide-icon>
     </button>
 
     <mat-menu #moreMenu="matMenu">
@@ -164,11 +160,11 @@
         mat-menu-item
         (click)="copyToClipboard(source.chunk_text || source.content || '')"
       >
-        <mat-icon>content_copy</mat-icon>
+        <lucide-icon name="copy"></lucide-icon>
         <span>Copy Text</span>
       </button>
       <button mat-menu-item (click)="copyToClipboard(source.document_id)">
-        <mat-icon>link</mat-icon>
+        <lucide-icon name="link"></lucide-icon>
         <span>Copy Document ID</span>
       </button>
       <button
@@ -176,7 +172,7 @@
         *ngIf="hasUrl"
         (click)="copyToClipboard(source.url!)"
       >
-        <mat-icon>link</mat-icon>
+        <lucide-icon name="link"></lucide-icon>
         <span>Copy URL</span>
       </button>
     </mat-menu>

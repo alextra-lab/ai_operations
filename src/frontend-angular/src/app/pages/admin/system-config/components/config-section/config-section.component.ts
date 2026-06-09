@@ -8,9 +8,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ConfigSection,
   ConfigSectionMetadata,
@@ -22,9 +22,9 @@ import { ConfigEditorComponent } from '../config-editor/config-editor.component'
   selector: 'app-config-section',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatExpansionModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     ConfigEditorComponent,
   ],

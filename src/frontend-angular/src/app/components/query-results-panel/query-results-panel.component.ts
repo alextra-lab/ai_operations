@@ -43,7 +43,6 @@ import {
 
 // Angular Material imports
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // RxJS imports
@@ -58,14 +57,15 @@ import {
 } from '../../api/models/query-config.models';
 import { AutoScrollService } from '../../services/auto-scroll.service';
 import { LLMContentRendererComponent } from '../llm-content-renderer/llm-content-renderer.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-query-results-panel',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     LLMContentRendererComponent,
   ],
@@ -177,13 +177,13 @@ export class QueryResultsPanelComponent
   getRoleIcon(role: string): string {
     switch (role) {
       case 'user':
-        return 'person';
+        return 'user';
       case 'assistant':
-        return 'smart_toy';
+        return 'bot';
       case 'system':
         return 'settings';
       default:
-        return 'help';
+        return 'circle-help';
     }
   }
 

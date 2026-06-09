@@ -7,7 +7,7 @@
         (click)="backToLibrary()"
         matTooltip="Back to Library"
       >
-        <mat-icon>arrow_back</mat-icon>
+        <lucide-icon name="arrow-left"></lucide-icon>
       </button>
       <div>
         <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
@@ -23,24 +23,23 @@
           <span class="text-sm text-gray-600 dark:text-gray-400">
             Version {{ template.version_number }}
           </span>
-          <mat-icon
+          <lucide-icon
             *ngIf="template.is_active_version"
             class="text-green-600 text-base"
             matTooltip="Active Version"
-          >
-            check_circle
-          </mat-icon>
+            name="circle-check"
+          ></lucide-icon>
         </div>
       </div>
     </div>
 
     <div class="flex gap-2" *ngIf="template && !loading">
       <button mat-raised-button color="accent" (click)="editTemplate()">
-        <mat-icon>edit</mat-icon>
+        <lucide-icon name="pencil"></lucide-icon>
         Edit
       </button>
       <button mat-raised-button color="warn" (click)="deleteTemplate()">
-        <mat-icon>delete</mat-icon>
+        <lucide-icon name="trash-2"></lucide-icon>
         Delete
       </button>
     </div>
@@ -92,12 +91,11 @@
                     <span class="font-semibold"
                       >Version {{ version.version_number }}</span
                     >
-                    <mat-icon
+                    <lucide-icon
                       *ngIf="version.is_active_version"
                       class="text-green-600 text-sm"
-                    >
-                      check_circle
-                    </mat-icon>
+                      name="circle-check"
+                    ></lucide-icon>
                     <span
                       [class]="getStatusClass(version.deployment_status)"
                       class="px-2 py-1 rounded-full text-xs"
@@ -120,18 +118,20 @@
                     matTooltip="Activate This Version"
                     [disabled]="processing"
                   >
-                    <mat-icon>published_with_changes</mat-icon>
+                    <lucide-icon name="badge-check"></lucide-icon>
                   </button>
                   <button
                     mat-icon-button
                     matTooltip="Select for comparison"
                     (click)="toggleVersionSelection(1, version.version_number)"
                   >
-                    <mat-icon>{{
-                      selectedVersion1 === version.version_number
-                        ? 'check_box'
-                        : 'check_box_outline_blank'
-                    }}</mat-icon>
+                    <lucide-icon
+                      [name]="
+                        selectedVersion1 === version.version_number
+                          ? 'square-check'
+                          : 'square'
+                      "
+                    ></lucide-icon>
                   </button>
                 </div>
               </div>
@@ -174,7 +174,7 @@
               (click)="compareVersions()"
               [disabled]="!selectedVersion1 || !selectedVersion2 || processing"
             >
-              <mat-icon>compare</mat-icon>
+              <lucide-icon name="git-compare"></lucide-icon>
               Compare Versions
             </button>
 
@@ -246,7 +246,7 @@
               (click)="createNewVersion()"
               [disabled]="newVersionForm.invalid || processing"
             >
-              <mat-icon>add</mat-icon>
+              <lucide-icon name="plus"></lucide-icon>
               Create New Version
             </button>
           </form>
@@ -364,7 +364,7 @@
                 [disabled]="processing"
                 class="flex-1"
               >
-                <mat-icon>check_circle</mat-icon>
+                <lucide-icon name="circle-check"></lucide-icon>
                 Approve
               </button>
               <button
@@ -375,7 +375,7 @@
                 [disabled]="processing"
                 class="flex-1"
               >
-                <mat-icon>cancel</mat-icon>
+                <lucide-icon name="circle-x"></lucide-icon>
                 Reject
               </button>
             </div>

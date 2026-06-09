@@ -7,10 +7,10 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ModelDetailedResponse } from '../../../../api/models/model-registry.models';
 
 export interface ModelDetailsDialogData {
@@ -22,10 +22,10 @@ export interface ModelDetailsDialogData {
   selector: 'app-model-details-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule,
     MatChipsModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
@@ -33,7 +33,7 @@ export interface ModelDetailsDialogData {
   template: `
     <div class="model-details-dialog">
       <h2 mat-dialog-title>
-        <mat-icon>psychology</mat-icon>
+        <lucide-icon name="brain-circuit"></lucide-icon>
         Model Details
       </h2>
 
@@ -67,9 +67,9 @@ export interface ModelDetailsDialogData {
               <mat-chip
                 [class]="data.model.is_available ? 'available' : 'unavailable'"
               >
-                <mat-icon>{{
-                  data.model.is_available ? 'check_circle' : 'cancel'
-                }}</mat-icon>
+                <lucide-icon
+                  [name]="data.model.is_available ? 'circle-check' : 'circle-x'"
+                ></lucide-icon>
                 {{ data.model.is_available ? 'Available' : 'Unavailable' }}
               </mat-chip>
             </div>
@@ -88,64 +88,76 @@ export interface ModelDetailsDialogData {
               class="capability-item"
               [class.enabled]="data.model.capabilities.supports_tools"
             >
-              <mat-icon>{{
-                data.model.capabilities.supports_tools
-                  ? 'check_circle'
-                  : 'cancel'
-              }}</mat-icon>
+              <lucide-icon
+                [name]="
+                  data.model.capabilities.supports_tools
+                    ? 'circle-check'
+                    : 'circle-x'
+                "
+              ></lucide-icon>
               <span>Tools/Functions</span>
             </div>
             <div
               class="capability-item"
               [class.enabled]="data.model.capabilities.supports_vision"
             >
-              <mat-icon>{{
-                data.model.capabilities.supports_vision
-                  ? 'check_circle'
-                  : 'cancel'
-              }}</mat-icon>
+              <lucide-icon
+                [name]="
+                  data.model.capabilities.supports_vision
+                    ? 'circle-check'
+                    : 'circle-x'
+                "
+              ></lucide-icon>
               <span>Vision</span>
             </div>
             <div
               class="capability-item"
               [class.enabled]="data.model.capabilities.supports_audio"
             >
-              <mat-icon>{{
-                data.model.capabilities.supports_audio
-                  ? 'check_circle'
-                  : 'cancel'
-              }}</mat-icon>
+              <lucide-icon
+                [name]="
+                  data.model.capabilities.supports_audio
+                    ? 'circle-check'
+                    : 'circle-x'
+                "
+              ></lucide-icon>
               <span>Audio</span>
             </div>
             <div
               class="capability-item"
               [class.enabled]="data.model.capabilities.supports_streaming"
             >
-              <mat-icon>{{
-                data.model.capabilities.supports_streaming
-                  ? 'check_circle'
-                  : 'cancel'
-              }}</mat-icon>
+              <lucide-icon
+                [name]="
+                  data.model.capabilities.supports_streaming
+                    ? 'circle-check'
+                    : 'circle-x'
+                "
+              ></lucide-icon>
               <span>Streaming</span>
             </div>
             <div
               class="capability-item"
               [class.enabled]="data.model.capabilities.supports_json_mode"
             >
-              <mat-icon>{{
-                data.model.capabilities.supports_json_mode
-                  ? 'check_circle'
-                  : 'cancel'
-              }}</mat-icon>
+              <lucide-icon
+                [name]="
+                  data.model.capabilities.supports_json_mode
+                    ? 'circle-check'
+                    : 'circle-x'
+                "
+              ></lucide-icon>
               <span>JSON Mode</span>
             </div>
             <div
               class="capability-item"
               [class.enabled]="data.model.is_reasoning_model"
             >
-              <mat-icon>{{
-                data.model.is_reasoning_model ? 'check_circle' : 'cancel'
-              }}</mat-icon>
+              <lucide-icon
+                [name]="
+                  data.model.is_reasoning_model ? 'circle-check' : 'circle-x'
+                "
+              ></lucide-icon>
               <span>Reasoning</span>
             </div>
           </div>
@@ -297,7 +309,7 @@ export interface ModelDetailsDialogData {
       <mat-dialog-actions align="end">
         <button mat-button (click)="close()">Close</button>
         <button mat-raised-button color="primary" (click)="openEdit()">
-          <mat-icon>edit</mat-icon>
+          <lucide-icon name="pencil"></lucide-icon>
           Edit Model
         </button>
       </mat-dialog-actions>

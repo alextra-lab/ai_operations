@@ -3,10 +3,11 @@ h2[mat-dialog-title] {
   align-items: center;
   gap: 12px;
   margin: 0 0 16px 0;
-  font-size: 24px;
-  font-weight: 500;
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
+  letter-spacing: -0.01em;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 28px;
     width: 28px;
     height: 28px;
@@ -28,7 +29,7 @@ mat-dialog-content {
       gap: 8px;
       margin-bottom: 12px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         color: rgba(0, 0, 0, 0.54);
         font-size: 20px;
         width: 20px;
@@ -39,7 +40,7 @@ mat-dialog-content {
         margin: 0;
         font-size: 16px;
         font-weight: 500;
-        color: rgba(0, 0, 0, 0.87);
+        color: var(--fg-1);
       }
     }
 
@@ -56,13 +57,13 @@ mat-dialog-content {
 
         label {
           font-weight: 500;
-          color: rgba(0, 0, 0, 0.6);
+          color: var(--fg-3);
           font-size: 14px;
         }
 
         .value {
           font-size: 14px;
-          color: rgba(0, 0, 0, 0.87);
+          color: var(--fg-1);
         }
       }
     }
@@ -83,7 +84,7 @@ mat-dialog-content {
         .toggle-label {
           font-weight: 500;
           font-size: 14px;
-          color: rgba(0, 0, 0, 0.87);
+          color: var(--fg-1);
         }
 
         mat-slide-toggle {
@@ -92,7 +93,7 @@ mat-dialog-content {
 
         .toggle-hint {
           font-size: 12px;
-          color: rgba(0, 0, 0, 0.6);
+          color: var(--fg-3);
           line-height: 1.4;
         }
       }
@@ -109,7 +110,7 @@ mat-dialog-content {
       border-radius: 4px;
       font-size: 14px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 20px;
         width: 20px;
         height: 20px;

@@ -1,7 +1,7 @@
 <mat-card class="test-panel">
   <mat-card-header>
     <mat-card-title class="flex items-center gap-2">
-      <mat-icon>science</mat-icon>
+      <lucide-icon name="flask-conical"></lucide-icon>
       <span>Test Use Case</span>
     </mat-card-title>
   </mat-card-header>
@@ -42,7 +42,7 @@
         (click)="executeTest()"
         [disabled]="!testQuery || isExecuting"
       >
-        <mat-icon>play_arrow</mat-icon>
+        <lucide-icon name="play"></lucide-icon>
         Run Test
       </button>
     </div>
@@ -51,12 +51,9 @@
     @if (testResult) {
       <div class="test-result mt-4">
         <h4 class="flex items-center gap-2 text-lg font-medium mb-2">
-          <mat-icon
+          <lucide-icon
             [class.text-green-600]="testResult.success"
-            [class.text-red-600]="!testResult.success"
-          >
-            {{ testResult.success ? 'check_circle' : 'error' }}
-          </mat-icon>
+            [class.text-red-600]="!testResult.success" [name]="testResult.success ? 'circle-check' : 'circle-alert'"></lucide-icon>
           <span>Test Result</span>
           <span class="execution-time text-sm text-gray-600">
             {{ testResult.execution_time_ms }}ms

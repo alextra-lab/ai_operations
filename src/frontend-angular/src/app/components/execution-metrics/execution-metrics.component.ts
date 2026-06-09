@@ -4,19 +4,19 @@ import { Component, Input, OnInit } from '@angular/core';
 // Angular Material imports
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ConsolidatedMetrics } from '../../api/models/use-case.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-execution-metrics',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatProgressBarModule,
     MatTooltipModule,
     MatChipsModule,
@@ -35,9 +35,9 @@ export class ExecutionMetricsComponent implements OnInit {
 
   // Performance indicators
   performanceIndicators = {
-    retrieval: { status: 'success', icon: 'speed', message: 'Ready' },
-    guard: { status: 'success', icon: 'security', message: 'Ready' },
-    model: { status: 'success', icon: 'psychology', message: 'Ready' },
+    retrieval: { status: 'success', icon: 'gauge', message: 'Ready' },
+    guard: { status: 'success', icon: 'shield', message: 'Ready' },
+    model: { status: 'success', icon: 'brain-circuit', message: 'Ready' },
   };
 
   ngOnInit(): void {
@@ -59,13 +59,13 @@ export class ExecutionMetricsComponent implements OnInit {
 
     if (score >= 0.8) {
       this.confidenceClass = 'high';
-      this.confidenceIcon = 'check_circle';
+      this.confidenceIcon = 'circle-check';
     } else if (score >= 0.6) {
       this.confidenceClass = 'medium';
-      this.confidenceIcon = 'warning';
+      this.confidenceIcon = 'triangle-alert';
     } else {
       this.confidenceClass = 'low';
-      this.confidenceIcon = 'error';
+      this.confidenceIcon = 'circle-alert';
     }
   }
 
@@ -75,13 +75,13 @@ export class ExecutionMetricsComponent implements OnInit {
     const confidence = this.metrics.confidence_score;
     if (confidence >= 0.7) {
       this.overallStatusClass = 'success';
-      this.overallStatusIcon = 'check_circle';
+      this.overallStatusIcon = 'circle-check';
     } else if (confidence >= 0.4) {
       this.overallStatusClass = 'warning';
-      this.overallStatusIcon = 'warning';
+      this.overallStatusIcon = 'triangle-alert';
     } else {
       this.overallStatusClass = 'error';
-      this.overallStatusIcon = 'error';
+      this.overallStatusIcon = 'circle-alert';
     }
   }
 

@@ -22,6 +22,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ToolDeleteDialogComponent } from './components/tool-delete-dialog/tool-delete-dialog.component';
 import { ToolDetailsDialogComponent } from './components/tool-details-dialog/tool-details-dialog.component';
 import { ToolEditDialogComponent } from './components/tool-edit-dialog/tool-edit-dialog.component';
@@ -36,6 +37,7 @@ import { ToolAdminService } from './services/tool-admin.service';
   selector: 'app-tool-management',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     RouterLink,
@@ -249,8 +251,8 @@ export class ToolManagementComponent implements OnInit {
   }
 
   getHealthIcon(tool: ToolListItem): string {
-    if (!tool.is_healthy) return 'error';
-    return 'check_circle';
+    if (!tool.is_healthy) return 'circle-alert';
+    return 'circle-check';
   }
 
   getHealthClass(tool: ToolListItem): string {

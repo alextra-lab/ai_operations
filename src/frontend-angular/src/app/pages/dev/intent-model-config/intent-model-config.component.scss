@@ -11,7 +11,7 @@
     margin-bottom: 16px;
   }
 
-  mat-icon[mat-card-avatar] {
+  :is(mat-icon, lucide-icon)[mat-card-avatar] {
     font-size: 40px;
     width: 40px;
     height: 40px;
@@ -32,7 +32,7 @@
       font-size: 12px;
       text-transform: uppercase;
       font-weight: 500;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--fg-3);
     }
 
     .stat-value {
@@ -60,7 +60,7 @@
   border-radius: 4px;
   color: #e65100;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     color: #ff9800;
   }
 }
@@ -81,7 +81,7 @@
 
   p {
     margin: 0;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--fg-3);
   }
 }
 
@@ -130,7 +130,7 @@
 
     .intent-description {
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--fg-3);
     }
 
     .intent-code {
@@ -175,7 +175,7 @@
     .provider-badge {
       display: inline-block;
       padding: 4px 8px;
-      background-color: #e0e0e0;
+      background-color: var(--border);
       border-radius: 4px;
       font-size: 11px;
       text-transform: uppercase;
@@ -200,7 +200,7 @@
     gap: 8px;
 
     button {
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         margin-right: 4px;
       }
     }

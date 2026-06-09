@@ -9,12 +9,12 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subject } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   QueryStats,
   RecentQuery,
@@ -26,9 +26,9 @@ import {
   selector: 'app-query-stats-widget',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatChipsModule,
     MatButtonModule,
     MatProgressSpinnerModule,
@@ -45,7 +45,7 @@ import {
 
       <!-- Error State -->
       <div *ngIf="hasError" class="error-container">
-        <mat-icon color="warn">error</mat-icon>
+        <lucide-icon color="warn" name="circle-alert"></lucide-icon>
         <p>Failed to load query statistics</p>
         <button mat-button (click)="refresh()">Retry</button>
       </div>
@@ -56,7 +56,7 @@ import {
         <div class="summary-stats">
           <div class="stat-card">
             <div class="stat-icon">
-              <mat-icon>search</mat-icon>
+              <lucide-icon name="search"></lucide-icon>
             </div>
             <div class="stat-info">
               <span class="stat-value">{{
@@ -68,7 +68,7 @@ import {
 
           <div class="stat-card">
             <div class="stat-icon success">
-              <mat-icon>check_circle</mat-icon>
+              <lucide-icon name="circle-check"></lucide-icon>
             </div>
             <div class="stat-info">
               <span class="stat-value">{{
@@ -80,7 +80,7 @@ import {
 
           <div class="stat-card">
             <div class="stat-icon error">
-              <mat-icon>error</mat-icon>
+              <lucide-icon name="circle-alert"></lucide-icon>
             </div>
             <div class="stat-info">
               <span class="stat-value">{{
@@ -92,7 +92,7 @@ import {
 
           <div class="stat-card">
             <div class="stat-icon">
-              <mat-icon>speed</mat-icon>
+              <lucide-icon name="gauge"></lucide-icon>
             </div>
             <div class="stat-info">
               <span class="stat-value">{{
@@ -107,13 +107,13 @@ import {
         <div class="performance-metrics">
           <div class="metric-item">
             <div class="metric-label">
-              <mat-icon>trending_up</mat-icon>
+              <lucide-icon name="trending-up"></lucide-icon>
               <span>Queries per Hour</span>
             </div>
             <div class="metric-value">
               <span class="value">{{ queryStats?.queries_per_hour || 0 }}</span>
               <mat-chip class="trend-chip positive">
-                <mat-icon>trending_up</mat-icon>
+                <lucide-icon name="trending-up"></lucide-icon>
                 +12%
               </mat-chip>
             </div>
@@ -121,7 +121,7 @@ import {
 
           <div class="metric-item">
             <div class="metric-label">
-              <mat-icon>percent</mat-icon>
+              <lucide-icon name="percent"></lucide-icon>
               <span>Success Rate</span>
             </div>
             <div class="metric-value">
@@ -146,7 +146,7 @@ import {
             >
               <div class="query-info">
                 <div class="query-text">
-                  <mat-icon>search</mat-icon>
+                  <lucide-icon name="search"></lucide-icon>
                   <span [matTooltip]="query.query">{{
                     truncateText(query.query, 50)
                   }}</span>
@@ -191,20 +191,22 @@ import {
               class="table-row"
             >
               <div class="query-cell">
-                <mat-icon>search</mat-icon>
+                <lucide-icon name="search"></lucide-icon>
                 <span [matTooltip]="query.query">{{
                   truncateText(query.query, 30)
                 }}</span>
               </div>
 
               <div class="user-cell">
-                <mat-icon>person</mat-icon>
+                <lucide-icon name="user"></lucide-icon>
                 <span>{{ query.user }}</span>
               </div>
 
               <div class="status-cell">
                 <mat-chip [class]="'status-' + query.status">
-                  <mat-icon>{{ getStatusIcon(query.status) }}</mat-icon>
+                  <lucide-icon
+                    [name]="getStatusIcon(query.status)"
+                  ></lucide-icon>
                   {{ query.status.toUpperCase() }}
                 </mat-chip>
               </div>
@@ -221,7 +223,7 @@ import {
 
         <!-- Empty State -->
         <div *ngIf="!queryStats?.total_queries" class="empty-state">
-          <mat-icon>search_off</mat-icon>
+          <lucide-icon name="search-x"></lucide-icon>
           <p>No queries executed yet</p>
           <small>Query statistics will appear here</small>
         </div>
@@ -703,12 +705,12 @@ export class QueryStatsWidgetComponent implements OnInit, OnDestroy {
    */
   getStatusIcon(status: string): string {
     const iconMap: Record<string, string> = {
-      success: 'check_circle',
-      failed: 'error',
-      processing: 'hourglass_empty',
+      success: 'circle-check',
+      failed: 'circle-alert',
+      processing: 'hourglass',
     };
 
-    return iconMap[status] || 'help';
+    return iconMap[status] || 'circle-help';
   }
 
   /**

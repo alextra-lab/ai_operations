@@ -6,16 +6,15 @@
 .page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px); // Account for main toolbar
+  height: calc(100vh - var(--chrome-h)); // Account for main toolbar
   overflow: hidden;
 }
 
 /* Layer 2: Page Header */
 .page-header-layer {
   flex: 0 0 auto;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-bottom: 1px solid var(--border);
   z-index: 10;
 }
 
@@ -42,8 +41,8 @@
   font-weight: 500;
   color: #333;
 
-  mat-icon {
-    color: #1976d2;
+  :is(mat-icon, lucide-icon) {
+    color: var(--primary);
     font-size: 28px;
     width: 28px;
     height: 28px;
@@ -140,7 +139,7 @@
 
   ::ng-deep .mat-mdc-tab-header {
     background: #fafafa;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border);
   }
 }
 
@@ -229,7 +228,7 @@
   .page-title {
     font-size: 1.25rem;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 24px;
       width: 24px;
       height: 24px;

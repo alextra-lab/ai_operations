@@ -176,7 +176,7 @@
           (click)="resetForm()"
           [disabled]="saving || isEditMode"
         >
-          <mat-icon>refresh</mat-icon>
+          <lucide-icon name="refresh-cw"></lucide-icon>
           Reset
         </button>
         <button
@@ -187,7 +187,7 @@
         >
           <mat-spinner *ngIf="saving" diameter="20" class="inline-block mr-2">
           </mat-spinner>
-          <mat-icon *ngIf="!saving">save</mat-icon>
+          <lucide-icon *ngIf="!saving" name="save"></lucide-icon>
           {{ isEditMode ? 'Update Template' : 'Create Template' }}
         </button>
       </div>

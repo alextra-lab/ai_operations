@@ -6,7 +6,7 @@
   <div class="page-header-section">
     <div class="page-title">
       <h1>
-        <mat-icon aria-hidden="true">science</mat-icon>
+        <lucide-icon aria-hidden="true" name="flask-conical"></lucide-icon>
         Tool Testing
       </h1>
       <p class="subtitle">
@@ -23,7 +23,7 @@
           [disabled]="testHistory().length === 0"
           aria-label="Clear test history"
         >
-          <mat-icon>delete_sweep</mat-icon>
+          <lucide-icon name="trash"></lucide-icon>
           Clear History
         </button>
 
@@ -33,7 +33,7 @@
           routerLink="/admin/tools"
           aria-label="Back to Tool Management"
         >
-          <mat-icon>build</mat-icon>
+          <lucide-icon name="wrench"></lucide-icon>
           Tool Management
         </a>
       </div>
@@ -60,11 +60,11 @@
             *ngIf="!isLoadingTools && tools().length === 0"
             class="empty-state"
           >
-            <mat-icon class="empty-icon">build_circle</mat-icon>
+            <lucide-icon class="empty-icon" name="wrench"></lucide-icon>
             <h3>No enabled tools</h3>
             <p>Enable tools in Tool Management to test them.</p>
             <a mat-raised-button color="primary" routerLink="/admin/tools">
-              <mat-icon>settings</mat-icon>
+              <lucide-icon name="settings"></lucide-icon>
               Manage Tools
             </a>
           </div>
@@ -83,13 +83,12 @@
                   <div class="tool-option">
                     <span class="tool-name">{{ tool.name }}</span>
                     <span class="tool-id">({{ tool.tool_id }})</span>
-                    <mat-icon
+                    <lucide-icon
                       *ngIf="!tool.is_healthy"
                       class="unhealthy-icon"
                       matTooltip="Tool is unhealthy"
-                    >
-                      warning
-                    </mat-icon>
+                      name="triangle-alert"
+                    ></lucide-icon>
                   </div>
                 </mat-option>
               </mat-select>
@@ -127,7 +126,7 @@
                     (click)="loadExample()"
                     aria-label="Load example parameters"
                   >
-                    <mat-icon>lightbulb</mat-icon>
+                    <lucide-icon name="lightbulb"></lucide-icon>
                   </button>
                   <button
                     mat-icon-button
@@ -135,7 +134,7 @@
                     (click)="clearParameters()"
                     aria-label="Clear parameters"
                   >
-                    <mat-icon>clear</mat-icon>
+                    <lucide-icon name="x"></lucide-icon>
                   </button>
                 </div>
               </div>
@@ -171,9 +170,9 @@
                 [class.error]="validationSuccess() === false"
                 role="status"
               >
-                <mat-icon>
-                  {{ validationSuccess() ? 'check_circle' : 'error' }}
-                </mat-icon>
+                <lucide-icon
+                  [name]="validationSuccess() ? 'circle-check' : 'circle-alert'"
+                ></lucide-icon>
                 {{ validationMessage() }}
               </div>
             </div>
@@ -187,7 +186,10 @@
                 aria-label="Validate parameters against schema"
               >
                 <mat-spinner *ngIf="isValidating" diameter="18"></mat-spinner>
-                <mat-icon *ngIf="!isValidating">rule</mat-icon>
+                <lucide-icon
+                  *ngIf="!isValidating"
+                  name="list-checks"
+                ></lucide-icon>
                 Validate
               </button>
 
@@ -199,7 +201,7 @@
                 aria-label="Execute test call"
               >
                 <mat-spinner *ngIf="isExecuting" diameter="18"></mat-spinner>
-                <mat-icon *ngIf="!isExecuting">play_arrow</mat-icon>
+                <lucide-icon *ngIf="!isExecuting" name="play"></lucide-icon>
                 Execute Test
               </button>
             </div>
@@ -223,7 +225,7 @@
         <mat-card-content>
           <!-- No result yet -->
           <div *ngIf="!currentResult()" class="empty-state small">
-            <mat-icon class="empty-icon">science</mat-icon>
+            <lucide-icon class="empty-icon" name="flask-conical"></lucide-icon>
             <p>Execute a test to see results</p>
           </div>
 
@@ -244,7 +246,7 @@
         <mat-card-content>
           <!-- Empty history -->
           <div *ngIf="testHistory().length === 0" class="empty-state small">
-            <mat-icon class="empty-icon">history</mat-icon>
+            <lucide-icon class="empty-icon" name="history"></lucide-icon>
             <p>Your test history will appear here</p>
           </div>
 
@@ -267,11 +269,11 @@
               "
             >
               <div class="entry-status">
-                <mat-icon
+                <lucide-icon
                   [class]="getStatusClass(entry)"
-                  [fontIcon]="getStatusIcon(entry)"
+                  [name]="getStatusIcon(entry)"
                   aria-hidden="true"
-                ></mat-icon>
+                ></lucide-icon>
               </div>
               <div class="entry-details">
                 <span class="entry-tool">{{ entry.tool_display_name }}</span>

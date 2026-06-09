@@ -9,11 +9,11 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subject } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ThreatEvent,
   ThreatSeverity,
@@ -25,9 +25,9 @@ import {
   selector: 'app-threat-feed-widget',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatChipsModule,
     MatButtonModule,
     MatProgressSpinnerModule,
@@ -43,7 +43,7 @@ import {
 
       <!-- Error State -->
       <div *ngIf="hasError" class="error-container">
-        <mat-icon color="warn">error</mat-icon>
+        <lucide-icon color="warn" name="circle-alert"></lucide-icon>
         <p>Failed to load threat events</p>
         <button mat-button (click)="refresh()">Retry</button>
       </div>
@@ -80,9 +80,10 @@ import {
           >
             <div class="threat-header">
               <div class="threat-title">
-                <mat-icon [class]="'severity-' + event.severity">
-                  {{ getSeverityIcon(event.severity) }}
-                </mat-icon>
+                <lucide-icon
+                  [class]="'severity-' + event.severity"
+                  [name]="getSeverityIcon(event.severity)"
+                ></lucide-icon>
                 <span class="title">{{ event.title }}</span>
               </div>
               <div class="threat-meta">
@@ -106,13 +107,14 @@ import {
 
             <div class="threat-footer">
               <div class="threat-source">
-                <mat-icon>source</mat-icon>
+                <lucide-icon name="folder-code"></lucide-icon>
                 <span>{{ event.source }}</span>
               </div>
               <div class="threat-status">
-                <mat-icon [class]="'status-' + event.status">
-                  {{ getStatusIcon(event.status) }}
-                </mat-icon>
+                <lucide-icon
+                  [class]="'status-' + event.status"
+                  [name]="getStatusIcon(event.status)"
+                ></lucide-icon>
                 <span>{{ formatStatus(event.status) }}</span>
               </div>
             </div>
@@ -122,14 +124,14 @@ import {
         <!-- Load More Button -->
         <div class="load-more" *ngIf="hasMoreThreats">
           <button mat-button (click)="loadMore()">
-            <mat-icon>expand_more</mat-icon>
+            <lucide-icon name="chevron-down"></lucide-icon>
             Load More
           </button>
         </div>
 
         <!-- Empty State -->
         <div *ngIf="threatEvents.length === 0" class="empty-state">
-          <mat-icon>security</mat-icon>
+          <lucide-icon name="shield"></lucide-icon>
           <p>No threat events detected</p>
           <small>All systems are secure</small>
         </div>
@@ -543,13 +545,13 @@ export class ThreatFeedWidgetComponent implements OnInit, OnDestroy {
    */
   getSeverityIcon(severity: ThreatSeverity): string {
     const iconMap: Record<ThreatSeverity, string> = {
-      [ThreatSeverity.CRITICAL]: 'error',
-      [ThreatSeverity.HIGH]: 'warning',
+      [ThreatSeverity.CRITICAL]: 'circle-alert',
+      [ThreatSeverity.HIGH]: 'triangle-alert',
       [ThreatSeverity.MEDIUM]: 'info',
-      [ThreatSeverity.LOW]: 'check_circle',
+      [ThreatSeverity.LOW]: 'circle-check',
     };
 
-    return iconMap[severity] || 'help';
+    return iconMap[severity] || 'circle-help';
   }
 
   /**
@@ -557,14 +559,14 @@ export class ThreatFeedWidgetComponent implements OnInit, OnDestroy {
    */
   getStatusIcon(status: ThreatStatus): string {
     const iconMap: Record<ThreatStatus, string> = {
-      [ThreatStatus.NEW]: 'fiber_new',
+      [ThreatStatus.NEW]: 'star',
       [ThreatStatus.INVESTIGATING]: 'search',
-      [ThreatStatus.RESOLVED]: 'check_circle',
-      [ThreatStatus.FALSE_POSITIVE]: 'cancel',
-      [ThreatStatus.ESCALATED]: 'trending_up',
+      [ThreatStatus.RESOLVED]: 'circle-check',
+      [ThreatStatus.FALSE_POSITIVE]: 'circle-x',
+      [ThreatStatus.ESCALATED]: 'trending-up',
     };
 
-    return iconMap[status] || 'help';
+    return iconMap[status] || 'circle-help';
   }
 
   /**

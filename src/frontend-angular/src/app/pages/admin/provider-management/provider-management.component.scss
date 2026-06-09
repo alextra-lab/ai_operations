@@ -49,7 +49,7 @@
 }
 
 .create-button {
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     margin-right: 0.5rem;
   }
 }
@@ -176,7 +176,7 @@
 }
 
 .status-disabled {
-  background-color: #e0e0e0 !important;
+  background-color: var(--border) !important;
   color: #616161 !important;
 }
 

@@ -194,9 +194,7 @@ describe('ToolRegistrationWizardComponent', () => {
       await fixture.whenStable();
 
       expect(component.validationErrors).toHaveProperty('tool_id');
-      expect(component.validationErrors['tool_id']).toEqual([
-        'Invalid format',
-      ]);
+      expect(component.validationErrors['tool_id']).toEqual(['Invalid format']);
       expect(component.stepper.next).not.toHaveBeenCalled();
     });
 
@@ -272,7 +270,7 @@ describe('ToolRegistrationWizardComponent', () => {
       expect(callArgs.data.mcp_command).toBeDefined();
       expect(
         Array.isArray(callArgs.data.mcp_command) ||
-        typeof callArgs.data.mcp_command === 'string'
+          typeof callArgs.data.mcp_command === 'string'
       ).toBe(true);
     });
   });

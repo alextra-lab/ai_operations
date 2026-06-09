@@ -14,10 +14,10 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { TestExecutionResult } from '../../../../../api/services/tool-testing.service';
 import {
   formatDuration,
@@ -28,9 +28,9 @@ import {
   selector: 'app-test-result-viewer',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
-    MatIconModule,
     MatSnackBarModule,
     MatTooltipModule,
   ],
@@ -56,7 +56,7 @@ export class TestResultViewerComponent {
    * Get status icon
    */
   get statusIcon(): string {
-    return this.result.success ? 'check_circle' : 'error';
+    return this.result.success ? 'circle-check' : 'circle-alert';
   }
 
   /**

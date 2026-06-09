@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -18,6 +17,7 @@ import {
   ChunkingStrategy,
   StrategyBenchmarkResult,
 } from '../../api/models/preflight.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * Strategy Comparison Component
@@ -31,10 +31,10 @@ import {
   selector: 'app-strategy-comparison',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatTableModule,
     MatButtonModule,
-    MatIconModule,
     MatTooltipModule,
     MatChipsModule,
     MatSortModule,
@@ -49,7 +49,7 @@ import {
           (click)="onClose()"
           aria-label="Close comparison"
         >
-          <mat-icon>close</mat-icon>
+          <lucide-icon name="x"></lucide-icon>
         </button>
       </div>
 
@@ -87,12 +87,9 @@ import {
           <ng-container matColumnDef="score">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Score
-              <mat-icon
+              <lucide-icon
                 class="text-sm ml-1 align-middle"
-                matTooltip="Overall quality score (0-100%)"
-              >
-                info
-              </mat-icon>
+                matTooltip="Overall quality score (0-100%)" name="info"></lucide-icon>
             </th>
             <td mat-cell *matCellDef="let result">
               <span [class]="getScoreClass(result.score)">
@@ -119,12 +116,9 @@ import {
           <ng-container matColumnDef="std_chunk_size">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Std Dev
-              <mat-icon
+              <lucide-icon
                 class="text-sm ml-1 align-middle"
-                matTooltip="Lower is more consistent"
-              >
-                info
-              </mat-icon>
+                matTooltip="Lower is more consistent" name="info"></lucide-icon>
             </th>
             <td mat-cell *matCellDef="let result">
               {{ result.std_chunk_size.toFixed(0) }}
@@ -143,12 +137,9 @@ import {
           <ng-container matColumnDef="hit_at_k">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Hit&#64;K
-              <mat-icon
+              <lucide-icon
                 class="text-sm ml-1 align-middle"
-                matTooltip="Retrieval accuracy metric"
-              >
-                info
-              </mat-icon>
+                matTooltip="Retrieval accuracy metric" name="info"></lucide-icon>
             </th>
             <td mat-cell *matCellDef="let result">
               <span *ngIf="result.hit_at_k !== undefined">
@@ -164,12 +155,9 @@ import {
           <ng-container matColumnDef="mrr">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               MRR
-              <mat-icon
+              <lucide-icon
                 class="text-sm ml-1 align-middle"
-                matTooltip="Mean Reciprocal Rank"
-              >
-                info
-              </mat-icon>
+                matTooltip="Mean Reciprocal Rank" name="info"></lucide-icon>
             </th>
             <td mat-cell *matCellDef="let result">
               <span *ngIf="result.mrr !== undefined">
@@ -185,12 +173,9 @@ import {
           <ng-container matColumnDef="ndcg">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               nDCG
-              <mat-icon
+              <lucide-icon
                 class="text-sm ml-1 align-middle"
-                matTooltip="Normalized Discounted Cumulative Gain"
-              >
-                info
-              </mat-icon>
+                matTooltip="Normalized Discounted Cumulative Gain" name="info"></lucide-icon>
             </th>
             <td mat-cell *matCellDef="let result">
               <span *ngIf="result.ndcg !== undefined">
@@ -214,7 +199,7 @@ import {
                 "
                 matTooltip="Select this strategy"
               >
-                <mat-icon>check_circle</mat-icon>
+                <lucide-icon name="circle-check"></lucide-icon>
               </button>
             </td>
           </ng-container>
@@ -229,7 +214,7 @@ import {
       </div>
 
       <div class="mt-4 text-sm text-gray-600" *ngIf="hasRetrievalMetrics">
-        <mat-icon class="text-sm align-middle mr-1">info</mat-icon>
+        <lucide-icon class="text-sm align-middle mr-1" name="info"></lucide-icon>
         Retrieval metrics are available for this analysis
       </div>
     </div>

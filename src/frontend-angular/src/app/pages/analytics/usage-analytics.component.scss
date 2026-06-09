@@ -18,7 +18,7 @@
     font-size: 28px;
     font-weight: 500;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 32px;
       width: 32px;
       height: 32px;
@@ -54,7 +54,7 @@
   padding: 32px;
   text-align: center;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 48px;
     width: 48px;
     height: 48px;
@@ -87,7 +87,7 @@
     align-items: center;
     justify-content: center;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -136,7 +136,7 @@
     height: 300px;
     color: #999;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 48px;
       width: 48px;
       height: 48px;
@@ -164,7 +164,7 @@
       gap: 8px;
       font-weight: 500;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 20px;
         width: 20px;
         height: 20px;
@@ -197,7 +197,7 @@
     padding: 40px;
     color: #999;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 48px;
       width: 48px;
       height: 48px;

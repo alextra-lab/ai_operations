@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LucideAngularModule } from 'lucide-angular';
 import {
   SecurityAlert,
   ThreatSeverity,
@@ -14,9 +14,9 @@ import {
   selector: 'app-security-alerts-widget',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatChipsModule,
     MatProgressSpinnerModule,
   ],
@@ -24,7 +24,7 @@ import {
     <div class="security-alerts-widget">
       <div class="header">
         <div class="title">
-          <mat-icon aria-hidden="true">warning</mat-icon>
+          <lucide-icon aria-hidden="true" name="triangle-alert"></lucide-icon>
           <div>
             <p>Security Alerts</p>
             <small>{{ alerts.length }} active</small>
@@ -46,9 +46,10 @@ import {
           *ngFor="let alert of alerts; trackBy: trackByAlert"
         >
           <div class="alert-main">
-            <mat-icon [class]="'sev-' + alert.severity">
-              {{ severityIcon(alert.severity) }}
-            </mat-icon>
+            <lucide-icon
+              [class]="'sev-' + alert.severity"
+              [name]="severityIcon(alert.severity)"
+            ></lucide-icon>
             <div class="details">
               <div class="top-line">
                 <span class="title-text">{{ alert.title }}</span>
@@ -68,7 +69,7 @@ import {
 
       <ng-template #emptyState>
         <div class="empty-state">
-          <mat-icon aria-hidden="true">shield</mat-icon>
+          <lucide-icon aria-hidden="true" name="shield"></lucide-icon>
           <p>No alerts</p>
           <small>System will surface alerts here</small>
         </div>
@@ -245,10 +246,10 @@ export class SecurityAlertsWidgetComponent {
 
   severityIcon(severity: ThreatSeverity): string {
     const map: Record<ThreatSeverity, string> = {
-      critical: 'error',
-      high: 'warning',
+      critical: 'circle-alert',
+      high: 'triangle-alert',
       medium: 'info',
-      low: 'check_circle',
+      low: 'circle-check',
     };
     return map[severity] || 'shield';
   }

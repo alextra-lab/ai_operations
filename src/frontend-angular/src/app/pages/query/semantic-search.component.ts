@@ -29,6 +29,7 @@ import {
   takeUntil,
 } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   ExecutionMetrics,
   getDefaultQueryConfig,
@@ -63,6 +64,7 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
   selector: 'app-semantic-search',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -86,11 +88,9 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
   template: `
     <!-- Layer 2: Page Container - Tailwind utilities -->
     <div
-      class="flex flex-col overflow-hidden
+      class="flex flex-col
                     -my-4 -mr-4 -mb-4
                     md:-my-6 md:-mr-8 md:-mb-6
-                    h-[calc(100vh-150px)]
-                    md:h-[calc(100vh-200px)]
                     page-container"
     >
       <!-- Layer 2: Configuration Header -->
@@ -98,23 +98,9 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
         class="flex-none z-[100] bg-white border-b border-gray-200
                         page-header-section"
       >
-        <!-- Page Title -->
-        <div class="px-4 pt-4 pb-3 md:px-6 md:pt-6 md:pb-4">
-          <h1
-            class="m-0 text-[28px] md:text-[28px] font-medium
-                               flex items-center gap-3"
-          >
-            <mat-icon class="text-blue-600">search</mat-icon>
-            Semantic Search
-          </h1>
-          <p class="m-0 mt-2 text-gray-600 text-sm">
-            Test vector retrieval and chunking strategies
-          </p>
-        </div>
-
-        <!-- Query input + config panel -->
-        <div class="px-4 pb-4 md:px-6 md:pb-4">
-          <div class="bg-gray-100 rounded-lg shadow-md p-5">
+        <!-- Query input + config panel (tab name already labels the panel) -->
+        <div class="px-4 pt-4 pb-4 md:px-6 md:pt-6 md:pb-4">
+          <div class="config-card">
             <mat-form-field appearance="outline" class="search-input-field">
               <mat-label>Enter your search query</mat-label>
               <textarea
@@ -144,11 +130,10 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
         </div>
       </div>
 
-      <!-- Layer 3: Results -->
+      <!-- Layer 3: Results (only rendered once there is something to show) -->
       <div
-        class="flex-1 overflow-y-auto overflow-x-hidden
-                        px-4 py-4 md:px-6 md:py-6
-                        min-h-0 bg-gray-50
+        *ngIf="messages.length > 0 || isSearching || errorMessage"
+        class="px-4 py-4 md:px-6 md:py-6
                         content-area"
       >
         <app-query-results-panel
@@ -164,7 +149,7 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
         <mat-card *ngIf="errorMessage" class="error-card">
           <mat-card-content>
             <div class="error-content">
-              <mat-icon color="warn">error</mat-icon>
+              <lucide-icon color="warn" name="circle-alert"></lucide-icon>
               <h3>Search Error</h3>
               <p>{{ errorMessage }}</p>
               <button mat-button (click)="clearError()">Dismiss</button>
@@ -186,26 +171,32 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
             (click)="onSearch()"
             [disabled]="!canSearch || isSearching"
           >
-            <mat-icon>search</mat-icon>
+            <lucide-icon name="search"></lucide-icon>
             {{ isSearching ? 'Searching...' : 'Search' }}
           </button>
           <button mat-button (click)="reset()">
-            <mat-icon>refresh</mat-icon>
+            <lucide-icon name="refresh-cw"></lucide-icon>
             Reset
           </button>
           <button mat-button (click)="exportConfiguration()">
-            <mat-icon>download</mat-icon>
+            <lucide-icon name="download"></lucide-icon>
             Export Config
           </button>
         </div>
 
         <div class="flex gap-4 mb-3 text-gray-600 text-sm status-info">
           <span *ngIf="lastSearchTimeMs" class="flex items-center gap-1">
-            <mat-icon class="!text-base !w-4 !h-4">schedule</mat-icon>
+            <lucide-icon
+              class="!text-base !w-4 !h-4"
+              name="clock"
+            ></lucide-icon>
             {{ lastSearchTimeMs }}ms
           </span>
           <span *ngIf="resultCount !== null" class="flex items-center gap-1">
-            <mat-icon class="!text-base !w-4 !h-4">description</mat-icon>
+            <lucide-icon
+              class="!text-base !w-4 !h-4"
+              name="file-text"
+            ></lucide-icon>
             {{ resultCount }} results
           </span>
         </div>
@@ -225,7 +216,7 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
             [disabled]="!selectedUseCaseId"
             class="flex-none"
           >
-            <mat-icon>playlist_add</mat-icon>
+            <lucide-icon name="list-plus"></lucide-icon>
             Apply
           </button>
         </div>
@@ -267,6 +258,22 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
       // Form field sizing (Material component override)
       .search-input-field {
         width: 100%;
+      }
+
+      // Tokenized config card (replaces raw bg-gray-100 / shadow-md / p-5)
+      .config-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md, 10px);
+        box-shadow: var(--shadow-1);
+        padding: 16px;
+      }
+
+      // Results canvas on the slate surface (replaces bg-gray-50). The parent
+      // query-tools page-container handles scrolling, so this just fills.
+      .content-area {
+        flex: 1 0 auto;
+        background: var(--surface-3);
       }
 
       // Error card styling (complex border-left pattern)
@@ -550,15 +557,15 @@ export class SemanticSearchComponent implements OnInit, OnDestroy {
   getResultTypeIcon(sourceType: string): string {
     switch (sourceType) {
       case 'DOCUMENT':
-        return 'description';
+        return 'file-text';
       case 'CHUNK':
-        return 'text_snippet';
+        return 'file-text';
       case 'METADATA':
         return 'info';
       case 'SUMMARY':
-        return 'summarize';
+        return 'file-text';
       default:
-        return 'description';
+        return 'file-text';
     }
   }
 

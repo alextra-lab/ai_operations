@@ -1,7 +1,7 @@
 <mat-expansion-panel [(expanded)]="isExpanded" class="config-panel">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <mat-icon aria-hidden="true">tune</mat-icon>
+      <lucide-icon aria-hidden="true" name="sliders-horizontal"></lucide-icon>
       Configuration
     </mat-panel-title>
     <mat-panel-description>
@@ -15,133 +15,136 @@
     role="form"
     aria-label="Query configuration"
   >
-    <!-- LLM Model Selection (RAG mode only) -->
-    <div class="form-section" *ngIf="mode !== 'semantic'">
-      <h4 id="model-section">LLM Model Selection</h4>
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Language Model</mat-label>
-        <mat-select
-          formControlName="llm_model"
-          aria-labelledby="model-section"
-          [attr.aria-required]="true"
-        >
-          <mat-option
-            *ngFor="let model of models$ | async"
-            [value]="model.model_id"
+    <!-- LLM Model Selection + Sampling Configuration, side by side (RAG only) -->
+    <div class="form-section-row" *ngIf="mode !== 'semantic'">
+      <!-- LLM Model Selection -->
+      <div class="form-section">
+        <h4 id="model-section">LLM Model Selection</h4>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Language Model</mat-label>
+          <mat-select
+            formControlName="llm_model"
+            aria-labelledby="model-section"
+            [attr.aria-required]="true"
           >
-            {{ model.name }} ({{ model.provider }})
-          </mat-option>
-        </mat-select>
-        <mat-hint>Select the language model for answer generation</mat-hint>
-      </mat-form-field>
-    </div>
+            <mat-option
+              *ngFor="let model of models$ | async"
+              [value]="model.model_id"
+            >
+              {{ model.name }} ({{ model.provider }})
+            </mat-option>
+          </mat-select>
+          <mat-hint>Select the language model for answer generation</mat-hint>
+        </mat-form-field>
+      </div>
 
-    <!-- Sampling Configuration -->
-    <div class="form-section" *ngIf="mode !== 'semantic'">
-      <h4 id="sampling-section">Sampling Configuration</h4>
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Sampling Preset</mat-label>
-        <mat-select
-          formControlName="sampling_preset"
-          aria-labelledby="sampling-section"
-          [attr.aria-required]="true"
-        >
-          <mat-option [value]="samplingPresets.STRICT">
-            <strong>Strict</strong> - High consistency (temp: 0.15)
-          </mat-option>
-          <mat-option [value]="samplingPresets.BALANCED">
-            <strong>Balanced</strong> - General purpose (temp: 0.65)
-          </mat-option>
-          <mat-option [value]="samplingPresets.CREATIVE">
-            <strong>Creative</strong> - High variance (temp: 0.85)
-          </mat-option>
-          <mat-option [value]="samplingPresets.CUSTOM">
-            <strong>Custom</strong> - Manual parameters
-          </mat-option>
-        </mat-select>
-        <mat-hint>ADR-023 sampling presets</mat-hint>
-      </mat-form-field>
+      <!-- Sampling Configuration -->
+      <div class="form-section">
+        <h4 id="sampling-section">Sampling Configuration</h4>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Sampling Preset</mat-label>
+          <mat-select
+            formControlName="sampling_preset"
+            aria-labelledby="sampling-section"
+            [attr.aria-required]="true"
+          >
+            <mat-option [value]="samplingPresets.STRICT">
+              <strong>Strict</strong> - High consistency (temp: 0.15)
+            </mat-option>
+            <mat-option [value]="samplingPresets.BALANCED">
+              <strong>Balanced</strong> - General purpose (temp: 0.65)
+            </mat-option>
+            <mat-option [value]="samplingPresets.CREATIVE">
+              <strong>Creative</strong> - High variance (temp: 0.85)
+            </mat-option>
+            <mat-option [value]="samplingPresets.CUSTOM">
+              <strong>Custom</strong> - Manual parameters
+            </mat-option>
+          </mat-select>
+          <mat-hint>ADR-023 sampling presets</mat-hint>
+        </mat-form-field>
 
-      <!-- Custom parameters (only if preset = CUSTOM) -->
-      <div *ngIf="isCustomPreset" class="custom-params">
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="flex-1">
-            <mat-label>Temperature</mat-label>
-            <input
-              matInput
-              type="number"
-              formControlName="temperature"
-              min="0"
-              max="2"
-              step="0.05"
-              aria-label="Temperature"
-              [attr.aria-describedby]="'temp-hint'"
-            />
-            <mat-hint id="temp-hint">
-              0.0 = consistent, 2.0 = creative
-            </mat-hint>
-            <mat-error *ngIf="configForm.get('temperature')?.hasError('min')">
-              Minimum value is 0
-            </mat-error>
-            <mat-error *ngIf="configForm.get('temperature')?.hasError('max')">
-              Maximum value is 2
-            </mat-error>
-          </mat-form-field>
+        <!-- Custom parameters (only if preset = CUSTOM) -->
+        <div *ngIf="isCustomPreset" class="custom-params">
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Temperature</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="temperature"
+                min="0"
+                max="2"
+                step="0.05"
+                aria-label="Temperature"
+                [attr.aria-describedby]="'temp-hint'"
+              />
+              <mat-hint id="temp-hint">
+                0.0 = consistent, 2.0 = creative
+              </mat-hint>
+              <mat-error *ngIf="configForm.get('temperature')?.hasError('min')">
+                Minimum value is 0
+              </mat-error>
+              <mat-error *ngIf="configForm.get('temperature')?.hasError('max')">
+                Maximum value is 2
+              </mat-error>
+            </mat-form-field>
 
-          <mat-form-field appearance="outline" class="flex-1">
-            <mat-label>Top-P</mat-label>
-            <input
-              matInput
-              type="number"
-              formControlName="top_p"
-              min="0"
-              max="1"
-              step="0.05"
-              aria-label="Top-P nucleus sampling"
-              [attr.aria-describedby]="'topp-hint'"
-            />
-            <mat-hint id="topp-hint"> Nucleus sampling threshold </mat-hint>
-            <mat-error *ngIf="configForm.get('top_p')?.hasError('min')">
-              Minimum value is 0
-            </mat-error>
-            <mat-error *ngIf="configForm.get('top_p')?.hasError('max')">
-              Maximum value is 1
-            </mat-error>
-          </mat-form-field>
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Top-P</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="top_p"
+                min="0"
+                max="1"
+                step="0.05"
+                aria-label="Top-P nucleus sampling"
+                [attr.aria-describedby]="'topp-hint'"
+              />
+              <mat-hint id="topp-hint"> Nucleus sampling threshold </mat-hint>
+              <mat-error *ngIf="configForm.get('top_p')?.hasError('min')">
+                Minimum value is 0
+              </mat-error>
+              <mat-error *ngIf="configForm.get('top_p')?.hasError('max')">
+                Maximum value is 1
+              </mat-error>
+            </mat-form-field>
 
-          <mat-form-field appearance="outline" class="flex-1">
-            <mat-label>Max Tokens</mat-label>
-            <input
-              matInput
-              type="number"
-              formControlName="max_tokens"
-              min="1"
-              max="16384"
-              step="128"
-              aria-label="Maximum output tokens"
-              [attr.aria-describedby]="'maxtokens-hint'"
-            />
-            <mat-hint id="maxtokens-hint"> Maximum output length </mat-hint>
-            <mat-error *ngIf="configForm.get('max_tokens')?.hasError('min')">
-              Minimum value is 1
-            </mat-error>
-            <mat-error *ngIf="configForm.get('max_tokens')?.hasError('max')">
-              Maximum value is 16384
-            </mat-error>
-          </mat-form-field>
-        </div>
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Max Tokens</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="max_tokens"
+                min="1"
+                max="16384"
+                step="128"
+                aria-label="Maximum output tokens"
+                [attr.aria-describedby]="'maxtokens-hint'"
+              />
+              <mat-hint id="maxtokens-hint"> Maximum output length </mat-hint>
+              <mat-error *ngIf="configForm.get('max_tokens')?.hasError('min')">
+                Minimum value is 1
+              </mat-error>
+              <mat-error *ngIf="configForm.get('max_tokens')?.hasError('max')">
+                Maximum value is 16384
+              </mat-error>
+            </mat-form-field>
+          </div>
 
-        <!-- High-entropy warning -->
-        <div
-          *ngIf="showHighEntropyWarning"
-          class="warning-banner"
-          role="alert"
-          aria-live="polite"
-        >
-          <mat-icon>warning</mat-icon>
-          <span>
-            High-entropy configuration may cause inconsistent outputs
-          </span>
+          <!-- High-entropy warning -->
+          <div
+            *ngIf="showHighEntropyWarning"
+            class="warning-banner"
+            role="alert"
+            aria-live="polite"
+          >
+            <lucide-icon name="triangle-alert"></lucide-icon>
+            <span>
+              High-entropy configuration may cause inconsistent outputs
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -150,7 +153,7 @@
     <div class="form-section">
       <h4 id="retrieval-section">Retrieval Configuration</h4>
       <p class="section-note" *ngIf="mode === 'semantic'">
-        <mat-icon>info</mat-icon>
+        <lucide-icon name="info"></lucide-icon>
         Embedding model is system-determined from selected collection(s)
       </p>
 
@@ -260,7 +263,7 @@
         (click)="resetToDefaults()"
         aria-label="Reset to default values"
       >
-        <mat-icon>restart_alt</mat-icon>
+        <lucide-icon name="rotate-ccw"></lucide-icon>
         Reset
       </button>
       <button
@@ -271,7 +274,7 @@
         [disabled]="!configForm.valid"
         aria-label="Execute query with current configuration"
       >
-        <mat-icon>play_arrow</mat-icon>
+        <lucide-icon name="play"></lucide-icon>
         Execute
       </button>
     </div>

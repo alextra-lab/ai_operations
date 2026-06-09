@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -16,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { finalize, take } from 'rxjs/operators';
 
 import { ExportService } from '../../services/export.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * Export Toolbar Component
@@ -34,10 +34,10 @@ import { ExportService } from '../../services/export.service';
   selector: 'app-export-toolbar',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
     MatDividerModule,
-    MatIconModule,
     MatMenuModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
@@ -54,7 +54,7 @@ import { ExportService } from '../../services/export.service';
         matTooltip="Export conversation"
         aria-label="Export conversation menu"
       >
-        <mat-icon>download</mat-icon>
+        <lucide-icon name="download"></lucide-icon>
       </button>
 
       <mat-menu #exportMenu="matMenu">
@@ -64,7 +64,7 @@ import { ExportService } from '../../services/export.service';
           (click)="copyMarkdown()"
           aria-label="Copy conversation as markdown"
         >
-          <mat-icon>content_copy</mat-icon>
+          <lucide-icon name="copy"></lucide-icon>
           <span>Copy as Markdown</span>
         </button>
 
@@ -74,7 +74,7 @@ import { ExportService } from '../../services/export.service';
           (click)="downloadMarkdown()"
           aria-label="Download conversation as markdown file"
         >
-          <mat-icon>download</mat-icon>
+          <lucide-icon name="download"></lucide-icon>
           <span>Download Markdown</span>
         </button>
 
@@ -84,7 +84,7 @@ import { ExportService } from '../../services/export.service';
           (click)="downloadJson()"
           aria-label="Download conversation as JSON file"
         >
-          <mat-icon>data_object</mat-icon>
+          <lucide-icon name="braces"></lucide-icon>
           <span>Download JSON</span>
         </button>
 
@@ -96,7 +96,7 @@ import { ExportService } from '../../services/export.service';
           [matMenuTriggerFor]="summaryMenu"
           aria-label="Generate summary submenu"
         >
-          <mat-icon>summarize</mat-icon>
+          <lucide-icon name="file-text"></lucide-icon>
           <span>Generate Summary</span>
         </button>
       </mat-menu>
@@ -108,7 +108,7 @@ import { ExportService } from '../../services/export.service';
           (click)="generateSummary('executive')"
           aria-label="Generate executive summary"
         >
-          <mat-icon>business</mat-icon>
+          <lucide-icon name="building-2"></lucide-icon>
           <span>Executive Summary</span>
         </button>
         <button
@@ -116,7 +116,7 @@ import { ExportService } from '../../services/export.service';
           (click)="generateSummary('technical')"
           aria-label="Generate technical summary"
         >
-          <mat-icon>engineering</mat-icon>
+          <lucide-icon name="hard-hat"></lucide-icon>
           <span>Technical Summary</span>
         </button>
         <button
@@ -124,7 +124,7 @@ import { ExportService } from '../../services/export.service';
           (click)="generateSummary('brief')"
           aria-label="Generate brief summary"
         >
-          <mat-icon>notes</mat-icon>
+          <lucide-icon name="sticky-note"></lucide-icon>
           <span>Brief Summary</span>
         </button>
       </mat-menu>

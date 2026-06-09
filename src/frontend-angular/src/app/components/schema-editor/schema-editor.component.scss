@@ -77,7 +77,7 @@
   font-size: 0.875rem;
   margin-bottom: 0.75rem;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 18px;
     width: 18px;
     height: 18px;

@@ -1,32 +1,42 @@
 // ============================================================================
-// Breadcrumb - Compact Design (SCSS for button states only)
-// Tailwind handles: layout, typography, responsive
-// SCSS handles: button hover/focus states only
+// Breadcrumb - Compact Design, on-dark (ink toolbar) colors
+// Tailwind handles: layout, responsive
+// SCSS handles: on-dark color overrides + button states
+// (The template's text-on-surface* utilities resolve to dark slate text,
+//  which is unreadable on the ink toolbar — overridden here.)
 // ============================================================================
 
 .breadcrumb-content {
-  // Ensure proper font size (16px body-large)
-  font-size: 16px;
+  font-size: 13.5px;
   line-height: 24px;
+  color: rgba(255, 255, 255, 0.62);
 
   .current-page {
-    font-size: 16px;
+    font-size: 13.5px;
     line-height: 24px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  :is(mat-icon, lucide-icon) {
+    color: rgba(255, 255, 255, 0.4);
   }
 }
 
 .breadcrumb-button {
-  border-radius: 4px;
+  border-radius: var(--radius-xs, 5px);
   transition: background-color 0.2s ease;
-  font-size: 16px;
+  font-size: 13.5px;
   line-height: 24px;
+  color: rgba(255, 255, 255, 0.62);
 
   &:hover:not(.disabled) {
-    background-color: var(--mat-sys-surface-container-high);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
   }
 
   &:focus {
-    outline: 2px solid var(--mat-sys-primary);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
 

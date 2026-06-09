@@ -1,7 +1,15 @@
 <div class="login-container" role="main">
   <mat-card class="login-card" appearance="outlined">
+    <div class="login-brand">
+      <div class="brand-mark">
+        <!-- Material security shield kept as the brand mark (design-system exception) -->
+        <mat-icon class="logo-icon" aria-hidden="true">security</mat-icon>
+      </div>
+      <span class="brand-wordmark">AI Operations Platform</span>
+    </div>
+
     <mat-card-header>
-      <mat-card-title>Sign in to AI Operations Platform</mat-card-title>
+      <mat-card-title>Sign in</mat-card-title>
       <mat-card-subtitle>
         Enter your credentials to access the AIO console.
       </mat-card-subtitle>
@@ -14,7 +22,7 @@
           class="session-expired-warning flex items-center gap-3 p-4 mb-4 bg-error-container text-on-error-container rounded-md"
           role="alert"
         >
-          <mat-icon aria-hidden="true">info</mat-icon>
+          <lucide-icon aria-hidden="true" name="info"></lucide-icon>
           <span>{{ sessionExpiredMessage() }}</span>
         </div>
       }
@@ -54,7 +62,7 @@
 
         @if (errorMessage()) {
           <div class="error-message" id="login-error">
-            <mat-icon aria-hidden="true" fontIcon="warning"></mat-icon>
+            <lucide-icon aria-hidden="true" name="triangle-alert"></lucide-icon>
             <span>{{ errorMessage() }}</span>
           </div>
         }

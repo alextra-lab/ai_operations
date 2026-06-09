@@ -4,7 +4,7 @@
   <div class="page-header-section">
     <div class="page-title">
       <h1>
-        <mat-icon>group</mat-icon>
+        <lucide-icon name="users"></lucide-icon>
         User Management
       </h1>
       <p class="subtitle">
@@ -19,7 +19,7 @@
         (click)="openCreateDialog()"
         aria-label="Create new user"
       >
-        <mat-icon>add</mat-icon>
+        <lucide-icon name="plus"></lucide-icon>
         Create User
       </button>
     </div>
@@ -169,7 +169,7 @@
               (click)="openEditDialog(user)"
               [attr.aria-label]="'Edit user ' + user.username"
             >
-              <mat-icon>edit</mat-icon>
+              <lucide-icon name="pencil"></lucide-icon>
             </button>
             <button
               mat-icon-button
@@ -177,7 +177,7 @@
               (click)="openPasswordResetDialog(user)"
               [attr.aria-label]="'Reset password for ' + user.username"
             >
-              <mat-icon>lock_reset</mat-icon>
+              <lucide-icon name="key-round"></lucide-icon>
             </button>
             <button
               mat-icon-button
@@ -186,7 +186,7 @@
               *ngIf="user.is_active"
               [attr.aria-label]="'Deactivate user ' + user.username"
             >
-              <mat-icon>block</mat-icon>
+              <lucide-icon name="ban"></lucide-icon>
             </button>
           </td>
         </ng-container>
@@ -198,7 +198,7 @@
 
     <!-- Empty State -->
     <div *ngIf="!isLoading && !error && users.length === 0" class="empty-state">
-      <mat-icon>group</mat-icon>
+      <lucide-icon name="users"></lucide-icon>
       <h2>No users found</h2>
       <p>Try adjusting your search or filter criteria.</p>
     </div>

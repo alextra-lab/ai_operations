@@ -20,7 +20,7 @@
     role="status"
     aria-live="polite"
   >
-    <mat-icon class="spinner">refresh</mat-icon>
+    <lucide-icon class="spinner" name="refresh-cw"></lucide-icon>
     <p>Loading assignments...</p>
   </div>
 
@@ -59,13 +59,12 @@
             [class.expired]="isExpired(assignment)"
           >
             {{ assignment.expires_at | date: 'short' }}
-            <mat-icon
+            <lucide-icon
               *ngIf="isExpired(assignment)"
               class="expired-icon"
               inline="true"
-            >
-              warning
-            </mat-icon>
+              name="triangle-alert"
+            ></lucide-icon>
           </span>
           <span *ngIf="!assignment.expires_at" class="permanent">
             Permanent
@@ -97,7 +96,7 @@
             *ngIf="assignment.is_active"
             [attr.aria-label]="'Revoke access to ' + assignment.use_case_name"
           >
-            <mat-icon>block</mat-icon>
+            <lucide-icon name="ban"></lucide-icon>
           </button>
         </td>
       </ng-container>
@@ -108,7 +107,7 @@
 
     <!-- Empty State -->
     <div *ngIf="assignments.length === 0" class="empty-state">
-      <mat-icon>assignment</mat-icon>
+      <lucide-icon name="clipboard-list"></lucide-icon>
       <h3>No Use Cases Assigned</h3>
       <p>This role has no use case assignments yet.</p>
     </div>

@@ -144,30 +144,6 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
           [autoScrollEnabled]="true"
         >
         </app-query-results-panel>
-
-        <!-- Empty State -->
-        <div
-          *ngIf="messages.length === 0 && !isAsking"
-          class="flex flex-col items-center justify-center
-                            text-center p-12 text-gray-500
-                            empty-state"
-        >
-          <lucide-icon
-            class="!text-[80px] !w-20 !h-20 mb-4 text-gray-400"
-            name="circle-help"
-          ></lucide-icon>
-          <h3 class="text-xl font-medium mb-2 text-gray-700">
-            Ready to Answer Questions
-          </h3>
-          <p class="mb-2">
-            Enter a question above and press "Ask Question" or hit Enter to get
-            started.
-          </p>
-          <p class="text-sm italic hint">
-            Tip: Use the parameter panel to tune RAG retrieval and LLM
-            generation settings.
-          </p>
-        </div>
       </div>
 
       <!-- Layer 4: Footer -->

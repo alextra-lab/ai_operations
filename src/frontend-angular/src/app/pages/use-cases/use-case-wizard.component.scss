@@ -90,7 +90,9 @@
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 
   .wizard-actions {
-    padding: 16px 24px;
+    // 8px vertical keeps the bar at ~56px (40px buttons + 16px) to match the
+    // mat-paginator footer height on My AI Operations / Pattern Library.
+    padding: 8px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;

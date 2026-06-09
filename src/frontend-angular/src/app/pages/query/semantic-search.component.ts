@@ -98,22 +98,8 @@ import { EnterToExecuteDirective } from '../../directives/enter-to-execute.direc
         class="flex-none z-[100] bg-white border-b border-gray-200
                         page-header-section"
       >
-        <!-- Page Title -->
-        <div class="px-4 pt-4 pb-3 md:px-6 md:pt-6 md:pb-4">
-          <h1
-            class="m-0 text-[28px] md:text-[28px] font-medium
-                               flex items-center gap-3"
-          >
-            <lucide-icon class="text-blue-600" name="search"></lucide-icon>
-            Semantic Search
-          </h1>
-          <p class="m-0 mt-2 text-gray-600 text-sm">
-            Test vector retrieval and chunking strategies
-          </p>
-        </div>
-
-        <!-- Query input + config panel -->
-        <div class="px-4 pb-4 md:px-6 md:pb-4">
+        <!-- Query input + config panel (tab name already labels the panel) -->
+        <div class="px-4 pt-4 pb-4 md:px-6 md:pt-6 md:pb-4">
           <div class="config-card">
             <mat-form-field appearance="outline" class="search-input-field">
               <mat-label>Enter your search query</mat-label>

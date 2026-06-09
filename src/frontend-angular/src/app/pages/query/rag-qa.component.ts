@@ -69,22 +69,8 @@ import { AutoScrollService } from '../../services/auto-scroll.service';
         class="flex-none z-[100] bg-white border-b border-gray-200
                         page-header-section"
       >
-        <!-- Page Title -->
-        <div class="px-4 pt-4 pb-3 md:px-6 md:pt-6 md:pb-4">
-          <h1
-            class="m-0 text-[28px] font-medium
-                               flex items-center gap-3"
-          >
-            <lucide-icon class="text-blue-600" name="circle-help"></lucide-icon>
-            RAG Q&A System
-          </h1>
-          <p class="m-0 mt-2 text-gray-600 text-sm">
-            Test full RAG pipeline with LLM generation and sampling controls
-          </p>
-        </div>
-
-        <!-- Question Input + Config Panel -->
-        <div class="px-4 pb-4 md:px-6 md:pb-4">
+        <!-- Question Input + Config Panel (tab name already labels the panel) -->
+        <div class="px-4 pt-4 pb-4 md:px-6 md:pt-6 md:pb-4">
           <div class="config-card">
             <!-- Question Input -->
             <div class="question-input-section">

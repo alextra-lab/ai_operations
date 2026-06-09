@@ -62,48 +62,48 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
           </h1>
           <p class="subtitle">Test, tune, and optimize query configurations</p>
         </div>
-
-        <!-- Material Tabs (part of Layer 2) -->
-        <mat-tab-group
-          [(selectedIndex)]="activeTab"
-          (selectedTabChange)="onTabChange($event)"
-          class="dev-tools-tabs"
-          animationDuration="300ms"
-        >
-          <!-- Tab 1: Semantic Search -->
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <lucide-icon class="tab-icon" name="search"></lucide-icon>
-              Semantic Search
-            </ng-template>
-            <ng-template matTabContent>
-              <app-semantic-search-tab></app-semantic-search-tab>
-            </ng-template>
-          </mat-tab>
-
-          <!-- Tab 2: RAG Q&A -->
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <lucide-icon class="tab-icon" name="circle-help"></lucide-icon>
-              RAG Q&A
-            </ng-template>
-            <ng-template matTabContent>
-              <app-rag-qa-tab></app-rag-qa-tab>
-            </ng-template>
-          </mat-tab>
-
-          <!-- Tab 3: Use Case Tester -->
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <lucide-icon class="tab-icon" name="hammer"></lucide-icon>
-              Use Case Tester
-            </ng-template>
-            <ng-template matTabContent>
-              <app-use-case-tester-tab></app-use-case-tester-tab>
-            </ng-template>
-          </mat-tab>
-        </mat-tab-group>
       </div>
+
+      <!-- Tabs fill the remaining space; each tab body scrolls internally -->
+      <mat-tab-group
+        [(selectedIndex)]="activeTab"
+        (selectedTabChange)="onTabChange($event)"
+        class="dev-tools-tabs"
+        animationDuration="300ms"
+      >
+        <!-- Tab 1: Semantic Search -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <lucide-icon class="tab-icon" name="search"></lucide-icon>
+            Semantic Search
+          </ng-template>
+          <ng-template matTabContent>
+            <app-semantic-search-tab></app-semantic-search-tab>
+          </ng-template>
+        </mat-tab>
+
+        <!-- Tab 2: RAG Q&A -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <lucide-icon class="tab-icon" name="circle-help"></lucide-icon>
+            RAG Q&A
+          </ng-template>
+          <ng-template matTabContent>
+            <app-rag-qa-tab></app-rag-qa-tab>
+          </ng-template>
+        </mat-tab>
+
+        <!-- Tab 3: Use Case Tester -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <lucide-icon class="tab-icon" name="hammer"></lucide-icon>
+            Use Case Tester
+          </ng-template>
+          <ng-template matTabContent>
+            <app-use-case-tester-tab></app-use-case-tester-tab>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
 
       <!-- Layer 4: Page Footer (NEVER SCROLLS) - Apply to Use Case -->
       <div class="page-footer">
@@ -151,12 +151,10 @@ import { UseCaseTesterTabComponent } from './tabs/use-case-tester-tab.component'
         height: calc(100vh - var(--chrome-h));
         margin: -24px -32px;
         padding: 0;
-        // Scroll the whole page (header + tabs + content) so tall tab content
-        // — e.g. an expanded config panel — is always reachable. The mat-tab
-        // flex chain doesn't reliably constrain tab-body-content for an inner
-        // scroll, so scroll at this level instead.
-        overflow-y: auto;
-        overflow-x: hidden;
+        // Fixed page; the tab group fills the remaining space and each tab
+        // body scrolls internally (the tab group is now a flex-1 sibling of
+        // the header, so the mat-tab flex chain constrains tab-body-content).
+        overflow: hidden;
         background: var(--surface-3);
       }
 

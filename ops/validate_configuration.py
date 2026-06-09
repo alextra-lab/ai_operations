@@ -22,7 +22,10 @@ try:
     from shared.config.version import CONFIG_SCHEMA_VERSION
 except ImportError as e:
     print(f"Error importing configuration modules: {e}")
-    print("Make sure you're running this from the project root directory")
+    print("Install the host ops dependencies in a virtualenv first:")
+    print("    python3.12 -m venv .venv && source .venv/bin/activate")
+    print("    pip install -r requirements-ops.txt")
+    print("Then run this script from the project root directory.")
     sys.exit(1)
 
 

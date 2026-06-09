@@ -89,6 +89,16 @@ Generate suitable values:
 python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
 
+Set up an isolated Python environment for the host ops scripts
+(`validate_configuration.py`, the test runner, etc.) so their dependencies stay off
+your system Python:
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-ops.txt
+```
+
 Validate the full config once edited:
 
 ```bash

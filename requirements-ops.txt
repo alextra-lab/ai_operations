@@ -1,0 +1,13 @@
+# Lightweight host dependencies for running the ops scripts
+# (e.g. `python ops/validate_configuration.py`) without the full ML stack.
+#
+# These are the only packages the host-side ops tooling imports directly via
+# `src/shared/config`. The complete per-service dependencies live in
+# requirements-all.txt and are installed inside the Docker images — you do NOT
+# need them just to set up and run the platform.
+#
+# For full host-side development (running the service test suites, etc.) install
+# requirements-all.txt instead — see "Developer setup" in README.md.
+
+pydantic>=2.12.5,<3.0.0
+pyyaml>=6.0.1

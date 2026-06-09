@@ -54,6 +54,50 @@ AI Operations Platform uses JWT-based authentication with role-based access cont
 
 [Detailed Authentication Documentation](authentication_patterns.md)
 
+### Request Middleware Pipeline (orchestrator-api)
+
+The orchestrator's FastAPI app (`src/orchestrator/app/main.py`, `create_app`) hardens every
+request through an ordered middleware stack — **order matters**. After CORS, middleware are
+registered in this order (each wraps the next):
+
+1. **`RequestIDLoggerMiddleware`** — generates or propagates a request ID for correlation
+   across all downstream middleware and logs.
+2. **`RequestLoggingMiddleware`** — structured request/response logging (verbosity via
+   `FRONTEND_VERBOSE_LOGGING`).
+3. **`rls_middleware`** — sets per-request Postgres row-level-security session variables
+   before any DB access (see [ADR-039 — RLS Security Model](../development/adrs/ADR-039-rls-security-model.md)).
+4. **`sanitize_request`** — request body sanitization / prompt-safety hooks.
+5. **`audit_middleware`** — persists an audit event per request (see below).
+6. **`security_headers_middleware`** — attaches security headers to the response.
+
+**Audit logging.** `audit_middleware` writes one row per request to the `audit_logs` table
+(model `AuditLog` in `src/orchestrator/app/db/models.py`). Each entry records `actor_user_id`
+and `actor_roles` (from the JWT), `action` (`"<METHOD> <path>"`), `resource_type`/`resource_id`,
+`request_id`, `client_ip`, `user_agent`, `success` (status `< 400`), and a `details` JSON blob
+(`status_code`, `query_params`, `duration_ms`). Persistence is **best-effort** — a DB failure is
+logged but never blocks the response, preserving availability. Audit rows are surfaced via the
+admin audit API/UI (`admin_audit_router`).
+
+**Security headers.** `security_headers_middleware` applies `DEFAULT_HEADERS`
+(`src/orchestrator/app/middleware/security_headers.py`) only when not already set by the
+response:
+
+| Header | Value |
+|---|---|
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains` |
+| `X-Content-Type-Options` | `nosniff` |
+| `X-Frame-Options` | `SAMEORIGIN` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` |
+| `X-XSS-Protection` | `1; mode=block` |
+| `Permissions-Policy` | `geolocation=(), microphone=(), camera=(), payment=(), usb=()` |
+| `Content-Security-Policy` | `default-src 'self'` + scoped `script-/style-/img-/font-/connect-/frame-src`, `object-src 'none'`, `base-uri`/`form-action`/`frame-ancestors 'self'`, `report-uri /api/security/csp-report` |
+
+> CSP allows `'unsafe-inline'`/`'unsafe-eval'` and `cdn.jsdelivr.net` for scripts/styles to
+> support the bundled Swagger UI; review with the security team before production ingress.
+
+Related: [ADR-048 — Secure Logging Redaction](../development/adrs/ADR-048-Secure-Logging-Redaction.md),
+[ADR-049 — Unified Authentication & Security](../development/adrs/ADR-049-Unified-Authentication-Security-Implementation.md).
+
 ### Observability (Logging, Tracing, Metrics)
 
 A comprehensive observability strategy combining structured logging, distributed tracing, and health monitoring.

@@ -4,17 +4,17 @@
   <!-- Status Header -->
   <div class="result-header">
     <div class="status-badge" [class]="statusClass">
-      <mat-icon [fontIcon]="statusIcon" aria-hidden="true"></mat-icon>
+      <lucide-icon [name]="statusIcon" aria-hidden="true"></lucide-icon>
       <span class="status-text">{{ statusText }}</span>
     </div>
 
     <div class="result-meta">
       <span class="duration">
-        <mat-icon aria-hidden="true">timer</mat-icon>
+        <lucide-icon aria-hidden="true" name="timer"></lucide-icon>
         {{ formattedDuration }}
       </span>
       <span *ngIf="timestamp" class="timestamp">
-        <mat-icon aria-hidden="true">schedule</mat-icon>
+        <lucide-icon aria-hidden="true" name="clock"></lucide-icon>
         {{ timestamp }}
       </span>
     </div>
@@ -26,7 +26,7 @@
         (click)="copyResult()"
         aria-label="Copy result to clipboard"
       >
-        <mat-icon>content_copy</mat-icon>
+        <lucide-icon name="copy"></lucide-icon>
       </button>
       <button
         mat-icon-button
@@ -34,7 +34,7 @@
         (click)="copyFullResult()"
         aria-label="Copy full result object"
       >
-        <mat-icon>code</mat-icon>
+        <lucide-icon name="code"></lucide-icon>
       </button>
       <button
         mat-icon-button
@@ -43,9 +43,9 @@
         [attr.aria-expanded]="!isCollapsed()"
         aria-label="Toggle result details"
       >
-        <mat-icon>
-          {{ isCollapsed() ? 'expand_more' : 'expand_less' }}
-        </mat-icon>
+        <lucide-icon
+          [name]="isCollapsed() ? 'chevron-down' : 'chevron-up'"
+        ></lucide-icon>
       </button>
     </div>
   </div>

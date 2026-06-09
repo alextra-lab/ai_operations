@@ -94,9 +94,9 @@ describe('TimelineVisualizerComponent', () => {
   });
 
   it('should get severity icon', () => {
-    expect(component.getSeverityIcon('critical')).toBe('error');
-    expect(component.getSeverityIcon('high')).toBe('warning');
+    expect(component.getSeverityIcon('critical')).toBe('circle-alert');
+    expect(component.getSeverityIcon('high')).toBe('triangle-alert');
     expect(component.getSeverityIcon('medium')).toBe('info');
-    expect(component.getSeverityIcon('low')).toBe('check_circle');
+    expect(component.getSeverityIcon('low')).toBe('circle-check');
   });
 });

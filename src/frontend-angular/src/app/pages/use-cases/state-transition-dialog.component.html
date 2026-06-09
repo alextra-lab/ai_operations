@@ -2,7 +2,9 @@
 <!-- ADR-012 Compliant: Material components + Tailwind utilities -->
 
 <h2 mat-dialog-title class="flex items-center gap-2">
-  <mat-icon>{{ getStateIcon(form.get('targetState')?.value) }}</mat-icon>
+  <lucide-icon
+    [name]="getStateIcon(form.get('targetState')?.value)"
+  ></lucide-icon>
   <span>Confirm State Transition</span>
 </h2>
 
@@ -16,16 +18,17 @@
           class="flex items-center gap-2"
           [ngClass]="getStateColor(data.useCase.lifecycle_state)"
         >
-          <mat-icon class="text-lg">{{
-            getStateIcon(data.useCase.lifecycle_state)
-          }}</mat-icon>
+          <lucide-icon
+            class="text-lg"
+            [name]="getStateIcon(data.useCase.lifecycle_state)"
+          ></lucide-icon>
           <span class="font-semibold">{{
             getStateName(data.useCase.lifecycle_state)
           }}</span>
         </div>
       </div>
 
-      <mat-icon class="text-gray-400 my-2">arrow_downward</mat-icon>
+      <lucide-icon class="text-gray-400 my-2" name="arrow-down"></lucide-icon>
 
       <div class="flex items-center justify-between mt-2">
         <span class="text-sm font-medium text-gray-600">Target State</span>
@@ -33,9 +36,10 @@
           class="flex items-center gap-2"
           [ngClass]="getStateColor(form.get('targetState')?.value)"
         >
-          <mat-icon class="text-lg">{{
-            getStateIcon(form.get('targetState')?.value)
-          }}</mat-icon>
+          <lucide-icon
+            class="text-lg"
+            [name]="getStateIcon(form.get('targetState')?.value)"
+          ></lucide-icon>
           <span class="font-semibold">{{
             getStateName(form.get('targetState')?.value)
           }}</span>
@@ -53,7 +57,7 @@
       <mat-select formControlName="targetState">
         <mat-option *ngFor="let state of data.allowedStates" [value]="state">
           <div class="flex items-center gap-2">
-            <mat-icon>{{ getStateIcon(state) }}</mat-icon>
+            <lucide-icon [name]="getStateIcon(state)"></lucide-icon>
             <span>{{ getStateName(state) }}</span>
           </div>
         </mat-option>
@@ -65,7 +69,10 @@
       class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2"
       *ngIf="getWarningMessage()"
     >
-      <mat-icon class="text-yellow-600 mt-0.5">warning</mat-icon>
+      <lucide-icon
+        class="text-yellow-600 mt-0.5"
+        name="triangle-alert"
+      ></lucide-icon>
       <p class="text-sm text-yellow-800 m-0">{{ getWarningMessage() }}</p>
     </div>
 
@@ -74,7 +81,7 @@
       class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-2"
       *ngIf="getRequirementMessage()"
     >
-      <mat-icon class="text-blue-600 mt-0.5">info</mat-icon>
+      <lucide-icon class="text-blue-600 mt-0.5" name="info"></lucide-icon>
       <p class="text-sm text-blue-800 m-0">{{ getRequirementMessage() }}</p>
     </div>
 
@@ -140,7 +147,9 @@
     [disabled]="!form.valid"
     type="button"
   >
-    <mat-icon>{{ getStateIcon(form.get('targetState')?.value) }}</mat-icon>
+    <lucide-icon
+      [name]="getStateIcon(form.get('targetState')?.value)"
+    ></lucide-icon>
     Confirm Transition
   </button>
 </mat-dialog-actions>

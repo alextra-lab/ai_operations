@@ -20,11 +20,11 @@ import { MatOptionModule } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   Document,
   DocumentMetadata,
@@ -36,6 +36,7 @@ import { DocumentService } from '../../api/services/document.service';
   selector: 'app-document-metadata',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -45,7 +46,6 @@ import { DocumentService } from '../../api/services/document.service';
     MatSelectModule,
     MatOptionModule,
     MatButtonModule,
-    MatIconModule,
     MatChipsModule,
     MatDividerModule,
   ],
@@ -66,7 +66,10 @@ import { DocumentService } from '../../api/services/document.service';
           class="flex-1 p-4 bg-blue-50 border border-blue-200 rounded flex items-center gap-3"
           *ngIf="getCollectionName()"
         >
-          <mat-icon class="text-blue-600 text-3xl">folder</mat-icon>
+          <lucide-icon
+            class="text-blue-600 text-3xl"
+            name="folder"
+          ></lucide-icon>
           <div class="flex-1">
             <div class="text-xs text-blue-700 uppercase">Collection</div>
             <div class="text-lg font-semibold text-blue-900">
@@ -79,7 +82,10 @@ import { DocumentService } from '../../api/services/document.service';
           class="flex-1 p-4 bg-green-50 border border-green-200 rounded flex items-center gap-3"
           *ngIf="document?.num_chunks"
         >
-          <mat-icon class="text-green-600 text-3xl">analytics</mat-icon>
+          <lucide-icon
+            class="text-green-600 text-3xl"
+            name="chart-column"
+          ></lucide-icon>
           <div class="flex-1">
             <div class="text-xs text-green-700 uppercase">Chunking</div>
             <div class="text-lg font-semibold text-green-900">
@@ -252,7 +258,7 @@ import { DocumentService } from '../../api/services/document.service';
           Cancel
         </button>
         <button mat-button (click)="resetForm()" [disabled]="isSaving">
-          <mat-icon class="text-base">refresh</mat-icon>
+          <lucide-icon class="text-base" name="refresh-cw"></lucide-icon>
           Reset
         </button>
         <button
@@ -261,7 +267,7 @@ import { DocumentService } from '../../api/services/document.service';
           (click)="saveMetadata()"
           [disabled]="!metadataForm.valid || isSaving"
         >
-          <mat-icon class="text-base">save</mat-icon>
+          <lucide-icon class="text-base" name="save"></lucide-icon>
           {{ isSaving ? 'Saving...' : 'Save' }}
         </button>
       </div>

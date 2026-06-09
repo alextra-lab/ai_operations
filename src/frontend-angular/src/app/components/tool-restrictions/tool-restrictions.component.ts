@@ -34,11 +34,13 @@ import {
   ToolRestrictionPreset,
   ToolRestrictions,
 } from '../../api/models/use-case-management.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-tool-restrictions',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatCardModule,
@@ -72,10 +74,10 @@ export class ToolRestrictionsComponent implements OnChanges {
   // Options for selects
   dataSourceOptions: { value: DataSourceType; label: string; icon: string }[] =
     [
-      { value: 'internal', label: 'Internal', icon: 'business' },
-      { value: 'external', label: 'External', icon: 'public' },
-      { value: 'none', label: 'None', icon: 'block' },
-      { value: 'mixed', label: 'Mixed', icon: 'merge_type' },
+      { value: 'internal', label: 'Internal', icon: 'building-2' },
+      { value: 'external', label: 'External', icon: 'globe' },
+      { value: 'none', label: 'None', icon: 'ban' },
+      { value: 'mixed', label: 'Mixed', icon: 'merge' },
     ];
 
   dataFlowOptions: {
@@ -83,17 +85,17 @@ export class ToolRestrictionsComponent implements OnChanges {
     label: string;
     icon: string;
   }[] = [
-    { value: 'ingress', label: 'Ingress', icon: 'arrow_downward' },
-    { value: 'egress', label: 'Egress', icon: 'arrow_upward' },
-    { value: 'bidirectional', label: 'Bidirectional', icon: 'swap_vert' },
-    { value: 'none', label: 'None', icon: 'block' },
+    { value: 'ingress', label: 'Ingress', icon: 'arrow-down' },
+    { value: 'egress', label: 'Egress', icon: 'arrow-up' },
+    { value: 'bidirectional', label: 'Bidirectional', icon: 'arrow-up-down' },
+    { value: 'none', label: 'None', icon: 'ban' },
   ];
 
   networkOptions: { value: NetworkAccessLevel; label: string; icon: string }[] =
     [
       { value: 'isolated', label: 'Isolated', icon: 'lock' },
-      { value: 'internal', label: 'Internal', icon: 'vpn_key' },
-      { value: 'external', label: 'External', icon: 'language' },
+      { value: 'internal', label: 'Internal', icon: 'key-round' },
+      { value: 'external', label: 'External', icon: 'globe' },
     ];
 
   sensitivityOptions: {

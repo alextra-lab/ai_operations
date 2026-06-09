@@ -1,11 +1,32 @@
-// Sidebar Component Styles
+// Sidebar Component Styles — dark "ink" chrome (design system)
 .sidebar-container {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: var(--mat-surface-color);
-  border-right: 1px solid var(--mat-divider-color);
+  background: var(--brand-ink);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Material component tokens, retuned for the dark chrome
+  --mat-list-list-item-label-text-color: rgba(255, 255, 255, 0.74);
+  --mat-list-list-item-leading-icon-color: rgba(255, 255, 255, 0.55);
+  --mat-list-list-item-hover-label-text-color: #fff;
+  --mat-list-list-item-hover-leading-icon-color: #fff;
+  --mat-list-list-item-hover-state-layer-color: rgba(255, 255, 255, 0.07);
+  --mat-list-list-item-focus-label-text-color: #fff;
+  // Icon spacing for list-item nav entries (Dashboard, Analyst Console, all
+  // sub-items). These drive the icon box + the icon→label gap so list items
+  // match the expansion-header items (which use flex gap). Kept in sync with
+  // .mat-expansion-panel-header-title { gap } below.
+  --mat-list-list-item-leading-icon-start-space: 16px;
+  --mat-list-list-item-leading-icon-end-space: 14px;
+  --mat-list-list-item-leading-icon-size: 21px;
+  --mat-expansion-container-background-color: transparent;
+  --mat-expansion-container-text-color: rgba(255, 255, 255, 0.74);
+  --mat-expansion-header-text-color: rgba(255, 255, 255, 0.74);
+  --mat-expansion-header-hover-state-layer-color: rgba(255, 255, 255, 0.07);
+  --mat-expansion-header-indicator-color: rgba(255, 255, 255, 0.4);
+  --mat-divider-color: rgba(255, 255, 255, 0.08);
 
   &.collapsed {
     .sidebar-header {
@@ -21,6 +42,8 @@
     }
 
     .user-section {
+      justify-content: center;
+
       .user-details {
         display: none;
       }
@@ -51,7 +74,7 @@
   // Sidebar Header
   .sidebar-header {
     padding: 16px;
-    border-bottom: 1px solid var(--mat-divider-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     position: relative;
 
     .app-logo {
@@ -63,13 +86,15 @@
         font-size: 32px;
         width: 32px;
         height: 32px;
-        color: var(--mat-primary-color);
+        color: #7aa0ff;
       }
 
       .app-name {
-        font-size: 18px;
+        font-size: 15.5px;
         font-weight: 600;
-        color: var(--mat-on-surface-color);
+        letter-spacing: -0.01em;
+        color: #fff;
+        white-space: nowrap;
       }
     }
 
@@ -81,7 +106,7 @@
         font-size: 32px;
         width: 32px;
         height: 32px;
-        color: var(--mat-primary-color);
+        color: #7aa0ff;
       }
     }
 
@@ -92,8 +117,14 @@
       transform: translateY(-50%);
       width: 32px;
       height: 32px;
+      color: rgba(255, 255, 255, 0.55);
 
-      mat-icon {
+      &:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+      }
+
+      :is(mat-icon, lucide-icon) {
         font-size: 20px;
         width: 20px;
         height: 20px;
@@ -111,11 +142,11 @@
     .user-avatar {
       flex-shrink: 0;
 
-      mat-icon {
-        font-size: 40px;
-        width: 40px;
-        height: 40px;
-        color: var(--mat-primary-color);
+      :is(mat-icon, lucide-icon) {
+        font-size: 36px;
+        width: 36px;
+        height: 36px;
+        color: #7aa0ff;
       }
     }
 
@@ -125,8 +156,8 @@
 
       .user-name {
         font-size: 14px;
-        font-weight: 500;
-        color: var(--mat-on-surface-color);
+        font-weight: 600;
+        color: #fff;
         line-height: 1.2;
         white-space: nowrap;
         overflow: hidden;
@@ -135,7 +166,7 @@
 
       .user-roles {
         font-size: 12px;
-        color: var(--mat-on-surface-variant-color);
+        color: rgba(255, 255, 255, 0.5);
         line-height: 1.2;
         white-space: nowrap;
         overflow: hidden;
@@ -154,13 +185,35 @@
       padding: 8px 0;
 
       .menu-item {
-        margin: 2px 8px;
-        border-radius: 8px;
+        margin: 2px 10px;
+        border-radius: var(--radius-sm, 7px);
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        transition:
+          background-color 0.2s ease,
+          color 0.2s ease;
 
         &:hover:not(.disabled) {
-          background-color: var(--mat-hover-color);
+          background-color: rgba(255, 255, 255, 0.07);
+
+          .menu-icon {
+            color: #fff;
+          }
+
+          .menu-label {
+            color: #fff;
+          }
+        }
+
+        &.active {
+          background-color: rgba(47, 98, 240, 0.22);
+
+          .menu-icon {
+            color: #9bb6ff;
+          }
+
+          .menu-label {
+            color: #fff;
+          }
         }
 
         &.disabled {
@@ -169,12 +222,13 @@
         }
 
         .menu-icon {
-          color: var(--mat-on-surface-variant-color);
-          margin-right: 16px;
+          color: rgba(255, 255, 255, 0.55);
+          // gap handled by --mat-list-list-item-leading-icon-end-space
+          transition: color 0.2s ease;
         }
 
         .menu-label {
-          color: var(--mat-on-surface-color);
+          color: rgba(255, 255, 255, 0.74);
           font-weight: 500;
         }
 
@@ -183,107 +237,154 @@
           padding: 2px 8px;
           border-radius: 12px;
           font-size: 11px;
-          font-weight: 500;
+          font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
 
           &.badge-primary {
-            background-color: var(--mat-primary-color);
-            color: var(--mat-on-primary-color);
+            background-color: rgba(47, 98, 240, 0.28);
+            border: 1px solid rgba(47, 98, 240, 0.55);
+            color: #fff;
           }
 
           &.badge-accent {
-            background-color: var(--mat-accent-color);
-            color: var(--mat-on-accent-color);
+            background-color: rgba(17, 160, 138, 0.22);
+            border: 1px solid rgba(17, 160, 138, 0.5);
+            color: #fff;
           }
 
           &.badge-warn {
-            background-color: var(--mat-warn-color);
-            color: var(--mat-on-warn-color);
+            background-color: rgba(210, 32, 48, 0.22);
+            border: 1px solid rgba(210, 32, 48, 0.5);
+            color: #fff;
           }
 
           &.badge-success {
-            background-color: #4caf50;
-            color: white;
+            background-color: rgba(31, 157, 87, 0.22);
+            border: 1px solid rgba(31, 157, 87, 0.5);
+            color: #fff;
           }
         }
       }
 
       // Expansion Panels
       .menu-expansion-panel {
-        margin: 2px 8px;
-        border-radius: 8px;
+        margin: 2px 10px;
+        border-radius: var(--radius-sm, 7px);
         box-shadow: none;
         border: none;
+        background: transparent;
 
         .menu-panel-header {
           padding: 0 16px;
           height: 48px;
           min-height: 48px;
 
-          .mat-expansion-panel-header-title {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex: 1;
-
+          &:hover {
             .menu-icon {
-              color: var(--mat-on-surface-variant-color);
+              color: #fff;
             }
 
             .menu-label {
-              color: var(--mat-on-surface-color);
-              font-weight: 500;
+              color: #fff;
+            }
+          }
+
+          // The icon/label/badge are projected into Material's .mat-content
+          // (a flex row), NOT a .mat-expansion-panel-header-title. Target them
+          // as direct descendants of the in-scope .menu-panel-header so the
+          // selector pierces Material's wrapper.
+          .menu-icon {
+            color: rgba(255, 255, 255, 0.55);
+            margin-right: 14px; // icon→label gap
+            flex: 0 0 auto;
+            transition: color 0.2s ease;
+          }
+
+          .menu-label {
+            color: rgba(255, 255, 255, 0.74);
+            font-weight: 500;
+          }
+
+          .menu-badge {
+            margin-left: auto;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+
+            &.badge-primary {
+              background-color: rgba(47, 98, 240, 0.28);
+              border: 1px solid rgba(47, 98, 240, 0.55);
+              color: #fff;
             }
 
-            .menu-badge {
-              margin-left: auto;
-              padding: 2px 8px;
-              border-radius: 12px;
-              font-size: 11px;
-              font-weight: 500;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
+            &.badge-accent {
+              background-color: rgba(17, 160, 138, 0.22);
+              border: 1px solid rgba(17, 160, 138, 0.5);
+              color: #fff;
+            }
 
-              &.badge-primary {
-                background-color: var(--mat-primary-color);
-                color: var(--mat-on-primary-color);
-              }
+            &.badge-warn {
+              background-color: rgba(210, 32, 48, 0.22);
+              border: 1px solid rgba(210, 32, 48, 0.5);
+              color: #fff;
+            }
 
-              &.badge-accent {
-                background-color: var(--mat-accent-color);
-                color: var(--mat-on-accent-color);
-              }
-
-              &.badge-warn {
-                background-color: var(--mat-warn-color);
-                color: var(--mat-on-warn-color);
-              }
-
-              &.badge-success {
-                background-color: #4caf50;
-                color: white;
-              }
+            &.badge-success {
+              background-color: rgba(31, 157, 87, 0.22);
+              border: 1px solid rgba(31, 157, 87, 0.5);
+              color: #fff;
             }
           }
 
           .mat-expansion-indicator {
-            color: var(--mat-on-surface-variant-color);
+            color: rgba(255, 255, 255, 0.4);
           }
         }
 
         .submenu-list {
           padding: 0;
-          background-color: var(--mat-surface-container-color);
+          background: transparent;
+          // Sub-items sit only slightly indented from their parent; reduce the
+          // leading-icon start-space so the icon+label don't push right and
+          // truncate (top-level keeps the 16px start-space set above), and a
+          // tighter icon→label gap than the top level.
+          --mat-list-list-item-leading-icon-start-space: 8px;
+          --mat-list-list-item-leading-icon-end-space: 10px;
 
           .submenu-item {
-            margin: 1px 8px;
-            border-radius: 6px;
+            margin: 1px 8px 1px 12px;
+            border-radius: var(--radius-sm, 7px);
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition:
+              background-color 0.2s ease,
+              color 0.2s ease;
 
             &:hover:not(.disabled) {
-              background-color: var(--mat-hover-color);
+              background-color: rgba(255, 255, 255, 0.07);
+
+              .submenu-icon {
+                color: #fff;
+              }
+
+              .submenu-label {
+                color: #fff;
+              }
+            }
+
+            &.active {
+              background-color: rgba(47, 98, 240, 0.2);
+
+              .submenu-icon {
+                color: #9bb6ff;
+              }
+
+              .submenu-label {
+                color: #fff;
+              }
             }
 
             &.disabled {
@@ -292,16 +393,17 @@
             }
 
             .submenu-icon {
-              color: var(--mat-on-surface-variant-color);
-              margin-right: 12px;
-              font-size: 20px;
-              width: 20px;
-              height: 20px;
+              color: rgba(255, 255, 255, 0.42);
+              // gap handled by --mat-list-list-item-leading-icon-end-space
+              font-size: 19px;
+              width: 19px;
+              height: 19px;
+              transition: color 0.2s ease;
             }
 
             .submenu-label {
-              color: var(--mat-on-surface-color);
-              font-size: 14px;
+              color: rgba(255, 255, 255, 0.66);
+              font-size: 13px;
             }
 
             .submenu-badge {
@@ -309,28 +411,32 @@
               padding: 1px 6px;
               border-radius: 10px;
               font-size: 10px;
-              font-weight: 500;
+              font-weight: 600;
               text-transform: uppercase;
               letter-spacing: 0.5px;
 
               &.badge-primary {
-                background-color: var(--mat-primary-color);
-                color: var(--mat-on-primary-color);
+                background-color: rgba(47, 98, 240, 0.28);
+                border: 1px solid rgba(47, 98, 240, 0.55);
+                color: #fff;
               }
 
               &.badge-accent {
-                background-color: var(--mat-accent-color);
-                color: var(--mat-on-accent-color);
+                background-color: rgba(17, 160, 138, 0.22);
+                border: 1px solid rgba(17, 160, 138, 0.5);
+                color: #fff;
               }
 
               &.badge-warn {
-                background-color: var(--mat-warn-color);
-                color: var(--mat-on-warn-color);
+                background-color: rgba(210, 32, 48, 0.22);
+                border: 1px solid rgba(210, 32, 48, 0.5);
+                color: #fff;
               }
 
               &.badge-success {
-                background-color: #4caf50;
-                color: white;
+                background-color: rgba(31, 157, 87, 0.22);
+                border: 1px solid rgba(31, 157, 87, 0.5);
+                color: #fff;
               }
             }
           }
@@ -341,13 +447,13 @@
 
   // Sidebar Footer
   .sidebar-footer {
-    padding: 16px;
-    border-top: 1px solid var(--mat-divider-color);
+    padding: 14px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     text-align: center;
 
     .footer-text {
-      color: var(--mat-on-surface-variant-color);
-      font-size: 12px;
+      color: rgba(255, 255, 255, 0.38);
+      font-size: 11.5px;
     }
   }
 }
@@ -363,12 +469,12 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: var(--mat-outline-variant-color);
+    background-color: rgba(255, 255, 255, 0.16);
     border-radius: 3px;
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background-color: var(--mat-outline-color);
+    background-color: rgba(255, 255, 255, 0.28);
   }
 }
 
@@ -377,8 +483,8 @@
 .submenu-item,
 .menu-expansion-panel .menu-panel-header {
   &:focus {
-    outline: 2px solid var(--mat-primary-color);
-    outline-offset: 2px;
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
   }
 }
 
@@ -390,7 +496,7 @@
     .menu-item,
     .submenu-item,
     .menu-expansion-panel {
-      border: 1px solid var(--mat-outline-color);
+      border: 1px solid rgba(255, 255, 255, 0.4);
     }
   }
 }

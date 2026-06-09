@@ -16,11 +16,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { InputField } from '../../../api/models/use-case.models';
 import { DynamicFormService } from '../services/dynamic-form.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-dynamic-field',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -199,13 +201,10 @@ import { DynamicFormService } from '../services/dynamic-form.service';
         <mat-checkbox [formControl]="control">
           {{ field.label }}
         </mat-checkbox>
-        <mat-icon
+        <lucide-icon
           *ngIf="field.description"
           [matTooltip]="field.description"
-          class="ml-2 text-gray-500 cursor-help text-sm"
-        >
-          help_outline
-        </mat-icon>
+          class="ml-2 text-gray-500 cursor-help text-sm" name="circle-help"></lucide-icon>
       </div>
 
       <!-- File Upload (Placeholder) -->
@@ -219,7 +218,7 @@ import { DynamicFormService } from '../services/dynamic-form.service';
             class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
           >
             <div class="flex flex-col items-center justify-center pt-5 pb-6">
-              <mat-icon class="text-gray-400 mb-2">cloud_upload</mat-icon>
+              <lucide-icon class="text-gray-400 mb-2" name="cloud-upload"></lucide-icon>
               <p class="mb-2 text-sm text-gray-500">
                 <span class="font-semibold">Click to upload</span> or drag and
                 drop
@@ -252,7 +251,7 @@ import { DynamicFormService } from '../services/dynamic-form.service';
         *ngSwitchDefault
         class="p-4 bg-yellow-50 border border-yellow-200 rounded"
       >
-        <mat-icon class="text-yellow-600">warning</mat-icon>
+        <lucide-icon class="text-yellow-600" name="triangle-alert"></lucide-icon>
         <span class="ml-2 text-sm text-yellow-700">
           Unsupported field type: {{ field.type }}
         </span>

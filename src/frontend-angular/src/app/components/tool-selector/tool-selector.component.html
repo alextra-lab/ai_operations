@@ -17,7 +17,7 @@
         aria-label="Clear"
         (click)="searchTerm = ''; filterTools()"
       >
-        <mat-icon>close</mat-icon>
+        <lucide-icon name="x"></lucide-icon>
       </button>
     </mat-form-field>
 
@@ -45,7 +45,7 @@
     *ngIf="error"
     class="p-4 bg-red-50 text-red-700 rounded border border-red-200 mb-4 flex items-center gap-2"
   >
-    <mat-icon>error</mat-icon>
+    <lucide-icon name="circle-alert"></lucide-icon>
     {{ error }}
     <button mat-button color="warn" (click)="loadTools()">Retry</button>
   </div>
@@ -55,7 +55,7 @@
     *ngIf="!isLoading && !error && filteredTools.length === 0"
     class="text-center py-12 bg-gray-50 rounded border border-gray-200 border-dashed"
   >
-    <mat-icon class="text-gray-400 text-4xl mb-2">build_circle</mat-icon>
+    <lucide-icon class="text-gray-400 text-4xl mb-2" name="wrench"></lucide-icon>
     <p class="text-gray-600">No tools found matching your filters.</p>
     <button
       *ngIf="searchTerm || selectedCategory"
@@ -84,9 +84,7 @@
         <div class="flex justify-between items-start mb-2">
           <div class="flex items-center gap-2">
             <div class="p-1.5 rounded bg-gray-100 text-gray-600">
-              <mat-icon class="text-xl w-[20px] h-[20px]">{{
-                getCategoryIcon(tool.category)
-              }}</mat-icon>
+              <lucide-icon class="text-xl w-[20px] h-[20px]" [name]="getCategoryIcon(tool.category)"></lucide-icon>
             </div>
             <div class="flex flex-col">
               <h3 class="m-0 text-base font-medium leading-tight">
@@ -135,12 +133,10 @@
           </div>
 
           <!-- Auth Badge -->
-          <mat-icon
+          <lucide-icon
             *ngIf="tool.requires_authentication"
             class="text-gray-400 text-sm w-[14px] h-[14px]"
-            matTooltip="Requires Authentication"
-            >lock</mat-icon
-          >
+            matTooltip="Requires Authentication" name="lock"></lucide-icon>
         </div>
       </div>
     </mat-card>

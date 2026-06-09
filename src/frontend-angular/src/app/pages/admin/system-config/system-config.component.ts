@@ -10,11 +10,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ModelRegistryService } from '../../../api/services/model-registry.service';
 import { ConfigImportExportComponent } from './components/config-import-export/config-import-export.component';
 import { ConfigSectionComponent } from './components/config-section/config-section.component';
@@ -36,9 +36,9 @@ import { SystemConfigService } from './services/system-config.service';
   selector: 'app-system-config',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
-    MatIconModule,
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,

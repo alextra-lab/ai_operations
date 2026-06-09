@@ -17,7 +17,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -25,6 +24,7 @@ import {
   ChunkingConfigOverride,
   ChunkingStrategy,
 } from '../../api/models/preflight.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 /**
  * Chunking Config Override Component
@@ -38,13 +38,13 @@ import {
   selector: 'app-chunking-config-override',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatIconModule,
     MatTooltipModule,
     MatCheckboxModule,
     MatDividerModule,
@@ -53,7 +53,7 @@ import {
   template: `
     <div class="chunking-config-override">
       <div class="flex items-center gap-2 mb-4">
-        <mat-icon class="text-orange-600">warning</mat-icon>
+        <lucide-icon class="text-orange-600" name="triangle-alert"></lucide-icon>
         <h3 class="text-base font-medium">
           Expert Mode: Override Chunking Configuration
         </h3>

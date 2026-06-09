@@ -7,7 +7,7 @@
     <div class="page-header-controls">
       <div class="header-left">
         <h1 class="page-title">
-          <mat-icon aria-hidden="true">analytics</mat-icon>
+          <lucide-icon aria-hidden="true" name="chart-column"></lucide-icon>
           Tool Analytics
         </h1>
         <p class="page-subtitle">
@@ -39,7 +39,7 @@
           [disabled]="isLoading"
           aria-label="Refresh analytics data"
         >
-          <mat-icon>refresh</mat-icon>
+          <lucide-icon name="refresh-cw"></lucide-icon>
           Refresh
         </button>
 
@@ -49,17 +49,17 @@
           [disabled]="isLoading || usageSummary().length === 0"
           aria-label="Export analytics data"
         >
-          <mat-icon>download</mat-icon>
+          <lucide-icon name="download"></lucide-icon>
           Export
         </button>
 
         <mat-menu #exportMenu="matMenu">
           <button mat-menu-item (click)="exportCSV()">
-            <mat-icon>table_chart</mat-icon>
+            <lucide-icon name="table"></lucide-icon>
             <span>Export as CSV</span>
           </button>
           <button mat-menu-item (click)="exportJSON()">
-            <mat-icon>code</mat-icon>
+            <lucide-icon name="code"></lucide-icon>
             <span>Export as JSON</span>
           </button>
         </mat-menu>
@@ -69,7 +69,7 @@
           routerLink="/admin/tools"
           aria-label="Back to tool management"
         >
-          <mat-icon>arrow_back</mat-icon>
+          <lucide-icon name="arrow-left"></lucide-icon>
           Back to Tools
         </a>
       </div>
@@ -86,7 +86,7 @@
 
     <!-- Error State -->
     <div *ngIf="error && !isLoading" class="error-container">
-      <mat-icon class="error-icon">error</mat-icon>
+      <lucide-icon class="error-icon" name="circle-alert"></lucide-icon>
       <p class="error-text">{{ error }}</p>
       <button mat-raised-button color="primary" (click)="onRefresh()">
         Retry
@@ -107,7 +107,7 @@
         <!-- Usage by Tool Tab -->
         <mat-tab>
           <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">build</mat-icon>
+            <lucide-icon class="tab-icon" name="wrench"></lucide-icon>
             Usage by Tool
           </ng-template>
           <div class="tab-content">
@@ -130,7 +130,7 @@
         <!-- Usage by Center Tab -->
         <mat-tab>
           <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">business</mat-icon>
+            <lucide-icon class="tab-icon" name="building-2"></lucide-icon>
             Usage by Center
           </ng-template>
           <div class="tab-content">
@@ -156,7 +156,7 @@
 
       <!-- No Data Message -->
       <mat-card *ngIf="usageSummary().length === 0" class="no-data-card">
-        <mat-icon class="no-data-icon">info</mat-icon>
+        <lucide-icon class="no-data-icon" name="info"></lucide-icon>
         <p class="no-data-text">
           No tool usage data available for the selected time range.
         </p>

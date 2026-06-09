@@ -266,8 +266,8 @@ describe('AuditLogsComponent', () => {
     });
 
     it('should return correct status icons', () => {
-      expect(component.getStatusIcon(true)).toBe('check_circle');
-      expect(component.getStatusIcon(false)).toBe('error');
+      expect(component.getStatusIcon(true)).toBe('circle-check');
+      expect(component.getStatusIcon(false)).toBe('circle-alert');
     });
 
     it('should calculate success rate', () => {

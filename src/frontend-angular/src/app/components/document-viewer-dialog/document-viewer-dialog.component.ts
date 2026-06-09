@@ -6,7 +6,6 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -15,6 +14,7 @@ import { catchError, finalize } from 'rxjs/operators';
 
 import { Document } from '../../api/models/document.models';
 import { DocumentService } from '../../api/services/document.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 export interface DocumentViewerDialogData {
   documentId: string;
@@ -26,12 +26,12 @@ export interface DocumentViewerDialogData {
   selector: 'app-document-viewer-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     NgFor,
     NgIf,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatTabsModule,
@@ -41,7 +41,7 @@ export interface DocumentViewerDialogData {
       <!-- Dialog Header -->
       <div mat-dialog-title class="dialog-header">
         <div class="header-content">
-          <mat-icon class="document-icon">description</mat-icon>
+          <lucide-icon class="document-icon" name="file-text"></lucide-icon>
           <div class="document-info">
             <h2 class="document-title">
               {{ data.title || 'Document Viewer' }}
@@ -58,7 +58,7 @@ export interface DocumentViewerDialogData {
           class="close-button"
           [attr.aria-label]="'Close dialog'"
         >
-          <mat-icon>close</mat-icon>
+          <lucide-icon name="x"></lucide-icon>
         </button>
       </div>
 
@@ -72,7 +72,7 @@ export interface DocumentViewerDialogData {
 
         <!-- Error State -->
         <div *ngIf="errorMessage" class="error-container">
-          <mat-icon color="warn" class="error-icon">error</mat-icon>
+          <lucide-icon color="warn" class="error-icon" name="circle-alert"></lucide-icon>
           <h3>Error Loading Document</h3>
           <p>{{ errorMessage }}</p>
           <button mat-button (click)="retryLoad()">Retry</button>
@@ -158,7 +158,7 @@ export interface DocumentViewerDialogData {
             <mat-tab label="Preview">
               <div class="preview-content">
                 <div *ngIf="!documentPreview" class="preview-placeholder">
-                  <mat-icon class="preview-icon">visibility</mat-icon>
+                  <lucide-icon class="preview-icon" name="eye"></lucide-icon>
                   <p>Document preview not available</p>
                   <p class="preview-note">
                     This document type may not support preview, or preview
@@ -182,7 +182,7 @@ export interface DocumentViewerDialogData {
       <!-- Dialog Actions -->
       <div mat-dialog-actions class="dialog-actions">
         <button mat-button (click)="downloadDocument()" [disabled]="!document">
-          <mat-icon>download</mat-icon>
+          <lucide-icon name="download"></lucide-icon>
           Download
         </button>
         <button mat-button mat-dialog-close>Close</button>

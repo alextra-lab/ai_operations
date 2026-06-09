@@ -15,7 +15,7 @@
       (click)="createNewTemplate()"
       class="flex items-center gap-2"
     >
-      <mat-icon>add</mat-icon>
+      <lucide-icon name="plus"></lucide-icon>
       Create Template
     </button>
   </div>
@@ -103,13 +103,12 @@
                 <span class="font-semibold"
                   >v{{ template.version_number }}</span
                 >
-                <mat-icon
+                <lucide-icon
                   *ngIf="template.is_active_version"
                   class="text-green-600 text-base"
                   matTooltip="Active Version"
-                >
-                  check_circle
-                </mat-icon>
+                  name="circle-check"
+                ></lucide-icon>
               </div>
             </td>
           </ng-container>
@@ -154,7 +153,7 @@
                   matTooltip="View Details"
                   color="primary"
                 >
-                  <mat-icon>visibility</mat-icon>
+                  <lucide-icon name="eye"></lucide-icon>
                 </button>
 
                 <button
@@ -163,7 +162,7 @@
                   matTooltip="Edit Template"
                   color="accent"
                 >
-                  <mat-icon>edit</mat-icon>
+                  <lucide-icon name="pencil"></lucide-icon>
                 </button>
 
                 <button
@@ -173,7 +172,7 @@
                   matTooltip="Approve Template"
                   class="text-green-600"
                 >
-                  <mat-icon>check_circle</mat-icon>
+                  <lucide-icon name="circle-check"></lucide-icon>
                 </button>
 
                 <button
@@ -183,7 +182,7 @@
                   matTooltip="Reject Template"
                   class="text-yellow-600"
                 >
-                  <mat-icon>cancel</mat-icon>
+                  <lucide-icon name="circle-x"></lucide-icon>
                 </button>
 
                 <button
@@ -192,7 +191,7 @@
                   matTooltip="Delete Template"
                   color="warn"
                 >
-                  <mat-icon>delete</mat-icon>
+                  <lucide-icon name="trash-2"></lucide-icon>
                 </button>
               </div>
             </td>
@@ -208,7 +207,7 @@
               class="text-center py-8"
             >
               <div class="text-gray-500 dark:text-gray-400">
-                <mat-icon class="text-4xl mb-2">inbox</mat-icon>
+                <lucide-icon class="text-4xl mb-2" name="inbox"></lucide-icon>
                 <p>No templates found</p>
                 <p class="text-sm mt-2">Create a new template to get started</p>
               </div>

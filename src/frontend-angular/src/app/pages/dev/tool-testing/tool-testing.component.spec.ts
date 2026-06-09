@@ -473,7 +473,7 @@ describe('ToolTestingComponent', () => {
         timestamp: new Date(),
       };
 
-      expect(component.getStatusIcon(entry)).toBe('check_circle');
+      expect(component.getStatusIcon(entry)).toBe('circle-check');
     });
 
     it('should get error status icon', () => {
@@ -487,7 +487,7 @@ describe('ToolTestingComponent', () => {
         timestamp: new Date(),
       };
 
-      expect(component.getStatusIcon(entry)).toBe('error');
+      expect(component.getStatusIcon(entry)).toBe('circle-alert');
     });
   });
 

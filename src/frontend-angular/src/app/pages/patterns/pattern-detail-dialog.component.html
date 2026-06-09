@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>
   <div class="dialog-title">
     <div class="category-badge" [style.background-color]="categoryInfo.color">
-      <mat-icon>{{ categoryInfo.icon }}</mat-icon>
+      <lucide-icon [name]="categoryInfo.icon"></lucide-icon>
       <span>{{ categoryInfo.label }}</span>
     </div>
     <div class="title-text">
@@ -37,7 +37,7 @@
           "
           matTooltip="Copy to clipboard"
         >
-          <mat-icon>content_copy</mat-icon>
+          <lucide-icon name="copy"></lucide-icon>
         </button>
       </div>
       <div class="prompt-box system-prompt">
@@ -59,7 +59,7 @@
           "
           matTooltip="Copy to clipboard"
         >
-          <mat-icon>content_copy</mat-icon>
+          <lucide-icon name="copy"></lucide-icon>
         </button>
       </div>
       <div class="prompt-box developer-prompt">
@@ -114,14 +114,14 @@
     <section class="section metadata-section">
       <div class="metadata-grid">
         <div class="metadata-item">
-          <mat-icon>trending_up</mat-icon>
+          <lucide-icon name="trending-up"></lucide-icon>
           <div>
             <div class="metadata-label">Usage Count</div>
             <div class="metadata-value">{{ pattern.use_count }}</div>
           </div>
         </div>
         <div class="metadata-item" *ngIf="pattern.source_url">
-          <mat-icon>link</mat-icon>
+          <lucide-icon name="link"></lucide-icon>
           <div>
             <div class="metadata-label">Source</div>
             <div class="metadata-value">
@@ -132,7 +132,7 @@
           </div>
         </div>
         <div class="metadata-item">
-          <mat-icon>schedule</mat-icon>
+          <lucide-icon name="clock"></lucide-icon>
           <div>
             <div class="metadata-label">Created</div>
             <div class="metadata-value">
@@ -155,7 +155,7 @@
     [attr.href]="pattern.source_url"
     target="_blank"
   >
-    <mat-icon>open_in_new</mat-icon>
+    <lucide-icon name="external-link"></lucide-icon>
     View Source
   </button>
 </mat-dialog-actions>

@@ -9,7 +9,6 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -17,6 +16,7 @@ import { Router } from '@angular/router';
 import { Observable, Subject, forkJoin, of } from 'rxjs';
 import { catchError, take, takeUntil, tap } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   UseCaseListResponse,
   UseCaseResponse,
@@ -36,11 +36,11 @@ interface TabState {
   selector: 'app-use-case-developer',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatTabsModule,
     MatListModule,
     MatButtonModule,
-    MatIconModule,
     MatChipsModule,
     MatProgressSpinnerModule,
     MatCardModule,

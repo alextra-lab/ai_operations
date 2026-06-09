@@ -11,7 +11,7 @@
 .page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
+  height: calc(100vh - var(--chrome-h));
   margin: -24px -32px;
   padding: 0;
   overflow: hidden; // CRITICAL: Prevent parent from scrolling
@@ -21,9 +21,8 @@
 .page-header-section {
   flex: 0 0 auto;
   z-index: 100;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-bottom: 1px solid var(--border);
 
   .page-title {
     padding: 24px 24px 16px 24px;
@@ -39,7 +38,7 @@
       align-items: center;
       gap: 12px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 32px;
         width: 32px;
         height: 32px;
@@ -60,7 +59,7 @@
     right: 24px;
 
     .close-btn {
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 28px;
         width: 28px;
         height: 28px;
@@ -87,11 +86,13 @@
   flex: 0 0 auto;
   z-index: 90;
   background: white;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border);
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 
   .wizard-actions {
-    padding: 16px 24px;
+    // 8px vertical keeps the bar at ~56px (40px buttons + 16px) to match the
+    // mat-paginator footer height on My AI Operations / Pattern Library.
+    padding: 8px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -137,7 +138,7 @@
       left: 50%;
       width: 100%;
       height: 2px;
-      background: #e0e0e0;
+      background: var(--border);
       z-index: -1;
     }
 
@@ -150,7 +151,7 @@
     }
 
     &.active::after {
-      background: linear-gradient(to right, #4caf50 50%, #e0e0e0 50%);
+      background: linear-gradient(to right, #4caf50 50%, var(--border) 50%);
     }
   }
 
@@ -183,7 +184,7 @@
       color: #757575;
     }
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       margin-left: auto;
       color: #ff9800;
     }
@@ -206,13 +207,13 @@
     background-color: #e3f2fd;
     border-left: 4px solid #2196f3;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       color: #2196f3;
     }
 
     p {
       margin: 0;
-      color: #1976d2;
+      color: var(--primary);
     }
   }
 
@@ -279,7 +280,7 @@
     font-size: 12px;
     color: #2e7d32;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 16px;
       width: 16px;
       height: 16px;
@@ -321,7 +322,7 @@
       font-weight: 500;
       color: #616161;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 18px;
         width: 18px;
         height: 18px;
@@ -380,9 +381,9 @@
     padding: 16px;
     background-color: #e3f2fd;
     border-radius: 4px;
-    color: #1976d2;
+    color: var(--primary);
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 24px;
       width: 24px;
       height: 24px;
@@ -400,21 +401,21 @@
       gap: 12px;
       padding: 8px 0;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 20px;
         width: 20px;
         height: 20px;
       }
 
-      &.passed mat-icon {
+      &.passed :is(mat-icon, lucide-icon) {
         color: #4caf50;
       }
 
-      &.warning mat-icon {
+      &.warning :is(mat-icon, lucide-icon) {
         color: #ff9800;
       }
 
-      &.failed mat-icon {
+      &.failed :is(mat-icon, lucide-icon) {
         color: #f44336;
       }
     }
@@ -437,7 +438,7 @@
       background-color: #e3f2fd;
       border-radius: 4px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         color: #2196f3;
         flex-shrink: 0;
       }
@@ -481,7 +482,7 @@
       font-weight: 500;
       color: #c62828;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         color: #f44336;
       }
     }
@@ -513,7 +514,7 @@
   border-left: 4px solid #4caf50;
   border-radius: 4px;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     color: #388e3c;
     flex-shrink: 0;
     margin-top: 2px;
@@ -549,7 +550,7 @@
 }
 
 .preview-container {
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 1rem;
   background: #fafafa;

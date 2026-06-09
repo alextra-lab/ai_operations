@@ -9,7 +9,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -20,6 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   Model,
   ModelDetailedResponse,
@@ -43,6 +43,7 @@ import {
   selector: 'app-model-management',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -50,7 +51,6 @@ import {
     MatTableModule,
     MatPaginatorModule,
     MatButtonModule,
-    MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -374,7 +374,7 @@ export class ModelManagementComponent implements OnInit, OnDestroy {
   }
 
   getAvailabilityIcon(isAvailable: boolean): string {
-    return isAvailable ? 'check_circle' : 'cancel';
+    return isAvailable ? 'circle-check' : 'circle-x';
   }
 
   getAvailableCount(): number {

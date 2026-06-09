@@ -14,13 +14,13 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
 import Ajv from 'ajv';
+import { LucideAngularModule } from 'lucide-angular';
 
 /** Validation error for the schema editor. */
 export interface SchemaValidationError {
@@ -47,8 +47,7 @@ export interface SchemaPreset {
 
 /** Compatibility status passed from parent. */
 export interface CompatibilityStatus {
-  level: 'full' | 'partial' | 'none'
-    | 'no_template' | 'no_schema';
+  level: 'full' | 'partial' | 'none' | 'no_template' | 'no_schema';
   message: string;
 }
 
@@ -93,13 +92,13 @@ function inferSchemaFromValue(value: unknown): Record<string, unknown> {
   styleUrls: ['./schema-editor.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatTabsModule,
-    MatIconModule,
   ],
 })
 export class SchemaEditorComponent implements OnChanges {
@@ -107,10 +106,8 @@ export class SchemaEditorComponent implements OnChanges {
   @Input() presetSchemas: SchemaPreset[] = [];
   @Input() compatibility: CompatibilityStatus | null = null;
   @Output() schemaChange = new EventEmitter<string>();
-  @Output() validationChange =
-    new EventEmitter<SchemaValidationResult>();
-  @Output() presetApplied =
-    new EventEmitter<SchemaPreset>();
+  @Output() validationChange = new EventEmitter<SchemaValidationResult>();
+  @Output() presetApplied = new EventEmitter<SchemaPreset>();
 
   validationResult: SchemaValidationResult = {
     valid: true,

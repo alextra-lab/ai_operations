@@ -8,7 +8,7 @@
         (click)="moveUp.emit()"
         aria-label="Move up"
       >
-        <mat-icon>arrow_upward</mat-icon>
+        <lucide-icon name="arrow-up"></lucide-icon>
       </button>
       <button
         mat-icon-button
@@ -16,7 +16,7 @@
         (click)="moveDown.emit()"
         aria-label="Move down"
       >
-        <mat-icon>arrow_downward</mat-icon>
+        <lucide-icon name="arrow-down"></lucide-icon>
       </button>
       <button
         mat-icon-button
@@ -25,7 +25,7 @@
         (click)="remove.emit()"
         aria-label="Remove field"
       >
-        <mat-icon>delete</mat-icon>
+        <lucide-icon name="trash-2"></lucide-icon>
       </button>
     </div>
   </div>
@@ -91,7 +91,7 @@
     <div class="flex items-center justify-between mb-2">
       <span class="text-sm font-medium text-gray-700">Options (value → label)</span>
       <button mat-button type="button" (click)="addOption()">
-        <mat-icon>add</mat-icon>
+        <lucide-icon name="plus"></lucide-icon>
         Add option
       </button>
     </div>
@@ -120,7 +120,7 @@
         (click)="removeOption(i)"
         aria-label="Remove option"
       >
-        <mat-icon>close</mat-icon>
+        <lucide-icon name="x"></lucide-icon>
       </button>
     </div>
   </div>
@@ -132,7 +132,7 @@
       type="button"
       (click)="showAdvancedValidation = !showAdvancedValidation"
     >
-      <mat-icon>{{ showAdvancedValidation ? 'expand_less' : 'expand_more' }}</mat-icon>
+      <lucide-icon [name]="showAdvancedValidation ? 'chevron-up' : 'chevron-down'"></lucide-icon>
       Advanced validation
     </button>
     <div *ngIf="showAdvancedValidation" formGroupName="validation" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 p-4 bg-gray-50 rounded">

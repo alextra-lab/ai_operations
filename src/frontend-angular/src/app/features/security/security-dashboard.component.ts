@@ -4,11 +4,11 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   SecurityAlert,
   SecurityEvent,
@@ -25,10 +25,10 @@ import { SecurityHeadersService } from '../../core/services/security-headers.ser
   selector: 'app-security-dashboard',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule,
     MatProgressBarModule,
     MatChipsModule,
     MatTableModule,
@@ -112,9 +112,10 @@ import { SecurityHeadersService } from '../../core/services/security-headers.ser
                     [ngClass]="'severity-' + event.severity"
                   >
                     <div class="event-header">
-                      <mat-icon [ngClass]="'severity-' + event.severity">
-                        {{ getEventIcon(event.type) }}
-                      </mat-icon>
+                      <lucide-icon
+                        [ngClass]="'severity-' + event.severity"
+                        [name]="getEventIcon(event.type)"
+                      ></lucide-icon>
                       <span class="event-type">{{ event.type }}</span>
                       <span class="event-time">{{
                         formatTime(event.timestamp)
@@ -128,7 +129,7 @@ import { SecurityHeadersService } from '../../core/services/security-headers.ser
                 </div>
                 <ng-template #noEvents>
                   <div class="no-events">
-                    <mat-icon>security</mat-icon>
+                    <lucide-icon name="shield"></lucide-icon>
                     <p>No security events detected</p>
                   </div>
                 </ng-template>
@@ -157,9 +158,10 @@ import { SecurityHeadersService } from '../../core/services/security-headers.ser
                     [ngClass]="'severity-' + alert.severity"
                   >
                     <div class="alert-header">
-                      <mat-icon [ngClass]="'severity-' + alert.severity">
-                        {{ getAlertIcon(alert.severity) }}
-                      </mat-icon>
+                      <lucide-icon
+                        [ngClass]="'severity-' + alert.severity"
+                        [name]="getAlertIcon(alert.severity)"
+                      ></lucide-icon>
                       <span class="alert-title">{{ alert.title }}</span>
                       <span class="alert-time">{{
                         formatTime(alert.timestamp)
@@ -187,7 +189,7 @@ import { SecurityHeadersService } from '../../core/services/security-headers.ser
                 </div>
                 <ng-template #noAlerts>
                   <div class="no-alerts">
-                    <mat-icon>check_circle</mat-icon>
+                    <lucide-icon name="circle-check"></lucide-icon>
                     <p>No active security alerts</p>
                   </div>
                 </ng-template>
@@ -211,11 +213,14 @@ import { SecurityHeadersService } from '../../core/services/security-headers.ser
                     class="header-item"
                     *ngFor="let header of expectedHeaders"
                   >
-                    <mat-icon
+                    <lucide-icon
                       [color]="isHeaderPresent(header) ? 'primary' : 'warn'"
-                    >
-                      {{ isHeaderPresent(header) ? 'check_circle' : 'error' }}
-                    </mat-icon>
+                      [name]="
+                        isHeaderPresent(header)
+                          ? 'circle-check'
+                          : 'circle-alert'
+                      "
+                    ></lucide-icon>
                     <span class="header-name">{{ header }}</span>
                     <span class="header-value" *ngIf="isHeaderPresent(header)">
                       {{ getHeaderValue(header) }}
@@ -235,15 +240,15 @@ import { SecurityHeadersService } from '../../core/services/security-headers.ser
           color="primary"
           (click)="refreshSecurityData()"
         >
-          <mat-icon>refresh</mat-icon>
+          <lucide-icon name="refresh-cw"></lucide-icon>
           Refresh
         </button>
         <button mat-raised-button color="accent" (click)="clearSecurityData()">
-          <mat-icon>clear_all</mat-icon>
+          <lucide-icon name="list-x"></lucide-icon>
           Clear Data
         </button>
         <button mat-raised-button color="warn" (click)="testSecurityFeatures()">
-          <mat-icon>bug_report</mat-icon>
+          <lucide-icon name="bug"></lucide-icon>
           Test Security
         </button>
       </div>
@@ -537,13 +542,13 @@ export class SecurityDashboardComponent implements OnInit {
   getEventIcon(eventType: string): string {
     switch (eventType) {
       case 'CSP_VIOLATION':
-        return 'security';
+        return 'shield';
       case 'XSS_ATTEMPT':
-        return 'warning';
+        return 'triangle-alert';
       case 'MISSING_SECURITY_HEADERS':
-        return 'error';
+        return 'circle-alert';
       case 'HTTP_SECURITY_ERROR':
-        return 'error_outline';
+        return 'circle-alert';
       default:
         return 'info';
     }
@@ -552,13 +557,13 @@ export class SecurityDashboardComponent implements OnInit {
   getAlertIcon(severity: string): string {
     switch (severity) {
       case 'critical':
-        return 'error';
+        return 'circle-alert';
       case 'high':
-        return 'warning';
+        return 'triangle-alert';
       case 'medium':
         return 'info';
       case 'low':
-        return 'check_circle';
+        return 'circle-check';
       default:
         return 'info';
     }

@@ -8,9 +8,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   AggregateAnalytics,
   formatCost,
@@ -21,7 +21,7 @@ import {
 @Component({
   selector: 'app-usage-summary-cards',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule, MatTooltipModule],
+  imports: [LucideAngularModule, CommonModule, MatCardModule, MatTooltipModule],
   templateUrl: './usage-summary-cards.component.html',
   styleUrls: ['./usage-summary-cards.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

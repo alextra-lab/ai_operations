@@ -258,7 +258,7 @@ describe('DocumentLibraryComponent', () => {
     // JSDOM does not implement navigation for programmatic link.click() on blob URLs
     const clickSpy = jest
       .spyOn(HTMLAnchorElement.prototype, 'click')
-      .mockImplementation(() => { });
+      .mockImplementation(() => {});
 
     component.downloadDocument(mockDocument);
 

@@ -9,9 +9,7 @@
     >
       <!-- Section Header -->
       <div class="section-header">
-        <mat-icon [attr.aria-hidden]="true">{{
-          getComponentIcon(section.component_type)
-        }}</mat-icon>
+        <lucide-icon [attr.aria-hidden]="true" [name]="getComponentIcon(section.component_type)"></lucide-icon>
         <h3>{{ section.title }}</h3>
       </div>
 
@@ -88,7 +86,7 @@
         "
         class="unsupported-type"
       >
-        <mat-icon>warning</mat-icon>
+        <lucide-icon name="triangle-alert"></lucide-icon>
         <p>Unsupported visualization type: {{ section.component_type }}</p>
       </div>
     </div>
@@ -96,7 +94,7 @@
 
   <!-- No Data -->
   <div *ngIf="visibleSections.length === 0" class="no-data">
-    <mat-icon>info</mat-icon>
+    <lucide-icon name="info"></lucide-icon>
     <p>No structured output data available.</p>
   </div>
 </div>

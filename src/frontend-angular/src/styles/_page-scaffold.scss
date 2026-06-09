@@ -1,0 +1,70 @@
+// ============================================================================
+// Page scaffold — design-system defaults for the shared page class convention
+// (.page-container / .page-header-section / .page-title / .page-controls /
+// .page-content) used across src/app/pages.
+//
+// These are GLOBAL defaults: pages that re-declare a property in their own
+// component SCSS win (Angular appends component styles after globals). The
+// per-page scaffold blocks have been retuned to consume the same tokens, so
+// both paths land on the design spec: transparent page head on the slate
+// canvas, hairline border, 22/600 title with a 25px cobalt leading icon.
+// ============================================================================
+
+.page-container {
+  font-family: var(--font-sans);
+}
+
+.page-header-section {
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+
+  .page-title {
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin: 0;
+      font-size: var(--h1-size);
+      font-weight: var(--h1-weight);
+      line-height: var(--h1-lh);
+      letter-spacing: -0.01em;
+      color: var(--fg-1);
+
+      :is(mat-icon, lucide-icon) {
+        font-size: 25px;
+        width: 25px;
+        height: 25px;
+        color: var(--primary);
+      }
+    }
+
+    .subtitle {
+      color: var(--fg-3);
+      font-size: 13.5px;
+      max-width: 70ch;
+    }
+  }
+
+  .page-controls {
+    .controls-container {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: none;
+    }
+  }
+}
+
+// Empty states (kit.css .empty)
+.empty-state,
+.no-results {
+  color: var(--fg-3);
+
+  :is(mat-icon, lucide-icon) {
+    color: var(--n-300);
+  }
+
+  h3 {
+    color: var(--fg-1);
+  }
+}

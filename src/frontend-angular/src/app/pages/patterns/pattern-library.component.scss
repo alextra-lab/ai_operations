@@ -9,7 +9,7 @@
 .page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px); // Account for main layout header and padding
+  height: calc(100vh - var(--chrome-h)); // Account for main layout header and padding
   margin: -24px -32px; // Offset main layout padding
   padding: 0;
   overflow: hidden; // Prevent this from scrolling
@@ -19,9 +19,8 @@
 .page-header-section {
   flex: 0 0 auto;
   z-index: 100;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-bottom: 1px solid var(--border);
 
   .page-title {
     padding: 16px 24px 12px 24px;
@@ -31,11 +30,12 @@
       align-items: center;
       gap: 10px;
       margin: 0;
-      font-size: 24px;
-      font-weight: 500;
+      font-size: var(--h1-size);
+      font-weight: var(--h1-weight);
+      letter-spacing: -0.01em;
       height: 36px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 28px;
         width: 28px;
         height: 28px;
@@ -44,7 +44,7 @@
 
     .subtitle {
       margin: 4px 0 0 0;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--fg-3);
       font-size: 13px;
 
       a {
@@ -62,7 +62,7 @@
     padding: 0 24px 12px 24px;
 
     .controls-container {
-      background: #f5f5f5;
+      background: var(--surface-2);
       border-radius: 6px;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       padding: 8px 16px 8px 16px;
@@ -84,7 +84,7 @@
         gap: 0;
         border-radius: 6px;
         overflow: hidden;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--border);
         height: 40px;
 
         button {
@@ -96,20 +96,20 @@
           height: 40px;
 
           &:hover {
-            background: #f5f5f5;
+            background: var(--surface-2);
           }
 
           &.active {
-            background: #1976d2;
+            background: var(--primary);
             color: white;
 
-            mat-icon {
+            :is(mat-icon, lucide-icon) {
               color: white;
             }
           }
 
-          mat-icon {
-            color: rgba(0, 0, 0, 0.6);
+          :is(mat-icon, lucide-icon) {
+            color: var(--fg-3);
             transition: color 0.2s ease;
           }
         }
@@ -140,7 +140,7 @@
   }
 
   p {
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--fg-3);
     font-size: 16px;
   }
 }
@@ -150,7 +150,7 @@
   padding: 40px 20px;
   background-color: #ffebee;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 48px;
     width: 48px;
     height: 48px;
@@ -182,7 +182,7 @@
   display: flex;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border);
   background: white;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -205,7 +205,7 @@
     margin-right: 16px;
     flex-shrink: 0;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 24px;
       width: 24px;
       height: 24px;
@@ -283,7 +283,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
 
-    mat-icon {
+    :is(mat-icon, lucide-icon) {
       font-size: 18px;
       width: 18px;
       height: 18px;
@@ -298,13 +298,13 @@
       margin: 0 0 8px 0;
       font-size: 18px;
       font-weight: 500;
-      color: rgba(0, 0, 0, 0.87);
+      color: var(--fg-1);
       line-height: 1.4;
     }
 
     .pattern-description {
       margin: 0;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--fg-3);
       font-size: 14px;
       line-height: 1.5;
       display: -webkit-box;
@@ -339,10 +339,10 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--fg-3);
       font-size: 13px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         font-size: 18px;
         width: 18px;
         height: 18px;
@@ -360,7 +360,7 @@
   text-align: center;
   padding: 60px 20px;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 64px;
     width: 64px;
     height: 64px;
@@ -372,7 +372,7 @@
     margin: 0 0 8px 0;
     font-size: 24px;
     font-weight: 400;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--fg-3);
   }
 
   p {
@@ -386,7 +386,7 @@
   flex: 0 0 auto;
   z-index: 90;
   background: white;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border);
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 
   mat-paginator {
@@ -402,9 +402,8 @@
   .page-header-section {
     .page-controls {
       .controls-container {
-
         // Allow form fields to wrap on medium screens
-        >div {
+        > div {
           flex-wrap: wrap;
         }
       }
@@ -414,7 +413,7 @@
 
 @media (max-width: 768px) {
   .page-container {
-    height: calc(100vh - 150px);
+    height: calc(100vh - var(--chrome-h));
     margin: -16px;
   }
 
@@ -426,7 +425,7 @@
         font-size: 20px;
         height: 32px;
 
-        mat-icon {
+        :is(mat-icon, lucide-icon) {
           font-size: 24px;
           width: 24px;
           height: 24px;
@@ -445,7 +444,7 @@
         padding: 8px 12px;
 
         // Stack rows on mobile
-        >div {
+        > div {
           flex-direction: column;
           align-items: stretch;
 

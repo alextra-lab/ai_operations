@@ -7,11 +7,11 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   RoleInfo,
   RoleUseCaseAssignment,
@@ -28,10 +28,10 @@ import { RoleManagementService } from '../../services/role-management.service';
   selector: 'app-role-details-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule,
     MatTableModule,
     MatChipsModule,
     MatTooltipModule,

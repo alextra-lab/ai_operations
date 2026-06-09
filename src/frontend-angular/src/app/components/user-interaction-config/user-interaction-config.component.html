@@ -1,13 +1,13 @@
 <mat-expansion-panel [expanded]="true">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <mat-icon>person</mat-icon>
+      <lucide-icon name="user"></lucide-icon>
       User Interaction
       <span class="validation-badge" *ngIf="hasErrors">
-        <mat-icon class="text-red-600">error</mat-icon>
+        <lucide-icon class="text-red-600" name="circle-alert"></lucide-icon>
       </span>
       <span class="validation-badge" *ngIf="!hasErrors && hasWarnings">
-        <mat-icon class="text-amber-600">warning</mat-icon>
+        <lucide-icon class="text-amber-600" name="triangle-alert"></lucide-icon>
       </span>
     </mat-panel-title>
     <mat-panel-description>
@@ -22,7 +22,7 @@
   >
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon>edit_note</mat-icon>
+        <lucide-icon name="square-pen"></lucide-icon>
         <span>1. Input Fields</span>
         <span class="field-count" *ngIf="inputFields.length > 0">
           ({{ inputFields.length }})
@@ -44,7 +44,7 @@
 
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon>description</mat-icon>
+        <lucide-icon name="file-text"></lucide-icon>
         <span>2. User Prompt Template</span>
       </ng-template>
 
@@ -59,7 +59,7 @@
           *ngIf="canGenerateTemplate"
         >
           <div class="auto-generate-hint">
-            <mat-icon>lightbulb</mat-icon>
+            <lucide-icon name="lightbulb"></lucide-icon>
             <span>No template defined yet.</span>
           </div>
           <button
@@ -69,7 +69,7 @@
             [disabled]="inputFields.length === 0"
             matTooltip="Generate a starter template using all defined input fields"
           >
-            <mat-icon>auto_awesome</mat-icon>
+            <lucide-icon name="sparkles"></lucide-icon>
             Generate Template from Fields
           </button>
           <p

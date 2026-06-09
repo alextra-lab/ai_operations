@@ -630,10 +630,10 @@ describe('ConversationComponent', () => {
     });
 
     it('should return correct role icons', () => {
-      expect(component.getRoleIcon('user')).toBe('person');
-      expect(component.getRoleIcon('assistant')).toBe('smart_toy');
+      expect(component.getRoleIcon('user')).toBe('user');
+      expect(component.getRoleIcon('assistant')).toBe('bot');
       expect(component.getRoleIcon('system')).toBe('info');
-      expect(component.getRoleIcon('unknown')).toBe('chat');
+      expect(component.getRoleIcon('unknown')).toBe('message-square');
     });
 
     it('should return correct role names', () => {

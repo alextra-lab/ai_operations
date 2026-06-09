@@ -5,9 +5,9 @@
   <div class="page-header-section">
     <div class="page-title">
       <h1>
-        <mat-icon>{{
-          isViewMode ? 'visibility' : isEditMode ? 'edit' : 'add_box'
-        }}</mat-icon>
+        <lucide-icon
+          [name]="isViewMode ? 'eye' : isEditMode ? 'pencil' : 'square-plus'"
+        ></lucide-icon>
         <span>
           {{
             isViewMode
@@ -32,7 +32,7 @@
         aria-label="Cancel"
         class="close-btn"
       >
-        <mat-icon>close</mat-icon>
+        <lucide-icon name="x"></lucide-icon>
       </button>
     </div>
   </div>
@@ -56,9 +56,11 @@
             [class.text-white]="currentStep >= step"
             [class.active]="currentStep === step"
           >
-            <mat-icon *ngIf="currentStep > step" class="text-xl w-5 h-5"
-              >check</mat-icon
-            >
+            <lucide-icon
+              *ngIf="currentStep > step"
+              class="text-xl w-5 h-5"
+              name="check"
+            ></lucide-icon>
             <span *ngIf="currentStep <= step">{{ getStepNumber(step) }}</span>
           </div>
           <div
@@ -127,11 +129,11 @@
                   [value]="cat.category_code"
                 >
                   <div class="flex items-center gap-2">
-                    <mat-icon
+                    <lucide-icon
                       class="text-base"
                       [style.color]="cat.color"
-                      >{{ cat.icon }}</mat-icon
-                    >
+                      [name]="cat.icon"
+                    ></lucide-icon>
                     <span>{{ cat.display_name }}</span>
                   </div>
                 </mat-option>
@@ -146,18 +148,16 @@
                   [value]="intent.intent_code"
                 >
                   <div class="flex items-center gap-2">
-                    <mat-icon
+                    <lucide-icon
                       class="text-base"
                       [style.color]="intent.color"
-                      >{{ intent.icon }}</mat-icon
-                    >
+                      [name]="intent.icon"
+                    ></lucide-icon>
                     <span>{{ intent.display_name }}</span>
                   </div>
                 </mat-option>
               </mat-select>
-              <mat-hint
-                *ngIf="getSelectedIntentProfile() as profile"
-              >
+              <mat-hint *ngIf="getSelectedIntentProfile() as profile">
                 {{ profile.description }}
               </mat-hint>
             </mat-form-field>
@@ -171,7 +171,8 @@
           Step {{ getStepNumber(2) }}: Starting Point
         </h2>
         <p class="mb-8 text-base text-gray-600">
-          Where do you start? Choose blank, a pattern, or clone an existing operation.
+          Where do you start? Choose blank, a pattern, or clone an existing
+          operation.
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -183,9 +184,10 @@
             [class.border-transparent]="startingPoint !== 'blank'"
             (click)="selectStartingPoint('blank')"
           >
-            <mat-icon class="text-6xl w-12 h-12 text-blue-500 mb-4"
-              >note_add</mat-icon
-            >
+            <lucide-icon
+              class="text-6xl w-12 h-12 text-blue-500 mb-4"
+              name="file-plus"
+            ></lucide-icon>
             <h3 class="mb-2 text-lg font-medium">Start from Blank</h3>
             <p class="m-0 text-sm text-gray-600">
               Create a new use case from scratch with default settings
@@ -200,9 +202,10 @@
             [class.border-transparent]="startingPoint !== 'pattern'"
             (click)="selectStartingPoint('pattern')"
           >
-            <mat-icon class="text-6xl w-12 h-12 text-blue-500 mb-4"
-              >library_books</mat-icon
-            >
+            <lucide-icon
+              class="text-6xl w-12 h-12 text-blue-500 mb-4"
+              name="library"
+            ></lucide-icon>
             <h3 class="mb-2 text-lg font-medium">Use a Pattern</h3>
             <p class="m-0 text-sm text-gray-600">
               Start with a prompt engineering pattern
@@ -217,9 +220,10 @@
             [class.border-transparent]="startingPoint !== 'clone'"
             (click)="selectStartingPoint('clone')"
           >
-            <mat-icon class="text-6xl w-12 h-12 text-blue-500 mb-4"
-              >content_copy</mat-icon
-            >
+            <lucide-icon
+              class="text-6xl w-12 h-12 text-blue-500 mb-4"
+              name="copy"
+            ></lucide-icon>
             <h3 class="mb-2 text-lg font-medium">Clone Existing</h3>
             <p class="m-0 text-sm text-gray-600">
               Clone and modify an existing use case
@@ -345,9 +349,10 @@
                   getCategoryInfo(pattern.category).color
                 "
               >
-                <mat-icon class="text-lg w-[18px] h-[18px]">{{
-                  getCategoryInfo(pattern.category).icon
-                }}</mat-icon>
+                <lucide-icon
+                  class="text-lg w-[18px] h-[18px]"
+                  [name]="getCategoryInfo(pattern.category).icon"
+                ></lucide-icon>
                 <span>{{ getCategoryInfo(pattern.category).label }}</span>
               </div>
 
@@ -388,9 +393,10 @@
                   class="flex items-center gap-1.5 text-gray-600 text-sm"
                   matTooltip="Times used"
                 >
-                  <mat-icon class="text-lg w-[18px] h-[18px]"
-                    >trending_up</mat-icon
-                  >
+                  <lucide-icon
+                    class="text-lg w-[18px] h-[18px]"
+                    name="trending-up"
+                  ></lucide-icon>
                   <span>{{ pattern.use_count || 0 }}</span>
                 </div>
 
@@ -400,7 +406,7 @@
                   matTooltip="Select pattern"
                   class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 >
-                  <mat-icon>check_circle</mat-icon>
+                  <lucide-icon name="circle-check"></lucide-icon>
                 </button>
               </div>
             </mat-card>
@@ -432,7 +438,8 @@
                   target="_blank"
                   rel="noopener"
                 >
-                  Learn more <mat-icon inline>open_in_new</mat-icon>
+                  Learn more
+                  <lucide-icon inline name="external-link"></lucide-icon>
                 </a>
               </div>
             </div>
@@ -450,10 +457,10 @@
       <div class="step-container" *ngIf="currentStep === 3">
         <h2>Step {{ getStepNumber(3) }}: User Experience</h2>
         <p class="step-description">
-          What does the end user see? Define the input form and
-          how results are displayed.
+          What does the end user see? Define the input form and how results are
+          displayed.
           <span *ngIf="appliedPatternName" class="pattern-badge">
-            <mat-icon inline>auto_awesome</mat-icon>
+            <lucide-icon inline name="sparkles"></lucide-icon>
             Pattern: {{ appliedPatternName }}
           </span>
         </p>
@@ -462,7 +469,7 @@
         <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              <mat-icon>input</mat-icon>
+              <lucide-icon name="log-in"></lucide-icon>
               User Interaction
             </mat-panel-title>
             <mat-panel-description>
@@ -481,12 +488,12 @@
 
         <!-- Contextual description (ADR-065) -->
         <div class="audience-banner">
-          <mat-icon>info_outline</mat-icon>
+          <lucide-icon name="info"></lucide-icon>
           <p>
-            This step defines what end users see: the input form
-            they fill in and how results are displayed. For API
-            consumers, the Output Schema is the contract;
-            visualization templates apply only to the browser UI.
+            This step defines what end users see: the input form they fill in
+            and how results are displayed. For API consumers, the Output Schema
+            is the contract; visualization templates apply only to the browser
+            UI.
           </p>
         </div>
 
@@ -494,7 +501,7 @@
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
-              <mat-icon>output</mat-icon>
+              <lucide-icon name="file-output"></lucide-icon>
               Output Configuration
             </mat-panel-title>
             <mat-panel-description>
@@ -548,7 +555,9 @@
                   Visualization Template (optional, UI only)
                 </h4>
                 <app-output-template-selector
-                  [selectedTemplateId]="configForm.get('output_template_id')?.value"
+                  [selectedTemplateId]="
+                    configForm.get('output_template_id')?.value
+                  "
                   (templateChange)="
                     configForm.patchValue({ output_template_id: $event });
                     updateSchemaCompatibility()
@@ -580,7 +589,10 @@
                     {{ showOutputPreview ? 'Hide Preview' : 'Show Preview' }}
                   </button>
                   @if (isLoadingOutputPreview) {
-                    <mat-spinner diameter="24" class="inline-spinner"></mat-spinner>
+                    <mat-spinner
+                      diameter="24"
+                      class="inline-spinner"
+                    ></mat-spinner>
                   }
                   @if (showOutputPreview && formattedPreview) {
                     <div class="preview-container mt-2">
@@ -605,8 +617,8 @@
       <div class="step-container" *ngIf="currentStep === 4">
         <h2>Step {{ getStepNumber(4) }}: AI Engine</h2>
         <p class="step-description">
-          How does the AI work? Configure prompts, model,
-          retrieval, tools, and policies.
+          How does the AI work? Configure prompts, model, retrieval, tools, and
+          policies.
         </p>
 
         <!-- Prompt Engineering Section -->
@@ -614,7 +626,7 @@
           <mat-expansion-panel [expanded]="true">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <mat-icon>edit_note</mat-icon>
+                <lucide-icon name="square-pen"></lucide-icon>
                 Prompt Engineering
               </mat-panel-title>
               <mat-panel-description>
@@ -624,7 +636,10 @@
 
             <!-- System Prompt -->
             <h4 class="mt-0 mb-3 text-base font-medium text-gray-700">
-              <mat-icon class="text-lg align-middle mr-1">person</mat-icon>
+              <lucide-icon
+                class="text-lg align-middle mr-1"
+                name="user"
+              ></lucide-icon>
               System Prompt (Hidden)
             </h4>
             <mat-form-field appearance="outline" class="w-full mb-4">
@@ -644,7 +659,10 @@
 
             <!-- Developer Prompt -->
             <h4 class="mt-4 mb-3 text-base font-medium text-gray-700">
-              <mat-icon class="text-lg align-middle mr-1">code</mat-icon>
+              <lucide-icon
+                class="text-lg align-middle mr-1"
+                name="code"
+              ></lucide-icon>
               Developer Prompt (Hidden)
             </h4>
             <mat-form-field appearance="outline" class="w-full mb-4">
@@ -664,9 +682,11 @@
 
             <!-- Few-Shot Examples -->
             <h4 class="mt-4 mb-3 text-base font-medium text-gray-700">
-              <mat-icon class="text-lg align-middle mr-1">school</mat-icon>
-              Few-Shot Examples
-              ({{ getFewshotsArray().length }})
+              <lucide-icon
+                class="text-lg align-middle mr-1"
+                name="graduation-cap"
+              ></lucide-icon>
+              Few-Shot Examples ({{ getFewshotsArray().length }})
             </h4>
             <div formArrayName="fewshots">
               <div
@@ -684,7 +704,7 @@
                     matTooltip="Remove example"
                     aria-label="Remove example"
                   >
-                    <mat-icon>delete</mat-icon>
+                    <lucide-icon name="trash-2"></lucide-icon>
                   </button>
                 </div>
 
@@ -719,7 +739,7 @@
                 (click)="addFewshotPair()"
                 type="button"
               >
-                <mat-icon>add</mat-icon>
+                <lucide-icon name="plus"></lucide-icon>
                 Add Few-Shot Example
               </button>
             </div>
@@ -732,10 +752,11 @@
                 (click)="togglePromptPreview()"
                 type="button"
               >
-                <mat-icon>{{
-                  showPromptPreview ? 'visibility_off' : 'visibility'
-                }}</mat-icon>
-                {{ showPromptPreview ? 'Hide' : 'Show' }} Message Assembly Preview
+                <lucide-icon
+                  [name]="showPromptPreview ? 'eye-off' : 'eye'"
+                ></lucide-icon>
+                {{ showPromptPreview ? 'Hide' : 'Show' }} Message Assembly
+                Preview
               </button>
             </div>
 
@@ -748,7 +769,7 @@
                   *ngIf="promptsForm.value.system_prompt"
                 >
                   <div class="message-role">
-                    <mat-icon>person</mat-icon> System
+                    <lucide-icon name="user"></lucide-icon> System
                   </div>
                   <div class="message-content">
                     {{ promptsForm.value.system_prompt }}
@@ -760,7 +781,7 @@
                   *ngIf="promptsForm.value.developer_prompt"
                 >
                   <div class="message-role">
-                    <mat-icon>code</mat-icon> Developer
+                    <lucide-icon name="code"></lucide-icon> Developer
                   </div>
                   <div class="message-content">
                     {{ promptsForm.value.developer_prompt }}
@@ -770,7 +791,7 @@
                 <ng-container *ngFor="let pair of promptsForm.value.fewshots">
                   <div class="message-block">
                     <div class="message-role">
-                      <mat-icon>question_answer</mat-icon> User
+                      <lucide-icon name="messages-square"></lucide-icon> User
                     </div>
                     <div class="message-content">
                       {{ pair.user }}
@@ -778,7 +799,7 @@
                   </div>
                   <div class="message-block">
                     <div class="message-role">
-                      <mat-icon>smart_toy</mat-icon> Assistant
+                      <lucide-icon name="bot"></lucide-icon> Assistant
                     </div>
                     <div class="message-content">
                       {{ pair.assistant }}
@@ -788,7 +809,7 @@
 
                 <div class="message-block user-query-placeholder">
                   <div class="message-role">
-                    <mat-icon>question_answer</mat-icon> User
+                    <lucide-icon name="messages-square"></lucide-icon> User
                   </div>
                   <div class="message-content">
                     <em>[User's actual query will appear here]</em>
@@ -805,7 +826,7 @@
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <mat-icon>psychology</mat-icon>
+                <lucide-icon name="brain-circuit"></lucide-icon>
                 Model Selection & Sampling
               </mat-panel-title>
               <mat-panel-description>
@@ -829,9 +850,11 @@
                     <span class="model-description">{{
                       getModelDescription(model)
                     }}</span>
-                    <mat-icon *ngIf="!model.is_available" class="text-sm"
-                      >warning</mat-icon
-                    >
+                    <lucide-icon
+                      *ngIf="!model.is_available"
+                      class="text-sm"
+                      name="triangle-alert"
+                    ></lucide-icon>
                   </div>
                 </mat-option>
               </mat-select>
@@ -841,7 +864,10 @@
             <!-- System Embedding Model Info -->
             <div class="bg-blue-50 border border-blue-200 rounded p-4 mb-4">
               <div class="flex items-start gap-2">
-                <mat-icon class="text-blue-600 mt-0.5">info</mat-icon>
+                <lucide-icon
+                  class="text-blue-600 mt-0.5"
+                  name="info"
+                ></lucide-icon>
                 <div class="flex-1">
                   <p class="text-sm font-medium text-blue-900 mb-1">
                     System Embedding Model
@@ -926,7 +952,7 @@
               class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded"
             >
               <div class="flex items-center gap-2 mb-2">
-                <mat-icon class="text-blue-600">info</mat-icon>
+                <lucide-icon class="text-blue-600" name="info"></lucide-icon>
                 <span class="font-medium text-blue-900"
                   >Active Preset Parameters</span
                 >
@@ -967,7 +993,10 @@
               class="mb-4 p-4 bg-red-50 border border-red-300 rounded"
             >
               <div class="flex items-center gap-2 mb-2">
-                <mat-icon class="text-red-600">warning</mat-icon>
+                <lucide-icon
+                  class="text-red-600"
+                  name="triangle-alert"
+                ></lucide-icon>
                 <span class="font-medium text-red-900"
                   >High-Entropy Configuration Detected</span
                 >
@@ -1060,7 +1089,7 @@
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <mat-icon>search</mat-icon>
+                <lucide-icon name="search"></lucide-icon>
                 RAG Settings
               </mat-panel-title>
               <mat-panel-description>
@@ -1141,7 +1170,7 @@
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <mat-icon>build</mat-icon>
+                <lucide-icon name="wrench"></lucide-icon>
                 Tools Configuration
               </mat-panel-title>
               <mat-panel-description>
@@ -1150,7 +1179,10 @@
             </mat-expansion-panel-header>
 
             <h4 class="mt-0 mb-3 text-base font-medium text-gray-700">
-              <mat-icon class="text-lg align-middle mr-1">checklist</mat-icon>
+              <lucide-icon
+                class="text-lg align-middle mr-1"
+                name="list-checks"
+              ></lucide-icon>
               Tools Allowlist
             </h4>
             <p class="text-sm text-gray-600 mb-4">
@@ -1167,7 +1199,10 @@
             <!-- ADR-057: Tool Security Restrictions -->
             <div class="mt-6 pt-6 border-t border-gray-200">
               <h4 class="mt-0 mb-3 text-base font-medium text-gray-700">
-                <mat-icon class="text-lg align-middle mr-1">security</mat-icon>
+                <lucide-icon
+                  class="text-lg align-middle mr-1"
+                  name="shield"
+                ></lucide-icon>
                 Security Restrictions (ADR-057)
               </h4>
               <p class="text-sm text-gray-600 mb-4">
@@ -1188,7 +1223,7 @@
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <mat-icon>policy</mat-icon>
+                <lucide-icon name="shield-alert"></lucide-icon>
                 Policies & Security
               </mat-panel-title>
               <mat-panel-description>
@@ -1254,8 +1289,8 @@
       <div class="step-container" *ngIf="currentStep === 5">
         <h2>Step {{ getStepNumber(5) }}: Review & Publish</h2>
         <p class="step-description">
-          Is this ready? Review configuration, fix validation
-          errors, and choose lifecycle state.
+          Is this ready? Review configuration, fix validation errors, and choose
+          lifecycle state.
         </p>
 
         <!-- Summary Cards -->
@@ -1263,7 +1298,7 @@
           <mat-card class="summary-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>info</mat-icon>
+                <lucide-icon name="info"></lucide-icon>
                 Basic Information
               </mat-card-title>
             </mat-card-header>
@@ -1275,17 +1310,13 @@
               <div class="summary-row">
                 <span class="label">Category:</span>
                 <span class="value">{{
-                  getCategoryDisplayName(
-                    basicInfoForm.value.category
-                  )
+                  getCategoryDisplayName(basicInfoForm.value.category)
                 }}</span>
               </div>
               <div class="summary-row">
                 <span class="label">Intent:</span>
                 <span class="value">{{
-                  getIntentDisplayName(
-                    basicInfoForm.value.intent_type
-                  )
+                  getIntentDisplayName(basicInfoForm.value.intent_type)
                 }}</span>
               </div>
               <div class="summary-row" *ngIf="basicInfoForm.value.description">
@@ -1295,7 +1326,7 @@
               <div class="summary-row" *ngIf="appliedPatternName">
                 <span class="label">Pattern:</span>
                 <span class="value pattern-badge-small">
-                  <mat-icon inline>auto_awesome</mat-icon>
+                  <lucide-icon inline name="sparkles"></lucide-icon>
                   {{ appliedPatternName }}
                 </span>
               </div>
@@ -1305,7 +1336,7 @@
           <mat-card class="summary-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>psychology</mat-icon>
+                <lucide-icon name="brain-circuit"></lucide-icon>
                 Models & Settings
               </mat-card-title>
             </mat-card-header>
@@ -1339,7 +1370,7 @@
           <mat-card class="summary-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>search</mat-icon>
+                <lucide-icon name="search"></lucide-icon>
                 RAG Configuration
               </mat-card-title>
             </mat-card-header>
@@ -1347,14 +1378,13 @@
               <div class="summary-row">
                 <span class="label">Enabled:</span>
                 <span class="value">
-                  <mat-icon
+                  <lucide-icon
                     class="status-icon"
                     [class.enabled]="configForm.value.rag_enabled"
-                  >
-                    {{
-                      configForm.value.rag_enabled ? 'check_circle' : 'cancel'
-                    }}
-                  </mat-icon>
+                    [name]="
+                      configForm.value.rag_enabled ? 'circle-check' : 'circle-x'
+                    "
+                  ></lucide-icon>
                 </span>
               </div>
               <div class="summary-row" *ngIf="configForm.value.rag_enabled">
@@ -1370,16 +1400,15 @@
               <div class="summary-row" *ngIf="configForm.value.rag_enabled">
                 <span class="label">Hybrid BM25:</span>
                 <span class="value">
-                  <mat-icon
+                  <lucide-icon
                     class="status-icon"
                     [class.enabled]="configForm.value.rag_hybrid_bm25"
-                  >
-                    {{
+                    [name]="
                       configForm.value.rag_hybrid_bm25
-                        ? 'check_circle'
-                        : 'cancel'
-                    }}
-                  </mat-icon>
+                        ? 'circle-check'
+                        : 'circle-x'
+                    "
+                  ></lucide-icon>
                 </span>
               </div>
               <div
@@ -1409,7 +1438,7 @@
           <mat-card class="summary-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>policy</mat-icon>
+                <lucide-icon name="shield-alert"></lucide-icon>
                 Policies
               </mat-card-title>
             </mat-card-header>
@@ -1417,31 +1446,29 @@
               <div class="summary-row">
                 <span class="label">Streaming:</span>
                 <span class="value">
-                  <mat-icon
+                  <lucide-icon
                     class="status-icon"
                     [class.enabled]="configForm.value.streaming_enabled"
-                  >
-                    {{
+                    [name]="
                       configForm.value.streaming_enabled
-                        ? 'check_circle'
-                        : 'cancel'
-                    }}
-                  </mat-icon>
+                        ? 'circle-check'
+                        : 'circle-x'
+                    "
+                  ></lucide-icon>
                 </span>
               </div>
               <div class="summary-row">
                 <span class="label">History:</span>
                 <span class="value">
-                  <mat-icon
+                  <lucide-icon
                     class="status-icon"
                     [class.enabled]="configForm.value.history_persistence"
-                  >
-                    {{
+                    [name]="
                       configForm.value.history_persistence
-                        ? 'check_circle'
-                        : 'cancel'
-                    }}
-                  </mat-icon>
+                        ? 'circle-check'
+                        : 'circle-x'
+                    "
+                  ></lucide-icon>
                 </span>
               </div>
               <div class="summary-row">
@@ -1455,7 +1482,7 @@
           <mat-card class="summary-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>security</mat-icon>
+                <lucide-icon name="shield"></lucide-icon>
                 Tool Restrictions
               </mat-card-title>
             </mat-card-header>
@@ -1463,12 +1490,11 @@
               <div class="summary-row">
                 <span class="label">Enabled:</span>
                 <span class="value">
-                  <mat-icon
+                  <lucide-icon
                     class="status-icon"
                     [class.enabled]="toolRestrictions !== null"
-                  >
-                    {{ toolRestrictions ? 'check_circle' : 'cancel' }}
-                  </mat-icon>
+                    [name]="toolRestrictions ? 'circle-check' : 'circle-x'"
+                  ></lucide-icon>
                 </span>
               </div>
               <ng-container *ngIf="toolRestrictions">
@@ -1505,7 +1531,7 @@
         <mat-expansion-panel class="preview-prompts-panel">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              <mat-icon>visibility</mat-icon>
+              <lucide-icon name="eye"></lucide-icon>
               Preview Prompts
             </mat-panel-title>
             <mat-panel-description>
@@ -1516,7 +1542,7 @@
           <div class="prompts-preview-content">
             <div class="prompt-section" *ngIf="promptsForm.value.system_prompt">
               <h4>
-                <mat-icon>person</mat-icon>
+                <lucide-icon name="user"></lucide-icon>
                 System Prompt
               </h4>
               <div class="prompt-text">
@@ -1529,7 +1555,7 @@
               *ngIf="promptsForm.value.developer_prompt"
             >
               <h4>
-                <mat-icon>code</mat-icon>
+                <lucide-icon name="code"></lucide-icon>
                 Developer Prompt
               </h4>
               <div class="prompt-text">
@@ -1545,7 +1571,7 @@
               "
             >
               <h4>
-                <mat-icon>school</mat-icon>
+                <lucide-icon name="graduation-cap"></lucide-icon>
                 Few-Shot Examples ({{ promptsForm.value.fewshots.length }})
               </h4>
               <div
@@ -1573,7 +1599,7 @@
                   promptsForm.value.fewshots.length === 0)
               "
             >
-              <mat-icon>info</mat-icon>
+              <lucide-icon name="info"></lucide-icon>
               <p>No prompts configured. Using defaults.</p>
             </div>
           </div>
@@ -1582,7 +1608,7 @@
         <!-- Validation Errors (if any) -->
         <div class="validation-errors" *ngIf="validationErrors.length > 0">
           <div class="error-title">
-            <mat-icon>error</mat-icon>
+            <lucide-icon name="circle-alert"></lucide-icon>
             <span>Validation Errors</span>
           </div>
           <ul>
@@ -1594,7 +1620,10 @@
         <mat-card class="mb-6">
           <mat-card-header>
             <mat-card-title>
-              <mat-icon class="success-icon">check_circle</mat-icon>
+              <lucide-icon
+                class="success-icon"
+                name="circle-check"
+              ></lucide-icon>
               Validation Checks
             </mat-card-title>
           </mat-card-header>
@@ -1605,9 +1634,9 @@
                 [class.passed]="basicInfoForm.valid"
                 [class.failed]="!basicInfoForm.valid"
               >
-                <mat-icon>{{
-                  basicInfoForm.valid ? 'check' : 'error'
-                }}</mat-icon>
+                <lucide-icon
+                  [name]="basicInfoForm.valid ? 'check' : 'circle-alert'"
+                ></lucide-icon>
                 <span>Basic information complete</span>
               </div>
               <div
@@ -1615,13 +1644,13 @@
                 [class.passed]="configForm.value.llm_model"
                 [class.failed]="!configForm.value.llm_model"
               >
-                <mat-icon>{{
-                  configForm.value.llm_model ? 'check' : 'error'
-                }}</mat-icon>
+                <lucide-icon
+                  [name]="configForm.value.llm_model ? 'check' : 'circle-alert'"
+                ></lucide-icon>
                 <span>Model configuration valid</span>
               </div>
               <div class="check-item passed">
-                <mat-icon>check</mat-icon>
+                <lucide-icon name="check"></lucide-icon>
                 <span>RAG settings within acceptable ranges</span>
               </div>
               <div
@@ -1635,12 +1664,14 @@
                   !promptsForm.value.developer_prompt
                 "
               >
-                <mat-icon>{{
-                  promptsForm.value.system_prompt ||
-                  promptsForm.value.developer_prompt
-                    ? 'check'
-                    : 'warning'
-                }}</mat-icon>
+                <lucide-icon
+                  [name]="
+                    promptsForm.value.system_prompt ||
+                    promptsForm.value.developer_prompt
+                      ? 'check'
+                      : 'triangle-alert'
+                  "
+                ></lucide-icon>
                 <span>{{
                   promptsForm.value.system_prompt ||
                   promptsForm.value.developer_prompt
@@ -1650,7 +1681,7 @@
                 }}</span>
               </div>
               <div class="check-item passed">
-                <mat-icon>check</mat-icon>
+                <lucide-icon name="check"></lucide-icon>
                 <span>Policy configuration valid</span>
               </div>
             </div>
@@ -1661,7 +1692,7 @@
         <mat-expansion-panel class="mb-6">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              <mat-icon>code</mat-icon>
+              <lucide-icon name="code"></lucide-icon>
               Full Configuration (JSON)
             </mat-panel-title>
             <mat-panel-description>
@@ -1678,7 +1709,7 @@
         <mat-card class="save-options-card" *ngIf="!isViewMode">
           <mat-card-header>
             <mat-card-title>
-              <mat-icon>rule</mat-icon>
+              <lucide-icon name="list-checks"></lucide-icon>
               Lifecycle State
             </mat-card-title>
           </mat-card-header>
@@ -1712,9 +1743,10 @@
                   />
                   <div class="flex-1">
                     <div class="flex items-center gap-2 mb-1">
-                      <mat-icon class="text-gray-600 text-lg"
-                        >edit_note</mat-icon
-                      >
+                      <lucide-icon
+                        class="text-gray-600 text-lg"
+                        name="square-pen"
+                      ></lucide-icon>
                       <strong class="text-base">Save as Draft</strong>
                     </div>
                     <p class="text-sm text-gray-600 m-0">
@@ -1749,9 +1781,10 @@
                   />
                   <div class="flex-1">
                     <div class="flex items-center gap-2 mb-1">
-                      <mat-icon class="text-yellow-600 text-lg"
-                        >rate_review</mat-icon
-                      >
+                      <lucide-icon
+                        class="text-yellow-600 text-lg"
+                        name="message-square-text"
+                      ></lucide-icon>
                       <strong class="text-base">Submit for Review</strong>
                     </div>
                     <p class="text-sm text-gray-600 m-0">
@@ -1788,9 +1821,10 @@
                   />
                   <div class="flex-1">
                     <div class="flex items-center gap-2 mb-1">
-                      <mat-icon class="text-green-600 text-lg"
-                        >publish</mat-icon
-                      >
+                      <lucide-icon
+                        class="text-green-600 text-lg"
+                        name="upload"
+                      ></lucide-icon>
                       <strong class="text-base">Publish Immediately</strong>
                       <mat-chip
                         class="text-xs px-2 py-1"
@@ -1809,7 +1843,7 @@
             </div>
 
             <div class="save-info mt-4">
-              <mat-icon>info</mat-icon>
+              <lucide-icon name="info"></lucide-icon>
               <p>
                 {{
                   targetLifecycleState === LifecycleState.DRAFT
@@ -1840,7 +1874,7 @@
           (click)="previousStep()"
           [disabled]="currentStep === 1 || isCreating"
         >
-          <mat-icon class="mx-1">chevron_left</mat-icon>
+          <lucide-icon class="mx-1" name="chevron-left"></lucide-icon>
           Previous
         </button>
 
@@ -1851,7 +1885,11 @@
           [disabled]="!canProceed() || isCreating"
         >
           {{ getButtonText() }}
-          <mat-icon *ngIf="!isLastStep()" class="mx-1">chevron_right</mat-icon>
+          <lucide-icon
+            *ngIf="!isLastStep()"
+            class="mx-1"
+            name="chevron-right"
+          ></lucide-icon>
         </button>
       </div>
     </div>

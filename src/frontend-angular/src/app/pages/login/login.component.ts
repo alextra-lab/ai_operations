@@ -15,17 +15,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
+    LucideAngularModule,
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
-    MatInputModule,
     MatIconModule,
+    MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
   ],

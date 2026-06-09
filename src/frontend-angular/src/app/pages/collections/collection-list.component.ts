@@ -32,6 +32,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   Collection,
   EMBEDDING_MODELS,
@@ -46,6 +47,7 @@ import { CollectionEditDialogComponent } from './collection-edit-dialog.componen
   styleUrls: ['./collection-list.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,

@@ -18,7 +18,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -29,6 +28,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { forkJoin, interval, Subject, takeUntil } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ToolAdminService } from '../tool-management/services/tool-admin.service';
 import { HealthHistoryChartComponent } from './components/health-history-chart/health-history-chart.component';
 import { HealthSummaryCardsComponent } from './components/health-summary-cards/health-summary-cards.component';
@@ -46,12 +46,12 @@ import { ToolHealthService } from './services/tool-health.service';
   selector: 'app-tool-health',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     RouterLink,
     MatButtonModule,
     MatCardModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSlideToggleModule,
@@ -300,13 +300,13 @@ export class ToolHealthComponent implements OnInit, OnDestroy {
     const status = this.getStatus(tool);
     switch (status) {
       case 'online':
-        return 'check_circle';
+        return 'circle-check';
       case 'offline':
-        return 'error';
+        return 'circle-alert';
       case 'disabled':
-        return 'power_off';
+        return 'power-off';
       default:
-        return 'help_outline';
+        return 'circle-help';
     }
   }
 

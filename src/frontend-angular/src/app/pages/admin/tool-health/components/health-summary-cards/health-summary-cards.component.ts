@@ -8,18 +8,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { HealthSummary } from '../../models/tool-health.models';
 
 @Component({
   selector: 'app-health-summary-cards',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatProgressSpinnerModule,
   ],
   templateUrl: './health-summary-cards.component.html',

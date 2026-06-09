@@ -2,6 +2,33 @@ import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
 
 setupZoneTestEnv();
 
+// ============================================================================
+// Lucide icon registry for tests
+// The app registers icons once in app.config.ts (root injector), which the
+// TestBed does not replicate. Without a LUCIDE_ICONS provider, rendering any
+// <lucide-icon> throws. Inject the app registry into every testing module.
+// ============================================================================
+import { TestBed } from '@angular/core/testing';
+import { LUCIDE_ICONS } from 'lucide-angular';
+import { APP_ICONS } from './app/shared/icons/lucide-icons';
+import { SafeLucideIconProvider } from './app/shared/icons/safe-lucide-icon-provider';
+
+const originalConfigureTestingModule =
+  TestBed.configureTestingModule.bind(TestBed);
+TestBed.configureTestingModule = (
+  moduleDef: Parameters<typeof TestBed.configureTestingModule>[0]
+) => {
+  moduleDef.providers = [
+    ...(moduleDef.providers ?? []),
+    {
+      provide: LUCIDE_ICONS,
+      multi: true,
+      useValue: new SafeLucideIconProvider(APP_ICONS),
+    },
+  ];
+  return originalConfigureTestingModule(moduleDef);
+};
+
 // Polyfill ReadableStream for jsdom (required for SSE streaming tests)
 import {
   ReadableStream,

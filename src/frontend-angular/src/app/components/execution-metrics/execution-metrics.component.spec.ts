@@ -67,9 +67,9 @@ describe('ExecutionMetricsComponent', () => {
 
   it('should initialize confidence and status classes', () => {
     expect(component.confidenceClass).toBe('high');
-    expect(component.confidenceIcon).toBe('check_circle');
+    expect(component.confidenceIcon).toBe('circle-check');
     expect(component.overallStatusClass).toBe('success');
-    expect(component.overallStatusIcon).toBe('check_circle');
+    expect(component.overallStatusIcon).toBe('circle-check');
   });
 
   it('should update confidence level for high score', () => {
@@ -77,7 +77,7 @@ describe('ExecutionMetricsComponent', () => {
     component.ngOnInit();
 
     expect(component.confidenceClass).toBe('high');
-    expect(component.confidenceIcon).toBe('check_circle');
+    expect(component.confidenceIcon).toBe('circle-check');
   });
 
   it('should update confidence level for medium score', () => {
@@ -85,7 +85,7 @@ describe('ExecutionMetricsComponent', () => {
     component.ngOnInit();
 
     expect(component.confidenceClass).toBe('medium');
-    expect(component.confidenceIcon).toBe('warning');
+    expect(component.confidenceIcon).toBe('triangle-alert');
   });
 
   it('should update confidence level for low score', () => {
@@ -93,7 +93,7 @@ describe('ExecutionMetricsComponent', () => {
     component.ngOnInit();
 
     expect(component.confidenceClass).toBe('low');
-    expect(component.confidenceIcon).toBe('error');
+    expect(component.confidenceIcon).toBe('circle-alert');
   });
 
   it('should update overall status for warning', () => {
@@ -101,7 +101,7 @@ describe('ExecutionMetricsComponent', () => {
     component.ngOnInit();
 
     expect(component.overallStatusClass).toBe('warning');
-    expect(component.overallStatusIcon).toBe('warning');
+    expect(component.overallStatusIcon).toBe('triangle-alert');
   });
 
   it('should update overall status for error', () => {
@@ -110,7 +110,7 @@ describe('ExecutionMetricsComponent', () => {
     component.ngOnInit();
 
     expect(component.overallStatusClass).toBe('error');
-    expect(component.overallStatusIcon).toBe('error');
+    expect(component.overallStatusIcon).toBe('circle-alert');
   });
 
   it('should format duration correctly', () => {

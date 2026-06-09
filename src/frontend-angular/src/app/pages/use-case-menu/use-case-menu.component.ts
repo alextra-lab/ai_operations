@@ -20,6 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { UseCase } from '../../api/models/use-case.models';
 import { UseCaseService } from '../../api/services/use-case.service';
 
@@ -27,6 +28,7 @@ import { UseCaseService } from '../../api/services/use-case.service';
   selector: 'app-use-case-menu',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatCardModule,
@@ -315,31 +317,32 @@ export class UseCaseMenuComponent implements OnInit, OnDestroy {
 
   getUseCaseIcon(category: string): string {
     const iconMap: Record<string, string> = {
-      threat_analysis: 'security',
-      incident_response: 'emergency',
-      vulnerability_assessment: 'bug_report',
-      compliance_check: 'verified_user',
-      data_analysis: 'analytics',
-      report_generation: 'description',
-      network_monitoring: 'network_check',
-      user_behavior: 'person_search',
-      default: 'psychology',
+      threat_analysis: 'shield',
+      incident_response: 'siren',
+      vulnerability_assessment: 'bug',
+      compliance_check: 'shield-check',
+      data_analysis: 'chart-column',
+      report_generation: 'file-text',
+      network_monitoring: 'network',
+      user_behavior: 'user-search',
+      default: 'brain-circuit',
     };
 
     return iconMap[category] || iconMap['default'];
   }
 
   getUseCaseColor(category: string): string {
+    // Design-system SOC category accents (tokens.css --cat-*)
     const colorMap: Record<string, string> = {
-      threat_analysis: '#f44336',
-      incident_response: '#ff9800',
-      vulnerability_assessment: '#ff5722',
-      compliance_check: '#4caf50',
-      data_analysis: '#2196f3',
-      report_generation: '#9c27b0',
-      network_monitoring: '#00bcd4',
-      user_behavior: '#795548',
-      default: '#607d8b',
+      threat_analysis: 'var(--cat-threat)',
+      incident_response: 'var(--cat-incident)',
+      vulnerability_assessment: 'var(--cat-vuln)',
+      compliance_check: 'var(--cat-compliance)',
+      data_analysis: 'var(--cat-data)',
+      report_generation: 'var(--cat-report)',
+      network_monitoring: 'var(--cat-network)',
+      user_behavior: 'var(--cat-behavior)',
+      default: 'var(--cat-default)',
     };
 
     return colorMap[category] || colorMap['default'];

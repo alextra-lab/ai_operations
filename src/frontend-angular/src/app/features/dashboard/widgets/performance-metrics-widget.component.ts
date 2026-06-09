@@ -2,19 +2,19 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { PerformanceMetrics, WidgetConfig } from '../models/dashboard.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-performance-metrics-widget',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatChipsModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
@@ -23,7 +23,7 @@ import { PerformanceMetrics, WidgetConfig } from '../models/dashboard.models';
     <div class="performance-metrics-widget">
       <div class="header">
         <div class="title">
-          <mat-icon aria-hidden="true">speed</mat-icon>
+          <lucide-icon aria-hidden="true" name="gauge"></lucide-icon>
           <div>
             <p>Performance Metrics</p>
             <small>Realtime backend health</small>
@@ -41,7 +41,7 @@ import { PerformanceMetrics, WidgetConfig } from '../models/dashboard.models';
       <div *ngIf="metrics; else emptyState" class="metrics-grid">
         <div class="metric-card">
           <div class="label">
-            <mat-icon aria-hidden="true">timer</mat-icon>
+            <lucide-icon aria-hidden="true" name="timer"></lucide-icon>
             <span>Response Time</span>
           </div>
           <div class="value">
@@ -51,7 +51,7 @@ import { PerformanceMetrics, WidgetConfig } from '../models/dashboard.models';
 
         <div class="metric-card">
           <div class="label">
-            <mat-icon aria-hidden="true">swap_horiz</mat-icon>
+            <lucide-icon aria-hidden="true" name="arrow-left-right"></lucide-icon>
             <span>Throughput</span>
           </div>
           <div class="value">
@@ -61,7 +61,7 @@ import { PerformanceMetrics, WidgetConfig } from '../models/dashboard.models';
 
         <div class="metric-card">
           <div class="label">
-            <mat-icon aria-hidden="true">error_outline</mat-icon>
+            <lucide-icon aria-hidden="true" name="circle-alert"></lucide-icon>
             <span>Error Rate</span>
           </div>
           <div class="value">{{ metrics.error_rate | number: '1.1-1' }}%</div>
@@ -69,7 +69,7 @@ import { PerformanceMetrics, WidgetConfig } from '../models/dashboard.models';
 
         <div class="bar-item">
           <div class="bar-label">
-            <mat-icon aria-hidden="true">memory</mat-icon>
+            <lucide-icon aria-hidden="true" name="cpu"></lucide-icon>
             <span>CPU</span>
           </div>
           <mat-progress-bar
@@ -83,7 +83,7 @@ import { PerformanceMetrics, WidgetConfig } from '../models/dashboard.models';
 
         <div class="bar-item">
           <div class="bar-label">
-            <mat-icon aria-hidden="true">storage</mat-icon>
+            <lucide-icon aria-hidden="true" name="database"></lucide-icon>
             <span>Memory</span>
           </div>
           <mat-progress-bar
@@ -97,7 +97,7 @@ import { PerformanceMetrics, WidgetConfig } from '../models/dashboard.models';
 
         <div class="bar-item">
           <div class="bar-label">
-            <mat-icon aria-hidden="true">lan</mat-icon>
+            <lucide-icon aria-hidden="true" name="network"></lucide-icon>
             <span>Connections</span>
           </div>
           <mat-progress-bar
@@ -110,7 +110,7 @@ import { PerformanceMetrics, WidgetConfig } from '../models/dashboard.models';
 
       <ng-template #emptyState>
         <div class="empty-state">
-          <mat-icon aria-hidden="true">speed</mat-icon>
+          <lucide-icon aria-hidden="true" name="gauge"></lucide-icon>
           <p>No performance data</p>
           <small>Data will appear when metrics stream begins</small>
         </div>

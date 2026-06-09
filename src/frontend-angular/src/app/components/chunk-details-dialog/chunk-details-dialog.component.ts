@@ -6,7 +6,6 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -16,6 +15,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import { Document } from '../../api/models/document.models';
 import { SearchResult } from '../../api/models/query.models';
 import { DocumentService } from '../../api/services/document.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 export interface ChunkDetailsDialogData {
   chunk: SearchResult;
@@ -28,12 +28,12 @@ export interface ChunkDetailsDialogData {
   selector: 'app-chunk-details-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     NgFor,
     NgIf,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatTabsModule,
@@ -43,7 +43,7 @@ export interface ChunkDetailsDialogData {
       <!-- Dialog Header -->
       <div mat-dialog-title class="dialog-header">
         <div class="header-content">
-          <mat-icon class="chunk-icon">text_snippet</mat-icon>
+          <lucide-icon class="chunk-icon" name="file-text"></lucide-icon>
           <div class="chunk-info">
             <h2 class="chunk-title">Chunk Details</h2>
             <p class="chunk-meta">
@@ -69,7 +69,7 @@ export interface ChunkDetailsDialogData {
           class="close-button"
           [attr.aria-label]="'Close dialog'"
         >
-          <mat-icon>close</mat-icon>
+          <lucide-icon name="x"></lucide-icon>
         </button>
       </div>
 
@@ -99,11 +99,11 @@ export interface ChunkDetailsDialogData {
               <!-- Content Actions -->
               <div class="content-actions">
                 <button mat-button (click)="copyChunkText()">
-                  <mat-icon>content_copy</mat-icon>
+                  <lucide-icon name="copy"></lucide-icon>
                   Copy Text
                 </button>
                 <button mat-button (click)="copyChunkWithMetadata()">
-                  <mat-icon>content_copy</mat-icon>
+                  <lucide-icon name="copy"></lucide-icon>
                   Copy with Metadata
                 </button>
               </div>
@@ -270,11 +270,11 @@ export interface ChunkDetailsDialogData {
                     color="primary"
                     (click)="viewFullDocument()"
                   >
-                    <mat-icon>description</mat-icon>
+                    <lucide-icon name="file-text"></lucide-icon>
                     View Full Document
                   </button>
                   <button mat-button (click)="downloadDocument()">
-                    <mat-icon>download</mat-icon>
+                    <lucide-icon name="download"></lucide-icon>
                     Download Document
                   </button>
                 </div>
@@ -291,7 +291,7 @@ export interface ChunkDetailsDialogData {
           (click)="downloadDocument()"
           [disabled]="!data.documentId"
         >
-          <mat-icon>download</mat-icon>
+          <lucide-icon name="download"></lucide-icon>
           Download Document
         </button>
         <button
@@ -299,7 +299,7 @@ export interface ChunkDetailsDialogData {
           (click)="viewFullDocument()"
           [disabled]="!data.documentId"
         >
-          <mat-icon>description</mat-icon>
+          <lucide-icon name="file-text"></lucide-icon>
           View Full Document
         </button>
         <button mat-button mat-dialog-close>Close</button>

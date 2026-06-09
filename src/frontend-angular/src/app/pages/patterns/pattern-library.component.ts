@@ -20,6 +20,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   PATTERN_CATEGORIES,
   PromptPattern,
@@ -32,6 +33,7 @@ import { PatternDetailDialogComponent } from './pattern-detail-dialog.component'
   selector: 'app-pattern-library',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -79,7 +81,7 @@ export class PatternLibraryComponent implements OnInit, OnDestroy {
   constructor(
     private patternsService: PromptPatternsService,
     private dialog: MatDialog
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // Load saved preferences
@@ -178,7 +180,7 @@ export class PatternLibraryComponent implements OnInit, OnDestroy {
       this.categories.find((c) => c.id === categoryId) || {
         id: categoryId,
         label: categoryId,
-        icon: 'category',
+        icon: 'shapes',
         description: '',
         color: '#757575',
       }

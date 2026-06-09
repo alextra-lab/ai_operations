@@ -7,7 +7,7 @@
 .page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
+  height: calc(100vh - var(--chrome-h));
   margin: -24px -32px;
   padding: 0;
   overflow: hidden; // CRITICAL: Prevent parent from scrolling
@@ -20,9 +20,8 @@
 .page-header-section {
   flex: 0 0 auto;
   z-index: 100;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-bottom: 1px solid var(--border);
 
   .page-title {
     padding: 24px 24px 16px 24px;
@@ -45,7 +44,7 @@
         align-items: center;
         gap: 12px;
 
-        mat-icon {
+        :is(mat-icon, lucide-icon) {
           font-size: 32px;
           width: 32px;
           height: 32px;
@@ -164,13 +163,13 @@
   .input-panel {
     margin: 0 24px 16px 24px;
     box-shadow: none;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border);
 
     ::ng-deep .mat-expansion-panel-header {
       padding: 0 16px;
       height: 56px;
 
-      mat-icon {
+      :is(mat-icon, lucide-icon) {
         margin-right: 8px;
       }
     }
@@ -215,7 +214,7 @@
         align-items: center;
         gap: 12px;
         padding: 16px;
-        background: #f5f5f5;
+        background: var(--surface-2);
         border-radius: 4px;
         color: #666;
 
@@ -234,7 +233,7 @@
 
     .overrides-panel {
       margin-top: 16px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid var(--border);
 
       .overrides-form {
         padding: 16px 0;
@@ -257,7 +256,7 @@
 .progress-container {
   flex: 0 0 auto;
   background: white;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border);
   padding: 8px 24px;
 
   mat-progress-bar {
@@ -276,7 +275,7 @@
     }
 
     .progress-percentage {
-      color: #1976d2;
+      color: var(--primary);
     }
   }
 }
@@ -314,8 +313,9 @@
 
     h3 {
       margin: 0 0 12px 0;
-      font-size: 24px;
-      font-weight: 500;
+      font-size: var(--h1-size);
+      font-weight: var(--h1-weight);
+      letter-spacing: -0.01em;
       color: #333;
     }
 
@@ -346,8 +346,9 @@
 
     h3 {
       margin: 0 0 12px 0;
-      font-size: 24px;
-      font-weight: 500;
+      font-size: var(--h1-size);
+      font-weight: var(--h1-weight);
+      letter-spacing: -0.01em;
       color: #f44336;
     }
 
@@ -371,12 +372,12 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
         .output-icon {
-          background: #1976d2;
+          background: var(--primary);
           display: flex;
           align-items: center;
           justify-content: center;
 
-          mat-icon {
+          :is(mat-icon, lucide-icon) {
             color: white;
           }
         }
@@ -393,7 +394,7 @@
   flex: 0 0 auto;
   z-index: 90;
   background: white;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border);
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
   padding: 12px 24px;
 
@@ -455,7 +456,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - 200px);
+  height: calc(100vh - var(--chrome-h));
   text-align: center;
   padding: 48px 24px;
 
@@ -487,7 +488,7 @@
 
 @media (max-width: 768px) {
   .page-container {
-    height: calc(100vh - 150px);
+    height: calc(100vh - var(--chrome-h));
     margin: -16px;
   }
 
@@ -499,7 +500,7 @@
         h1 {
           font-size: 24px;
 
-          mat-icon {
+          :is(mat-icon, lucide-icon) {
             font-size: 28px;
             width: 28px;
             height: 28px;
@@ -573,7 +574,7 @@
 // Ensure focus indicators are visible
 button:focus-visible,
 .mat-mdc-button:focus-visible {
-  outline: 2px solid #1976d2;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 

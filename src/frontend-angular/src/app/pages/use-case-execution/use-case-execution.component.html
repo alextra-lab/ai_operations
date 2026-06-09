@@ -12,12 +12,13 @@
             class="back-button"
             aria-label="Back to Use Cases"
           >
-            <mat-icon>arrow_back</mat-icon>
+            <lucide-icon name="arrow-left"></lucide-icon>
           </button>
           <h1>
-            <mat-icon [class]="'category-icon category-' + useCase.category"
-              >play_circle</mat-icon
-            >
+            <lucide-icon
+              [class]="'category-icon category-' + useCase.category"
+              name="circle-play"
+            ></lucide-icon>
             {{ useCase.name }}
           </h1>
         </div>
@@ -34,7 +35,7 @@
       <mat-expansion-panel class="input-panel" [expanded]="inputPanelExpanded">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <mat-icon>input</mat-icon>
+            <lucide-icon name="log-in"></lucide-icon>
             Input Parameters
           </mat-panel-title>
           @if (!inputPanelExpanded) {
@@ -138,7 +139,7 @@
 
           @if (!hasInputFields) {
             <div class="no-fields">
-              <mat-icon class="no-fields-icon">info</mat-icon>
+              <lucide-icon class="no-fields-icon" name="info"></lucide-icon>
               <p>This use case doesn't require any input parameters.</p>
             </div>
           }
@@ -149,7 +150,7 @@
           <mat-expansion-panel class="overrides-panel">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <mat-icon>tune</mat-icon>
+                <lucide-icon name="sliders-horizontal"></lucide-icon>
                 Advanced Overrides
               </mat-panel-title>
             </mat-expansion-panel-header>
@@ -234,7 +235,7 @@
     <div class="content-area">
       @if (!hasResults && !hasError) {
         <div class="empty-state">
-          <mat-icon class="empty-icon">play_circle_outline</mat-icon>
+          <lucide-icon class="empty-icon" name="circle-play"></lucide-icon>
           <h3>Ready to Execute</h3>
           <p>
             Fill in the input parameters above and click Execute to run this use
@@ -245,7 +246,7 @@
 
       @if (hasError) {
         <div class="error-state">
-          <mat-icon class="error-icon">error_outline</mat-icon>
+          <lucide-icon class="error-icon" name="circle-alert"></lucide-icon>
           <h3>Execution Failed</h3>
           <p class="error-message">{{ executionError }}</p>
           <button mat-raised-button color="primary" (click)="resetExecution()">
@@ -271,7 +272,7 @@
             <mat-card class="metrics-card">
               <mat-card-header>
                 <div mat-card-avatar class="metrics-icon">
-                  <mat-icon>insights</mat-icon>
+                  <lucide-icon name="chart-line"></lucide-icon>
                 </div>
                 <mat-card-title>Execution Metrics</mat-card-title>
               </mat-card-header>
@@ -290,11 +291,14 @@
             <mat-card class="sources-card">
               <mat-card-header>
                 <div mat-card-avatar class="sources-icon">
-                  <mat-icon>source</mat-icon>
+                  <lucide-icon name="folder-code"></lucide-icon>
                 </div>
                 <mat-card-title>Source Documents</mat-card-title>
                 <mat-card-subtitle
-                  >{{ executionResult!.sources.length }} documents</mat-card-subtitle
+                  >{{
+                    executionResult!.sources.length
+                  }}
+                  documents</mat-card-subtitle
                 >
               </mat-card-header>
               <mat-card-content>
@@ -303,7 +307,9 @@
                     *ngFor="let source of executionResult!.sources"
                     class="source-item"
                   >
-                    <app-source-citation [source]="source"></app-source-citation>
+                    <app-source-citation
+                      [source]="source"
+                    ></app-source-citation>
                   </div>
                 </div>
               </mat-card-content>
@@ -315,7 +321,7 @@
               <mat-card class="structured-output-card">
                 <mat-card-header>
                   <div mat-card-avatar class="output-icon">
-                    <mat-icon>dashboard</mat-icon>
+                    <lucide-icon name="layout-dashboard"></lucide-icon>
                   </div>
                   <mat-card-title>Structured Output</mat-card-title>
                   <mat-card-subtitle>Formatted Results</mat-card-subtitle>
@@ -340,7 +346,7 @@
                 (click)="openRefineSchemaDialog()"
                 aria-label="Generate schema from this output"
               >
-                <mat-icon>auto_fix_high</mat-icon>
+                <lucide-icon name="wand-sparkles"></lucide-icon>
                 Generate Schema from This Output
               </button>
             </div>
@@ -356,7 +362,10 @@
         <div class="footer-status">
           @if (executionResult && !isExecuting) {
             <span class="status-text">
-              <mat-icon class="status-icon">check_circle</mat-icon>
+              <lucide-icon
+                class="status-icon"
+                name="circle-check"
+              ></lucide-icon>
               Execution completed
               @if (executionResult.metrics && executionResult.metrics.model) {
                 <span class="metrics-summary">
@@ -389,7 +398,7 @@
             [disabled]="isExecuting"
             aria-label="Reset execution"
           >
-            <mat-icon>refresh</mat-icon>
+            <lucide-icon name="refresh-cw"></lucide-icon>
             Reset
           </button>
 
@@ -399,7 +408,7 @@
             [disabled]="isExecuting"
             aria-label="Toggle advanced settings"
           >
-            <mat-icon>tune</mat-icon>
+            <lucide-icon name="sliders-horizontal"></lucide-icon>
             {{ showOverrides ? 'Hide' : 'Show' }} Overrides
           </button>
 
@@ -421,7 +430,7 @@
             class="execute-button"
             aria-label="Execute use case"
           >
-            <mat-icon>play_arrow</mat-icon>
+            <lucide-icon name="play"></lucide-icon>
             Execute
           </button>
         </div>
@@ -441,7 +450,7 @@
 @if (error && !isLoading) {
   <!-- Error Loading State -->
   <div class="error-container">
-    <mat-icon class="error-icon">error_outline</mat-icon>
+    <lucide-icon class="error-icon" name="circle-alert"></lucide-icon>
     <h3>Error Loading Use Case</h3>
     <p>{{ error }}</p>
     <button mat-raised-button color="primary" (click)="navigateToUseCases()">

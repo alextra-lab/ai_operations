@@ -20,11 +20,11 @@
           color="primary"
           (click)="formatSchema()"
         >
-          <mat-icon>format_align_left</mat-icon>
+          <lucide-icon name="align-left"></lucide-icon>
           Format
         </button>
         <button type="button" mat-button (click)="clearSchema()">
-          <mat-icon>clear</mat-icon>
+          <lucide-icon name="x"></lucide-icon>
           Clear
         </button>
       </div>
@@ -62,7 +62,7 @@
         color="primary"
         (click)="generateFromExample()"
       >
-        <mat-icon>auto_fix_high</mat-icon>
+        <lucide-icon name="wand-sparkles"></lucide-icon>
         Generate Schema
       </button>
     </div>
@@ -70,8 +70,11 @@
 </mat-tab-group>
 
 <!-- Compatibility status (ADR-063 amendment) -->
-@if (compatibility && compatibility.level !== 'no_template'
-  && compatibility.level !== 'no_schema') {
+@if (
+  compatibility &&
+  compatibility.level !== 'no_template' &&
+  compatibility.level !== 'no_schema'
+) {
   <div
     class="compatibility-status"
     [class.compat-full]="compatibility.level === 'full'"
@@ -79,13 +82,15 @@
     [class.compat-none]="compatibility.level === 'none'"
     role="status"
   >
-    <mat-icon>
-      @switch (compatibility.level) {
-        @case ('full') { check_circle }
-        @case ('partial') { warning }
-        @case ('none') { error }
-      }
-    </mat-icon>
+    <lucide-icon
+      [name]="
+        compatibility.level === 'full'
+          ? 'circle-check'
+          : compatibility.level === 'partial'
+            ? 'triangle-alert'
+            : 'circle-alert'
+      "
+    ></lucide-icon>
     <span>{{ compatibility.message }}</span>
   </div>
 }
@@ -94,25 +99,23 @@
 @if (presetSchemas.length > 0) {
   <div class="presets-section">
     @if (hasGroupedPresets) {
-      <span class="presets-label">
-        Schema presets by domain:
-      </span>
-      @for (entry of groupedPresets | keyvalue;
-        track entry.key) {
+      <span class="presets-label"> Schema presets by domain: </span>
+      @for (entry of groupedPresets | keyvalue; track entry.key) {
         <div class="preset-group">
           <span class="preset-group-label">
             {{ entry.key }}
           </span>
           <div class="preset-buttons">
-            @for (preset of entry.value;
-              track preset.id) {
+            @for (preset of entry.value; track preset.id) {
               <button
                 type="button"
                 mat-stroked-button
                 (click)="applyPreset(preset)"
-                [attr.title]="preset.recommendedTemplateId
-                  ? 'Suggests: ' + preset.recommendedTemplateId
-                  : null"
+                [attr.title]="
+                  preset.recommendedTemplateId
+                    ? 'Suggests: ' + preset.recommendedTemplateId
+                    : null
+                "
               >
                 {{ preset.label }}
               </button>
@@ -121,9 +124,7 @@
         </div>
       }
     } @else {
-      <span class="presets-label">
-        Quick start with a pre-built schema:
-      </span>
+      <span class="presets-label"> Quick start with a pre-built schema: </span>
       <div class="preset-buttons">
         @for (preset of presetSchemas; track preset.id) {
           <button

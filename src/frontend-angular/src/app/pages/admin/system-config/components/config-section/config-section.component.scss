@@ -8,11 +8,11 @@
   gap: 16px;
   width: 100%;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 32px;
     width: 32px;
     height: 32px;
-    color: #1976d2;
+    color: var(--primary);
 
     &.restart-required {
       color: #ff9800;
@@ -60,7 +60,7 @@
   border-radius: 4px;
   color: #c62828;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 24px;
     width: 24px;
     height: 24px;
@@ -82,7 +82,7 @@
   border-radius: 4px;
   color: #1565c0;
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 20px;
     width: 20px;
     height: 20px;

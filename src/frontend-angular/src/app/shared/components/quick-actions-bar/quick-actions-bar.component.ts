@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { QuickAction } from '../../../core/models/navigation.models';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-quick-actions-bar',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [
+    LucideAngularModule,CommonModule, MatButtonModule, MatTooltipModule],
   templateUrl: './quick-actions-bar.component.html',
   styleUrls: ['./quick-actions-bar.component.scss'],
 })

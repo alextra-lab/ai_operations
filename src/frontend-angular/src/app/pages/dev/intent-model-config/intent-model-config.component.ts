@@ -4,39 +4,38 @@
  * Admin UI for configuring intent-to-model defaults (ADR-069).
  */
 
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
-import { IntentModelConfigService } from './services/intent-model-config.service';
+import { LucideAngularModule } from 'lucide-angular';
+import { toLucideIconName } from '../../../shared/icons/material-icon-map';
 import {
-  IntentConfigRow,
   AvailableModel,
-  IntentModelSummary,
-  IntentModelHistoryEntry,
+  IntentConfigRow,
 } from './models/intent-model-config.models';
+import { IntentModelConfigService } from './services/intent-model-config.service';
 
 @Component({
   selector: 'app-intent-model-config',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule,
     MatSelectModule,
     MatInputModule,
     MatFormFieldModule,
@@ -62,6 +61,15 @@ export class IntentModelConfigComponent implements OnInit {
     'actions',
   ];
 
+  /**
+   * Normalize a Material icon name from the intent summary API to a registered
+   * Lucide name via the shared map (with a safe registered fallback so an
+   * unmapped value can never throw during render).
+   */
+  private normalizeIcon(icon: string | null): string {
+    return toLucideIconName(icon);
+  }
+
   constructor(
     private intentModelService: IntentModelConfigService,
     private snackBar: MatSnackBar,
@@ -86,6 +94,7 @@ export class IntentModelConfigComponent implements OnInit {
       this.availableModels = models || [];
       this.intents = (summaries || []).map((summary) => ({
         ...summary,
+        icon: this.normalizeIcon(summary.icon),
         isEditing: false,
         selectedModel: summary.current_model_id,
         selectedTemperature: summary.current_temperature,
@@ -206,9 +215,7 @@ export class IntentModelConfigComponent implements OnInit {
    */
   getModelDetails(modelId: string | null): AvailableModel | null {
     if (!modelId) return null;
-    return (
-      this.availableModels.find((m) => m.model_id === modelId) || null
-    );
+    return this.availableModels.find((m) => m.model_id === modelId) || null;
   }
 
   /**

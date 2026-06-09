@@ -8,12 +8,12 @@ import {
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 
+import { LucideAngularModule } from 'lucide-angular';
 import {
   GroupingRoleInfo,
   SYSTEM_ROLES,
@@ -27,13 +27,13 @@ const ROLE_PATTERN = /^[a-z][a-z0-9_-]{1,49}$/;
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
   ],

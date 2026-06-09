@@ -271,23 +271,23 @@ describe('StructuredOutputRendererComponent', () => {
 
   describe('Component Icons', () => {
     it('should return correct icon for table', () => {
-      expect(component.getComponentIcon('table')).toBe('table_chart');
+      expect(component.getComponentIcon('table')).toBe('table');
     });
 
     it('should return correct icon for chart', () => {
-      expect(component.getComponentIcon('chart')).toBe('bar_chart');
+      expect(component.getComponentIcon('chart')).toBe('chart-column');
     });
 
     it('should return correct icon for gauge', () => {
-      expect(component.getComponentIcon('gauge')).toBe('speed');
+      expect(component.getComponentIcon('gauge')).toBe('gauge');
     });
 
     it('should return correct icon for timeline', () => {
-      expect(component.getComponentIcon('timeline')).toBe('timeline');
+      expect(component.getComponentIcon('timeline')).toBe('chart-line');
     });
 
     it('should return default icon for unknown type', () => {
-      expect(component.getComponentIcon('unknown')).toBe('dashboard');
+      expect(component.getComponentIcon('unknown')).toBe('layout-dashboard');
     });
   });
 

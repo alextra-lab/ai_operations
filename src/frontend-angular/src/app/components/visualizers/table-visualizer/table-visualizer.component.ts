@@ -29,6 +29,7 @@ import {
   TableColumn,
   TableConfig,
 } from '../../../models/output-format.model';
+import { LucideAngularModule } from 'lucide-angular';
 
 /** Per-tab state when in tabbed mode */
 export interface TabbedTableTab {
@@ -43,6 +44,7 @@ export interface TabbedTableTab {
   selector: 'app-table-visualizer',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatTableModule,
     MatPaginatorModule,

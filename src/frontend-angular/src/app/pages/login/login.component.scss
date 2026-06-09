@@ -1,14 +1,62 @@
+// Login — design-system skin (kit.css .login-*)
 .login-container {
   display: grid;
   min-height: 100vh;
   padding: 2rem 1.5rem;
   place-items: center;
-  background: radial-gradient(circle at top, #f3f6ff 0%, #e8f8fb 70%);
+  background: var(--bg-login);
 }
 
 .login-card {
-  width: min(480px, 100%);
-  box-shadow: 0 24px 48px rgba(18, 53, 91, 0.1);
+  width: min(430px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+  padding: 34px 32px 28px;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 24px;
+
+  .brand-mark {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    background: var(--brand-gradient-diag);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+
+    .logo-icon {
+      color: #fff;
+      font-size: 26px;
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  .brand-wordmark {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--fg-1);
+    letter-spacing: -0.01em;
+  }
+}
+
+.login-card mat-card-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--fg-1);
+}
+
+.login-card mat-card-subtitle {
+  color: var(--fg-3);
+  font-size: 13.5px;
 }
 
 .form-field {
@@ -20,7 +68,7 @@
   gap: 0.5rem;
   align-items: center;
   margin-top: 0.5rem;
-  color: #b71c1c;
+  color: var(--error-fg);
   font-size: 0.875rem;
 }
 
@@ -36,6 +84,6 @@
 
 @media (max-width: 480px) {
   .login-card {
-    padding: 0 0.5rem;
+    padding: 24px 20px;
   }
 }

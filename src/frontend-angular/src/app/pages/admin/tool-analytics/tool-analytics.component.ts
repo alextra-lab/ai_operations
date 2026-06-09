@@ -18,7 +18,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -27,6 +26,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { RouterLink } from '@angular/router';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { ToolAnalyticsService } from '../../../api/services/tool-analytics.service';
 import { ToolAdminService } from '../tool-management/services/tool-admin.service';
 import {
@@ -48,12 +48,12 @@ import {
   selector: 'app-tool-analytics',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     RouterLink,
     MatButtonModule,
     MatCardModule,
-    MatIconModule,
     MatMenuModule,
     MatProgressSpinnerModule,
     MatSelectModule,

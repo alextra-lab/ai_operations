@@ -87,7 +87,7 @@
   padding: 24px;
   color: rgba(0, 0, 0, 0.6);
 
-  mat-icon {
+  :is(mat-icon, lucide-icon) {
     font-size: 20px;
     width: 20px;
     height: 20px;

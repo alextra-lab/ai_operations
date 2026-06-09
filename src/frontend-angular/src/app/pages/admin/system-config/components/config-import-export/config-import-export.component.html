@@ -2,7 +2,9 @@
 <div class="dialog-container">
   <!-- Dialog Header -->
   <h2 mat-dialog-title>
-    <mat-icon>{{ data.mode === 'export' ? 'download' : 'upload' }}</mat-icon>
+    <lucide-icon
+      [name]="data.mode === 'export' ? 'download' : 'upload'"
+    ></lucide-icon>
     {{
       data.mode === 'export' ? 'Export Configuration' : 'Import Configuration'
     }}
@@ -40,7 +42,7 @@
       @if (validationErrors.length > 0) {
         <div class="validation-errors">
           <div class="error-header">
-            <mat-icon>error</mat-icon>
+            <lucide-icon name="circle-alert"></lucide-icon>
             <span>Validation Errors</span>
           </div>
           <ul>
@@ -54,7 +56,7 @@
       <!-- Validation Success -->
       @if (isValid && data.mode === 'import') {
         <div class="validation-success">
-          <mat-icon>check_circle</mat-icon>
+          <lucide-icon name="circle-check"></lucide-icon>
           <span>Configuration is valid and ready to import</span>
         </div>
       }
@@ -69,7 +71,7 @@
         (click)="copyToClipboard()"
         [disabled]="!configYaml || isLoading"
       >
-        <mat-icon>content_copy</mat-icon>
+        <lucide-icon name="copy"></lucide-icon>
         Copy
       </button>
       <button
@@ -77,7 +79,7 @@
         (click)="downloadYaml()"
         [disabled]="!configYaml || isLoading"
       >
-        <mat-icon>download</mat-icon>
+        <lucide-icon name="download"></lucide-icon>
         Download
       </button>
     } @else {
@@ -86,7 +88,7 @@
         (click)="validateYaml()"
         [disabled]="!configYaml || isLoading"
       >
-        <mat-icon>check</mat-icon>
+        <lucide-icon name="check"></lucide-icon>
         Validate
       </button>
       <button
@@ -95,7 +97,7 @@
         (click)="importConfig()"
         [disabled]="!configYaml || isLoading"
       >
-        <mat-icon>upload</mat-icon>
+        <lucide-icon name="upload"></lucide-icon>
         Import
       </button>
     }

@@ -4,7 +4,7 @@
  */
 
 .template-editor-container {
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - var(--chrome-h));
 }
 
 // Material form field customizations

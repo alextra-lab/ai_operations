@@ -1,0 +1,144 @@
+// ============================================================================
+// Material component skins — design-system re-skin (kit.css component spec)
+// Applied via Material's CSS custom-property tokens wherever possible; class
+// overrides only where Material exposes no token.
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// NOTE: token-level component overrides (buttons, cards, form fields, tables,
+// chips, slide-toggle, dialogs, menus, snackbar) live in styles.scss via the
+// validated mat.*-overrides mixins. This partial holds class-level rules that
+// Material exposes no token for, plus app-level badge conventions.
+// ----------------------------------------------------------------------------
+:root {
+  // Expansion panels (token names per Material 21 built output)
+  --mat-expansion-container-background-color: var(--surface);
+  --mat-expansion-container-shape: var(--radius-md);
+}
+
+// Suppress the browser autofill highlight (Chrome paints inputs #e8f0fe),
+// which clashes with the clean white fields. Keep the surface + token text.
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--fg-1);
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset;
+  caret-color: var(--fg-1);
+  transition: background-color 9999s ease-out 0s;
+}
+
+// Focus ring on all Material buttons
+.mat-mdc-raised-button:focus-visible,
+.mat-mdc-unelevated-button:focus-visible,
+.mat-mdc-outlined-button:focus-visible,
+.mat-mdc-button:focus-visible,
+.mat-mdc-icon-button:focus-visible {
+  box-shadow: var(--ring);
+  outline: none;
+}
+
+// Stroked buttons: white field, primary-50 hover (kit .btn--stroked)
+.mat-mdc-outlined-button:not(:disabled) {
+  background: var(--surface);
+
+  &:hover {
+    background: var(--primary-50);
+    border-color: var(--primary-200);
+  }
+}
+
+// Danger buttons (color="warn"): white field, deep error text, tinted border
+.mat-mdc-raised-button.mat-warn:not(:disabled),
+.mat-mdc-unelevated-button.mat-warn:not(:disabled) {
+  background: var(--surface);
+  color: var(--error-fg);
+  border: 1px solid #e6bcc1;
+
+  &:hover {
+    background: var(--error-bg);
+  }
+
+  :is(mat-icon, lucide-icon) {
+    color: var(--error-fg);
+  }
+}
+
+.mat-mdc-button.mat-warn,
+.mat-mdc-icon-button.mat-warn {
+  color: var(--error-fg);
+
+  &:hover {
+    background: var(--error-bg);
+  }
+}
+
+// Cards: 1px border + rest shadow per kit .panel
+.mat-mdc-card {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-1) !important;
+}
+
+// Tables: header row + hover (no Material token for these)
+.mat-mdc-header-row {
+  background: var(--surface-2);
+}
+
+.mat-mdc-row:hover {
+  background: var(--n-50);
+}
+
+// Chips: hairline border (Material renders outline only for outlined chips)
+.mat-mdc-standard-chip {
+  border: 1px solid #d7dee8;
+}
+
+// ----------------------------------------------------------------------------
+// Badges — lifecycle/state + role badges (app-level conventions used across
+// tables and cards). Tinted bg + matching fg + 1px tinted border.
+// ----------------------------------------------------------------------------
+.badge-draft,
+.state-draft {
+  background: var(--neutral-bg);
+  color: var(--neutral-fg);
+  border: 1px solid var(--n-300);
+}
+
+.badge-review,
+.state-review {
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  border: 1px solid #ecd3a3;
+}
+
+.badge-published,
+.state-published {
+  background: var(--success-bg);
+  color: var(--success-fg);
+  border: 1px solid #b5e2c8;
+}
+
+.badge-archived,
+.state-archived {
+  background: var(--error-bg);
+  color: var(--error-fg);
+  border: 1px solid #e6bcc1;
+}
+
+// Role badge — white field, primary-100 border, primary-dark mono text
+.role-badge {
+  background: var(--surface);
+  border: 1px solid var(--primary-100);
+  color: var(--primary-dark);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+}
+
+// Code styling — DM Mono
+code,
+pre {
+  font-family: var(--font-mono);
+}

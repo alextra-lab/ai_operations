@@ -1,10 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -21,7 +16,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -38,6 +32,8 @@ import {
 } from '../../api/models/use-case.models';
 import { UseCaseExecutionService } from '../../api/services/use-case-execution.service';
 import { UseCaseService } from '../../api/services/use-case.service';
+import { UserProfile } from '../../core/auth/auth.models';
+import { AuthService } from '../../core/auth/auth.service';
 import {
   FormattedOutput,
   OutputFormatTemplate,
@@ -45,11 +41,10 @@ import {
 import { OutputFormattingService } from '../../services/output-formatting.service';
 import { SessionStorageService } from '../../services/session-storage.service';
 import { TemplateRegistryService } from '../../services/template-registry.service';
-import { AuthService } from '../../core/auth/auth.service';
-import { UserProfile } from '../../core/auth/auth.models';
 
 // Components
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { LucideAngularModule } from 'lucide-angular';
 import { ExecutionMetricsComponent } from '../../components/execution-metrics/execution-metrics.component';
 import { ExportToolbarComponent } from '../../components/export-toolbar/export-toolbar.component';
 import { QueryResultsPanelComponent } from '../../components/query-results-panel/query-results-panel.component';
@@ -65,6 +60,7 @@ import { StructuredOutputRendererComponent } from '../../components/structured-o
   selector: 'app-use-case-execution',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
@@ -72,7 +68,6 @@ import { StructuredOutputRendererComponent } from '../../components/structured-o
     MatCheckboxModule,
     MatExpansionModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
     MatOptionModule,
     MatProgressBarModule,
@@ -233,8 +228,7 @@ export class UseCaseExecutionComponent implements OnInit, OnDestroy {
    * Load output format template when output_contract has template_id.
    */
   private loadOutputTemplate(): void {
-    const templateId =
-      this.useCaseConfig?.output_contract?.template_id ?? null;
+    const templateId = this.useCaseConfig?.output_contract?.template_id ?? null;
     if (templateId) {
       this.outputTemplate = this.templateRegistry.get(templateId) ?? null;
     } else {
@@ -380,7 +374,10 @@ export class UseCaseExecutionComponent implements OnInit, OnDestroy {
           this.currentStep = 'Execution completed';
           this.isExecuting = false;
 
-          if (result.structured_data && this.useCaseConfig?.output_contract?.template_id) {
+          if (
+            result.structured_data &&
+            this.useCaseConfig?.output_contract?.template_id
+          ) {
             await this.renderStructuredOutput(result);
           }
 
@@ -485,8 +482,7 @@ export class UseCaseExecutionComponent implements OnInit, OnDestroy {
   private async renderStructuredOutput(
     result: ExecutionResponse
   ): Promise<void> {
-    const templateId =
-      this.useCaseConfig?.output_contract?.template_id ?? null;
+    const templateId = this.useCaseConfig?.output_contract?.template_id ?? null;
     if (!templateId || !result.structured_data) {
       return;
     }
@@ -506,7 +502,10 @@ export class UseCaseExecutionComponent implements OnInit, OnDestroy {
       );
       this.cdr.detectChanges();
     } catch (error) {
-      console.error('[UseCaseExecution] Failed to format structured output:', error);
+      console.error(
+        '[UseCaseExecution] Failed to format structured output:',
+        error
+      );
       this.formattedOutput = null;
     }
   }
@@ -517,10 +516,7 @@ export class UseCaseExecutionComponent implements OnInit, OnDestroy {
 
   /** Whether the refine schema button should be shown. */
   get canRefineSchema(): boolean {
-    return (
-      !!this.executionResult?.structured_data
-      && !!this.useCaseId
-    );
+    return !!this.executionResult?.structured_data && !!this.useCaseId;
   }
 
   /**
@@ -548,15 +544,23 @@ export class UseCaseExecutionComponent implements OnInit, OnDestroy {
     }
 
     // Check if user is creator (creator can edit own drafts)
-    const createdBy = (this.useCase as any).created_by_user_id || (this.useCase as any).created_by;
+    const createdBy =
+      (this.useCase as any).created_by_user_id ||
+      (this.useCase as any).created_by;
     if (createdBy && createdBy === this.currentUser.id) {
       return true;
     }
 
     // AIOps development roles can edit drafts they have access to
     // (This aligns with the wizard edit permissions)
-    const devRoles: readonly string[] = ['developer', 'use_case_admin', 'corpus_admin'];
-    return devRoles.some(role => this.currentUser?.roles.includes(role as any) ?? false);
+    const devRoles: readonly string[] = [
+      'developer',
+      'use_case_admin',
+      'corpus_admin',
+    ];
+    return devRoles.some(
+      (role) => this.currentUser?.roles.includes(role as any) ?? false
+    );
   }
 
   /**
@@ -566,30 +570,29 @@ export class UseCaseExecutionComponent implements OnInit, OnDestroy {
   openRefineSchemaDialog(): void {
     if (!this.executionResult?.structured_data) return;
 
-    const currentSchema =
-      this.useCaseConfig?.output_contract?.output_schema
-        ? JSON.stringify(
+    const currentSchema = this.useCaseConfig?.output_contract?.output_schema
+      ? JSON.stringify(
           this.useCaseConfig.output_contract.output_schema,
           null,
           2
         )
-        : null;
+      : null;
 
     const data: SchemaRefineDialogData = {
       currentSchema,
-      structuredData:
-        this.executionResult.structured_data,
+      structuredData: this.executionResult.structured_data,
       useCaseId: this.useCaseId ?? '',
       canModifySchema: this.canModifyUseCase(),
     };
 
-    const dialogRef = this.dialog.open(
-      SchemaRefineDialogComponent,
-      { data, width: '750px' }
-    );
+    const dialogRef = this.dialog.open(SchemaRefineDialogComponent, {
+      data,
+      width: '750px',
+    });
 
-    dialogRef.afterClosed().subscribe(
-      (result: SchemaRefineDialogResult | undefined) => {
+    dialogRef
+      .afterClosed()
+      .subscribe((result: SchemaRefineDialogResult | undefined) => {
         if (!result || result.strategy === 'cancel') return;
         if (!result.schema || !this.useCaseId) return;
 
@@ -605,22 +608,18 @@ export class UseCaseExecutionComponent implements OnInit, OnDestroy {
 
         // Navigate to wizard in edit mode with
         // updated schema via query param (route: /dev/use-cases/edit/:id)
-        this.router.navigate(
-          ['/dev/use-cases/edit', this.useCaseId],
-          {
-            queryParams: {
-              refinedSchema: result.schema,
-              step: 3,
-            },
-          }
-        );
+        this.router.navigate(['/dev/use-cases/edit', this.useCaseId], {
+          queryParams: {
+            refinedSchema: result.schema,
+            step: 3,
+          },
+        });
         this.snackBar.open(
           'Navigating to wizard with refined schema...',
           'OK',
           { duration: 3000 }
         );
-      }
-    );
+      });
   }
 
   // ========================================================================

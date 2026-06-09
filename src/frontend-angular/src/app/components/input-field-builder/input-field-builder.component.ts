@@ -7,10 +7,10 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 
 import { InputField } from '../../api/models/use-case.models';
 import { InputFieldEditorComponent } from '../input-field-editor/input-field-editor.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 const DEFAULT_FIELD: InputField = {
   name: 'query',
@@ -27,10 +27,10 @@ const DEFAULT_FIELD: InputField = {
   styleUrls: ['./input-field-builder.component.scss'],
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatButtonModule,
     MatExpansionModule,
-    MatIconModule,
     InputFieldEditorComponent,
   ],
 })

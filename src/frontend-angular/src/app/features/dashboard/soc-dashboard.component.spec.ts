@@ -306,10 +306,10 @@ describe('SocDashboardComponent', () => {
     expect(component.getConnectionIcon()).toBe('wifi');
 
     component.connectionState = WebSocketConnectionState.CONNECTING;
-    expect(component.getConnectionIcon()).toBe('wifi_find');
+    expect(component.getConnectionIcon()).toBe('wifi');
 
     component.connectionState = WebSocketConnectionState.DISCONNECTED;
-    expect(component.getConnectionIcon()).toBe('wifi_off');
+    expect(component.getConnectionIcon()).toBe('wifi-off');
   });
 
   it('should get correct connection text', () => {
@@ -324,11 +324,11 @@ describe('SocDashboardComponent', () => {
   });
 
   it('should get correct widget icon', () => {
-    expect(component.getWidgetIcon(WidgetType.SYSTEM_HEALTH)).toBe(
-      'monitor_heart'
+    expect(component.getWidgetIcon(WidgetType.SYSTEM_HEALTH)).toBe('activity');
+    expect(component.getWidgetIcon(WidgetType.THREAT_FEED)).toBe('shield');
+    expect(component.getWidgetIcon(WidgetType.QUERY_STATS)).toBe(
+      'chart-column'
     );
-    expect(component.getWidgetIcon(WidgetType.THREAT_FEED)).toBe('security');
-    expect(component.getWidgetIcon(WidgetType.QUERY_STATS)).toBe('query_stats');
   });
 
   it('should track widgets by id', () => {

@@ -5,15 +5,11 @@
     aria-label="Breadcrumb navigation"
   >
     <!-- Show only last 2 items on mobile, more on desktop -->
-    <div
-      class="breadcrumb-content flex items-center text-body-large font-medium text-on-surface-variant"
-    >
+    <div class="breadcrumb-content flex items-center font-medium">
       <!-- Mobile: Show only current page -->
       <span class="current-page md:hidden" [attr.aria-current]="'page'">
         @if (getLastBreadcrumb()?.icon) {
-          <mat-icon class="text-base w-4 h-4 mr-1">{{
-            getLastBreadcrumb()?.icon
-          }}</mat-icon>
+          <lucide-icon class="text-base w-4 h-4 mr-1" [name]="getLastBreadcrumb()?.icon"></lucide-icon>
         }
         {{ getLastBreadcrumb()?.label }}
       </span>
@@ -27,7 +23,7 @@
           <li class="flex items-center">
             <button
               mat-button
-              class="breadcrumb-button text-body-large hover:text-on-surface"
+              class="breadcrumb-button"
               [disabled]="
                 getParentBreadcrumb()
                   ? isBreadcrumbDisabled(getParentBreadcrumb()!)
@@ -35,26 +31,19 @@
               "
               [attr.aria-label]="'Go to ' + getParentBreadcrumb()?.label"
               (click)="
-                getParentBreadcrumb() && onBreadcrumbClick(getParentBreadcrumb()!)
+                getParentBreadcrumb() &&
+                  onBreadcrumbClick(getParentBreadcrumb()!)
               "
             >
               {{ getParentBreadcrumb()?.label }}
             </button>
 
             <!-- Separator -->
-            <mat-icon
-              class="text-base w-4 h-4 mx-1 text-on-surface-variant"
-              aria-hidden="true"
-            >
-              chevron_right
-            </mat-icon>
+            <lucide-icon class="text-base w-4 h-4 mx-1" aria-hidden="true" name="chevron-right"></lucide-icon>
           </li>
 
           <!-- Current page -->
-          <li
-            class="current-page text-on-surface font-medium"
-            [attr.aria-current]="'page'"
-          >
+          <li class="current-page font-medium" [attr.aria-current]="'page'">
             {{ getLastBreadcrumb()?.label }}
           </li>
         </ol>
@@ -62,10 +51,7 @@
 
       <!-- Fallback: Just show current page on desktop if only one breadcrumb -->
       @if (breadcrumbs().length === 1) {
-        <span
-          class="current-page hidden md:block"
-          [attr.aria-current]="'page'"
-        >
+        <span class="current-page hidden md:block" [attr.aria-current]="'page'">
           {{ getLastBreadcrumb()?.label }}
         </span>
       }

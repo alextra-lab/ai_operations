@@ -12,7 +12,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -20,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Subject, forkJoin, takeUntil } from 'rxjs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { GatewayCostChartComponent } from './components/charts/gateway-cost-chart.component';
 import { GatewayLatencyChartComponent } from './components/charts/gateway-latency-chart.component';
 import { GatewayTokenChartComponent } from './components/charts/gateway-token-chart.component';
@@ -38,11 +38,11 @@ import { GatewayMetricsService } from './services/gateway-metrics.service';
   selector: 'app-gateway-metrics',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     FormsModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSnackBarModule,

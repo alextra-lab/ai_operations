@@ -13,10 +13,10 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 
+import { LucideAngularModule } from 'lucide-angular';
 import { Tool } from '../../models/tool-management.models';
 import { ToolAdminService } from '../../services/tool-admin.service';
 
@@ -24,10 +24,10 @@ import { ToolAdminService } from '../../services/tool-admin.service';
   selector: 'app-tool-details-dialog',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CommonModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatTabsModule,
     MatChipsModule,

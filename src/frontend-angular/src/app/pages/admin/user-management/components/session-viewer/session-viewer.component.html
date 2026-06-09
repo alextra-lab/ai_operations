@@ -6,7 +6,7 @@
     matTooltip="Refresh"
     aria-label="Refresh sessions"
   >
-    <mat-icon>refresh</mat-icon>
+    <lucide-icon name="refresh-cw"></lucide-icon>
   </button>
 </h2>
 
@@ -72,7 +72,7 @@
               (session.created_at | date: 'short')
             "
           >
-            <mat-icon>logout</mat-icon>
+            <lucide-icon name="log-out"></lucide-icon>
           </button>
         </td>
       </ng-container>
@@ -83,13 +83,13 @@
 
     <!-- Empty State -->
     <div *ngIf="sessions.length === 0" class="empty-state">
-      <mat-icon>event_busy</mat-icon>
+      <lucide-icon name="calendar-x"></lucide-icon>
       <p>No active sessions</p>
     </div>
   </div>
 
   <div class="info-box">
-    <mat-icon>info</mat-icon>
+    <lucide-icon name="info"></lucide-icon>
     <p>Sessions auto-refresh every 30 seconds</p>
   </div>
 </mat-dialog-content>

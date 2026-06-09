@@ -2,7 +2,7 @@
 <div class="dialog-container">
   <div class="dialog-header">
     <h2 mat-dialog-title>
-      <mat-icon class="warning-icon">warning</mat-icon>
+      <lucide-icon class="warning-icon" name="triangle-alert"></lucide-icon>
       Delete Tool?
     </h2>
   </div>
@@ -42,7 +42,7 @@
     </div>
 
     <div *ngIf="error" class="error-message">
-      <mat-icon>error</mat-icon>
+      <lucide-icon name="circle-alert"></lucide-icon>
       <span>{{ error }}</span>
     </div>
   </mat-dialog-content>

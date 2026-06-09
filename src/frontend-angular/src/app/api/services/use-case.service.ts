@@ -128,7 +128,7 @@ export class UseCaseService {
               max_execution_time_ms: 30000,
             },
             ui_config: {
-              icon: 'description',
+              icon: 'file-text',
               color: 'primary',
               layout: 'single',
               show_metrics: true,

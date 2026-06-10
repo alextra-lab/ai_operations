@@ -15,7 +15,13 @@ PROFILE = enterprise
 # DOCKER_DEFAULT_PLATFORM = linux/amd64
 
 # Enterprise Artifactory mirrors — provided by your enterprise team.
-# Only used when PROFILE=enterprise.
+#
+# BASE_REGISTRY is the registry host root (no trailing namespace). It prefixes
+# EVERY externally-pulled image: the service base images (python, node, nginx)
+# AND the infra images pulled by `make up`/`make pull` (postgres, qdrant/qdrant,
+# redis). It must resolve Docker Hub names — e.g. <prefix>/postgres and
+# <prefix>/qdrant/qdrant must both pull — which a Docker Hub remote repo does.
+# (The public default is "docker.io".)
 BASE_REGISTRY   = your-artifactory.example.com/docker
 PIP_INDEX_URL   = https://your-artifactory.example.com/artifactory/api/pypi/pypi/simple
 TORCH_INDEX_URL = https://your-artifactory.example.com/artifactory/api/pypi/torch-cpu/simple

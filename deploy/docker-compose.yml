@@ -3,6 +3,9 @@ services:
     build:
       context: ../src
       dockerfile: frontend-angular/Dockerfile
+      args:
+        BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
+        NPM_REGISTRY: ${NPM_REGISTRY:-}
     container_name: ui-webapp
     networks: [observability]
     profiles: [full]
@@ -36,6 +39,10 @@ services:
     build:
       context: ../src
       dockerfile: orchestrator/Dockerfile
+      args:
+        BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+        OFFLINE: ${OFFLINE:-0}
     container_name: orchestrator-api
     networks: [observability]
     ports:
@@ -101,7 +108,7 @@ services:
     restart: always
 
   postgres-db:
-    image: postgres:17.6
+    image: ${BASE_REGISTRY:-docker.io}/postgres:17.6
     #image: arm64v8/postgres:17.4
     container_name: postgres-db
     networks: [observability]
@@ -129,6 +136,10 @@ services:
     build:
       context: ..
       dockerfile: ops/database/Dockerfile
+      args:
+        BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+        OFFLINE: ${OFFLINE:-0}
     container_name: db-init
     networks: [observability]
     environment:
@@ -148,7 +159,7 @@ services:
     restart: "no"
 
   vector-db:
-    image: qdrant/qdrant:v1.16.0
+    image: ${BASE_REGISTRY:-docker.io}/qdrant/qdrant:v1.16.0
     container_name: vector-db
     networks: [observability]
     restart: always
@@ -168,6 +179,11 @@ services:
     build:
       context: ../src
       dockerfile: llm_guard_svc/Dockerfile
+      args:
+        BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+        TORCH_INDEX_URL: ${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cpu}
+        OFFLINE: ${OFFLINE:-0}
     container_name: llm-guard-svc
     networks: [observability]
     profiles: [full]
@@ -210,6 +226,10 @@ services:
     build:
       context: ../src/
       dockerfile: corpus_svc/Dockerfile
+      args:
+        BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+        OFFLINE: ${OFFLINE:-0}
     container_name: corpus-service
     networks: [observability]
     volumes:
@@ -292,6 +312,11 @@ services:
     build:
       context: ../src
       dockerfile: embedding/Dockerfile
+      args:
+        BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+        TORCH_INDEX_URL: ${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cpu}
+        OFFLINE: ${OFFLINE:-0}
     container_name: embedding-service
     networks: [observability]
     volumes:
@@ -345,7 +370,7 @@ services:
     restart: always
 
   redis-cache:
-    image: redis:7-alpine
+    image: ${BASE_REGISTRY:-docker.io}/redis:7-alpine
     container_name: redis-cache
     networks: [observability]
     ports:
@@ -364,6 +389,10 @@ services:
     build:
       context: ../src
       dockerfile: inference-gateway/Dockerfile
+      args:
+        BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+        OFFLINE: ${OFFLINE:-0}
     container_name: inference-gateway
     networks: [observability]
     ports:

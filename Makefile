@@ -18,23 +18,28 @@ endif
 # ── Compose file selection ────────────────────────────────────────
 ifeq ($(PROFILE),local)
   COMPOSE_FILES = -f deploy/docker-compose.yml -f deploy/docker-compose.local.yml
-  BUILD_ARGS    = --build-arg BASE_REGISTRY=docker.io/library \
-                  --build-arg PIP_INDEX_URL=https://pypi.org/simple \
-                  --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
+  BASE_REGISTRY   ?= docker.io
+  PIP_INDEX_URL   ?= https://pypi.org/simple
+  TORCH_INDEX_URL ?= https://download.pytorch.org/whl/cpu
 else ifeq ($(PROFILE),enterprise)
   COMPOSE_FILES = -f deploy/docker-compose.yml
   # Provided by your enterprise team — set in config/make.local.mk,
   # export before make, or pass on the command line. Defaults are
-  # placeholders that will fail the build until overridden.
+  # placeholders that will fail until overridden.
   BASE_REGISTRY   ?= <ARTIFACTORY_DOCKER_REGISTRY_PLACEHOLDER>
   PIP_INDEX_URL   ?= <ARTIFACTORY_PYPI_URL_PLACEHOLDER>
   TORCH_INDEX_URL ?= <ARTIFACTORY_TORCH_CPU_URL_PLACEHOLDER>
-  BUILD_ARGS    = --build-arg BASE_REGISTRY=$(BASE_REGISTRY) \
-                  --build-arg PIP_INDEX_URL=$(PIP_INDEX_URL) \
-                  --build-arg TORCH_INDEX_URL=$(TORCH_INDEX_URL)
 else
   $(error Unknown PROFILE '$(PROFILE)'. Use: local (default) or enterprise)
 endif
+
+BUILD_ARGS = --build-arg BASE_REGISTRY=$(BASE_REGISTRY) \
+             --build-arg PIP_INDEX_URL=$(PIP_INDEX_URL) \
+             --build-arg TORCH_INDEX_URL=$(TORCH_INDEX_URL)
+
+# Exported so `docker compose` interpolates them in image: names (infra image
+# pulls) and build.args (base-image FROMs) — not only at `make build` time.
+export BASE_REGISTRY PIP_INDEX_URL TORCH_INDEX_URL
 
 DC = docker compose --env-file config/env/.env $(COMPOSE_FILES)
 
@@ -62,6 +67,10 @@ build:	## Build images (PROFILE=local|enterprise)
 .PHONY: build-offline
 build-offline:	## Build from local src/wheelhouse — no network required
 	DOCKER_BUILDKIT=0 $(DC) build --build-arg OFFLINE=1
+
+.PHONY: pull
+pull:	## Pull prebuilt images from the registry (honors BASE_REGISTRY)
+	$(DC) pull
 
 # ── Start / stop ──────────────────────────────────────────────────
 .PHONY: up

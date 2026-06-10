@@ -15,11 +15,13 @@ Clean checkout to a running stack in five steps.
 | Python | 3.12 | Ops scripts (`make setup`, `python ops/...`) |
 | Node | ≥ 24 | Frontend development only — not needed to run the stack |
 
-**Platform:** The compose file defaults to `linux/arm64` (Apple Silicon). On x86_64 / amd64 hosts, set this before building:
+**Platform:** The local-profile overlay (`deploy/docker-compose.local.yml`) defaults to `linux/arm64` (Apple Silicon). On x86_64 / amd64 hosts, set this before building:
 
 ```bash
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 ```
+
+(Or set it once in `config/make.local.mk`.) The base compose file carries no platform pins — it follows the host.
 
 ---
 

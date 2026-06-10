@@ -56,6 +56,7 @@ These values are **not committed to this repository**. Your enterprise team is t
 | `BASE_REGISTRY` | Artifactory-hosted Docker Hub mirror | Makefile `BUILD_ARGS` — rewrites `FROM` base image pulls away from `docker.io/library` |
 | `PIP_INDEX_URL` | Artifactory PyPI remote URL | Makefile `BUILD_ARGS` — used as `pip --index-url` during image builds |
 | `TORCH_INDEX_URL` | Artifactory PyTorch CPU wheel remote URL | Makefile `BUILD_ARGS` — used for torch installs during image builds |
+| `NPM_REGISTRY` | Artifactory npm remote URL | Frontend (`ui-webapp`) build — `npm ci` registry; without it npm hits `registry.npmjs.org` and fails with `ENOTFOUND` |
 | Artifactory Docker registry URL | Where pre-built images are pushed and pulled from | `docker login` + `docker pull` / `docker compose pull` |
 | LLMaaS/vLLM base URL | Internal OpenAI-compatible inference endpoint | `gateway_providers` table — see Step 4 |
 | Pre-staged model paths | Populated `data/models/`, `data/llm-guard-models/` directories | Bind-mounted into embedding-service and llm-guard-svc |
@@ -167,6 +168,7 @@ PROFILE         = enterprise
 BASE_REGISTRY   = your-artifactory.example.com/docker
 PIP_INDEX_URL   = https://your-artifactory.example.com/artifactory/api/pypi/pypi/simple
 TORCH_INDEX_URL = https://your-artifactory.example.com/artifactory/api/pypi/torch-cpu/simple
+NPM_REGISTRY    = https://your-artifactory.example.com/artifactory/api/npm/npm/
 ```
 
 Then build with no extra flags:

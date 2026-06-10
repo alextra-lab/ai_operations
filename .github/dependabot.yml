@@ -31,18 +31,40 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     groups:
+      # Keep the Angular framework and its build system / schematics in ONE
+      # group. @angular-devkit/* and @ngtools/* must upgrade atomically with
+      # @angular/* — splitting them across PRs produces an unbuildable state
+      # (framework vN with build system vN-1). See PR #131/#132 fallout.
       angular:
         patterns:
           - "@angular/*"
+          - "@angular-devkit/*"
+          - "@ngtools/*"
+          - "@schematics/*"
           - "angular-*"
+          - "ng-packagr"
       npm-dev:
         dependency-type: development
         patterns:
           - "*"
+        exclude-patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+          - "@ngtools/*"
+          - "@schematics/*"
+          - "angular-*"
+          - "ng-packagr"
       npm-prod:
         dependency-type: production
         patterns:
           - "*"
+    ignore:
+      # Tailwind CSS v4 is a breaking migration (PostCSS plugin moved to
+      # @tailwindcss/postcss, @tailwind directives -> @import "tailwindcss",
+      # JS config -> CSS-first). Defer until migrated deliberately; bumping it
+      # in the dev group silently breaks `ng build`. Unignore when ready.
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
     labels:
       - dependencies
       - frontend

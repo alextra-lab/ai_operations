@@ -13,8 +13,12 @@
 
 > **Note (AIO-65, 2026-05-31):** Migrations 027–039 have been consolidated into
 > `000_complete_init.sql`; a fresh `init + seed` is the complete schema with no
-> migration step. `migrations/run_migrations.sh` remains for future (> 039)
-> migrations only.
+> migration step. `run_migrations.sh` (a wrapper around
+> `init_db.py --migrations-only`) remains for future (> 039) migrations only.
+>
+> **In the containerized stack**, the `db-init` service (`init_db.py`, pure
+> Python/psycopg — no psql) runs init → seeds → migrations automatically on
+> `make up`; the manual steps above are the host-side equivalent.
 
 ---
 
@@ -71,11 +75,14 @@ ops/database/
 │   └── 014_set_documents_as_default_collection.sql # Default collection (ex-migration 034)
 │
 ├── migrations/
-│   ├── run_migrations.sh             # Runner for FUTURE migrations (> 039)
 │   └── rbac_v2/                      # RBAC V2 upgrade migrations (untouched)
 │
 ├── rollback/
 │   └── 000_drop_all.sql              # Emergency rollback (requires unlock)
+│
+├── init_db.py                        # db-init container entrypoint (init → seeds → migrations)
+├── run_migrations.sh                 # Host wrapper: init_db.py --migrations-only (FUTURE migrations > 039)
+├── Dockerfile                        # db-init image (pure Python, no psql/apt)
 │
 ├── docs/
 │   ├── SCHEMA.md                     # Tables, columns, relationships

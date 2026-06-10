@@ -1,6 +1,20 @@
 PROFILE ?= local
 SVC     ?=
 
+# ── Optional local overrides (gitignored) ─────────────────────────
+# Set PROFILE, the Artifactory URLs, and DOCKER_DEFAULT_PLATFORM here
+# once instead of passing them on every command. The leading "-" makes
+# the include silent when the file is absent. Command-line overrides
+# (make build PROFILE=local) still take precedence over this file.
+# See config/make.local.mk.template to get started.
+-include config/make.local.mk
+
+# Propagate the platform override to the docker CLI when set
+# (x86_64 hosts building arm64-tagged images use linux/amd64).
+ifneq ($(DOCKER_DEFAULT_PLATFORM),)
+export DOCKER_DEFAULT_PLATFORM
+endif
+
 # ── Compose file selection ────────────────────────────────────────
 ifeq ($(PROFILE),local)
   COMPOSE_FILES = -f deploy/docker-compose.yml -f deploy/docker-compose.local.yml
@@ -9,9 +23,15 @@ ifeq ($(PROFILE),local)
                   --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
 else ifeq ($(PROFILE),enterprise)
   COMPOSE_FILES = -f deploy/docker-compose.yml
-  BUILD_ARGS    = --build-arg BASE_REGISTRY=<ARTIFACTORY_DOCKER_REGISTRY_PLACEHOLDER> \
-                  --build-arg PIP_INDEX_URL=<ARTIFACTORY_PYPI_URL_PLACEHOLDER> \
-                  --build-arg TORCH_INDEX_URL=<ARTIFACTORY_TORCH_CPU_URL_PLACEHOLDER>
+  # Provided by your enterprise team — set in config/make.local.mk,
+  # export before make, or pass on the command line. Defaults are
+  # placeholders that will fail the build until overridden.
+  BASE_REGISTRY   ?= <ARTIFACTORY_DOCKER_REGISTRY_PLACEHOLDER>
+  PIP_INDEX_URL   ?= <ARTIFACTORY_PYPI_URL_PLACEHOLDER>
+  TORCH_INDEX_URL ?= <ARTIFACTORY_TORCH_CPU_URL_PLACEHOLDER>
+  BUILD_ARGS    = --build-arg BASE_REGISTRY=$(BASE_REGISTRY) \
+                  --build-arg PIP_INDEX_URL=$(PIP_INDEX_URL) \
+                  --build-arg TORCH_INDEX_URL=$(TORCH_INDEX_URL)
 else
   $(error Unknown PROFILE '$(PROFILE)'. Use: local (default) or enterprise)
 endif

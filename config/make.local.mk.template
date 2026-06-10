@@ -1,0 +1,21 @@
+# Local Make overrides — copy to config/make.local.mk and edit.
+#
+#   cp config/make.local.mk.template config/make.local.mk
+#
+# config/make.local.mk is gitignored and auto-included by the Makefile.
+# Values set here apply to every `make` command, so you no longer need to
+# pass PROFILE= or the Artifactory URLs each time. Command-line overrides
+# (e.g. `make build PROFILE=local`) still win for one-off invocations.
+
+# Default profile for all commands (local | enterprise).
+PROFILE = enterprise
+
+# x86_64 hosts: pin the build/run platform so arm64-tagged images resolve.
+# Leave commented on Apple Silicon / native arm64 hosts.
+# DOCKER_DEFAULT_PLATFORM = linux/amd64
+
+# Enterprise Artifactory mirrors — provided by your enterprise team.
+# Only used when PROFILE=enterprise.
+BASE_REGISTRY   = your-artifactory.example.com/docker
+PIP_INDEX_URL   = https://your-artifactory.example.com/artifactory/api/pypi/pypi/simple
+TORCH_INDEX_URL = https://your-artifactory.example.com/artifactory/api/pypi/torch-cpu/simple

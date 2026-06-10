@@ -222,12 +222,14 @@ or containers crash immediately with `exec format error`.
 
 **Cause**
 
-The compose file defaults `platform: linux/arm64` (Apple Silicon). On amd64 hosts Docker will
-attempt to run arm64 images under emulation, which is slow and often broken.
+The local-profile overlay (`deploy/docker-compose.local.yml`) defaults every service to
+`platform: linux/arm64` (Apple Silicon). On amd64 hosts Docker will attempt to run arm64
+images under emulation, which is slow and often broken. (The base compose file carries no
+platform pins — the enterprise profile follows the host and is unaffected.)
 
 **Fix**
 
-Set the platform override before building and starting:
+Set the platform override before building and starting — the overlay interpolates it:
 
 ```bash
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
@@ -235,15 +237,9 @@ make build
 make up
 ```
 
-Add it to your shell profile to avoid repeating it. Note: `db-init` has `platform: linux/arm64`
-hardcoded in `deploy/docker-compose.yml` — if you hit issues with that specific container on
-amd64, override it:
-
-```bash
-# Temporary workaround — edit deploy/docker-compose.yml
-# Change:  platform: linux/arm64
-# To:      platform: linux/amd64
-```
+Add it to your shell profile, or set it once in `config/make.local.mk` so every `make`
+command picks it up. No compose-file edits are needed; the override applies to all
+services, including `db-init`.
 
 ---
 

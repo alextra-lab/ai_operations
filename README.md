@@ -50,15 +50,16 @@ See [Dependency Management Guide](docs/development/guidelines/Dependency_Managem
   docker network create observability
   ```
 
-- The compose file defaults to `platform: linux/arm64` (Apple Silicon).
-  On x86_64 / amd64 hosts, override per service with the
-  `DOCKER_DEFAULT_PLATFORM` env var:
+- The base compose file is platform-neutral and follows the host. The
+  **local profile** overlay (`deploy/docker-compose.local.yml`) pins
+  `linux/arm64` (Apple Silicon) by default; on x86_64 / amd64 hosts,
+  override it with the `DOCKER_DEFAULT_PLATFORM` env var:
 
   ```bash
   export DOCKER_DEFAULT_PLATFORM=linux/amd64
   ```
 
-  or edit `deploy/docker-compose.yml` and change `platform:` lines as needed.
+  or set it once in `config/make.local.mk`.
 
 ### Steps
 

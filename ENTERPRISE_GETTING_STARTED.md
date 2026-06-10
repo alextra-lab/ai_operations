@@ -33,7 +33,11 @@ paths — is done by your enterprise team. Your job is to pull and start.
 | Pre-staged models | Paths to `data/models/`, `data/llm-guard-models/`, `data/tokenizers/` — or the source to stage from |
 | Network/proxy settings | `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY` if required by your network |
 
-**Platform:** The compose file defaults to `linux/arm64` (Apple Silicon). On x86_64 / amd64 hosts, set this before building or pulling:
+**Platform:** The base compose file (the one the enterprise profile uses) is
+platform-neutral — builds, pulls, and runs follow the host platform, so amd64
+hosts need no override. The `linux/arm64` pins exist only in the local-profile
+overlay. Set `DOCKER_DEFAULT_PLATFORM` only when cross-building (e.g. producing
+amd64 images on an Apple Silicon machine):
 
 ```bash
 export DOCKER_DEFAULT_PLATFORM=linux/amd64

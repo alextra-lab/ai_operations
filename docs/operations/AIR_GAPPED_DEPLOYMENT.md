@@ -78,14 +78,19 @@ manually — images are distributed via the internal Artifactory Docker registry
 Python dependencies from `src/wheelhouse/` rather than PyPI:
 
 ```dockerfile
-# In each service Dockerfile (simplified):
+# In each service Dockerfile (simplified) — runs in a builder stage; the
+# wheelhouse is not shipped in the final image:
 ARG OFFLINE=0
 RUN if [ "$OFFLINE" = "1" ]; then \
-      pip install --no-index --find-links=/app/wheelhouse -r requirements.txt; \
+      pip install --no-index --find-links=/wheelhouse -r requirements.txt; \
     else \
       pip install --index-url "$PIP_INDEX_URL" -r requirements.txt; \
     fi
 ```
+
+The images install no OS packages (`apt-get` is not used in any service
+Dockerfile), so offline image builds need no Debian mirror — only the base
+image (`BASE_REGISTRY`) and the wheelhouse.
 
 ### Step 1 — Build the wheelhouse (internet-connected machine)
 

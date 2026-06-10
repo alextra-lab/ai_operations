@@ -30,10 +30,14 @@ RUN if [ "$OFFLINE" = "1" ]; then \
         pip install --no-cache-dir --index-url "$PIP_INDEX_URL" -r requirements.txt; \
     fi && \
     mkdir -p /usr/local/share/nltk_data && \
-    if [ "$OFFLINE" = "1" ] && [ -d /wheelhouse/nltk_data ]; then \
+    if [ -d /wheelhouse/nltk_data ] && [ -n "$(ls -A /wheelhouse/nltk_data 2>/dev/null)" ]; then \
+        echo "NLTK data: using staged src/wheelhouse/nltk_data"; \
         cp -r /wheelhouse/nltk_data/* /usr/local/share/nltk_data/; \
+    elif [ "$OFFLINE" != "1" ]; then \
+        python -c "import nltk; [nltk.download(d, download_dir='/usr/local/share/nltk_data', quiet=True) for d in ['punkt', 'punkt_tab', 'stopwords']]" \
+          || echo "WARN: NLTK data not fetched (no network / mirror blocked). Stage it into src/wheelhouse/nltk_data for air-gapped/enterprise builds. The active chunker does not require it."; \
     else \
-        python -c "import nltk; [nltk.download(d, download_dir='/usr/local/share/nltk_data') for d in ['punkt', 'punkt_tab', 'stopwords']]" || true; \
+        echo "WARN: OFFLINE build with no src/wheelhouse/nltk_data staged — skipping NLTK data."; \
     fi
 
 # Stage 2: Runtime — wheelhouse and build inputs do not ship in this image

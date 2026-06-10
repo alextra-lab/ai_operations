@@ -25,6 +25,10 @@ COPY frontend-angular/package*.json ./
 # build must not depend on it. --include=dev is required for the Angular CLI
 # build; --ignore-scripts skips the Cypress binary download (not needed for the
 # production build).
+# Point npm at the enterprise Artifactory mirror when provided (else npm
+# default registry). Without this, npm ci hits registry.npmjs.org and
+# fails with ENOTFOUND on air-gapped/enterprise networks.
+RUN if [ -n "$NPM_REGISTRY" ]; then npm config set registry "$NPM_REGISTRY"; fi
 RUN npm ci --include=dev --legacy-peer-deps --ignore-scripts
 
 # Copy source code

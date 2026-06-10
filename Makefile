@@ -39,7 +39,7 @@ BUILD_ARGS = --build-arg BASE_REGISTRY=$(BASE_REGISTRY) \
 
 # Exported so `docker compose` interpolates them in image: names (infra image
 # pulls) and build.args (base-image FROMs) — not only at `make build` time.
-export BASE_REGISTRY PIP_INDEX_URL TORCH_INDEX_URL
+export BASE_REGISTRY PIP_INDEX_URL TORCH_INDEX_URL NPM_REGISTRY
 
 DC = docker compose --env-file config/env/.env $(COMPOSE_FILES)
 

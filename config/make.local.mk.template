@@ -25,3 +25,6 @@ PROFILE = enterprise
 BASE_REGISTRY   = your-artifactory.example.com/docker
 PIP_INDEX_URL   = https://your-artifactory.example.com/artifactory/api/pypi/pypi/simple
 TORCH_INDEX_URL = https://your-artifactory.example.com/artifactory/api/pypi/torch-cpu/simple
+
+# npm mirror for the frontend (ui-webapp) build.
+NPM_REGISTRY    = https://your-artifactory.example.com/artifactory/api/npm/npm/

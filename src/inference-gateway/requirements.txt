@@ -1,6 +1,6 @@
 # Core FastAPI stack (matching backend service)
 fastapi>=0.136.3
-uvicorn==0.48.0
+uvicorn==0.49.0
 starlette>=1.2.1
 pydantic>=2.13.4,<3.0.0
 
@@ -17,7 +17,7 @@ asyncpg>=0.31.0
 
 # HTTP clients for provider calls - Needed for P1-T5+
 httpx>=0.28.1
-openai>=2.40.0,<3.0.0
+openai>=2.41.0,<3.0.0
 
 # Retry logic - Needed for P2-T3
 backoff>=2.2.1
@@ -26,11 +26,11 @@ backoff>=2.2.1
 redis>=8.0.0
 
 # Logging (reuses shared.logging_utils)
-structlog>=25.5.0  # Structured logging - version constraint for security
+structlog>=26.1.0  # Structured logging - version constraint for security
 
 # Validation - Needed for P2-T2+
 jsonschema>=4.26.0,<5.0.0  # Prevent v5 breaking changes
 pyyaml>=6.0.1
 
 # Utilities
-python-multipart>=0.0.30
+python-multipart>=0.0.32

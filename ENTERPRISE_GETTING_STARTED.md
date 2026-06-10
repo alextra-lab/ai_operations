@@ -111,6 +111,9 @@ Validate the full config once edited:
 python ops/validate_configuration.py
 ```
 
+The validator loads `config/env/.env` itself — you do not need to export it into your
+shell first (shell environment variables take precedence over the file if both are set).
+
 Everything else in `.env` has working defaults. Proxy settings (`HTTP_PROXY`, `HTTPS_PROXY`,
 `NO_PROXY`) are not in `env.template` — if your network requires them, set them in your shell
 environment before running Docker commands.
@@ -179,6 +182,33 @@ Each service Dockerfile accepts `BASE_REGISTRY` to rewrite the `FROM` base image
 
 For full ARG and Dockerfile mechanics, see
 [Offline & Enterprise Deployment](docs/operations/AIR_GAPPED_DEPLOYMENT.md#enterprise-profile-artifactory-mirrors).
+
+### Corporate TLS interception / internal CA (`SSL: CERTIFICATE_VERIFY_FAILED`)
+
+If your network intercepts TLS or Artifactory serves a certificate from an internal CA,
+`make build` fails at the `pip install` (or npm) step with
+`SSL: CERTIFICATE_VERIFY_FAILED` — build containers trust only public CAs by default.
+Fix it once:
+
+```bash
+# Drop your enterprise CA chain (PEM format) into src/certs/ — gitignored
+cp /path/to/enterprise-root-ca.crt src/certs/
+make build
+```
+
+Every image build appends `src/certs/*.crt` / `*.pem` to the container's trust bundle and
+points `PIP_CERT` / `SSL_CERT_FILE` at it (pip, Python's urllib, and the frontend's npm
+via `NODE_EXTRA_CA_CERTS` all honor it). The directory is empty in public checkouts and
+the mechanism is a no-op then.
+
+Two related trust stores this does **not** cover:
+
+- **`docker login` / `docker pull` (Path A)** — registry trust belongs to the Docker
+  *daemon*, not the build. Configure `/etc/docker/certs.d/<registry-host>/ca.crt`
+  (Linux) or add the CA to the OS keychain (Docker Desktop).
+- **Runtime egress** (e.g. the gateway calling your LLMaaS endpoint over TLS) — if that
+  endpoint also presents an internal CA, that is deployment configuration, not image
+  build; ask your enterprise team for the standard approach.
 
 ---
 

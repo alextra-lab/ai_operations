@@ -29,6 +29,28 @@ except ImportError as e:
     sys.exit(1)
 
 
+def load_env_file(path: Path) -> int:
+    """Load KEY=VALUE pairs from an env file into os.environ.
+
+    Mirrors docker compose --env-file semantics for simple files: comments and
+    blank lines are skipped, surrounding quotes are stripped. Variables already
+    present in the shell environment take precedence and are not overwritten.
+    Returns the number of variables loaded.
+    """
+    loaded = 0
+    for raw_line in path.read_text().splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip("'\"")
+        if key and key not in os.environ:
+            os.environ[key] = value
+            loaded += 1
+    return loaded
+
+
 def check_environment_variables() -> dict[str, list[str]]:
     """Check for required and optional environment variables."""
     results: dict[str, list[str]] = {
@@ -201,6 +223,16 @@ def main():
     """Main validation function."""
     print("🔍 AI Operations Platform (AIOP) Configuration Validation")
     print("=" * 50)
+
+    # Load config/env/.env so the script validates the same values the stack
+    # will run with — no need to export it into the shell first. Shell
+    # environment variables take precedence over the file.
+    env_file = project_root / "config" / "env" / ".env"
+    if env_file.is_file():
+        loaded = load_env_file(env_file)
+        print(f"\n📄 Loaded {loaded} variable(s) from {env_file} (shell env takes precedence)")
+    else:
+        print(f"\n⚠️  {env_file} not found — validating shell environment only (run `make setup`)")
 
     # Check environment variables
     print("\n📋 Environment Variables Check:")

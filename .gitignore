@@ -93,6 +93,10 @@ tests/.env.test
 # Local Make overrides (machine-specific build config; template is committed)
 config/make.local.mk
 
+# Enterprise CA certificates (machine/site-specific; never commit)
+src/certs/*
+!src/certs/.gitkeep
+
 # Docker-related files
 docker-compose.override.yml
 .docker/

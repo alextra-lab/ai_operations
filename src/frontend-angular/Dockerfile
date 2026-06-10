@@ -8,6 +8,14 @@ ARG NPM_REGISTRY=
 # Set working directory
 WORKDIR /app
 
+# Optional enterprise CA bundle: drop *.crt/*.pem into src/certs/ and the npm
+# install/build trusts them (corporate TLS interception / internal Artifactory
+# CA). Empty in public checkouts — the file stays empty and node ignores it.
+COPY certs /certs
+RUN touch /tmp/extra-ca.pem && \
+    cat /certs/*.crt /certs/*.pem >> /tmp/extra-ca.pem 2>/dev/null || true
+ENV NODE_EXTRA_CA_CERTS=/tmp/extra-ca.pem
+
 # Copy package files
 COPY frontend-angular/package*.json ./
 

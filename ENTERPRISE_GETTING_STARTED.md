@@ -39,6 +39,8 @@ paths — is done by your enterprise team. Your job is to pull and start.
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 ```
 
+Or set it once in `config/make.local.mk` (see Path B below) so it applies to every `make` command without re-exporting.
+
 ---
 
 ## What your enterprise team must provide
@@ -54,10 +56,10 @@ These values are **not committed to this repository**. Your enterprise team is t
 | LLMaaS/vLLM base URL | Internal OpenAI-compatible inference endpoint | `gateway_providers` table — see Step 4 |
 | Pre-staged model paths | Populated `data/models/`, `data/llm-guard-models/` directories | Bind-mounted into embedding-service and llm-guard-svc |
 
-> **Build ARGs live in the Makefile, not in `.env`.** Do not look for `BASE_REGISTRY`,
-> `PIP_INDEX_URL`, or `TORCH_INDEX_URL` in `config/env/env.template` — they are not there.
-> They are build-time ARGs passed to `docker compose build`, substituted by your enterprise
-> team or CI/CD system before a build runs.
+> **Build ARGs are not in `.env`.** Do not look for `BASE_REGISTRY`, `PIP_INDEX_URL`, or
+> `TORCH_INDEX_URL` in `config/env/env.template` — they are not there. They are build-time
+> ARGs passed to `docker compose build`. Supply them in `config/make.local.mk` (see Path B),
+> on the `make` command line, or via CI/CD variables before a build runs.
 
 ---
 
@@ -131,23 +133,41 @@ Your enterprise team will provide the registry URL and login instructions.
 > This repo's own GitHub Actions CI (lint and tests only) does **not** build or push images.
 > Image distribution is handled by the internal enterprise CI/CD pipeline.
 
-### Path B — Build locally (advanced, requires Makefile configuration)
+### Path B — Build locally (advanced, requires local Make configuration)
 
-If you need to build images yourself, your enterprise team must first substitute the three
-placeholder strings in the Makefile (lines 12–14):
-
-```makefile
-# Current Makefile enterprise profile (placeholders — not functional as-is)
-BUILD_ARGS = --build-arg BASE_REGISTRY=<ARTIFACTORY_DOCKER_REGISTRY_PLACEHOLDER> \
-             --build-arg PIP_INDEX_URL=<ARTIFACTORY_PYPI_URL_PLACEHOLDER> \
-             --build-arg TORCH_INDEX_URL=<ARTIFACTORY_TORCH_CPU_URL_PLACEHOLDER>
-```
-
-Once your enterprise team substitutes real Artifactory URLs, run:
+If you need to build images yourself, supply the three Artifactory URLs your enterprise team
+provides. The recommended way is a local, gitignored Make config that the Makefile
+auto-includes — set the values once and every `make` command picks them up:
 
 ```bash
-make build PROFILE=enterprise
+cp config/make.local.mk.template config/make.local.mk
 ```
+
+Edit `config/make.local.mk` with the real values (and `DOCKER_DEFAULT_PLATFORM` on amd64 hosts):
+
+```makefile
+PROFILE         = enterprise
+BASE_REGISTRY   = your-artifactory.example.com/docker
+PIP_INDEX_URL   = https://your-artifactory.example.com/artifactory/api/pypi/pypi/simple
+TORCH_INDEX_URL = https://your-artifactory.example.com/artifactory/api/pypi/torch-cpu/simple
+```
+
+Then build with no extra flags:
+
+```bash
+make build      # PROFILE=enterprise and the URLs are picked up automatically
+```
+
+For a one-off build without the file, pass the values on the command line instead — they
+override `config/make.local.mk`:
+
+```bash
+make build PROFILE=enterprise \
+  BASE_REGISTRY=... PIP_INDEX_URL=... TORCH_INDEX_URL=...
+```
+
+The Makefile's committed defaults are `<…PLACEHOLDER>` strings that intentionally fail the
+build until you override them via either method above.
 
 The `enterprise` profile uses the base `deploy/docker-compose.yml` only (no local override).
 Each service Dockerfile accepts `BASE_REGISTRY` to rewrite the `FROM` base image pull and

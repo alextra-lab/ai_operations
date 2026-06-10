@@ -90,6 +90,9 @@ target/
 tests/.env.test
 .env.test
 
+# Local Make overrides (machine-specific build config; template is committed)
+config/make.local.mk
+
 # Docker-related files
 docker-compose.override.yml
 .docker/

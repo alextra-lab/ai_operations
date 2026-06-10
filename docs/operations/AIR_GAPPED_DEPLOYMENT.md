@@ -32,7 +32,20 @@ TORCH_INDEX_URL = <ARTIFACTORY_TORCH_CPU_URL_PLACEHOLDER>
 ```
 
 The actual Artifactory URLs are provided by your enterprise team and are not committed to
-this repository. Substitute them when running the build:
+this repository.
+
+**Recommended — set them once in a local Make config.** Copy the template and edit it; the
+Makefile auto-includes `config/make.local.mk` (gitignored), so `PROFILE`, the Artifactory
+URLs, and `DOCKER_DEFAULT_PLATFORM` apply to every `make` command without re-typing:
+
+```bash
+cp config/make.local.mk.template config/make.local.mk
+# edit config/make.local.mk, then:
+make build      # PROFILE=enterprise and the URLs are picked up automatically
+make up
+```
+
+**One-off — pass them on the command line** (overrides `config/make.local.mk`):
 
 ```bash
 make build PROFILE=enterprise \

@@ -65,7 +65,7 @@ services:
       timeout: 5s
       retries: 5
     restart: always
-    platform: linux/arm64
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
 
   orchestrator-api:
     build:
@@ -326,7 +326,7 @@ services:
       retries: 3
       start_period: 5s
     restart: always
-    platform: linux/arm64
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
 
   inference-gateway:
     build:
@@ -381,7 +381,7 @@ services:
       retries: 3
       start_period: 30s
     restart: always
-    platform: linux/arm64
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
 
 networks:
   test-network:

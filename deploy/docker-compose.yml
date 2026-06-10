@@ -31,7 +31,6 @@ services:
       retries: 3
       start_period: 5s
     restart: always
-    platform: linux/arm64
 
   orchestrator-api:
     build:
@@ -100,7 +99,6 @@ services:
       retries: 3
       start_period: 5s
     restart: always
-    platform: linux/arm64
 
   postgres-db:
     image: postgres:17.6
@@ -126,7 +124,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-    platform: linux/arm64
 
   db-init:
     build:
@@ -149,7 +146,6 @@ services:
       postgres-db:
         condition: service_healthy
     restart: "no"
-    platform: linux/arm64
 
   vector-db:
     image: qdrant/qdrant:v1.16.0
@@ -167,7 +163,6 @@ services:
       timeout: 5s
       retries: 5 # Allow more retries
       start_period: 10s
-    platform: linux/arm64
 
   llm-guard-svc:
     build:
@@ -210,7 +205,6 @@ services:
       retries: 3
       start_period: 5s
     restart: always
-    platform: linux/arm64
 
   corpus-service:
     build:
@@ -293,7 +287,6 @@ services:
       retries: 3
       start_period: 10s
     restart: always
-    platform: linux/arm64
 
   embedding-service:
     build:
@@ -350,7 +343,6 @@ services:
       retries: 3
       start_period: 10s
     restart: always
-    platform: linux/arm64
 
   redis-cache:
     image: redis:7-alpine
@@ -367,7 +359,6 @@ services:
       timeout: 5s
       retries: 5
     restart: always
-    platform: linux/arm64
 
   inference-gateway:
     build:
@@ -425,7 +416,6 @@ services:
       retries: 3
       start_period: 30s
     restart: always
-    platform: linux/arm64
 
 networks:
   observability:

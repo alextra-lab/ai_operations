@@ -1,38 +1,52 @@
 # deploy/docker-compose.local.yml
-# Local M1 override: backend-core only (no llm-guard / UI)
+# Local-profile override: development settings and platform pins.
 # Usage: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.local.yml up --build
+#
+# Platform: local development targets Apple Silicon by default. The base
+# compose file is platform-neutral (enterprise/amd64 hosts follow the host
+# platform); the arm64 pins live only in this overlay. On x86_64 hosts,
+# export DOCKER_DEFAULT_PLATFORM=linux/amd64 (or set it in
+# config/make.local.mk) — the interpolation below picks it up.
 
 services:
   orchestrator-api:
-    container_name: aio-m1-orchestrator
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
     environment:
       - DEVELOPMENT=1
       - ENV=development
 
   inference-gateway:
-    container_name: aio-m1-gateway
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
     environment:
       - DEVELOPMENT=1
       - ENV=development
 
   corpus-service:
-    container_name: aio-m1-corpus
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
     environment:
       - DEVELOPMENT=1
 
   embedding-service:
-    container_name: aio-m1-embedding
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
     environment:
       - DEVELOPMENT=1
 
   postgres-db:
-    container_name: aio-m1-postgres
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
 
   vector-db:
-    container_name: aio-m1-qdrant
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
 
   redis-cache:
-    container_name: aio-m1-redis
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
 
   db-init:
-    container_name: aio-m1-db-init
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
+
+  # Profile-gated services (--profile full): pins merge into the base
+  # definitions without enabling them.
+  llm-guard-svc:
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}
+
+  ui-webapp:
+    platform: ${DOCKER_DEFAULT_PLATFORM:-linux/arm64}

@@ -47,8 +47,7 @@ DC = docker compose --env-file config/env/.env $(COMPOSE_FILES)
 
 # ── First-time setup ──────────────────────────────────────────────
 .PHONY: setup
-setup:	## One-time setup: network, data dirs, env file (safe to re-run)
-	docker network create observability 2>/dev/null || true
+setup: ensure-network	## One-time setup: network, data dirs, env file (safe to re-run)
 	mkdir -p data/postgres data/qdrant data/redis data/models \
 	         data/llm-guard-models data/retrieval/tmp
 	@if [ ! -f config/env/.env ]; then \
@@ -58,6 +57,11 @@ setup:	## One-time setup: network, data dirs, env file (safe to re-run)
 	  echo "  TOOL_SECRETS_KEY before running 'make up'."; \
 	  echo ""; \
 	fi
+
+# ── Network ───────────────────────────────────────────────────────
+.PHONY: ensure-network
+ensure-network:	## Create the shared observability network if absent (idempotent)
+	@docker network create observability 2>/dev/null || true
 
 # ── Build ─────────────────────────────────────────────────────────
 .PHONY: build
@@ -74,11 +78,11 @@ pull:	## Pull prebuilt images from the registry (honors BASE_REGISTRY)
 
 # ── Start / stop ──────────────────────────────────────────────────
 .PHONY: up
-up:	## Start services in the background (backend-core; no llm-guard/UI)
+up: ensure-network	## Start services in the background (backend-core; no llm-guard/UI)
 	$(DC) up -d
 
 .PHONY: up-full
-up-full:	## Start the FULL stack incl. llm-guard-svc + ui-webapp (--profile full)
+up-full: ensure-network	## Start the FULL stack incl. llm-guard-svc + ui-webapp (--profile full)
 	docker compose --env-file config/env/.env $(COMPOSE_FILES) -f deploy/docker-compose.full.yml --profile full up -d
 
 .PHONY: down

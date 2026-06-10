@@ -17,16 +17,21 @@ or containers start but immediately exit because they cannot reach each other.
 
 **Cause**
 
-The `observability` Docker network must be created externally before any `docker compose` or
-`make` command. It is not created by compose itself.
+The `observability` Docker network is declared `external: true` in compose (it is shared
+with external monitoring tooling), so compose will not create it. You only see this error
+when starting the stack **without** going through `make`.
 
 **Fix**
 
+`make setup`, `make up`, and `make up-full` create the network automatically if absent (via
+the idempotent `ensure-network` target), so the normal flow needs no action. If you invoke
+`docker compose` directly, create it once yourself:
+
 ```bash
-docker network create observability
+docker network create observability   # or: make ensure-network
 ```
 
-Safe to re-run — `make setup` includes this call and suppresses the "already exists" error.
+Safe to re-run — the "already exists" error is suppressed.
 
 ---
 

@@ -83,7 +83,7 @@ export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
 ## Architecture
 
-This is a multi-service AI Operations platform — governed LLM execution units (AIOps) created via a wizard, usable by any enterprise team. Services communicate over a Docker network named `observability` (must be created externally with `docker network create observability`).
+This is a multi-service AI Operations platform — governed LLM execution units (AIOps) created via a wizard, usable by any enterprise team. Services communicate over a Docker network named `observability`, declared `external: true` in compose and shared with external monitoring tooling. `make setup`, `make up`, and `make up-full` create it automatically if absent (idempotent `ensure-network` target), so manual `docker network create observability` is no longer required.
 
 ### Services
 

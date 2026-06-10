@@ -128,6 +128,6 @@ help:	## Show available targets
 	@echo ""
 	@echo "Usage: make <target> [PROFILE=local|enterprise] [SVC=<service-name>]"
 	@echo ""
-	@grep -E '^[a-zA-Z_-]+:.*##' $(MAKEFILE_LIST) | \
+	@grep -hE '^[a-zA-Z_-]+:.*##' $(MAKEFILE_LIST) | \
 	  awk 'BEGIN {FS = ":.*##"}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ""

@@ -94,7 +94,7 @@ services:
       db-init:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8000/health', timeout=5).getcode() == 200 else sys.exit(1)"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -204,7 +204,7 @@ services:
       - HF_HUB_DISABLE_PROGRESS_BARS=1
       - TRANSFORMERS_VERBOSITY=error
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8081/health', timeout=5).getcode() == 200 else sys.exit(1)"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -419,7 +419,7 @@ services:
       db-init:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8002/health', timeout=5).getcode() == 200 else sys.exit(1)"]
       interval: 30s
       timeout: 10s
       retries: 3

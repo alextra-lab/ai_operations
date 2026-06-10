@@ -135,7 +135,7 @@ services:
         condition: service_healthy
     networks: [test-network]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5).getcode() == 200 else sys.exit(1)"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -199,7 +199,7 @@ services:
         condition: service_healthy
     networks: [test-network]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8001/health', timeout=5).getcode() == 200 else sys.exit(1)"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -251,7 +251,7 @@ services:
         condition: service_healthy
     networks: [test-network]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8000/health', timeout=5).getcode() == 200 else sys.exit(1)"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -292,7 +292,7 @@ services:
       - ${PROJECT_ROOT:-..}/data/llm-guard-models:/app/models:cached
     networks: [test-network]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8081/health', timeout=5).getcode() == 200 else sys.exit(1)"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -375,7 +375,7 @@ services:
       redis-cache:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8002/health', timeout=5).getcode() == 200 else sys.exit(1)"]
       interval: 30s
       timeout: 10s
       retries: 3

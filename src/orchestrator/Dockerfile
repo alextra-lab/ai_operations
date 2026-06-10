@@ -1,3 +1,10 @@
+# Orchestrator API — multi-stage
+# Note: the Docker CLI (docker-ce-cli) was removed — docker-spawned MCP servers
+# are not wired up (no docker.sock is mounted in compose), and its install
+# required fetching an apt repo + GPG key from download.docker.com, which is
+# unavailable in air-gapped builds. Reintroduce behind an opt-in build ARG if
+# docker-based MCP STDIO transport is ever needed.
+
 # Stage 1: Build dependencies
 ARG BASE_REGISTRY=docker.io/library
 FROM ${BASE_REGISTRY}/python:3.12-slim AS builder
@@ -6,37 +13,26 @@ WORKDIR /app
 ARG PIP_INDEX_URL=https://pypi.org/simple
 ARG OFFLINE=0
 
-# Install curl and Docker CLI for MCP STDIO support
-# Docker CLI allows spawning MCP servers like: docker mcp gateway run
-# Note: docker.io package doesn't include CLI, we need docker-ce-cli from Docker repo
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    ca-certificates \
-    gnupg \
-    && install -m 0755 -d /etc/apt/keyrings \
-    && curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc \
-    && chmod a+r /etc/apt/keyrings/docker.asc \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends docker-ce-cli \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create non-root user with docker group access
-# docker-ce-cli creates a docker group; add appuser to it for socket access
-RUN groupadd -r appuser && \
-    useradd -r -g appuser appuser && \
-    usermod -aG docker appuser || true
-
-# Copy requirements and prebuilt wheels (from host, not a builder stage)
+# Copy requirements and prebuilt wheels (from host)
 COPY orchestrator/requirements.txt .
-COPY wheelhouse /app/wheelhouse
+COPY wheelhouse /wheelhouse
 
 # Install runtime dependencies: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0)
 RUN if [ "$OFFLINE" = "1" ]; then \
-        pip install --no-cache-dir --no-index --find-links=/app/wheelhouse -r requirements.txt; \
+        pip install --no-cache-dir --no-index --find-links=/wheelhouse -r requirements.txt; \
     else \
         pip install --no-cache-dir --index-url "$PIP_INDEX_URL" -r requirements.txt; \
-    fi && rm -rf /app/wheelhouse
+    fi
+
+# Stage 2: Runtime — wheelhouse and build inputs do not ship in this image
+FROM ${BASE_REGISTRY}/python:3.12-slim
+WORKDIR /app
+
+# Installed site-packages and console scripts from the builder
+COPY --from=builder /usr/local /usr/local
+
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 # Copy orchestrator service code and shared code
 COPY orchestrator/app /app/app
@@ -50,7 +46,7 @@ USER appuser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD ["python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8000/health', timeout=5).getcode() == 200 else sys.exit(1)"]
 
 EXPOSE 8000
 

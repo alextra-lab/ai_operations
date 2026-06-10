@@ -1,33 +1,14 @@
+# LLM Guard Service — multi-stage
+# No OS compilers needed: online builds install binary wheels; offline builds
+# install from the wheelhouse, whose sdists are compiled by
+# ops/bootstrap/build_wheelhouse.sh on the connected host.
+
+# Stage 1: Build dependencies
 ARG BASE_REGISTRY=docker.io/library
-FROM ${BASE_REGISTRY}/python:3.12-slim
+FROM ${BASE_REGISTRY}/python:3.12-slim AS builder
 WORKDIR /app
 
 ARG PIP_INDEX_URL=https://pypi.org/simple
-
-# --- Set environment variables (safe defaults, no secrets) ---
-# TRANSFORMERS_OFFLINE and HF_HUB_OFFLINE are omitted here intentionally:
-# for OFFLINE=1 builds, set them via compose environment: block so online builds
-# can freely download models from HuggingFace Hub.
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PORT=8081 \
-    HF_HOME=/app/models \
-    PYTHONPATH="/app"
-
-# --- OS dependencies for runtime and wheels ---
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl ca-certificates g++ build-essential \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# --- Create non-root user ---
-RUN groupadd -r guarduser && useradd -r -g guarduser guarduser
-
-# --- Prepare models directory ---
-RUN mkdir -p /app/models
-
-# Declare volatile build args AFTER apt-get to avoid busting the cache layer above
 ARG OFFLINE=0
 ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
 
@@ -40,15 +21,39 @@ ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
 # Presidio pattern recognizers directly (no spaCy NlpEngine), so no spaCy model
 # is needed (the `spacy` library remains only as a presidio-analyzer dependency).
 COPY llm_guard_svc/requirements.txt .
-COPY wheelhouse /app/wheelhouse
+COPY wheelhouse /wheelhouse
 
 # --- Install runtime dependencies: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0) ---
 RUN if [ "$OFFLINE" = "1" ]; then \
-        pip install --no-cache-dir --no-index --find-links=/app/wheelhouse -r requirements.txt; \
+        pip install --no-cache-dir --no-index --find-links=/wheelhouse -r requirements.txt; \
     else \
         pip install --no-cache-dir --index-url "$TORCH_INDEX_URL" --extra-index-url "$PIP_INDEX_URL" \
             -r requirements.txt; \
-    fi && rm -rf /app/wheelhouse
+    fi
+
+# Stage 2: Runtime — wheelhouse and build inputs do not ship in this image
+FROM ${BASE_REGISTRY}/python:3.12-slim
+WORKDIR /app
+
+# --- Set environment variables (safe defaults, no secrets) ---
+# TRANSFORMERS_OFFLINE and HF_HUB_OFFLINE are omitted here intentionally:
+# for OFFLINE=1 builds, set them via compose environment: block so online builds
+# can freely download models from HuggingFace Hub.
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PORT=8081 \
+    HF_HOME=/app/models \
+    PYTHONPATH="/app"
+
+# --- Installed site-packages and console scripts from the builder ---
+COPY --from=builder /usr/local /usr/local
+
+# --- Create non-root user ---
+RUN groupadd -r guarduser && useradd -r -g guarduser guarduser
+
+# --- Prepare models directory ---
+RUN mkdir -p /app/models
 
 # --- Copy service and shared code ---
 COPY llm_guard_svc/app /app/app
@@ -60,7 +65,7 @@ RUN chown -R guarduser:guarduser /app
 USER guarduser
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:${PORT}/health || exit 1
+    CMD ["python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8081/health', timeout=5).getcode() == 200 else sys.exit(1)"]
 
 EXPOSE ${PORT}
 

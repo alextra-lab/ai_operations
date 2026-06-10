@@ -128,7 +128,13 @@ jobs:
 
       - name: Run pip-audit
         run: |
-          pip-audit -r requirements-all-no-llm-guard.txt
+          # GHSA-rrmf-rvhw-rf47: torch <= 2.12.0 memory corruption via
+          # torch.jit.script. LOW severity, no patched version exists (affects
+          # all releases), and this platform never JIT-scripts untrusted input
+          # (torch is used only for embedding inference + llm-guard scanners).
+          # Remove this ignore once PyTorch ships a fixed release.
+          pip-audit -r requirements-all-no-llm-guard.txt \
+            --ignore-vuln GHSA-rrmf-rvhw-rf47
 
       - name: Install frontend dependencies
         working-directory: src/frontend-angular

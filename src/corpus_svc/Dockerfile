@@ -1,44 +1,44 @@
-# Corpus Service - Single Stage, Wheelhouse + NLTK Data
+# Corpus Service — multi-stage, wheelhouse + NLTK data
+# No OS packages required: PDF parsing is pdfplumber/pypdfium2 (bundled wheels),
+# file typing is extension-based, DB driver is psycopg3[binary]/asyncpg.
 
+# Stage 1: Build dependencies
 ARG BASE_REGISTRY=docker.io/library
-FROM ${BASE_REGISTRY}/python:3.12-slim
+FROM ${BASE_REGISTRY}/python:3.12-slim AS builder
 
 WORKDIR /app
 
 ARG PIP_INDEX_URL=https://pypi.org/simple
 ARG OFFLINE=0
 
-# Install runtime OS dependencies for document processing
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    tesseract-ocr \
-    tesseract-ocr-eng \
-    poppler-utils \
-    libmagic1 \
-    curl \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Non-root user for security
-RUN groupadd -g 1000 appuser && \
-    useradd -u 1000 -g appuser -s /bin/bash -m appuser
-
 # Python requirements and prebuilt wheelhouse (host must build wheels for python 3.12/linux!)
 COPY corpus_svc/requirements.txt .
-COPY wheelhouse /app/wheelhouse
+COPY wheelhouse /wheelhouse
 
-# Install Python dependencies and NLTK data in a single layer so wheelhouse is cleaned up before commit
+# Install Python dependencies and NLTK data: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0)
 RUN if [ "$OFFLINE" = "1" ]; then \
-        pip install --no-cache-dir --no-index --find-links=/app/wheelhouse -r requirements.txt; \
+        pip install --no-cache-dir --no-index --find-links=/wheelhouse -r requirements.txt; \
     else \
         pip install --no-cache-dir --index-url "$PIP_INDEX_URL" -r requirements.txt; \
     fi && \
     mkdir -p /usr/local/share/nltk_data && \
-    if [ "$OFFLINE" = "1" ] && [ -d /app/wheelhouse/nltk_data ]; then \
-        cp -r /app/wheelhouse/nltk_data/* /usr/local/share/nltk_data/; \
+    if [ "$OFFLINE" = "1" ] && [ -d /wheelhouse/nltk_data ]; then \
+        cp -r /wheelhouse/nltk_data/* /usr/local/share/nltk_data/; \
     else \
         python -c "import nltk; [nltk.download(d, download_dir='/usr/local/share/nltk_data') for d in ['punkt', 'punkt_tab', 'stopwords']]" || true; \
-    fi && \
-    rm -rf /app/wheelhouse
+    fi
+
+# Stage 2: Runtime — wheelhouse and build inputs do not ship in this image
+FROM ${BASE_REGISTRY}/python:3.12-slim
+
+WORKDIR /app
+
+# Installed site-packages, console scripts, and NLTK data from the builder
+COPY --from=builder /usr/local /usr/local
+
+# Non-root user for security
+RUN groupadd -g 1000 appuser && \
+    useradd -u 1000 -g appuser -s /bin/bash -m appuser
 
 # Copy service code
 COPY corpus_svc/app /app/app
@@ -58,6 +58,6 @@ ENV NLTK_DATA=/usr/local/share/nltk_data
 EXPOSE 8001
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8001/health || exit 1
+    CMD ["python", "-c", "import urllib.request; import sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8001/health', timeout=5).getcode() == 200 else sys.exit(1)"]
 
 ENTRYPOINT ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8001"]

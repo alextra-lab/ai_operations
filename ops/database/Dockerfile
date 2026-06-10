@@ -3,7 +3,7 @@
 # just a base-image mirror and a pip source.
 
 # Stage 1: Build dependencies
-ARG BASE_REGISTRY=docker.io/library
+ARG BASE_REGISTRY=docker.io
 FROM ${BASE_REGISTRY}/python:3.12-slim AS builder
 
 ARG PIP_INDEX_URL=https://pypi.org/simple

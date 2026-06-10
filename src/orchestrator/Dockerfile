@@ -6,7 +6,7 @@
 # docker-based MCP STDIO transport is ever needed.
 
 # Stage 1: Build dependencies
-ARG BASE_REGISTRY=docker.io/library
+ARG BASE_REGISTRY=docker.io
 FROM ${BASE_REGISTRY}/python:3.12-slim AS builder
 WORKDIR /app
 

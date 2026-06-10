@@ -131,8 +131,18 @@ them to the internal Artifactory Docker registry. Developers pull rather than bu
 # Log in to your internal Artifactory Docker registry
 docker login <ARTIFACTORY_DOCKER_REGISTRY>
 
-# Pull all service images
-docker compose --env-file config/env/.env -f deploy/docker-compose.yml pull
+# Pull all images (service + infra) from your registry
+make pull
+```
+
+`make pull` exports `BASE_REGISTRY` from `config/make.local.mk` so the infra images
+(`postgres`, `qdrant/qdrant`, `redis`) and the service images all resolve to your
+Artifactory rather than Docker Hub. If you invoke compose directly instead, export the
+registry first so the `image:` names interpolate:
+
+```bash
+BASE_REGISTRY=<your-artifactory>/docker \
+  docker compose --env-file config/env/.env -f deploy/docker-compose.yml pull
 ```
 
 Your enterprise team will provide the registry URL and login instructions.

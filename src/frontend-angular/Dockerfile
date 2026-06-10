@@ -1,6 +1,7 @@
 # Multi-stage Docker build for Angular application
 # Build stage
-FROM node:26-alpine AS build
+ARG BASE_REGISTRY=docker.io
+FROM ${BASE_REGISTRY}/node:26-alpine AS build
 
 ARG NPM_REGISTRY=
 # Empty default uses npm's default registry; set to Artifactory npm URL for enterprise builds
@@ -36,7 +37,7 @@ RUN ls -la node_modules/.bin/ng || echo "ng not found"
 RUN npm run build -- --configuration=production
 
 # Production stage
-FROM nginx:alpine AS production
+FROM ${BASE_REGISTRY}/nginx:alpine AS production
 
 # Install curl for health checks
 RUN apk add --no-cache curl

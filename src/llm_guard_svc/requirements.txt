@@ -56,7 +56,7 @@ numpy>=1.19.0,<3.0.0
 typing-extensions>=4.15.0,<5.0.0
 # cryptography is transitive (via pyOpenSSL/httpx chain). Explicit floor closes
 # Dependabot CVEs alerts 152 and 154, patched in cryptography>=46.0.5.
-cryptography>=48.0.0
+cryptography>=48.0.1
 
 # --- Instrumentation and monitoring ---
 opentelemetry-api==1.42.1

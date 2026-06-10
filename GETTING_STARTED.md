@@ -68,6 +68,9 @@ Validate the full config once edited:
 python ops/validate_configuration.py
 ```
 
+The validator loads `config/env/.env` itself — no need to export it into your shell
+first (shell environment variables take precedence over the file if both are set).
+
 Everything else in `.env` has working defaults for local development.
 
 ---

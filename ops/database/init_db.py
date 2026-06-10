@@ -2,6 +2,9 @@
 """db-init entrypoint — runs inside the db-init container.
 
 Applies: schema init -> seeds -> migrations -> intent defaults.
+With ``--migrations-only``, applies pending migrations and exits (the mode
+run_migrations.sh wraps for host-side use; connection settings then fall back
+to the historical host defaults instead of being required).
 
 Pure-Python replacement for the former init_entrypoint.sh + psql pair, so the
 image needs no OS packages (psycopg executes the .sql files directly). SQL
@@ -9,10 +12,6 @@ files are sent whole over the simple query protocol (psycopg uses it for
 parameterless execute()), which allows multiple statements per file and
 honors the explicit BEGIN/COMMIT blocks the files contain — matching
 ``psql -v ON_ERROR_STOP=1 -f`` behavior: execution stops at the first error.
-
-The host-side runner (run_migrations.sh) remains for operators with psql;
-this module replicates its logic for the container path. Keep the two in
-sync if migration semantics change.
 """
 
 import os
@@ -34,13 +33,27 @@ def require_env(name: str) -> str:
     return value
 
 
-def connect() -> psycopg.Connection:
+def connect(strict: bool = True) -> psycopg.Connection:
+    """strict=True (container init): all settings required.
+    strict=False (host --migrations-only): the defaults run_migrations.sh used."""
+    if strict:
+        host = require_env("POSTGRES_HOST")
+        user = require_env("POSTGRES_USER")
+        password = require_env("POSTGRES_PASSWORD")
+        dbname = require_env("POSTGRES_DB")
+    else:
+        host = os.environ.get("POSTGRES_HOST", "localhost")
+        user = os.environ.get("POSTGRES_USER", "postgres")
+        password = os.environ.get("POSTGRES_PASSWORD")
+        dbname = os.environ.get("POSTGRES_DB", "aio")
+        if not password:
+            print("Warning: POSTGRES_PASSWORD not set. Connection may fail.")
     return psycopg.connect(
-        host=require_env("POSTGRES_HOST"),
+        host=host,
         port=os.environ.get("POSTGRES_PORT", "5432"),
-        user=require_env("POSTGRES_USER"),
-        password=require_env("POSTGRES_PASSWORD"),
-        dbname=require_env("POSTGRES_DB"),
+        user=user,
+        password=password,
+        dbname=dbname,
         autocommit=True,
     )
 
@@ -92,6 +105,12 @@ def seed_intent_defaults() -> None:
 
 
 def main() -> None:
+    if "--migrations-only" in sys.argv[1:]:
+        conn = connect(strict=False)
+        print(f"Database: {conn.info.host}:{conn.info.port}/{conn.info.dbname}")
+        run_migrations(conn)
+        return
+
     conn = connect()
 
     already_init = scalar(

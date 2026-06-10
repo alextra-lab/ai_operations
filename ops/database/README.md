@@ -41,10 +41,15 @@ AI Operations Platform uses PostgreSQL 17+ as its primary data store. The databa
 
 ## Quick Start
 
+> **Containerized stack? You don't need any of this.** The `db-init` compose
+> service (`ops/database/init_db.py`, pure Python/psycopg — no psql required)
+> applies init → seeds → migrations → intent defaults automatically on
+> `make up`. The commands below are the manual host-side equivalent.
+
 ### Prerequisites
 
 - PostgreSQL 17+ installed
-- `psql-17` command-line tool
+- `psql-17` command-line tool (for the manual commands below)
 - Database created (default: `aio` or `aio-test`)
 - Environment variables configured in `.env` or `env.test`
 
@@ -81,8 +86,9 @@ migration step required**.
 
 `./ops/database/run_migrations.sh` and the `ops/database/migrations/` directory
 remain in place as the mechanism for **future** migrations (numbered > 039). The
-runner records applied files in `schema_migrations` so re-runs skip already-applied
-files. Data operations that previously lived in migrations 033/034/036/037 now live
+runner is a thin wrapper around `init_db.py --migrations-only` (host prerequisite:
+`pip install -r requirements-ops.txt` — psql is not needed). It records applied
+files in `schema_migrations` so re-runs skip already-applied files. Data operations that previously lived in migrations 033/034/036/037 now live
 in numbered `ops/database/seed/` files (012–014) and run during the seed phase.
 
 ### Initialize Test Database
@@ -180,7 +186,6 @@ ops/database/
 │   ├── 013_rename_template_ids.sql   # Template ID rename (ex-migration 037)
 │   └── 014_set_documents_as_default_collection.sql # Default collection (ex-migration 034)
 ├── migrations/
-│   ├── run_migrations.sh           # Runner for FUTURE migrations (> 039)
 │   └── rbac_v2/                    # RBAC V2 upgrade migrations (untouched)
 ├── rollback/
 │   └── 000_drop_all.sql            # Emergency rollback (development only)
@@ -189,6 +194,9 @@ ops/database/
 │   ├── ERD.md                      # Entity-relationship diagrams
 │   ├── INDEXES.md                  # Index strategy and performance
 │   └── RLS_POLICIES.md             # Row-level security documentation
+├── init_db.py                      # db-init container entrypoint (init → seeds → migrations)
+├── run_migrations.sh               # Host wrapper: init_db.py --migrations-only (FUTURE migrations > 039)
+├── Dockerfile                      # db-init image (pure Python, no psql/apt)
 └── README.md                       # This file
 
 **Note:** Architecture Decision Records (ADRs) related to the database are located in:

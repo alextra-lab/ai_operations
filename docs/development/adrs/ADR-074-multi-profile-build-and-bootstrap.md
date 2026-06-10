@@ -217,6 +217,12 @@ environment block for services that depend on it.
 **Reason:** First clean-checkout bootstrap attempt surfaces reproducibility gaps and corrects the
 enterprise/offline misclassification. Formalizes the three-profile build strategy.
 
+### 2026-06-10 — Amended (db-init entrypoint)
+**Changed By:** Project team (Alex / Claude)
+**Reason:** `ops/database/init_entrypoint.sh` replaced by `ops/database/init_db.py` — a pure-Python
+(psycopg) entrypoint with identical phase semantics, removing the image's psql/apt dependency so
+db-init builds air-gapped like the other services. `run_migrations.sh` remains for host-side use.
+
 ---
 
 **Template Version:** 1.0

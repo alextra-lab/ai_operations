@@ -1,7 +1,6 @@
 import {
   provideHttpClient,
   withInterceptors,
-  withXhr,
 } from '@angular/common/http';
 import {
   ApplicationConfig,
@@ -24,11 +23,9 @@ import { SafeLucideIconProvider } from './shared/icons/safe-lucide-icon-provider
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // KNOWN BUG (Angular 22): HTTP responses do not trigger an automatic change-detection
-    // tick even when they resolve inside the zone, so data panels stay on "Loading…" until
-    // a user event. See docs/development/analysis/angular22-http-change-detection-bug.md.
-    // withXhr() + dropping eventCoalescing were tried here and kept (harmless) but did NOT
-    // fix it; the actual workaround is per-component cdr.detectChanges() in each panel.
+    // Rolled back to Angular 21 (PR #166) to escape the Angular 22 change-detection
+    // regression where in-zone HTTP completions did not trigger an automatic CD tick.
+    // See docs/development/analysis/angular22-http-change-detection-bug.md.
     provideZoneChangeDetection(),
     importProvidersFrom(LucideAngularModule.pick(APP_ICONS)),
     // Safety net: registered icons resolve via the provider above; any
@@ -42,9 +39,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(
-      // withXhr() keeps HttpClient on the XMLHttpRequest backend (Angular 22 defaults to
-      // fetch). Kept for predictability; it does NOT by itself fix the CD bug noted above.
-      withXhr(),
       withInterceptors([
         authInterceptor,
         securityInterceptor,

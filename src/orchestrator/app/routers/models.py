@@ -9,7 +9,7 @@ and syncing with inference servers.
 from datetime import UTC, datetime
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -279,6 +279,7 @@ async def update_model_metadata(
 
 @router.post("/sync", status_code=status.HTTP_200_OK, dependencies=[Depends(admin_required)])
 async def sync_models(
+    request: Request,
     db: AsyncSession = Depends(get_async_db),
     current_user: TokenPayload = Depends(get_current_user),
 ) -> dict:
@@ -318,11 +319,18 @@ async def sync_models(
         inference_endpoint = embedding_settings.openai_base_url
         api_key = embedding_settings.openai_api_key
 
+        # Forward the caller's JWT to the Gateway (it requires a JWT, not the LLMaaS
+        # api_key). sync is admin-only, and admin tokens bypass the Gateway scope check.
+        gateway_auth_token = request.headers.get("authorization") or request.headers.get(
+            "Authorization"
+        )
+
         service = ModelRegistryService(
             session=db,
             inference_endpoint=inference_endpoint,
             api_key=api_key,
             gateway_url=gateway_url,
+            gateway_auth_token=gateway_auth_token,
         )
 
         sync_report = await service.sync_with_inference_server()

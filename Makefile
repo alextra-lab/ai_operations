@@ -74,13 +74,17 @@ ensure-network:	## Create the shared observability network if absent (idempotent
 	@docker network create observability 2>/dev/null || true
 
 # ── Build ─────────────────────────────────────────────────────────
+# SVC=<service>  build only that service (e.g. SVC=ui-webapp); default builds all.
+# NO_CACHE=1     rebuild without the layer cache (forces a clean rebuild).
+NO_CACHE_FLAG := $(if $(NO_CACHE),--no-cache,)
+
 .PHONY: build
-build:	## Build images (PROFILE=local|enterprise)
-	$(DC) build $(BUILD_ARGS)
+build:	## Build images — all, or SVC=<name>; NO_CACHE=1 for a clean rebuild
+	$(DC) build $(NO_CACHE_FLAG) $(BUILD_ARGS) $(SVC)
 
 .PHONY: build-offline
-build-offline:	## Build from local src/wheelhouse — no network required
-	$(DC) build --build-arg OFFLINE=1
+build-offline:	## Build from src/wheelhouse (no network); SVC= and NO_CACHE= supported
+	$(DC) build $(NO_CACHE_FLAG) --build-arg OFFLINE=1 $(SVC)
 
 .PHONY: pull
 pull:	## Pull prebuilt images from the registry (honors BASE_REGISTRY)

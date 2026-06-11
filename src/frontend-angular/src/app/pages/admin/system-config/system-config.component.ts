@@ -115,13 +115,13 @@ export class SystemConfigComponent implements OnInit {
       next: (config) => {
         this.config = config;
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         this.checkConfigHealth();
       },
       error: (err) => {
         this.error = 'Failed to load configuration';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         this.snackBar.open('Failed to load configuration', 'Close', {
           duration: 5000,
         });
@@ -205,7 +205,7 @@ export class SystemConfigComponent implements OnInit {
     const total = this.modifiedSections.size;
     if (savedCount + errorCount === total) {
       this.isLoading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
       this.modifiedSections.clear();
       this.restartRequired = requiresRestart;
 

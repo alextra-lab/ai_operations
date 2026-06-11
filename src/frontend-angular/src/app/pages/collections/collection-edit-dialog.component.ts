@@ -9,7 +9,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -49,6 +49,8 @@ import { CollectionService } from '../../api/services/collection.service';
   ],
 })
 export class CollectionEditDialogComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   editForm: FormGroup;
   isSubmitting = false;
   errorMessage = '';
@@ -114,6 +116,7 @@ export class CollectionEditDialogComponent implements OnInit {
         error: (error) => {
           this.errorMessage = error.message;
           this.isSubmitting = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

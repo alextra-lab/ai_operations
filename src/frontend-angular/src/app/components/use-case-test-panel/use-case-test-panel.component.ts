@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -40,6 +40,8 @@ import { LucideAngularModule } from 'lucide-angular';
   styleUrls: ['./use-case-test-panel.component.scss'],
 })
 export class UseCaseTestPanelComponent {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   @Input() useCaseId!: string;
 
   testQuery = '';
@@ -70,6 +72,7 @@ export class UseCaseTestPanelComponent {
             duration: 3000,
           });
           this.isExecuting = false;
+          queueMicrotask(() => this.cdr.detectChanges());
           return;
         }
       }
@@ -97,6 +100,7 @@ export class UseCaseTestPanelComponent {
       this.snackBar.open(`Test error: ${error}`, 'Close', { duration: 5000 });
     } finally {
       this.isExecuting = false;
+      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 }

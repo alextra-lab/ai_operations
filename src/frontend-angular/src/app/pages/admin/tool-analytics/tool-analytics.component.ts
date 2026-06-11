@@ -130,13 +130,13 @@ export class ToolAnalyticsComponent implements OnInit, OnDestroy {
           this.aggregates.set(agg);
 
           this.isLoading = false;
-          this.cdr.detectChanges();
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (err) => {
           console.error('Error loading analytics:', err);
           this.error = 'Failed to load analytics data. Please try again.';
           this.isLoading = false;
-          this.cdr.detectChanges();
+          queueMicrotask(() => this.cdr.detectChanges());
           this.snackBar.open('Failed to load analytics', 'Close', {
             duration: 5000,
           });

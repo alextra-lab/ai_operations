@@ -127,7 +127,7 @@ export class RoleManagementComponent implements OnInit {
         });
 
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         console.error(
@@ -170,7 +170,7 @@ export class RoleManagementComponent implements OnInit {
         });
 
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

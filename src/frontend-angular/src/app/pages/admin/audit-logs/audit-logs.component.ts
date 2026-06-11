@@ -140,12 +140,12 @@ export class AuditLogsComponent implements OnInit {
         this.logs = response.logs;
         this.totalLogs = response.total;
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.error = 'Failed to load audit logs';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading audit logs:', err);
       },
     });
@@ -164,12 +164,12 @@ export class AuditLogsComponent implements OnInit {
       next: (response) => {
         this.stats = response;
         this.isLoadingStats = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         console.error('Error loading stats:', err);
         this.isLoadingStats = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

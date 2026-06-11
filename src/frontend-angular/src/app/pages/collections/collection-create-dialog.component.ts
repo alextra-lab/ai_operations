@@ -8,7 +8,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -53,6 +53,8 @@ import { SystemConfigService } from '../admin/system-config/services/system-conf
   ],
 })
 export class CollectionCreateDialogComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   createForm: FormGroup;
   isSubmitting = false;
   isLoadingModels = true;
@@ -128,6 +130,7 @@ export class CollectionCreateDialogComponent implements OnInit {
               });
             }
             this.isLoadingModels = false;
+            queueMicrotask(() => this.cdr.detectChanges());
           },
           error: () => {
             // Fallback to first available model if config fails
@@ -137,6 +140,7 @@ export class CollectionCreateDialogComponent implements OnInit {
               });
             }
             this.isLoadingModels = false;
+            queueMicrotask(() => this.cdr.detectChanges());
           },
         });
       },
@@ -145,6 +149,7 @@ export class CollectionCreateDialogComponent implements OnInit {
         this.errorMessage =
           'Failed to load embedding models. Please try again.';
         this.isLoadingModels = false;
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }
@@ -202,6 +207,7 @@ export class CollectionCreateDialogComponent implements OnInit {
         this.errorMessage =
           error.error?.detail || error.message || 'Failed to create collection';
         this.isSubmitting = false;
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

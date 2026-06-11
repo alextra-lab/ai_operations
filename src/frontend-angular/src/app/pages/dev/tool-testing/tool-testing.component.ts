@@ -7,14 +7,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, WritableSignal, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -65,6 +58,8 @@ import {
   styleUrls: ['./tool-testing.component.scss'],
 })
 export class ToolTestingComponent implements OnInit, OnDestroy {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   // Injected services
@@ -131,6 +126,7 @@ export class ToolTestingComponent implements OnInit, OnDestroy {
 
           this.tools.set(toolOptions);
           this.isLoadingTools = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           console.error('Error loading tools:', error);
@@ -138,6 +134,7 @@ export class ToolTestingComponent implements OnInit, OnDestroy {
             duration: 5000,
           });
           this.isLoadingTools = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -281,6 +278,7 @@ export class ToolTestingComponent implements OnInit, OnDestroy {
     } catch {
       this.snackBar.open('Invalid JSON', 'Close', { duration: 3000 });
       this.isValidating = false;
+      queueMicrotask(() => this.cdr.detectChanges());
       return;
     }
 
@@ -290,6 +288,7 @@ export class ToolTestingComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result) => {
           this.isValidating = false;
+          queueMicrotask(() => this.cdr.detectChanges());
           this.validationSuccess.set(result.valid);
 
           if (result.valid) {
@@ -306,6 +305,7 @@ export class ToolTestingComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isValidating = false;
+          queueMicrotask(() => this.cdr.detectChanges());
           const msg = error.error?.detail || 'Validation request failed';
           this.validationMessage.set(msg);
           this.validationSuccess.set(false);
@@ -333,6 +333,7 @@ export class ToolTestingComponent implements OnInit, OnDestroy {
     } catch {
       this.snackBar.open('Invalid JSON', 'Close', { duration: 3000 });
       this.isExecuting = false;
+      queueMicrotask(() => this.cdr.detectChanges());
       return;
     }
 
@@ -348,6 +349,7 @@ export class ToolTestingComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result) => {
           this.isExecuting = false;
+          queueMicrotask(() => this.cdr.detectChanges());
           this.currentResult.set(result);
 
           // Add to history
@@ -375,6 +377,7 @@ export class ToolTestingComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isExecuting = false;
+          queueMicrotask(() => this.cdr.detectChanges());
           const errorMsg = error.error?.detail || 'Test execution failed';
           this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
         },

@@ -700,7 +700,7 @@ export class TokenUsageDashboardComponent implements OnInit, OnDestroy {
             this.updateAvailableCenters();
             this.updateCharts();
             this.isLoading = false;
-            this.cdr.detectChanges();
+            queueMicrotask(() => this.cdr.detectChanges());
           },
           error: (err) => {
             console.error('Error fetching center token usage data:', err);
@@ -708,7 +708,7 @@ export class TokenUsageDashboardComponent implements OnInit, OnDestroy {
               err.message ||
               'Failed to load center token usage data. Please try again.';
             this.isLoading = false;
-            this.cdr.detectChanges();
+            queueMicrotask(() => this.cdr.detectChanges());
           },
         });
     } else {
@@ -723,7 +723,7 @@ export class TokenUsageDashboardComponent implements OnInit, OnDestroy {
             this.updateAvailableCenters();
             this.updateCharts();
             this.isLoading = false;
-            this.cdr.detectChanges();
+            queueMicrotask(() => this.cdr.detectChanges());
           },
           error: (err) => {
             console.error('Error fetching token usage data:', err);
@@ -731,7 +731,7 @@ export class TokenUsageDashboardComponent implements OnInit, OnDestroy {
               err.message ||
               'Failed to load token usage data. Please try again.';
             this.isLoading = false;
-            this.cdr.detectChanges();
+            queueMicrotask(() => this.cdr.detectChanges());
           },
         });
     }

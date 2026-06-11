@@ -75,14 +75,14 @@ export class ConfigImportExportComponent implements OnInit {
       next: (response) => {
         this.configYaml = response.config_yaml;
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: () => {
         this.snackBar.open('Failed to export configuration', 'Close', {
           duration: 5000,
         });
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }
@@ -114,13 +114,13 @@ export class ConfigImportExportComponent implements OnInit {
           this.validationErrors = response.validation_errors || [];
         }
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.isValid = false;
         this.validationErrors = [err.error?.detail || 'Validation failed'];
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }
@@ -153,7 +153,7 @@ export class ConfigImportExportComponent implements OnInit {
         error: (err) => {
           this.validationErrors = [err.error?.detail || 'Import failed'];
           this.isLoading = false;
-          this.cdr.detectChanges();
+          queueMicrotask(() => this.cdr.detectChanges());
           this.snackBar.open('Failed to import configuration', 'Close', {
             duration: 5000,
           });

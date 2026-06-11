@@ -15,7 +15,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -130,6 +130,8 @@ const DEFAULT_QUERY_FIELD: InputField = {
   ],
 })
 export class UseCaseWizardComponent implements OnInit, OnDestroy {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   // Mode
@@ -398,11 +400,13 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
           this.populateFormsForEdit(useCase);
           this.applyRefinedSchemaFromQueryParams();
           this.isLoading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           console.error('Error loading AI operation:', error);
           this.showError('Failed to load AI operation: ' + error.message);
           this.isLoading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -663,10 +667,12 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
           this.availablePatterns = response.patterns || [];
           this.filteredPatterns = this.availablePatterns;
           this.isLoading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error: Error) => {
           console.error('Error loading patterns:', error);
           this.isLoading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -731,6 +737,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
         next: (models) => {
           this.llmModels = models;
           this.isLoadingModels = false;
+          queueMicrotask(() => this.cdr.detectChanges());
 
           // In create mode: Set default LLM model if form is empty
           // In edit/view mode: Verify the configured model exists in the registry
@@ -758,6 +765,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error loading LLM models:', error);
           this.isLoadingModels = false;
+          queueMicrotask(() => this.cdr.detectChanges());
           this.showError('Failed to load LLM models');
         },
       });
@@ -836,12 +844,14 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
           }
 
           this.isLoadingModels = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: () => {
           // Fallback to empty; user can still proceed without RAG
           this.allCollectionsWithModels = [];
           this.availableCollections = [];
           this.isLoadingModels = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -1367,10 +1377,12 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
             }
 
             this.isLoading = false;
+            queueMicrotask(() => this.cdr.detectChanges());
           },
           error: (error) => {
             this.showError('Failed to apply pattern: ' + error.message);
             this.isLoading = false;
+            queueMicrotask(() => this.cdr.detectChanges());
           },
         });
     } else if (
@@ -1762,6 +1774,7 @@ export class UseCaseWizardComponent implements OnInit, OnDestroy {
       this.formattedPreview = null;
     } finally {
       this.isLoadingOutputPreview = false;
+      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 

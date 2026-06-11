@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -445,6 +445,8 @@ import { DocumentService } from '../../api/services/document.service';
   ],
 })
 export class DocumentUploadComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   uploadForm: FormGroup;
@@ -589,6 +591,7 @@ export class DocumentUploadComponent implements OnInit {
           duration: 5000,
         });
         this.isUploading = false;
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }
@@ -601,6 +604,7 @@ export class DocumentUploadComponent implements OnInit {
     });
     this.documentService.clearUploadProgress();
     this.isUploading = false;
+    queueMicrotask(() => this.cdr.detectChanges());
   }
 
   loadRecentUploads(): void {

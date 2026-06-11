@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -44,6 +44,8 @@ import { RoleManagementService } from '../../services/role-management.service';
   styleUrls: ['./assign-use-case-dialog.component.scss'],
 })
 export class AssignUseCaseDialogComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   assignForm: FormGroup;
   isSubmitting = false;
   error: string | null = null;
@@ -76,11 +78,13 @@ export class AssignUseCaseDialogComponent implements OnInit {
         // Response is paginated with use_cases array
         this.useCases = response.use_cases || [];
         this.isLoadingUseCases = false;
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         console.error('Failed to load use cases:', err);
         this.error = 'Failed to load available use cases';
         this.isLoadingUseCases = false;
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }
@@ -123,6 +127,7 @@ export class AssignUseCaseDialogComponent implements OnInit {
         },
         error: (err: any) => {
           this.isSubmitting = false;
+          queueMicrotask(() => this.cdr.detectChanges());
           this.error = err.error?.detail || 'Failed to assign use case';
         },
       });

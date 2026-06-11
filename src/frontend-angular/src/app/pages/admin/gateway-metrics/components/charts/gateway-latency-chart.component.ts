@@ -112,11 +112,11 @@ export class GatewayLatencyChartComponent
       await this.libraryLoader.loadChartJS();
       this.Chart = (window as unknown as { Chart: unknown }).Chart;
       this.isLoading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
     } catch (error) {
       console.error('Failed to load Chart.js:', error);
       this.isLoading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 

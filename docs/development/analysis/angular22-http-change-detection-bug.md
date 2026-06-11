@@ -2,7 +2,8 @@
 
 **Status:** Worked around (per-panel `detectChanges`). Root cause NOT fully understood — flagged for a future deep-dive.
 **First observed:** after the design-system reskin (PR #130), which coincided with the Angular **21 → 22** bump.
-**Affected:** every data-bound admin panel under `src/frontend-angular/src/app/pages/admin/` (~26 components).
+**Affected:** every data-bound component app-wide — admin panels, dev tools, analytics, documents,
+collections, templates, use-cases, and shared dialogs/charts (~64 components patched).
 
 ## Symptom
 
@@ -44,9 +45,21 @@ but unconfirmed thread.
 ## Workaround in place
 
 Per-component change detection: each affected component injects
-`private readonly cdr = inject(ChangeDetectorRef)` and calls `this.cdr.detectChanges()` immediately
-after every `this.<loading> = false` in its HTTP subscribe handlers. Applied via a one-off codemod;
-`tsc --noEmit` clean. (`developer-teams` already did the equivalent with `markForCheck`.)
+`private readonly cdr = inject(ChangeDetectorRef)` and repaints after its loading flag clears.
+Two patterns are used, both **deferred** so CD runs after the *whole* synchronous handler:
+
+- **Subscribe handlers:** after each `this.<loading> = false`, insert
+  `queueMicrotask(() => this.cdr.detectChanges())`.
+- **`finalize` teardown:** `finalize(() => { this.<loading> = false; this.cdr.detectChanges(); })`
+  (the `finalize` callback already runs after the synchronous `next` body, so no extra defer needed).
+
+**Why deferred (the `queueMicrotask`):** an earlier rollout (PR #164) called `detectChanges()`
+*synchronously* inside the subscribe handler. On reactive-form panels (e.g. `config-editor`) that fired
+CD on the line *before* `buildForm()` ran, so `formControlName` bound to a null control and threw
+`TypeError: Cannot read properties of null (reading '_rawValidators')`. Deferring to a microtask runs
+CD after the entire handler completes (form built), fixing both the stuck-panel symptom and the
+`_rawValidators` regression. Applied app-wide via a one-off codemod; `tsc --noEmit` clean.
+(`developer-teams` already did the equivalent with `markForCheck`.)
 
 Also retained but **not** themselves a fix (harmless, kept for predictability):
 `provideHttpClient(withXhr())` and `provideZoneChangeDetection()` (no `eventCoalescing`).

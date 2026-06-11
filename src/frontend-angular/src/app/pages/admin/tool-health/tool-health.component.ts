@@ -135,7 +135,7 @@ export class ToolHealthComponent implements OnInit, OnDestroy {
           this.tools.set(healthTools);
           this.sortedTools.set([...healthTools]);
           this.isLoading = false;
-          this.cdr.detectChanges();
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           console.error('Error loading health data:', error);
@@ -143,7 +143,7 @@ export class ToolHealthComponent implements OnInit, OnDestroy {
             duration: 5000,
           });
           this.isLoading = false;
-          this.cdr.detectChanges();
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -198,7 +198,7 @@ export class ToolHealthComponent implements OnInit, OnDestroy {
         next: (history) => {
           this.healthHistory.set(history);
           this.isLoadingHistory = false;
-          this.cdr.detectChanges();
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           console.error('Error loading tool history:', error);
@@ -206,7 +206,7 @@ export class ToolHealthComponent implements OnInit, OnDestroy {
             duration: 5000,
           });
           this.isLoadingHistory = false;
-          this.cdr.detectChanges();
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

@@ -113,14 +113,14 @@ export class ConfigEditorComponent implements OnInit, OnChanges, OnDestroy {
       next: (schema) => {
         this.schema = schema;
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         if (this.config) {
           this.buildForm();
         }
       },
       error: () => {
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

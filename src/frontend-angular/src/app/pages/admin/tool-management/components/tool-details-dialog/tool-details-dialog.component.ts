@@ -60,12 +60,12 @@ export class ToolDetailsDialogComponent implements OnInit {
       next: (tool) => {
         this.tool = tool;
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.error = 'Failed to load tool details';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading tool:', err);
       },
     });

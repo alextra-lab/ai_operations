@@ -1,12 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -403,6 +396,8 @@ import { DocumentService } from '../../api/services/document.service';
   ],
 })
 export class DocumentMetadataComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   @Input() document?: Document;
   @Output() metadataSaved = new EventEmitter<Document>();
   @Output() cancelled = new EventEmitter<void>();
@@ -513,6 +508,7 @@ export class DocumentMetadataComponent implements OnInit {
           );
           this.metadataSaved.emit(updatedDocument);
           this.isSaving = false;
+          queueMicrotask(() => this.cdr.detectChanges());
           // Close dialog and return the updated document
           this.dialogRef.close(updatedDocument);
         },
@@ -525,6 +521,7 @@ export class DocumentMetadataComponent implements OnInit {
             }
           );
           this.isSaving = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

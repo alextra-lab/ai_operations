@@ -93,12 +93,12 @@ export class ProviderManagementComponent implements OnInit {
         this.providers = response.items;
         this.totalProviders = response.total;
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.error = 'Failed to load providers';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading providers:', err);
         this.snackBar.open('Failed to load providers', 'Close', {
           duration: 5000,

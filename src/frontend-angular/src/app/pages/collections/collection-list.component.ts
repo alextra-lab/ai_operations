@@ -11,7 +11,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -68,6 +68,8 @@ import { CollectionEditDialogComponent } from './collection-edit-dialog.componen
   ],
 })
 export class CollectionListComponent implements OnInit, OnDestroy {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   // Data
@@ -157,6 +159,7 @@ export class CollectionListComponent implements OnInit, OnDestroy {
           this.totalCount = response.total;
           this.applySearchFilter();
           this.isLoading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.snackBar.open(
@@ -165,6 +168,7 @@ export class CollectionListComponent implements OnInit, OnDestroy {
             { duration: 5000 }
           );
           this.isLoading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

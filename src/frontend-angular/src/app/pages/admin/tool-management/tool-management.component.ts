@@ -121,12 +121,12 @@ export class ToolManagementComponent implements OnInit {
         this.tools = tools;
         this.applyFilters();
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.error = 'Failed to load tools';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading tools:', err);
         this.snackBar.open('Failed to load tools', 'Close', {
           duration: 5000,

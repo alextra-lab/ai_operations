@@ -74,12 +74,12 @@ export class SessionViewerComponent implements OnInit, OnDestroy {
       next: (sessions: SessionInfo[]) => {
         this.sessions = sessions;
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err: any) => {
         this.error = 'Failed to load sessions';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading sessions:', err);
       },
     });

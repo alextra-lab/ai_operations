@@ -123,7 +123,7 @@ export class ModelManagementComponent implements OnInit, OnDestroy {
         this.pageSize
       )
       .pipe(
-        finalize(() => (this.loading = false)),
+        finalize(() => { this.loading = false; this.cdr.detectChanges(); }),
         takeUntil(this.destroy$)
       )
       .subscribe({
@@ -169,7 +169,7 @@ export class ModelManagementComponent implements OnInit, OnDestroy {
     this.modelRegistryService
       .syncModels()
       .pipe(
-        finalize(() => (this.syncing = false)),
+        finalize(() => { this.syncing = false; this.cdr.detectChanges(); }),
         takeUntil(this.destroy$)
       )
       .subscribe({

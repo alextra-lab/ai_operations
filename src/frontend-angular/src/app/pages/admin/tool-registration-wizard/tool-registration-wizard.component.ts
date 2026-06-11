@@ -347,7 +347,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       }
     } finally {
       this.loading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 
@@ -522,7 +522,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
     } finally {
       this.loading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 
@@ -563,7 +563,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
     } finally {
       this.loading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 
@@ -631,7 +631,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       }
     } finally {
       this.loading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 
@@ -693,7 +693,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       }
     } finally {
       this.loading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 
@@ -748,7 +748,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       }
     } finally {
       this.loading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 

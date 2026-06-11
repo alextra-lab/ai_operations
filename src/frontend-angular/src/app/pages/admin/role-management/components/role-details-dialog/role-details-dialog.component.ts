@@ -74,12 +74,12 @@ export class RoleDetailsDialogComponent implements OnInit {
       next: (response) => {
         this.assignments = response.assignments;
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.error = 'Failed to load use case assignments';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading assignments:', err);
       },
     });

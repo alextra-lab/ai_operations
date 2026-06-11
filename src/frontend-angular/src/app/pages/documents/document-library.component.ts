@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -796,6 +796,8 @@ import { DocumentMetadataComponent } from './document-metadata.component';
   ],
 })
 export class DocumentLibraryComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   searchForm: FormGroup;
   documents: Document[] = [];
   totalDocuments = 0;
@@ -855,6 +857,7 @@ export class DocumentLibraryComponent implements OnInit {
           this.documents = response.documents;
           this.totalDocuments = response.total;
           this.isLoading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.snackBar.open(
@@ -865,6 +868,7 @@ export class DocumentLibraryComponent implements OnInit {
             }
           );
           this.isLoading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -899,6 +903,7 @@ export class DocumentLibraryComponent implements OnInit {
           this.documents = response.documents;
           this.totalDocuments = response.total;
           this.isLoading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.snackBar.open(
@@ -909,6 +914,7 @@ export class DocumentLibraryComponent implements OnInit {
             }
           );
           this.isLoading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

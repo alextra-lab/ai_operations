@@ -132,13 +132,13 @@ export class GatewayMetricsComponent implements OnInit, OnDestroy {
           this.providerMetrics = results.providers;
           this.modelMetrics = results.models;
           this.isLoading = false;
-          this.cdr.detectChanges();
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           console.error('Error loading metrics:', error);
           this.error = 'Failed to load metrics. Please try again.';
           this.isLoading = false;
-          this.cdr.detectChanges();
+          queueMicrotask(() => this.cdr.detectChanges());
           this.snackBar.open('Failed to load metrics', 'Close', {
             duration: 5000,
           });

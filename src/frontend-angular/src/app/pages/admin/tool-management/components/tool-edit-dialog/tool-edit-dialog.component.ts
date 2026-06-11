@@ -96,12 +96,12 @@ export class ToolEditDialogComponent implements OnInit {
         });
         this.tagsInput = tool.tags?.join(', ') || '';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.error = 'Failed to load tool';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading tool:', err);
       },
     });

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -39,6 +39,8 @@ import { ModelSelectorComponent } from '../../components/model-selector/model-se
   styleUrls: ['./template-editor.component.scss'],
 })
 export class TemplateEditorComponent implements OnInit, OnDestroy {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   templateForm: FormGroup;
   selectedLLMModelId?: string;
   selectedLLMModel?: ModelDetailedResponse;
@@ -123,6 +125,7 @@ export class TemplateEditorComponent implements OnInit, OnDestroy {
     // For now, just show preview
     setTimeout(() => {
       this.saving = false;
+      queueMicrotask(() => this.cdr.detectChanges());
       this.snackBar.open(
         'Template configuration ready (save API not yet implemented)',
         'Close',

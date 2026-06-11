@@ -115,11 +115,11 @@ export class HealthHistoryChartComponent
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.Chart = (window as any).Chart;
       this.isLoading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
     } catch (error) {
       console.error('Failed to load Chart.js:', error);
       this.isLoading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 

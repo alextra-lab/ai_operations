@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -57,6 +57,8 @@ import { TemplateService } from '../../api/services/template.service';
   styleUrls: ['./prompt-template-editor.component.scss'],
 })
 export class PromptTemplateEditorComponent implements OnInit, OnDestroy {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   templateForm: FormGroup;
   metadataForm: FormGroup;
 
@@ -151,6 +153,7 @@ export class PromptTemplateEditorComponent implements OnInit, OnDestroy {
           this.currentTemplate = template;
           this.populateForm(template);
           this.loading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.snackBar.open(
@@ -159,6 +162,7 @@ export class PromptTemplateEditorComponent implements OnInit, OnDestroy {
             { duration: 5000, panelClass: ['error-snackbar'] }
           );
           this.loading = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -255,6 +259,7 @@ export class PromptTemplateEditorComponent implements OnInit, OnDestroy {
             duration: 3000,
           });
           this.saving = false;
+          queueMicrotask(() => this.cdr.detectChanges());
           this.router.navigate(['/templates/library']);
         },
         error: (error) => {
@@ -264,6 +269,7 @@ export class PromptTemplateEditorComponent implements OnInit, OnDestroy {
             { duration: 5000, panelClass: ['error-snackbar'] }
           );
           this.saving = false;
+          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -289,6 +295,7 @@ export class PromptTemplateEditorComponent implements OnInit, OnDestroy {
               duration: 3000,
             });
             this.saving = false;
+            queueMicrotask(() => this.cdr.detectChanges());
             this.router.navigate(['/templates/library']);
           },
           error: (error) => {
@@ -298,6 +305,7 @@ export class PromptTemplateEditorComponent implements OnInit, OnDestroy {
               { duration: 5000, panelClass: ['error-snackbar'] }
             );
             this.saving = false;
+            queueMicrotask(() => this.cdr.detectChanges());
           },
         });
     }

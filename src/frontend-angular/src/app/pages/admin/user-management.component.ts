@@ -107,7 +107,7 @@ export class UserManagementComponent implements OnInit {
       error: (err: any) => {
         this.error = 'Failed to load users';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading users:', err);
       },
     });
@@ -211,7 +211,7 @@ export class UserManagementComponent implements OnInit {
     if (!users.length) {
       this.userRolesMap = {};
       this.isLoading = false;
-      this.cdr.detectChanges();
+      queueMicrotask(() => this.cdr.detectChanges());
       return;
     }
 
@@ -244,11 +244,11 @@ export class UserManagementComponent implements OnInit {
           {}
         );
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: () => {
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -662,6 +662,8 @@ import { DocumentService } from '../../api/services/document.service';
   ],
 })
 export class DocumentProcessingComponent implements OnInit, OnDestroy {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   processingStatuses: DocumentProcessingStatus[] = [];
   recentHistory: any[] = [];
   isLoading = false;
@@ -692,6 +694,7 @@ export class DocumentProcessingComponent implements OnInit, OnDestroy {
       next: (statuses) => {
         this.processingStatuses = statuses;
         this.isLoading = false;
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (error) => {
         this.snackBar.open(
@@ -702,6 +705,7 @@ export class DocumentProcessingComponent implements OnInit, OnDestroy {
           }
         );
         this.isLoading = false;
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }
@@ -766,6 +770,7 @@ export class DocumentProcessingComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.isLoading = false;
+        queueMicrotask(() => this.cdr.detectChanges());
         this.snackBar.open(
           `Failed to reprocess document: ${error.message}`,
           'Close',

@@ -208,7 +208,7 @@ export class UserEditDialogComponent implements OnInit {
       },
       complete: () => {
         this.isLoading = false;
-        this.cdr.detectChanges();
+        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

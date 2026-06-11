@@ -10,7 +10,7 @@ import { appConfig } from './app/app.config';
 
 // eslint-disable-next-line no-console
 console.log(
-  '%c 🐤🐤🐤  AIO-CANARY-XHR-v3 — HttpClient forced to XHR backend (zone-patched CD)  🐤🐤🐤 ',
+  '%c AIO-CANARY-CD-v5-COALESCE-OFF — zone diagnostics active ',
   'background:#0ea5e9;color:#fff;font-size:22px;font-weight:bold;padding:8px 12px;border-radius:6px'
 );
 

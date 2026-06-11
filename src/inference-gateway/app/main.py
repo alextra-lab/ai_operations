@@ -5,6 +5,7 @@ OpenAI-compatible API for centralized LLM provider access.
 Implements chat completions, embeddings, and model management.
 """
 
+import os
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
@@ -26,6 +27,13 @@ from .services.redis_client import configure_redis, init_redis, shutdown_redis
 from .services.usage_logger import init_usage_logger
 
 logger = configure_logging(service_name="gateway_main")
+
+# Surface outbound provider HTTP calls (method, URL, status code) in gateway logs so
+# first-time LLMaaS connectivity issues are debuggable. httpx emits one line per request;
+# LOG_VERBOSE=true bumps to DEBUG and adds connection-level httpcore detail.
+configure_logging(service_name="httpx")
+if os.environ.get("LOG_VERBOSE", "false").lower() == "true":
+    configure_logging(service_name="httpcore")
 
 # Load configuration
 gateway_config = load_inference_gateway_config()

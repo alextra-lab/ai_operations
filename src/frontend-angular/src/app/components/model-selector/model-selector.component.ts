@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 // Angular Material imports
@@ -33,8 +33,6 @@ import { ModelRegistryService } from '../../api/services/model-registry.service'
   styleUrls: ['./model-selector.component.scss'],
 })
 export class ModelSelectorComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   @Input() useCaseType?: string;
   @Input() preselectedModelId?: string;
   @Output() modelSelected = new EventEmitter<ModelDetailedResponse>();
@@ -66,12 +64,10 @@ export class ModelSelectorComponent implements OnInit {
             this.loadSelectedModel();
           }
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           console.error('Error loading models:', error);
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

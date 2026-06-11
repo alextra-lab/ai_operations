@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Input, inject } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -26,8 +26,6 @@ import { HealthSummary } from '../../models/tool-health.models';
   styleUrls: ['./health-summary-cards.component.scss'],
 })
 export class HealthSummaryCardsComponent {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   @Input() summary: HealthSummary | null = null;
   @Input() isLoading = false;
 

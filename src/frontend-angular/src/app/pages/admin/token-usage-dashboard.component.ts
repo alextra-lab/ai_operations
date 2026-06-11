@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -532,8 +532,6 @@ import { AdminAnalyticsService } from '../../api/services/admin-analytics.servic
   ],
 })
 export class TokenUsageDashboardComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   private adminAnalyticsService = inject(AdminAnalyticsService);
   private destroy$ = new Subject<void>();
 
@@ -700,7 +698,6 @@ export class TokenUsageDashboardComponent implements OnInit, OnDestroy {
             this.updateAvailableCenters();
             this.updateCharts();
             this.isLoading = false;
-            queueMicrotask(() => this.cdr.detectChanges());
           },
           error: (err) => {
             console.error('Error fetching center token usage data:', err);
@@ -708,7 +705,6 @@ export class TokenUsageDashboardComponent implements OnInit, OnDestroy {
               err.message ||
               'Failed to load center token usage data. Please try again.';
             this.isLoading = false;
-            queueMicrotask(() => this.cdr.detectChanges());
           },
         });
     } else {
@@ -723,7 +719,6 @@ export class TokenUsageDashboardComponent implements OnInit, OnDestroy {
             this.updateAvailableCenters();
             this.updateCharts();
             this.isLoading = false;
-            queueMicrotask(() => this.cdr.detectChanges());
           },
           error: (err) => {
             console.error('Error fetching token usage data:', err);
@@ -731,7 +726,6 @@ export class TokenUsageDashboardComponent implements OnInit, OnDestroy {
               err.message ||
               'Failed to load token usage data. Please try again.';
             this.isLoading = false;
-            queueMicrotask(() => this.cdr.detectChanges());
           },
         });
     }

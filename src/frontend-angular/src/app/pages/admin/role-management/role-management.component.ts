@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -53,8 +53,6 @@ import { RoleManagementService } from './services/role-management.service';
   styleUrls: ['./role-management.component.scss'],
 })
 export class RoleManagementComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   roles: RoleInfo[] = [];
   isLoading = false;
   error: string | null = null;
@@ -127,7 +125,6 @@ export class RoleManagementComponent implements OnInit {
         });
 
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         console.error(
@@ -170,7 +167,6 @@ export class RoleManagementComponent implements OnInit {
         });
 
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

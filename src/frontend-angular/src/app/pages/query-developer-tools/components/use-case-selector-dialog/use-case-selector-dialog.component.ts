@@ -18,7 +18,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -84,8 +84,6 @@ export interface UseCaseSelectorDialogResult {
   styleUrls: ['./use-case-selector-dialog.component.scss'],
 })
 export class UseCaseSelectorDialogComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   useCases$!: Observable<UseCaseResponse[]>;
   searchControl = new FormControl('');
   selectedUseCase: UseCaseResponse | null = null;
@@ -263,7 +261,6 @@ export class UseCaseSelectorDialogComponent implements OnInit {
     this.useCaseService.updateUseCase(useCase.id, updateRequest).subscribe({
       next: (updated) => {
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         this.dialogRef.close({
           success: true,
           useCase: updated,
@@ -272,7 +269,6 @@ export class UseCaseSelectorDialogComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         this.handleError(error);
       },
     });
@@ -323,7 +319,6 @@ export class UseCaseSelectorDialogComponent implements OnInit {
       .subscribe({
         next: (updated) => {
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
           this.dialogRef.close({
             success: true,
             useCase: updated,
@@ -333,7 +328,6 @@ export class UseCaseSelectorDialogComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
           this.handleError(error);
         },
       });

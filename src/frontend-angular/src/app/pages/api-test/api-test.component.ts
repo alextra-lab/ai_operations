@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -211,8 +211,6 @@ import {
   ],
 })
 export class ApiTestComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   loading = false;
@@ -258,12 +256,10 @@ export class ApiTestComponent implements OnInit, OnDestroy {
             'API is healthy!'
           );
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.healthStatus = { error: error.message };
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -282,12 +278,10 @@ export class ApiTestComponent implements OnInit, OnDestroy {
             'Successfully logged in!'
           );
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.loginResult = { error: error.message };
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -336,12 +330,10 @@ export class ApiTestComponent implements OnInit, OnDestroy {
         next: (result) => {
           this.errorTestResult = result;
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.errorTestResult = { error: error.message, handled: true };
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

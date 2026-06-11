@@ -6,7 +6,16 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { LibraryLoaderService } from '../../../../../services/library-loader.service';
@@ -63,8 +72,6 @@ import { TimeSeriesPoint } from '../../models/gateway-metrics.models';
 export class GatewayLatencyChartComponent
   implements AfterViewInit, OnChanges, OnDestroy
 {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   @ViewChild('chartCanvas', { static: false })
   chartCanvas!: ElementRef<HTMLCanvasElement>;
   @Input() data: TimeSeriesPoint[] = [];
@@ -112,11 +119,9 @@ export class GatewayLatencyChartComponent
       await this.libraryLoader.loadChartJS();
       this.Chart = (window as unknown as { Chart: unknown }).Chart;
       this.isLoading = false;
-      queueMicrotask(() => this.cdr.detectChanges());
     } catch (error) {
       console.error('Failed to load Chart.js:', error);
       this.isLoading = false;
-      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 

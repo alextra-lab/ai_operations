@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -67,8 +67,6 @@ import { AuditLogsService } from './services/audit-logs.service';
   styleUrls: ['./audit-logs.component.scss'],
 })
 export class AuditLogsComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   logs: AuditLogEntry[] = [];
   totalLogs = 0;
   isLoading = false;
@@ -140,12 +138,10 @@ export class AuditLogsComponent implements OnInit {
         this.logs = response.logs;
         this.totalLogs = response.total;
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.error = 'Failed to load audit logs';
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading audit logs:', err);
       },
     });
@@ -164,12 +160,10 @@ export class AuditLogsComponent implements OnInit {
       next: (response) => {
         this.stats = response;
         this.isLoadingStats = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         console.error('Error loading stats:', err);
         this.isLoadingStats = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

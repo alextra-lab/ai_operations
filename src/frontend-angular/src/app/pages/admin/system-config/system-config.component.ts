@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -50,8 +50,6 @@ import { SystemConfigService } from './services/system-config.service';
   styleUrls: ['./system-config.component.scss'],
 })
 export class SystemConfigComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   config: SystemConfigFull | null = null;
   sections = CONFIG_SECTIONS;
   isLoading = false;
@@ -115,13 +113,11 @@ export class SystemConfigComponent implements OnInit {
       next: (config) => {
         this.config = config;
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         this.checkConfigHealth();
       },
       error: (err) => {
         this.error = 'Failed to load configuration';
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         this.snackBar.open('Failed to load configuration', 'Close', {
           duration: 5000,
         });
@@ -205,7 +201,6 @@ export class SystemConfigComponent implements OnInit {
     const total = this.modifiedSections.size;
     if (savedCount + errorCount === total) {
       this.isLoading = false;
-      queueMicrotask(() => this.cdr.detectChanges());
       this.modifiedSections.clear();
       this.restartRequired = requiresRestart;
 

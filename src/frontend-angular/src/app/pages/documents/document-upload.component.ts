@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -804,8 +810,6 @@ import { DocumentService } from '../../api/services/document.service';
   ],
 })
 export class DocumentUploadComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   uploadForm: FormGroup;
@@ -914,13 +918,11 @@ export class DocumentUploadComponent implements OnInit, OnDestroy {
         }
 
         this.loadingCollections = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (error: any) => {
         console.error('Failed to load collections:', error);
         this.collectionError = 'Failed to load collections. Using default.';
         this.loadingCollections = false;
-        queueMicrotask(() => this.cdr.detectChanges());
 
         this.snackBar.open('Failed to load collections', 'Close', {
           duration: 5000,
@@ -1036,7 +1038,6 @@ export class DocumentUploadComponent implements OnInit, OnDestroy {
         { duration: 5000 }
       );
       this.isUploading = false;
-      queueMicrotask(() => this.cdr.detectChanges());
       return;
     }
 
@@ -1087,7 +1088,6 @@ export class DocumentUploadComponent implements OnInit, OnDestroy {
           duration: 5000,
         });
         this.isUploading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }
@@ -1100,7 +1100,6 @@ export class DocumentUploadComponent implements OnInit, OnDestroy {
     });
     this.documentService.clearUploadProgress();
     this.isUploading = false;
-    queueMicrotask(() => this.cdr.detectChanges());
   }
 
   loadRecentUploads(): void {

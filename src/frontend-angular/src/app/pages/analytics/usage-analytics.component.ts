@@ -9,7 +9,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -44,8 +44,6 @@ import { AnalyticsService } from '../../api/services/analytics.service';
   styleUrls: ['./usage-analytics.component.scss'],
 })
 export class UsageAnalyticsComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   private analyticsService = inject(AnalyticsService);
   private destroy$ = new Subject<void>();
 
@@ -167,7 +165,6 @@ export class UsageAnalyticsComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.errorMessage = error.message;
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
 
@@ -179,12 +176,10 @@ export class UsageAnalyticsComponent implements OnInit, OnDestroy {
         next: (docs) => {
           this.hotDocuments = docs;
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.errorMessage = error.message;
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

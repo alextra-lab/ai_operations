@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -276,8 +276,6 @@ import { DynamicFormComponent } from '../../features/dynamic-forms/components/dy
   ],
 })
 export class DynamicFormTestComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   useCases: UseCase[] = [];
   selectedUseCaseId: string | null = null;
   currentConfig: UseCaseConfig | null = null;
@@ -331,13 +329,11 @@ export class DynamicFormTestComponent implements OnInit {
       next: (config) => {
         this.currentConfig = config;
         this.isLoadingConfig = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         this.showSuccess(`Loaded config for: ${config.name}`);
       },
       error: (error) => {
         console.error('Error loading use case config:', error);
         this.isLoadingConfig = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         this.showError('Failed to load use case configuration');
       },
     });

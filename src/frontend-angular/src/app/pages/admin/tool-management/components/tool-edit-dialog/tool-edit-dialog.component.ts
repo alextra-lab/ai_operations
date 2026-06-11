@@ -5,7 +5,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -47,8 +47,6 @@ import { ToolAdminService } from '../../services/tool-admin.service';
   styleUrls: ['./tool-edit-dialog.component.scss'],
 })
 export class ToolEditDialogComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   form: FormGroup;
   tool: Tool | null = null;
   isSubmitting = false;
@@ -96,12 +94,10 @@ export class ToolEditDialogComponent implements OnInit {
         });
         this.tagsInput = tool.tags?.join(', ') || '';
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.error = 'Failed to load tool';
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading tool:', err);
       },
     });

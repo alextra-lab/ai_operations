@@ -500,7 +500,7 @@ export class UseCaseExecutionComponent implements OnInit, OnDestroy {
         },
         template
       );
-      queueMicrotask(() => this.cdr.detectChanges());
+      this.cdr.detectChanges();
     } catch (error) {
       console.error(
         '[UseCaseExecution] Failed to format structured output:',

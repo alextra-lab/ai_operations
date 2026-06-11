@@ -9,7 +9,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -71,8 +71,6 @@ import { TemplateService } from '../../api/services/template.service';
   styleUrls: ['./template-detail.component.scss'],
 })
 export class TemplateDetailComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   templateId: string | null = null;
   template: TemplateResponse | null = null;
   versions: TemplateVersionResponse[] = [];
@@ -143,7 +141,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             { duration: 5000, panelClass: ['error-snackbar'] }
           );
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -156,7 +153,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.versions = response.versions;
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.snackBar.open(
@@ -165,7 +161,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             { duration: 5000, panelClass: ['error-snackbar'] }
           );
           this.loading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -200,7 +195,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             this.loadTemplateDetails(this.templateId);
           }
           this.processing = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.snackBar.open(
@@ -209,7 +203,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             { duration: 5000, panelClass: ['error-snackbar'] }
           );
           this.processing = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -236,7 +229,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             this.loadTemplateDetails(this.templateId);
           }
           this.processing = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.snackBar.open(
@@ -245,7 +237,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             { duration: 5000, panelClass: ['error-snackbar'] }
           );
           this.processing = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -270,7 +261,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
         next: (diff) => {
           this.diffResult = diff;
           this.processing = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.snackBar.open(
@@ -279,7 +269,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             { duration: 5000, panelClass: ['error-snackbar'] }
           );
           this.processing = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -305,7 +294,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             this.loadTemplateDetails(this.templateId);
           }
           this.processing = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.snackBar.open(
@@ -314,7 +302,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             { duration: 5000, panelClass: ['error-snackbar'] }
           );
           this.processing = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -338,7 +325,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             this.loadTemplateDetails(this.templateId);
           }
           this.processing = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.snackBar.open(
@@ -347,7 +333,6 @@ export class TemplateDetailComponent implements OnInit, OnDestroy {
             { duration: 5000, panelClass: ['error-snackbar'] }
           );
           this.processing = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

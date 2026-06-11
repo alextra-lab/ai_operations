@@ -165,7 +165,10 @@ def load_embedding_config() -> EmbeddingConfig:
         enable_model_caching=os.environ.get("EMBEDDING_ENABLE_MODEL_CACHING", "true").lower()
         == "true",
         batch_size=int(os.environ.get("EMBEDDING_BATCH_SIZE", "32")),
-        openai_base_url=os.environ.get("LLMAAS_BASE_URL"),
+        # No remote embedding default. An OpenAI-compatible embedding endpoint is opt-in
+        # and configured at runtime once online; absent that, embeddings use the local
+        # model only (and are disabled if the local model files are not present).
+        openai_base_url=None,
         openai_api_key=resolve_secret("OPENAI_API_KEY") or os.environ.get("OPENAI_API_KEY"),
         client_api_key=resolve_secret("EMBEDDING_SERVICE_CLIENT_API_KEY")
         or os.environ.get("EMBEDDING_SERVICE_CLIENT_API_KEY"),

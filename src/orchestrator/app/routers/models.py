@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.auth import admin_required, auth_manager, get_current_user
 from shared.auth.models import TokenPayload
-from shared.config.loader import load_embedding_config, load_orchestrator_config
+from shared.config.loader import load_orchestrator_config
 from shared.logging_utils.fastapi import configure_logging
 
 from ..db.database import get_async_db
@@ -305,7 +305,6 @@ async def sync_models(
         )
 
         orchestrator_settings = load_orchestrator_config()
-        embedding_settings = load_embedding_config()
 
         # Get Gateway URL for unified model discovery
         gateway_url = orchestrator_settings.inference_gateway_url
@@ -315,20 +314,16 @@ async def sync_models(
             if gateway_url.rstrip("/").endswith("/v1")
             else gateway_url.rstrip("/")
         )
-        # Fallback to direct inference server if Gateway not available
-        inference_endpoint = embedding_settings.openai_base_url
-        api_key = embedding_settings.openai_api_key
 
-        # Forward the caller's JWT to the Gateway (it requires a JWT, not the LLMaaS
-        # api_key). sync is admin-only, and admin tokens bypass the Gateway scope check.
+        # The orchestrator discovers models ONLY through the Gateway; it never contacts an
+        # inference server directly. Forward the caller's JWT (sync is admin-only, and admin
+        # tokens bypass the Gateway scope check).
         gateway_auth_token = request.headers.get("authorization") or request.headers.get(
             "Authorization"
         )
 
         service = ModelRegistryService(
             session=db,
-            inference_endpoint=inference_endpoint,
-            api_key=api_key,
             gateway_url=gateway_url,
             gateway_auth_token=gateway_auth_token,
         )

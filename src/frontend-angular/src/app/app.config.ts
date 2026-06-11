@@ -12,6 +12,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { changeDetectionInterceptor } from './core/interceptors/change-detection.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loggingInterceptor } from './core/interceptors/logging.interceptor';
 import { securityInterceptor } from './core/interceptors/security.interceptor';
@@ -38,6 +39,9 @@ export const appConfig: ApplicationConfig = {
         securityInterceptor,
         errorInterceptor,
         loggingInterceptor,
+        // Angular 22's fetch backend resolves responses outside the zone, so CD does
+        // not run after HTTP calls. This re-ticks once per response (see interceptor).
+        changeDetectionInterceptor,
       ])
     ),
     provideServiceWorker('ngsw-worker.js', {

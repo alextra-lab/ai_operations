@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -75,8 +75,7 @@ export class ProviderManagementComponent implements OnInit {
   constructor(
     private providerService: ProviderManagementService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -87,28 +86,19 @@ export class ProviderManagementComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    // AIO-CANARY-PROVIDERS-20260611 — searchable marker to prove THIS build is the one
-    // running: grep the served JS for it, and watch the browser console on load.
-    console.warn('AIO-CANARY-PROVIDERS-20260611 loadProviders() start');
-
     this.providerService.listProviders(this.filters).subscribe({
       next: (response) => {
-        console.warn(
-          'AIO-CANARY-PROVIDERS-20260611 next() items=' + response.items.length
-        );
         this.providers = response.items;
         this.totalProviders = response.total;
         this.isLoading = false;
-        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('AIO-CANARY-PROVIDERS-20260611 error', err);
         this.error = 'Failed to load providers';
         this.isLoading = false;
+        console.error('Error loading providers:', err);
         this.snackBar.open('Failed to load providers', 'Close', {
           duration: 5000,
         });
-        this.cdr.detectChanges();
       },
     });
   }

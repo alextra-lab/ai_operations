@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -57,6 +57,8 @@ import { ToolAdminService } from './services/tool-admin.service';
   styleUrls: ['./tool-management.component.scss'],
 })
 export class ToolManagementComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   tools: ToolListItem[] = [];
   filteredTools: ToolListItem[] = [];
   isLoading = false;
@@ -119,10 +121,12 @@ export class ToolManagementComponent implements OnInit {
         this.tools = tools;
         this.applyFilters();
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = 'Failed to load tools';
         this.isLoading = false;
+        this.cdr.detectChanges();
         console.error('Error loading tools:', err);
         this.snackBar.open('Failed to load tools', 'Close', {
           duration: 5000,

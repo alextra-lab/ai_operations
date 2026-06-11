@@ -6,7 +6,6 @@ import {
 import {
   ApplicationConfig,
   importProvidersFrom,
-  provideAppInitializer,
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -20,22 +19,17 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loggingInterceptor } from './core/interceptors/logging.interceptor';
 import { securityInterceptor } from './core/interceptors/security.interceptor';
-import {
-  installZoneDiagnostics,
-  zoneDiagInterceptor,
-} from './core/interceptors/zone-diag.interceptor';
 import { APP_ICONS } from './shared/icons/lucide-icons';
 import { SafeLucideIconProvider } from './shared/icons/safe-lucide-icon-provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Keep zone-driven change detection immediate for HttpClient's XHR load events.
-    // In Angular 22 + zone.js 0.16, XHR completion is delivered through a patched
-    // XMLHttpRequestEventTarget "load" eventTask; with eventCoalescing the tick is
-    // deferred until the next real DOM event, leaving data-bound admin panels stuck on
-    // "Loading…" until the user clicks. (Root cause; do not re-enable coalescing.)
+    // KNOWN BUG (Angular 22): HTTP responses do not trigger an automatic change-detection
+    // tick even when they resolve inside the zone, so data panels stay on "Loading…" until
+    // a user event. See docs/development/analysis/angular22-http-change-detection-bug.md.
+    // withXhr() + dropping eventCoalescing were tried here and kept (harmless) but did NOT
+    // fix it; the actual workaround is per-component cdr.detectChanges() in each panel.
     provideZoneChangeDetection(),
-    provideAppInitializer(() => installZoneDiagnostics()),
     importProvidersFrom(LucideAngularModule.pick(APP_ICONS)),
     // Safety net: registered icons resolve via the provider above; any
     // unregistered name falls through to this provider and renders a neutral
@@ -48,18 +42,14 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(
-      // Angular 22 defaults HttpClient to the fetch backend, whose responses resolve
-      // OUTSIDE the Angular zone — so zone.js never schedules change detection after an
-      // HTTP call and data-bound views stay stale until a user event (every admin panel
-      // stuck on "Loading…" until you click). withXhr() puts HttpClient back on the
-      // zone-patched XMLHttpRequest backend, restoring automatic change detection.
+      // withXhr() keeps HttpClient on the XMLHttpRequest backend (Angular 22 defaults to
+      // fetch). Kept for predictability; it does NOT by itself fix the CD bug noted above.
       withXhr(),
       withInterceptors([
         authInterceptor,
         securityInterceptor,
         errorInterceptor,
         loggingInterceptor,
-        zoneDiagInterceptor,
       ])
     ),
     provideServiceWorker('ngsw-worker.js', {

@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -50,6 +50,8 @@ import { ProviderManagementService } from './services/provider-management.servic
   styleUrls: ['./provider-management.component.scss'],
 })
 export class ProviderManagementComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   providers: ProviderConfig[] = [];
   totalProviders = 0;
   isLoading = false;
@@ -91,10 +93,12 @@ export class ProviderManagementComponent implements OnInit {
         this.providers = response.items;
         this.totalProviders = response.total;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = 'Failed to load providers';
         this.isLoading = false;
+        this.cdr.detectChanges();
         console.error('Error loading providers:', err);
         this.snackBar.open('Failed to load providers', 'Close', {
           duration: 5000,

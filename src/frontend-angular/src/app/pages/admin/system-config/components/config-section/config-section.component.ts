@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -32,6 +32,8 @@ import { ConfigEditorComponent } from '../config-editor/config-editor.component'
   styleUrls: ['./config-section.component.scss'],
 })
 export class ConfigSectionComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   @Input() section!: ConfigSection;
   @Input() metadata!: ConfigSectionMetadata;
   @Input() config: Record<string, unknown> | null = null;

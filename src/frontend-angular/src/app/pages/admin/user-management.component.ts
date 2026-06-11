@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -58,6 +58,8 @@ import { UserManagementService } from './user-management/services/user-managemen
   styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   users: UserListItem[] = [];
   totalUsers = 0;
   isLoading = false;
@@ -105,6 +107,7 @@ export class UserManagementComponent implements OnInit {
       error: (err: any) => {
         this.error = 'Failed to load users';
         this.isLoading = false;
+        this.cdr.detectChanges();
         console.error('Error loading users:', err);
       },
     });
@@ -208,6 +211,7 @@ export class UserManagementComponent implements OnInit {
     if (!users.length) {
       this.userRolesMap = {};
       this.isLoading = false;
+      this.cdr.detectChanges();
       return;
     }
 
@@ -240,9 +244,11 @@ export class UserManagementComponent implements OnInit {
           {}
         );
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -36,6 +36,8 @@ import { UserManagementService } from '../../services/user-management.service';
   styleUrls: ['./session-viewer.component.scss'],
 })
 export class SessionViewerComponent implements OnInit, OnDestroy {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   sessions: SessionInfo[] = [];
   isLoading = false;
   error: string | null = null;
@@ -72,10 +74,12 @@ export class SessionViewerComponent implements OnInit, OnDestroy {
       next: (sessions: SessionInfo[]) => {
         this.sessions = sessions;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
         this.error = 'Failed to load sessions';
         this.isLoading = false;
+        this.cdr.detectChanges();
         console.error('Error loading sessions:', err);
       },
     });

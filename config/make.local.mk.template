@@ -26,5 +26,9 @@ BASE_REGISTRY   = your-artifactory.example.com/docker
 PIP_INDEX_URL   = https://your-artifactory.example.com/artifactory/api/pypi/pypi/simple
 TORCH_INDEX_URL = https://your-artifactory.example.com/artifactory/api/pypi/torch-cpu/simple
 
-# npm mirror for the frontend (ui-webapp) build.
+# npm mirror for the frontend (ui-webapp) build. If the mirror requires
+# authentication (most Artifactory npm repos do), set NPM_REGISTRY here AND put
+# the credentials in src/frontend-angular/.npmrc.local (gitignored) — paste your
+# Artifactory "Set Me Up" npm snippet there (_auth/_authToken + always-auth).
+# Auth cannot go in the URL as user:pass@host — npm ignores it.
 NPM_REGISTRY    = https://your-artifactory.example.com/artifactory/api/npm/npm/

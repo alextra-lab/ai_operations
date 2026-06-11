@@ -192,6 +192,21 @@ The `enterprise` profile uses the base `deploy/docker-compose.yml` only (no loca
 Each service Dockerfile accepts `BASE_REGISTRY` to rewrite the `FROM` base image pull and
 `PIP_INDEX_URL` as `pip --index-url`. No Dockerfile edits are required.
 
+**npm registry authentication.** If your Artifactory npm repo requires a login (most do),
+`NPM_REGISTRY` alone is not enough — npm needs credentials in an `.npmrc`, and it does **not**
+accept them in the URL (`https://user:pass@host/...` is ignored). Put them in a gitignored
+file the frontend build reads:
+
+```bash
+# Paste your Artifactory "Set Me Up" npm snippet (registry + _auth/_authToken +
+# always-auth) into this file. It is gitignored and only exists in the discarded
+# build stage — it never ships in the image.
+$EDITOR src/frontend-angular/.npmrc.local
+```
+
+A `401`/`403` from `npm ci` means missing or invalid auth here; `ENOTFOUND` means the registry
+URL itself isn't reaching the mirror.
+
 For full ARG and Dockerfile mechanics, see
 [Offline & Enterprise Deployment](docs/operations/AIR_GAPPED_DEPLOYMENT.md#enterprise-profile-artifactory-mirrors).
 

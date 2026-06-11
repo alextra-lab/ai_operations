@@ -35,6 +35,16 @@ WORKDIR /app
 # Installed site-packages and console scripts from the builder
 COPY --from=builder /usr/local /usr/local
 
+# Trust the same optional enterprise CA bundle at runtime. Outbound TLS to the
+# inference provider happens in this stage, not the builder, and the builder's
+# trust store does not carry over. httpx (and the openai SDK that wraps it)
+# honor SSL_CERT_FILE when trust_env is enabled (the default), so point it at
+# the bundle that now contains the CA. Empty in public checkouts — a no-op then.
+COPY certs /certs
+RUN cat /certs/*.crt /certs/*.pem >> /etc/ssl/certs/ca-certificates.crt 2>/dev/null || true
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
+    REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+
 # Create non-root user
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 

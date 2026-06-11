@@ -40,6 +40,15 @@ WORKDIR /app
 # Installed site-packages and console scripts from the builder
 COPY --from=builder /usr/local /usr/local
 
+# Trust the optional enterprise CA bundle at runtime too — the builder's trust
+# store does not carry over. Internal traffic is plain HTTP over the docker
+# network, but MCP HTTP transport can reach external TLS endpoints; httpx honors
+# SSL_CERT_FILE when trust_env is enabled (the default). No-op in public checkouts.
+COPY certs /certs
+RUN cat /certs/*.crt /certs/*.pem >> /etc/ssl/certs/ca-certificates.crt 2>/dev/null || true
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
+    REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+
 # Create non-root user
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 

@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.logging_utils.fastapi import configure_logging
 
-from ..db.models import Model
+from ..db.models import Model, ModelProviderEnum, ModelTypeEnum
 from ..schemas.model import (
     ModelCapabilities,
     ModelDetailedResponse,
@@ -28,6 +28,35 @@ from ..schemas.model import (
 from .model_metadata_inferencer import ModelMetadataInferencer
 
 logger = configure_logging(service_name="model_registry_service")
+
+_VALID_PROVIDER_TYPES = {e.value for e in ModelProviderEnum}  # openai, anthropic, local, other
+_VALID_MODEL_TYPES = {e.value for e in ModelTypeEnum}
+
+
+def _normalize_provider_type(value: str | None) -> str:
+    """Map a discovered provider_type onto the model_provider_enum vocabulary.
+
+    The Gateway reports provider types such as "openai_compatible" / "azure_openai" that
+    are NOT members of model_provider_enum (openai|anthropic|local|other); inserting them
+    raises ``invalid input value for enum``. Collapse OpenAI-compatible variants to
+    "openai" and map anything unrecognized to "other".
+    """
+    v = (value or "").strip().lower()
+    if v in _VALID_PROVIDER_TYPES:
+        return v
+    if "openai" in v or v in ("azure", "vllm"):
+        return "openai"
+    if v == "anthropic":
+        return "anthropic"
+    if v in ("local", "huggingface", "sentence_transformers"):
+        return "local"
+    return "other"
+
+
+def _normalize_model_type(value: str | None) -> str:
+    """Map a model_type onto the model_type_enum vocabulary; unknown -> 'other'."""
+    v = (value or "llm").strip().lower()
+    return v if v in _VALID_MODEL_TYPES else "other"
 
 
 class ModelRegistryService:
@@ -618,9 +647,9 @@ class ModelRegistryService:
             model_kwargs = {
                 "model_id": model_id,
                 "name": metadata.get("name", model_id),
-                "provider_type": metadata.get("provider_type", "openai"),
+                "provider_type": _normalize_provider_type(metadata.get("provider_type")),
                 "provider": assigned_provider,  # From Gateway or auto-assigned
-                "model_type": metadata.get("model_type", "llm"),
+                "model_type": _normalize_model_type(metadata.get("model_type")),
                 "context_window": metadata.get("context_window"),
                 "max_input_tokens": metadata.get("max_input_tokens"),
                 "max_output_tokens": metadata.get("max_output_tokens"),

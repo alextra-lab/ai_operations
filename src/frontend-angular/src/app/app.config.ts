@@ -24,7 +24,12 @@ import { SafeLucideIconProvider } from './shared/icons/safe-lucide-icon-provider
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    // Keep zone-driven change detection immediate for HttpClient's XHR load events.
+    // In Angular 22 + zone.js 0.16, XHR completion is delivered through a patched
+    // XMLHttpRequestEventTarget "load" eventTask; with eventCoalescing the tick is
+    // deferred until the next real DOM event, leaving data-bound admin panels stuck on
+    // "Loading…" until the user clicks. (Root cause; do not re-enable coalescing.)
+    provideZoneChangeDetection(),
     importProvidersFrom(LucideAngularModule.pick(APP_ICONS)),
     // Safety net: registered icons resolve via the provider above; any
     // unregistered name falls through to this provider and renders a neutral

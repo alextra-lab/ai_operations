@@ -1,4 +1,8 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptors,
+  withXhr,
+} from '@angular/common/http';
 import {
   ApplicationConfig,
   importProvidersFrom,
@@ -12,7 +16,6 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { changeDetectionInterceptor } from './core/interceptors/change-detection.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loggingInterceptor } from './core/interceptors/logging.interceptor';
 import { securityInterceptor } from './core/interceptors/security.interceptor';
@@ -34,14 +37,17 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(
+      // Angular 22 defaults HttpClient to the fetch backend, whose responses resolve
+      // OUTSIDE the Angular zone — so zone.js never schedules change detection after an
+      // HTTP call and data-bound views stay stale until a user event (every admin panel
+      // stuck on "Loading…" until you click). withXhr() puts HttpClient back on the
+      // zone-patched XMLHttpRequest backend, restoring automatic change detection.
+      withXhr(),
       withInterceptors([
         authInterceptor,
         securityInterceptor,
         errorInterceptor,
         loggingInterceptor,
-        // Angular 22's fetch backend resolves responses outside the zone, so CD does
-        // not run after HTTP calls. This re-ticks once per response (see interceptor).
-        changeDetectionInterceptor,
       ])
     ),
     provideServiceWorker('ngsw-worker.js', {

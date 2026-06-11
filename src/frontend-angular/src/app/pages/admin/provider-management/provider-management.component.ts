@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -75,8 +75,7 @@ export class ProviderManagementComponent implements OnInit {
   constructor(
     private providerService: ProviderManagementService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private ngZone: NgZone
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -88,24 +87,19 @@ export class ProviderManagementComponent implements OnInit {
     this.error = null;
 
     this.providerService.listProviders(this.filters).subscribe({
-      next: (response) =>
-        // Re-enter Angular's zone so the view repaints immediately. Without this the
-        // response can resolve outside the zone, leaving the panel stuck on "Loading…"
-        // until an unrelated user event triggers change detection.
-        this.ngZone.run(() => {
-          this.providers = response.items;
-          this.totalProviders = response.total;
-          this.isLoading = false;
-        }),
-      error: (err) =>
-        this.ngZone.run(() => {
-          this.error = 'Failed to load providers';
-          this.isLoading = false;
-          console.error('Error loading providers:', err);
-          this.snackBar.open('Failed to load providers', 'Close', {
-            duration: 5000,
-          });
-        }),
+      next: (response) => {
+        this.providers = response.items;
+        this.totalProviders = response.total;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load providers';
+        this.isLoading = false;
+        console.error('Error loading providers:', err);
+        this.snackBar.open('Failed to load providers', 'Close', {
+          duration: 5000,
+        });
+      },
     });
   }
 

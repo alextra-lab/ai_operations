@@ -794,7 +794,24 @@ async def list_models(
                         headers["Authorization"] = f"Bearer {provider_config.api_key}"
 
                     # Query provider
+                    logger.info(
+                        "Querying provider for models",
+                        extra={
+                            "provider": provider_config.name,
+                            "models_url": models_url,
+                            "authenticated": bool(provider_config.api_key),
+                            "api_key_len": len(provider_config.api_key or ""),
+                        },
+                    )
                     response = await client.get(models_url, headers=headers, timeout=10.0)
+                    logger.info(
+                        "Provider models response",
+                        extra={
+                            "provider": provider_config.name,
+                            "status_code": response.status_code,
+                            "body_preview": response.text[:500],
+                        },
+                    )
                     response.raise_for_status()
 
                     data = response.json()
@@ -818,10 +835,24 @@ async def list_models(
                         extra={"provider": provider_config.name, "count": len(provider_models)},
                     )
 
+                except httpx.HTTPStatusError as e:
+                    logger.warning(
+                        "Failed to query models from provider (HTTP error)",
+                        extra={
+                            "provider": provider_config.name,
+                            "models_url": models_url,
+                            "status_code": e.response.status_code,
+                            "body": e.response.text[:1000],
+                        },
+                    )
                 except Exception as e:
                     logger.warning(
-                        f"Failed to query models from {provider_config.name}: {e}",
-                        extra={"provider": provider_config.name, "error": str(e)},
+                        "Failed to query models from provider",
+                        extra={
+                            "provider": provider_config.name,
+                            "models_url": models_url,
+                            "error": repr(e),
+                        },
                     )
 
         logger.info(

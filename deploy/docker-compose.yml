@@ -429,6 +429,7 @@ services:
       - JWT_ISSUER=${JWT_ISSUER:-ai-operations-platform}
       # Logging Configuration
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_VERBOSE=${LOG_VERBOSE:-false}
       - REDACT_LOGS=${REDACT_LOGS:-true}
       - LOG_REDACTION_LEVEL=${LOG_REDACTION_LEVEL:-partial}
       # Gateway Configuration

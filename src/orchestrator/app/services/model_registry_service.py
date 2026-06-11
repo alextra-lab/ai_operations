@@ -486,11 +486,17 @@ class ModelRegistryService:
         existing_models = result.scalars().all()
         existing_model_map = {m.model_id: m for m in existing_models}
 
+        # The Gateway can report the same model_id from multiple providers (e.g. two
+        # providers pointing at the same endpoint). model_id is unique in `models`, so
+        # process each only once per sync to avoid duplicate-key violations.
+        seen_ids: set[str] = set()
+
         # Process discovered models - create or update
         for model_data in discovered_models:
             model_id = model_data.get("id")
-            if not model_id:
+            if not model_id or model_id in seen_ids:
                 continue
+            seen_ids.add(model_id)
 
             owned_by = model_data.get("owned_by")
             provider_name = model_data.get("provider")  # From Gateway (if enhanced) or None

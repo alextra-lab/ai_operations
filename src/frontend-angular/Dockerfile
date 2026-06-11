@@ -17,18 +17,23 @@ RUN touch /tmp/extra-ca.pem && \
     cat /certs/*.crt /certs/*.pem >> /tmp/extra-ca.pem 2>/dev/null || true
 ENV NODE_EXTRA_CA_CERTS=/tmp/extra-ca.pem
 
-# Copy package files
-COPY frontend-angular/package*.json ./
+# Copy package manifests, the committed .npmrc (legacy-peer-deps), and an
+# OPTIONAL gitignored .npmrc.local. The latter carries your enterprise npm
+# auth — Artifactory's "Set Me Up" .npmrc (registry + _auth/_authToken +
+# always-auth). It lives only in this build stage, which is discarded, so it
+# never ships in the final image. (Auth in the registry URL as user:pass@host
+# does NOT work — npm requires _auth/_authToken in .npmrc.) BuildKit secrets
+# are not used because the Makefile builds with DOCKER_BUILDKIT=0.
+COPY frontend-angular/package*.json frontend-angular/.npmrc frontend-angular/.npmrc.local* ./
 
-# Install dependencies from the npm registry.
-# npm_cache/ is gitignored and excluded by .dockerignore (absent in CI), so the
-# build must not depend on it. --include=dev is required for the Angular CLI
-# build; --ignore-scripts skips the Cypress binary download (not needed for the
-# production build).
-# Point npm at the enterprise Artifactory mirror when provided (else npm
-# default registry). Without this, npm ci hits registry.npmjs.org and
-# fails with ENOTFOUND on air-gapped/enterprise networks.
-RUN if [ -n "$NPM_REGISTRY" ]; then npm config set registry "$NPM_REGISTRY"; fi
+# Merge staged auth, then point npm at the enterprise Artifactory mirror when
+# provided (NPM_REGISTRY) unless .npmrc.local already set a registry. Without a
+# registry override, npm ci hits registry.npmjs.org and fails with ENOTFOUND on
+# enterprise networks; without auth it fails with 401/403.
+# --include=dev is required for the Angular CLI build; --ignore-scripts skips
+# the Cypress binary download (not needed for the production build).
+RUN if [ -f .npmrc.local ]; then cat .npmrc.local >> .npmrc; fi && \
+    if [ -n "$NPM_REGISTRY" ] && ! grep -q '^registry=' .npmrc; then npm config set registry "$NPM_REGISTRY"; fi
 RUN npm ci --include=dev --legacy-peer-deps --ignore-scripts
 
 # Copy source code

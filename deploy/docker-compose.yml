@@ -3,6 +3,8 @@ services:
     build:
       context: ../src
       dockerfile: frontend-angular/Dockerfile
+      secrets:
+        - npmrc
       args:
         BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
         NPM_REGISTRY: ${NPM_REGISTRY:-}
@@ -39,6 +41,8 @@ services:
     build:
       context: ../src
       dockerfile: orchestrator/Dockerfile
+      secrets:
+        - netrc
       args:
         BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
         PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
@@ -136,6 +140,8 @@ services:
     build:
       context: ..
       dockerfile: ops/database/Dockerfile
+      secrets:
+        - netrc
       args:
         BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
         PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
@@ -179,6 +185,8 @@ services:
     build:
       context: ../src
       dockerfile: llm_guard_svc/Dockerfile
+      secrets:
+        - netrc
       args:
         BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
         PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
@@ -226,6 +234,8 @@ services:
     build:
       context: ../src/
       dockerfile: corpus_svc/Dockerfile
+      secrets:
+        - netrc
       args:
         BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
         PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
@@ -312,6 +322,8 @@ services:
     build:
       context: ../src
       dockerfile: embedding/Dockerfile
+      secrets:
+        - netrc
       args:
         BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
         PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
@@ -389,6 +401,8 @@ services:
     build:
       context: ../src
       dockerfile: inference-gateway/Dockerfile
+      secrets:
+        - netrc
       args:
         BASE_REGISTRY: ${BASE_REGISTRY:-docker.io}
         PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
@@ -445,6 +459,12 @@ services:
       retries: 3
       start_period: 30s
     restart: always
+
+secrets:
+  netrc:
+    file: ${PIP_NETRC:-/dev/null}
+  npmrc:
+    file: ${NPM_NPMRC:-/dev/null}
 
 networks:
   observability:

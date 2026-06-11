@@ -17,24 +17,21 @@ RUN touch /tmp/extra-ca.pem && \
     cat /certs/*.crt /certs/*.pem >> /tmp/extra-ca.pem 2>/dev/null || true
 ENV NODE_EXTRA_CA_CERTS=/tmp/extra-ca.pem
 
-# Copy package manifests, the committed .npmrc (legacy-peer-deps), and an
-# OPTIONAL gitignored .npmrc.local. The latter carries your enterprise npm
-# auth — Artifactory's "Set Me Up" .npmrc (registry + _auth/_authToken +
-# always-auth). It lives only in this build stage, which is discarded, so it
-# never ships in the final image. (Auth in the registry URL as user:pass@host
-# does NOT work — npm requires _auth/_authToken in .npmrc.) BuildKit secrets
-# are not used because the Makefile builds with DOCKER_BUILDKIT=0.
-COPY frontend-angular/package*.json frontend-angular/.npmrc frontend-angular/.npmrc.local* ./
+COPY frontend-angular/package*.json frontend-angular/.npmrc ./
 
-# Merge staged auth, then point npm at the enterprise Artifactory mirror when
-# provided (NPM_REGISTRY) unless .npmrc.local already set a registry. Without a
-# registry override, npm ci hits registry.npmjs.org and fails with ENOTFOUND on
-# enterprise networks; without auth it fails with 401/403.
-# --include=dev is required for the Angular CLI build; --ignore-scripts skips
-# the Cypress binary download (not needed for the production build).
-RUN if [ -f .npmrc.local ]; then cat .npmrc.local >> .npmrc; fi && \
-    if [ -n "$NPM_REGISTRY" ] && ! grep -q '^registry=' .npmrc; then npm config set registry "$NPM_REGISTRY"; fi
-RUN npm ci --include=dev --legacy-peer-deps --ignore-scripts
+# npm registry + auth.
+#   - NPM_REGISTRY (build arg) selects the registry, via env so it does not
+#     write to the read-only secret mount. Falls back to the public registry.
+#   - Auth comes from a BuildKit secret (config/secrets/npmrc — scoped
+#     //host/path/:_auth or :_authToken lines). It is mounted to a tmpfs for
+#     this RUN only: never written to an image layer or the build cache.
+#     Optional (required=false) so public builds need no secret.
+# Without a reachable registry npm ci fails ENOTFOUND; without valid auth, 401/403.
+# --include=dev is needed for the Angular CLI build; --ignore-scripts skips the
+# Cypress binary download (not needed for the production build).
+RUN --mount=type=secret,id=npmrc,target=/root/.npmrc,required=false \
+    npm_config_registry="${NPM_REGISTRY:-https://registry.npmjs.org/}" \
+    npm ci --include=dev --legacy-peer-deps --ignore-scripts
 
 # Copy source code
 COPY frontend-angular/ .

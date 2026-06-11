@@ -39,6 +39,7 @@ class ModelRegistryService:
         inference_endpoint: str | None = None,
         api_key: str | None = None,
         gateway_url: str | None = None,
+        gateway_auth_token: str | None = None,
     ):
         """
         Initialize model registry service.
@@ -48,11 +49,14 @@ class ModelRegistryService:
             inference_endpoint: OpenAI-compatible inference endpoint (fallback)
             api_key: API key for inference server
             gateway_url: Inference Gateway URL for unified model discovery
+            gateway_auth_token: Authorization header value (e.g. "Bearer <jwt>") to
+                forward to the Gateway, which requires a JWT rather than the LLMaaS key
         """
         self.session = session
         self.inference_endpoint = inference_endpoint
         self.api_key = api_key
         self.gateway_url = gateway_url
+        self.gateway_auth_token = gateway_auth_token
         self.cache_ttl_seconds = 3600  # 1 hour cache
         self.inferencer = ModelMetadataInferencer()
 
@@ -277,10 +281,13 @@ class ModelRegistryService:
         """
         try:
             async with httpx.AsyncClient() as client:
-                # Gateway requires JWT token - use service account or admin token
-                # For now, use API key if available (Gateway may accept it)
+                # The Gateway authenticates with a JWT (admin tokens bypass scope
+                # checks); self.api_key is the LLMaaS key, which the Gateway rejects with
+                # 401. Forward the caller's JWT when provided, falling back to api_key.
                 headers = {}
-                if self.api_key:
+                if self.gateway_auth_token:
+                    headers["Authorization"] = self.gateway_auth_token
+                elif self.api_key:
                     headers["Authorization"] = f"Bearer {self.api_key}"
 
                 # gateway_url may already include /v1 (INFERENCE_GATEWAY_URL default does),

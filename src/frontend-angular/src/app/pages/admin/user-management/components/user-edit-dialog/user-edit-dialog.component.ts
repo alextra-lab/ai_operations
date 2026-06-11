@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -57,6 +57,8 @@ import { UserManagementService } from '../../services/user-management.service';
   styleUrls: ['./user-edit-dialog.component.scss'],
 })
 export class UserEditDialogComponent implements OnInit {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   editForm: FormGroup;
   isSubmitting = false;
   error: string | null = null;
@@ -206,6 +208,7 @@ export class UserEditDialogComponent implements OnInit {
       },
       complete: () => {
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }

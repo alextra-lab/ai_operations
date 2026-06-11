@@ -7,19 +7,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  Output,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -38,6 +26,8 @@ export type ChartMetric = 'calls' | 'cost';
 export class UsageByCenterChartComponent
   implements AfterViewInit, OnChanges, OnDestroy
 {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   @ViewChild('chartCanvas', { static: false })
   chartCanvas!: ElementRef<HTMLCanvasElement>;
 
@@ -90,9 +80,11 @@ export class UsageByCenterChartComponent
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.Chart = (window as any).Chart;
       this.isLoading = false;
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('Failed to load Chart.js:', error);
       this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 

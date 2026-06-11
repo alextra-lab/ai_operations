@@ -7,14 +7,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, WritableSignal, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -67,6 +60,8 @@ import {
   styleUrls: ['./tool-analytics.component.scss'],
 })
 export class ToolAnalyticsComponent implements OnInit, OnDestroy {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   // Data signals
@@ -135,11 +130,13 @@ export class ToolAnalyticsComponent implements OnInit, OnDestroy {
           this.aggregates.set(agg);
 
           this.isLoading = false;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Error loading analytics:', err);
           this.error = 'Failed to load analytics data. Please try again.';
           this.isLoading = false;
+          this.cdr.detectChanges();
           this.snackBar.open('Failed to load analytics', 'Close', {
             duration: 5000,
           });

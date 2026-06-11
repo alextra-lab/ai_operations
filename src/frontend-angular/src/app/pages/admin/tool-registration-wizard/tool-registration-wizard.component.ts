@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -53,6 +53,8 @@ import {
   ],
 })
 export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   @ViewChild('stepper') stepper!: MatStepper;
 
   sessionId: string | null = null;
@@ -345,6 +347,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       }
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -519,6 +522,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -559,6 +563,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -626,6 +631,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       }
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -687,6 +693,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       }
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -741,6 +748,7 @@ export class ToolRegistrationWizardComponent implements OnInit, OnDestroy {
       }
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 

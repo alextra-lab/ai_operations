@@ -6,16 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -57,6 +48,8 @@ import { SystemConfigService } from '../../services/system-config.service';
   styleUrls: ['./config-editor.component.scss'],
 })
 export class ConfigEditorComponent implements OnInit, OnChanges, OnDestroy {
+  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
+  private readonly cdr = inject(ChangeDetectorRef);
   @Input() section!: ConfigSection;
   @Input() config: Record<string, unknown> | null = null;
   @Output() configChange = new EventEmitter<Record<string, unknown>>();
@@ -120,12 +113,14 @@ export class ConfigEditorComponent implements OnInit, OnChanges, OnDestroy {
       next: (schema) => {
         this.schema = schema;
         this.isLoading = false;
+        this.cdr.detectChanges();
         if (this.config) {
           this.buildForm();
         }
       },
       error: () => {
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }

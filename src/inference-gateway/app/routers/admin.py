@@ -986,17 +986,43 @@ async def test_provider(
 
         import httpx
 
-        # Get provider config
+        # Get provider config. get_provider() returns api_key=None by design, so load
+        # the bearer token separately — without it the probe is unauthenticated and any
+        # token-protected provider (e.g. vLLM) returns 401, falsely failing the test.
         provider = await get_provider(provider_id, token)
+
+        async with get_db() as db:
+            key_row = (
+                await db.execute(
+                    text("SELECT api_key_encrypted FROM gateway_providers WHERE id = :id"),
+                    {"id": provider_id},
+                )
+            ).fetchone()
+        api_key = key_row[0] if key_row else None
 
         # Test health check URL if available, otherwise test base URL
         test_url = provider.health_check_url or f"{provider.base_url}/models"
 
+        headers = {}
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
+
         start_time = time.time()
         async with httpx.AsyncClient(timeout=5.0) as client:
             try:
-                response = await client.get(test_url)
+                response = await client.get(test_url, headers=headers)
                 latency_ms = int((time.time() - start_time) * 1000)
+                logger.info(
+                    "Provider connectivity test result",
+                    extra={
+                        "provider_id": str(provider_id),
+                        "test_url": test_url,
+                        "authenticated": bool(api_key),
+                        "status_code": response.status_code,
+                        "latency_ms": latency_ms,
+                        "body_preview": response.text[:500],
+                    },
+                )
 
                 # Update health check results
                 async with get_db() as db:

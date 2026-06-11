@@ -20,7 +20,8 @@ ENV PIP_CERT=/etc/ssl/certs/ca-certificates.crt \
 # psycopg v3 is used by init_db.py and seed_intent_defaults_from_env.py
 # (build context is the repo root, so the wheelhouse lives at src/wheelhouse)
 COPY src/wheelhouse /wheelhouse
-RUN if [ "$OFFLINE" = "1" ]; then \
+RUN --mount=type=secret,id=netrc,target=/root/.netrc,required=false \
+    if [ "$OFFLINE" = "1" ]; then \
         pip install --no-cache-dir --no-index --find-links=/wheelhouse psycopg psycopg-binary; \
     else \
         pip install --no-cache-dir --index-url "$PIP_INDEX_URL" psycopg psycopg-binary; \

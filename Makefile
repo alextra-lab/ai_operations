@@ -41,6 +41,16 @@ BUILD_ARGS = --build-arg BASE_REGISTRY=$(BASE_REGISTRY) \
 # pulls) and build.args (base-image FROMs) — not only at `make build` time.
 export BASE_REGISTRY PIP_INDEX_URL TORCH_INDEX_URL NPM_REGISTRY
 
+# Build secrets (BuildKit). Credentials live in gitignored files under
+# config/secrets/ and are mounted to a tmpfs at build time — never written
+# to an image layer or the build cache. Absolute paths so compose resolves
+# them regardless of the compose file location; /dev/null (empty = no auth)
+# when absent, so public builds are unaffected.
+export DOCKER_BUILDKIT=1
+PIP_NETRC := $(if $(wildcard config/secrets/netrc),$(CURDIR)/config/secrets/netrc,/dev/null)
+NPM_NPMRC := $(if $(wildcard config/secrets/npmrc),$(CURDIR)/config/secrets/npmrc,/dev/null)
+export PIP_NETRC NPM_NPMRC
+
 DC = docker compose --env-file config/env/.env $(COMPOSE_FILES)
 
 .DEFAULT_GOAL := help
@@ -66,11 +76,11 @@ ensure-network:	## Create the shared observability network if absent (idempotent
 # ── Build ─────────────────────────────────────────────────────────
 .PHONY: build
 build:	## Build images (PROFILE=local|enterprise)
-	DOCKER_BUILDKIT=0 $(DC) build $(BUILD_ARGS)
+	$(DC) build $(BUILD_ARGS)
 
 .PHONY: build-offline
 build-offline:	## Build from local src/wheelhouse — no network required
-	DOCKER_BUILDKIT=0 $(DC) build --build-arg OFFLINE=1
+	$(DC) build --build-arg OFFLINE=1
 
 .PHONY: pull
 pull:	## Pull prebuilt images from the registry (honors BASE_REGISTRY)

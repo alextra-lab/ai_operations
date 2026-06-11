@@ -192,20 +192,28 @@ The `enterprise` profile uses the base `deploy/docker-compose.yml` only (no loca
 Each service Dockerfile accepts `BASE_REGISTRY` to rewrite the `FROM` base image pull and
 `PIP_INDEX_URL` as `pip --index-url`. No Dockerfile edits are required.
 
-**npm registry authentication.** If your Artifactory npm repo requires a login (most do),
-`NPM_REGISTRY` alone is not enough — npm needs credentials in an `.npmrc`, and it does **not**
-accept them in the URL (`https://user:pass@host/...` is ignored). Put them in a gitignored
-file the frontend build reads:
+### Registry authentication (pip, torch, npm)
+
+Index/registry **URLs** go in `config/make.local.mk` (no embedded credentials).
+**Credentials** go in gitignored files under **`config/secrets/`**, mounted as BuildKit
+secrets at build time — they are written to a tmpfs for the relevant `RUN` only and **never
+land in an image layer, the build cache, or `docker history`** (verified). See
+[`config/secrets/README.md`](config/secrets/README.md) for the exact file formats.
 
 ```bash
-# Paste your Artifactory "Set Me Up" npm snippet (registry + _auth/_authToken +
-# always-auth) into this file. It is gitignored and only exists in the discarded
-# build stage — it never ships in the image.
-$EDITOR src/frontend-angular/.npmrc.local
+# pip / torch index auth (Python service + db-init builds):
+$EDITOR config/secrets/netrc      # machine <host> / login <user> / password <token>
+
+# npm auth (ui-webapp build) — use the SCOPED form npm login writes, not the
+# legacy unscoped _auth= that Artifactory "Set Me Up" often gives:
+npm login --registry="$NPM_REGISTRY" --userconfig=config/secrets/npmrc
 ```
 
-A `401`/`403` from `npm ci` means missing or invalid auth here; `ENOTFOUND` means the registry
-URL itself isn't reaching the mirror.
+`make build` / `make up` pick these up automatically (the Makefile mounts them when present).
+Diagnostics: `401`/`403` from `npm ci` or pip → missing/invalid auth in `config/secrets/`;
+`ENOTFOUND`/connection error → the registry URL isn't reaching the mirror;
+`SSL: CERTIFICATE_VERIFY_FAILED` → CA bundle (see above, `src/certs/`). Credentials embedded
+in a registry URL do **not** work for npm (and are unnecessary for pip now).
 
 For full ARG and Dockerfile mechanics, see
 [Offline & Enterprise Deployment](docs/operations/AIR_GAPPED_DEPLOYMENT.md#enterprise-profile-artifactory-mirrors).

@@ -24,7 +24,8 @@ COPY corpus_svc/requirements.txt .
 COPY wheelhouse /wheelhouse
 
 # Install Python dependencies and NLTK data: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0)
-RUN if [ "$OFFLINE" = "1" ]; then \
+RUN --mount=type=secret,id=netrc,target=/root/.netrc,required=false \
+    if [ "$OFFLINE" = "1" ]; then \
         pip install --no-cache-dir --no-index --find-links=/wheelhouse -r requirements.txt; \
     else \
         pip install --no-cache-dir --index-url "$PIP_INDEX_URL" -r requirements.txt; \

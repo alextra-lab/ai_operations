@@ -15,20 +15,27 @@ PROFILE = enterprise
 # DOCKER_DEFAULT_PLATFORM = linux/amd64
 
 # Enterprise Artifactory mirrors — provided by your enterprise team.
+# These are URLs only — NO embedded credentials. Authentication is handled
+# separately via gitignored build-secret files in config/secrets/ (see that
+# directory's README): pip/torch auth in config/secrets/netrc, npm auth in
+# config/secrets/npmrc. They are mounted at build time and never enter an image.
 #
 # BASE_REGISTRY is the registry host root (no trailing namespace). It prefixes
 # EVERY externally-pulled image: the service base images (python, node, nginx)
 # AND the infra images pulled by `make up`/`make pull` (postgres, qdrant/qdrant,
 # redis). It must resolve Docker Hub names — e.g. <prefix>/postgres and
 # <prefix>/qdrant/qdrant must both pull — which a Docker Hub remote repo does.
-# (The public default is "docker.io".)
+# (The public default is "docker.io". Docker registry login is `docker login`,
+# not set here.)
 BASE_REGISTRY   = your-artifactory.example.com/docker
+
+# PIP_INDEX_URL: your PyPI mirror. TORCH_INDEX_URL MUST be a CPU PyTorch index
+# (serves torch==X+cpu) — pointing it at a plain PyPI mirror pulls the CUDA
+# build (~4 GB of nvidia-* deps) on every platform, arm64 included. Use an
+# Artifactory remote proxying https://download.pytorch.org/whl/cpu, or that URL
+# directly where reachable.
 PIP_INDEX_URL   = https://your-artifactory.example.com/artifactory/api/pypi/pypi/simple
 TORCH_INDEX_URL = https://your-artifactory.example.com/artifactory/api/pypi/torch-cpu/simple
 
-# npm mirror for the frontend (ui-webapp) build. If the mirror requires
-# authentication (most Artifactory npm repos do), set NPM_REGISTRY here AND put
-# the credentials in src/frontend-angular/.npmrc.local (gitignored) — paste your
-# Artifactory "Set Me Up" npm snippet there (_auth/_authToken + always-auth).
-# Auth cannot go in the URL as user:pass@host — npm ignores it.
+# npm mirror for the frontend (ui-webapp) build. Auth → config/secrets/npmrc.
 NPM_REGISTRY    = https://your-artifactory.example.com/artifactory/api/npm/npm/

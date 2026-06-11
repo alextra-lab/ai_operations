@@ -93,6 +93,9 @@ tests/.env.test
 # Local Make overrides (machine-specific build config; template is committed)
 config/make.local.mk
 
+# Enterprise npm auth (Artifactory Set-Me-Up .npmrc); never commit
+src/frontend-angular/.npmrc.local
+
 # Enterprise CA certificates (machine/site-specific; never commit)
 src/certs/*
 !src/certs/.gitkeep

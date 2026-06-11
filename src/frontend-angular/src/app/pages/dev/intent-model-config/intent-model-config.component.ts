@@ -5,7 +5,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -50,8 +50,6 @@ import { IntentModelConfigService } from './services/intent-model-config.service
   styleUrls: ['./intent-model-config.component.scss'],
 })
 export class IntentModelConfigComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   loading = false;
   intents: IntentConfigRow[] = [];
   availableModels: AvailableModel[] = [];
@@ -111,7 +109,6 @@ export class IntentModelConfigComponent implements OnInit {
       );
     } finally {
       this.loading = false;
-      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 

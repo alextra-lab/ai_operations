@@ -651,7 +651,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
       await this.sessionStorage.setCurrentSession(sessionId);
       this.hasShownHourWarning = false; // Reset TTL warning flag for new session
       this.updateTtlStatus();
-      queueMicrotask(() => this.cdr.detectChanges()); // Trigger change detection for async updates
+      this.cdr.detectChanges(); // Trigger change detection for async updates
       this.scrollToBottom();
     }
   }
@@ -666,7 +666,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
     await this.loadSessions();
     this.hasShownHourWarning = false; // Reset TTL warning flag for new session
     this.updateTtlStatus();
-    queueMicrotask(() => this.cdr.detectChanges()); // Trigger change detection for async updates
+    this.cdr.detectChanges(); // Trigger change detection for async updates
   }
 
   // ADR-059: TTL Monitoring
@@ -796,7 +796,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
 
       this.currentSession.title = newTitle.trim();
       await this.loadSessions();
-      queueMicrotask(() => this.cdr.detectChanges());
+      this.cdr.detectChanges();
 
       this.snackBar.open('Conversation renamed', 'OK', { duration: 2000 });
     }
@@ -838,7 +838,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
       }
 
       await this.loadSessions();
-      queueMicrotask(() => this.cdr.detectChanges());
+      this.cdr.detectChanges();
 
       this.snackBar.open('Conversation renamed', 'OK', { duration: 2000 });
     }
@@ -948,7 +948,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (chunk) => {
           streamingMessage += chunk.response || '';
-          queueMicrotask(() => this.cdr.detectChanges());
+          this.cdr.detectChanges();
         },
         complete: async () => {
           // Save assistant response

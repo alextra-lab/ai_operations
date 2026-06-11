@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -41,8 +41,6 @@ import { UserManagementService } from '../../services/user-management.service';
   styleUrls: ['./password-reset-dialog.component.scss'],
 })
 export class PasswordResetDialogComponent {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   resetForm: FormGroup;
   isSubmitting = false;
   error: string | null = null;
@@ -102,7 +100,6 @@ export class PasswordResetDialogComponent {
         },
         error: (err: any) => {
           this.isSubmitting = false;
-          queueMicrotask(() => this.cdr.detectChanges());
           this.error = err.error?.detail || 'Failed to reset password';
         },
       });

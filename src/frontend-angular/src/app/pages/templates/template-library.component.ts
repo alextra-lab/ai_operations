@@ -6,7 +6,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -60,8 +60,6 @@ import { TemplateService } from '../../api/services/template.service';
   styleUrls: ['./template-library.component.scss'],
 })
 export class TemplateLibraryComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   // Table configuration
   displayedColumns: string[] = [
     'template_id',
@@ -135,7 +133,6 @@ export class TemplateLibraryComponent implements OnInit, OnDestroy {
           this.templates = response.templates;
           this.totalCount = response.total_count;
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           console.error('Error loading templates:', error);
@@ -145,7 +142,6 @@ export class TemplateLibraryComponent implements OnInit, OnDestroy {
             { duration: 5000, panelClass: ['error-snackbar'] }
           );
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

@@ -1,5 +1,5 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -625,8 +625,6 @@ export interface ChunkDetailsDialogData {
   ],
 })
 export class ChunkDetailsDialogComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   document: Document | null = null;
   isLoadingDocument = false;
 
@@ -649,7 +647,7 @@ export class ChunkDetailsDialogComponent implements OnInit {
     this.documentService
       .getDocument(this.data.documentId!)
       .pipe(
-        finalize(() => { this.isLoadingDocument = false; this.cdr.detectChanges(); }),
+        finalize(() => (this.isLoadingDocument = false)),
         catchError((error) => {
           console.warn('Failed to load document:', error);
           return of(null);

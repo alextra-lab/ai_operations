@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -207,8 +207,6 @@ export interface ModelPricingDialogData {
   ],
 })
 export class ModelPricingDialogComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   priceForm!: FormGroup;
   current: ModelPriceCurrentResponse | null = null;
   history: ModelPriceHistoryEntry[] = [];
@@ -258,7 +256,6 @@ export class ModelPricingDialogComponent implements OnInit {
       next: (resp) => {
         this.current = resp;
         this.saving = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         this.load();
       },
       error: () => (this.saving = false),

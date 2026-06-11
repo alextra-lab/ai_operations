@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -46,8 +46,6 @@ import { UserManagementService } from '../../services/user-management.service';
   styleUrls: ['./user-create-dialog.component.scss'],
 })
 export class UserCreateDialogComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   createForm: FormGroup;
   isSubmitting = false;
   error: string | null = null;
@@ -141,7 +139,6 @@ export class UserCreateDialogComponent implements OnInit {
         const newUserId = created?.id;
         if (!newUserId) {
           this.isSubmitting = false;
-          queueMicrotask(() => this.cdr.detectChanges());
           this.error = 'User created but id not returned';
           return;
         }
@@ -155,12 +152,10 @@ export class UserCreateDialogComponent implements OnInit {
         this.userService.updateUserRoles(newUserId, roleRequest).subscribe({
           next: () => {
             this.isSubmitting = false;
-            queueMicrotask(() => this.cdr.detectChanges());
             this.dialogRef.close(true);
           },
           error: (err: any) => {
             this.isSubmitting = false;
-            queueMicrotask(() => this.cdr.detectChanges());
             this.error =
               err?.error?.detail || 'User created but role update failed';
           },
@@ -168,7 +163,6 @@ export class UserCreateDialogComponent implements OnInit {
       },
       error: (err: any) => {
         this.isSubmitting = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         this.error = err.error?.detail || 'Failed to create user';
       },
     });

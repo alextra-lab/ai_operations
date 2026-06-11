@@ -8,7 +8,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -56,8 +56,6 @@ import { GatewayMetricsService } from './services/gateway-metrics.service';
   styleUrls: ['./gateway-metrics.component.scss'],
 })
 export class GatewayMetricsComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   // Data
@@ -132,13 +130,11 @@ export class GatewayMetricsComponent implements OnInit, OnDestroy {
           this.providerMetrics = results.providers;
           this.modelMetrics = results.models;
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           console.error('Error loading metrics:', error);
           this.error = 'Failed to load metrics. Please try again.';
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
           this.snackBar.open('Failed to load metrics', 'Close', {
             duration: 5000,
           });

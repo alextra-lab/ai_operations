@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import {
@@ -41,8 +41,6 @@ import { RoleManagementService } from '../../services/role-management.service';
   styleUrls: ['./role-details-dialog.component.scss'],
 })
 export class RoleDetailsDialogComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   assignments: RoleUseCaseAssignment[] = [];
   isLoading = false;
   error: string | null = null;
@@ -74,12 +72,10 @@ export class RoleDetailsDialogComponent implements OnInit {
       next: (response) => {
         this.assignments = response.assignments;
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.error = 'Failed to load use case assignments';
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading assignments:', err);
       },
     });

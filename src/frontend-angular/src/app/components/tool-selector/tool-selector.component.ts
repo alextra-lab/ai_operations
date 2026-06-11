@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -42,8 +42,6 @@ import { ToolDeveloperService } from '../../api/services/tool-developer.service'
   styleUrls: ['./tool-selector.component.scss'],
 })
 export class ToolSelectorComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   @Input() selectedToolIds: string[] = [];
   @Output() selectionChange = new EventEmitter<string[]>();
 
@@ -76,13 +74,11 @@ export class ToolSelectorComponent implements OnInit {
         this.extractCategories();
         this.filterTools();
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         console.error('Error loading tools:', err);
         this.error = 'Failed to load available tools';
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subject, takeUntil } from 'rxjs';
@@ -49,8 +49,6 @@ import { UseCaseService } from '../../api/services/use-case.service';
   styleUrls: ['./use-case-menu.component.scss'],
 })
 export class UseCaseMenuComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   // Form controls
   searchForm: FormGroup;
 
@@ -124,12 +122,10 @@ export class UseCaseMenuComponent implements OnInit, OnDestroy {
           this.totalItems = useCases.length;
           this.applyFilters();
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           this.error = 'Failed to load use cases. Please try again.';
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
           console.error('Error loading use cases:', error);
         },
       });

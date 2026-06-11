@@ -4,7 +4,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -54,8 +54,6 @@ import { PatternDetailDialogComponent } from './pattern-detail-dialog.component'
   styleUrls: ['./pattern-library.component.scss'],
 })
 export class PatternLibraryComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   patterns: PromptPattern[] = [];
   loading = false;
   error: string | null = null;
@@ -145,13 +143,11 @@ export class PatternLibraryComponent implements OnInit, OnDestroy {
         this.totalPatterns = response.total;
         this.totalPages = response.total_pages;
         this.loading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (error) => {
         console.error('Failed to load patterns:', error);
         this.error = 'Failed to load pattern library. Please try again.';
         this.loading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

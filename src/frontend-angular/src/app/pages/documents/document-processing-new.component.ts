@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, interval } from 'rxjs';
 
@@ -538,8 +538,6 @@ import { DocumentService } from '../../api/services/document.service';
   ],
 })
 export class DocumentProcessingComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   processingStatuses: DocumentProcessingStatus[] = [];
   recentHistory: any[] = [];
   isLoading = false;
@@ -567,7 +565,6 @@ export class DocumentProcessingComponent implements OnInit, OnDestroy {
       next: (statuses) => {
         this.processingStatuses = statuses;
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (error) => {
         this.snackBar.open(
@@ -578,7 +575,6 @@ export class DocumentProcessingComponent implements OnInit, OnDestroy {
           }
         );
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
     });
   }

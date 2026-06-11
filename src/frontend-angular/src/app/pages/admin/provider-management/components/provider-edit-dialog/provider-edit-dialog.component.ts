@@ -5,7 +5,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -50,8 +50,6 @@ import { ProviderManagementService } from '../../services/provider-management.se
   styleUrls: ['./provider-edit-dialog.component.scss'],
 })
 export class ProviderEditDialogComponent {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   form: FormGroup;
   isSubmitting = false;
   error: string | null = null;
@@ -128,7 +126,6 @@ export class ProviderEditDialogComponent {
           this.error =
             err.error?.detail || 'Failed to update provider. Please try again.';
           this.isSubmitting = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

@@ -7,7 +7,14 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, WritableSignal, inject, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -59,8 +66,6 @@ import { ToolHealthService } from './services/tool-health.service';
   styleUrls: ['./tool-health.component.scss'],
 })
 export class ToolHealthComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
   private autoRefreshStop$ = new Subject<void>();
 
@@ -135,7 +140,6 @@ export class ToolHealthComponent implements OnInit, OnDestroy {
           this.tools.set(healthTools);
           this.sortedTools.set([...healthTools]);
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           console.error('Error loading health data:', error);
@@ -143,7 +147,6 @@ export class ToolHealthComponent implements OnInit, OnDestroy {
             duration: 5000,
           });
           this.isLoading = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }
@@ -198,7 +201,6 @@ export class ToolHealthComponent implements OnInit, OnDestroy {
         next: (history) => {
           this.healthHistory.set(history);
           this.isLoadingHistory = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
         error: (error) => {
           console.error('Error loading tool history:', error);
@@ -206,7 +208,6 @@ export class ToolHealthComponent implements OnInit, OnDestroy {
             duration: 5000,
           });
           this.isLoadingHistory = false;
-          queueMicrotask(() => this.cdr.detectChanges());
         },
       });
   }

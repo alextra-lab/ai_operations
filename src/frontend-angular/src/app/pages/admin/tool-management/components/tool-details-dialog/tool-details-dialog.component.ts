@@ -5,7 +5,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import {
@@ -36,8 +36,6 @@ import { ToolAdminService } from '../../services/tool-admin.service';
   styleUrls: ['./tool-details-dialog.component.scss'],
 })
 export class ToolDetailsDialogComponent implements OnInit {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   tool: Tool | null = null;
   isLoading = true;
   error: string | null = null;
@@ -60,12 +58,10 @@ export class ToolDetailsDialogComponent implements OnInit {
       next: (tool) => {
         this.tool = tool;
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err) => {
         this.error = 'Failed to load tool details';
         this.isLoading = false;
-        queueMicrotask(() => this.cdr.detectChanges());
         console.error('Error loading tool:', err);
       },
     });

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // Angular Material imports
@@ -65,8 +65,6 @@ import {
   styleUrls: ['./model-management.component.scss'],
 })
 export class ModelManagementComponent implements OnInit, OnDestroy {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   models: Model[] = [];
   totalModels = 0;
   pageSize = 20;
@@ -123,7 +121,7 @@ export class ModelManagementComponent implements OnInit, OnDestroy {
         this.pageSize
       )
       .pipe(
-        finalize(() => { this.loading = false; this.cdr.detectChanges(); }),
+        finalize(() => (this.loading = false)),
         takeUntil(this.destroy$)
       )
       .subscribe({
@@ -169,7 +167,7 @@ export class ModelManagementComponent implements OnInit, OnDestroy {
     this.modelRegistryService
       .syncModels()
       .pipe(
-        finalize(() => { this.syncing = false; this.cdr.detectChanges(); }),
+        finalize(() => (this.syncing = false)),
         takeUntil(this.destroy$)
       )
       .subscribe({

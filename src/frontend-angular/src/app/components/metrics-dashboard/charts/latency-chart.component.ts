@@ -13,7 +13,16 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ExecutionMetrics } from '../../../api/models/query-config.models';
@@ -70,8 +79,6 @@ import { LibraryLoaderService } from '../../../services/library-loader.service';
 export class LatencyChartComponent
   implements AfterViewInit, OnChanges, OnDestroy
 {
-  // Angular 22 zone-CD workaround: HTTP responses don't auto-tick CD; repaint manually.
-  private readonly cdr = inject(ChangeDetectorRef);
   @ViewChild('chartCanvas')
   canvasRef!: ElementRef<HTMLCanvasElement>;
 
@@ -181,14 +188,12 @@ export class LatencyChartComponent
       });
 
       this.isLoading = false;
-      queueMicrotask(() => this.cdr.detectChanges());
 
       // Initial data update
       this.updateChart();
     } catch (error) {
       console.error('Failed to initialize chart:', error);
       this.isLoading = false;
-      queueMicrotask(() => this.cdr.detectChanges());
     }
   }
 

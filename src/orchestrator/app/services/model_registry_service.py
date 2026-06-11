@@ -283,8 +283,14 @@ class ModelRegistryService:
                 if self.api_key:
                     headers["Authorization"] = f"Bearer {self.api_key}"
 
+                # gateway_url may already include /v1 (INFERENCE_GATEWAY_URL default does),
+                # so guard against producing /v1/v1/models — same handling as the direct
+                # inference-server and model-detail paths below.
                 gateway_endpoint = (self.gateway_url or "").rstrip("/")
-                models_url = f"{gateway_endpoint}/v1/models"
+                if gateway_endpoint.endswith("/v1"):
+                    models_url = f"{gateway_endpoint}/models"
+                else:
+                    models_url = f"{gateway_endpoint}/v1/models"
 
                 logger.info(
                     "Querying models from Gateway (all providers): %s",

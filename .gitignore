@@ -97,6 +97,7 @@ config/make.local.mk
 config/secrets/*
 !config/secrets/.gitkeep
 !config/secrets/README.md
+!config/secrets/*.example
 src/frontend-angular/.npmrc.local
 
 # Enterprise CA certificates (machine/site-specific; never commit)

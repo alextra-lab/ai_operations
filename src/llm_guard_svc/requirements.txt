@@ -19,7 +19,7 @@ cachetools>=7.1.4,<8.0.0
 # sole blocker for the transformers 5.x upgrade. The three ONNX classifiers now
 # drive onnxruntime.InferenceSession directly (see _onnx_classifier.py, AIO-77).
 torch>=2.4.0
-transformers[torch]>=5.0.0,<5.11.0
+transformers[torch]>=5.0.0,<5.13.0
 onnxruntime>=1.26.0
 # onnx is transitive (via onnxruntime/optimum). Explicit floor closes 6 Dependabot CVEs
 # (alerts 153-157, 159): GHSA-6xj5-x7h3-3r6c et al., all patched in onnx>=1.21.0.

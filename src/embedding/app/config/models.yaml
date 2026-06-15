@@ -1,12 +1,18 @@
 # Default configuration for embedding service
+#
+# Both providers below ship DISABLED. Out of the box the service starts but has no
+# active embedding provider, so requests return 503 "No providers available" until an
+# operator explicitly enables one. Nothing defaults to a remote server or to the local
+# torch backend. To use a provider, set its `enabled: true` (and for `local`, build the
+# image with WITH_LOCAL_EMBEDDING=1 so torch/sentence-transformers are installed).
 
-default_provider: local
+default_provider: null
 
 providers:
   # OpenAI-compatible provider configuration (example: local inference server)
   - name: openai
     type: OPENAI_COMPATIBLE
-    enabled: true
+    enabled: false
     priority: 10
     connection:
       url: http://host.docker.internal:1234/v1
@@ -26,10 +32,10 @@ providers:
         default: false
         batch_size: 8
 
-  # Local model provider configuration (for fallback)
+  # Local model provider (torch + sentence-transformers; requires WITH_LOCAL_EMBEDDING=1 build)
   - name: local
     type: LOCAL_MODEL
-    enabled: true
+    enabled: false
     priority: 20
     models:
       - name: all-minilm-l6-v2

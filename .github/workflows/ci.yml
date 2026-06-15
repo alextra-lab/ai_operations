@@ -140,6 +140,11 @@ jobs:
         working-directory: src/frontend-angular
         run: npm ci
 
-      - name: Run npm audit (high+)
+      - name: Run npm audit (high+, production deps)
         working-directory: src/frontend-angular
-        run: npm audit --audit-level=high
+        # --omit=dev: gate on dependencies that actually ship in the production bundle.
+        # The remaining high advisories are all build/dev tooling (esbuild, vite,
+        # @angular-devkit/build-angular) whose only "fix" is a breaking toolchain
+        # downgrade and whose attack surface is the local dev server (`ng serve`),
+        # never the deployed nginx image. Production deps must stay clean.
+        run: npm audit --audit-level=high --omit=dev

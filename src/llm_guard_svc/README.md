@@ -13,7 +13,7 @@ This removed the library's hard `transformers==4.51.3` pin and closed 7 CVEs.
 |---|---|---|
 | `regex` | stdlib `re` + presidio TextReplaceBuilder | MIT |
 | `secrets` | `detect-secrets` (vendored plugins) | MIT |
-| `prompt_injection` | ONNX (deberta-v3) via transformers + optimum | Apache-2.0 |
+| `prompt_injection` | ONNX (deberta-v3) via onnxruntime + transformers tokenizer | Apache-2.0 |
 | `gibberish` | ONNX classifier | Apache-2.0 |
 | `language` | ONNX (xlm-roberta) | MIT |
 | `anonymize` (PII) | Presidio pattern recognizers + GLiNER `gliner_multi_pii-v1` | MIT / Apache-2.0 |

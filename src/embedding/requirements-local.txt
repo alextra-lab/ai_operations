@@ -1,0 +1,13 @@
+# Optional local-embedding extras for the SentenceTransformer (LocalProvider) backend.
+#
+# NOT installed by default on any profile. The Dockerfile installs these only when built
+# with --build-arg WITH_LOCAL_EMBEDDING=1 (e.g. `make build WITH_LOCAL_EMBEDDING=1`).
+#
+# WARNING: torch's default wheel on a plain PyPI index is the CUDA build and pulls
+# multi-GB nvidia-* packages — on x86_64 AND modern arm64. To get a CPU-only image,
+# build with TORCH_INDEX_URL pointing at a PyTorch CPU index (serves torch==X+cpu),
+# or supply a torch +cpu wheel via the wheelhouse and build with OFFLINE=1. Without a
+# CPU torch source this WILL download CUDA. Enterprise builds leave this off entirely
+# and use a remote/OpenAI-compatible embedding provider instead.
+sentence-transformers>=5.5.1
+torch>=2.12.0

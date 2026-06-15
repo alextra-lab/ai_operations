@@ -33,9 +33,17 @@ else
   $(error Unknown PROFILE '$(PROFILE)'. Use: local (default) or enterprise)
 endif
 
+# Local embedding (torch + sentence-transformers) is OFF by default on every profile:
+# the embedding-service builds lean and CPU-only (no torch, no nvidia-* CUDA wheels) and
+# starts with no active provider (503 until one is enabled). Opt in with
+# `make build WITH_LOCAL_EMBEDDING=1` — and supply a CPU torch source (TORCH_INDEX_URL or
+# wheelhouse), or it will pull the multi-GB CUDA build.
+WITH_LOCAL_EMBEDDING ?= 0
+
 BUILD_ARGS = --build-arg BASE_REGISTRY=$(BASE_REGISTRY) \
              --build-arg PIP_INDEX_URL=$(PIP_INDEX_URL) \
-             --build-arg TORCH_INDEX_URL=$(TORCH_INDEX_URL)
+             --build-arg TORCH_INDEX_URL=$(TORCH_INDEX_URL) \
+             --build-arg WITH_LOCAL_EMBEDDING=$(WITH_LOCAL_EMBEDDING)
 
 # Exported so `docker compose` interpolates them in image: names (infra image
 # pulls) and build.args (base-image FROMs) — not only at `make build` time.

@@ -101,6 +101,13 @@ See [Dependency Management Guide](docs/development/guidelines/Dependency_Managem
    `make up` wraps `docker compose` with the correct `--env-file` and local override —
    prefer it over a raw `docker compose up`, which skips both.
 
+   > **PyTorch is opt-in.** By default `embedding-service` and `llm-guard-svc` build
+   > **without** `torch` (and the multi-GB `nvidia-*` CUDA wheels it pulls). The default
+   > `embedding-service` then has no active provider (returns `503` until one is enabled),
+   > and `llm-guard-svc` stays disabled but healthy. To build the local torch-based features,
+   > pass `WITH_LOCAL_EMBEDDING=1` / `WITH_LLM_GUARD_MODELS=1` and supply a CPU-torch source —
+   > see [docs/operations/AIR_GAPPED_DEPLOYMENT.md](docs/operations/AIR_GAPPED_DEPLOYMENT.md).
+
 ## Developer setup (host)
 
 Running the test suites, linters, or `python ops/...` scripts **on the host** (rather than

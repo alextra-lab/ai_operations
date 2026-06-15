@@ -2,6 +2,20 @@
 
 The Embedding Service is a component of the AI Operations Platform system, providing text embedding generation using both OpenAI-compatible inference servers and local models.
 
+## ⚠️ Deactivated by default
+
+Out of the box **no provider is enabled** (neither the remote OpenAI-compatible one nor the
+local model). The service starts, but embedding requests return **`503 "No providers
+available"`** until you enable a provider in `app/config/models.yaml` (set `enabled: true`).
+Nothing defaults to a remote server.
+
+The **local** (SentenceTransformer) provider also requires `torch`, which is **not installed by
+default** — the default image is lean and CPU-only with no `torch`/`nvidia-*` CUDA wheels. To
+include it, build with **`WITH_LOCAL_EMBEDDING=1`** (e.g. `make build SVC=embedding-service
+WITH_LOCAL_EMBEDDING=1`) and supply a CPU-torch source (see
+[docs/operations/AIR_GAPPED_DEPLOYMENT.md](../../docs/operations/AIR_GAPPED_DEPLOYMENT.md)),
+then enable the `local` provider in config.
+
 ## Features
 
 - **Multiple Provider Support**:

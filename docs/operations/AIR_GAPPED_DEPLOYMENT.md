@@ -66,6 +66,46 @@ make build PROFILE=enterprise
 Each parametrized Dockerfile accepts these ARGs and uses them for the base image pull and
 pip install. No Dockerfile edits are required.
 
+### Torch / local ML is opt-in (default OFF) — no nvidia in default images
+
+By default, **`embedding-service` and `llm-guard-svc` build without PyTorch** (and therefore
+without the multi-GB `nvidia-*` CUDA wheels that `torch` pulls in on x86_64 **and** arm64).
+This is the right default for enterprise: there is usually no CPU-torch (`torch==X+cpu`) source
+behind the Artifactory mirrors, and the deploy targets are CPU-only. `TORCH_INDEX_URL` above is
+unused unless you opt in.
+
+Two build flags gate the torch/ML stack (both default `0` on every profile):
+
+| Flag | Service | What it installs when `=1` |
+|---|---|---|
+| `WITH_LOCAL_EMBEDDING` | `embedding-service` | `torch` + `sentence-transformers` (local SentenceTransformer provider) |
+| `WITH_LLM_GUARD_MODELS` | `llm-guard-svc` | `torch`, `transformers`, `onnxruntime`, `gliner`, `spaCy` (model-based scanners) |
+
+**Default behavior (flags off):**
+- `embedding-service` starts with **no active provider** → embedding requests return
+  `503 "No providers available"` until one is enabled in `app/config/models.yaml`.
+- `llm-guard-svc` starts, loads models lazily (nothing at startup), and **stays disabled**
+  (`LLM_GUARD_ENABLED=false`); `/health` passes, so the `ui-webapp → llm-guard` compose
+  dependency is satisfied. Model scanners simply never load.
+
+**To enable local torch-based features**, you need both the flag **and** a CPU-torch source —
+there is no `+cpu` wheel on a plain PyPI mirror, only at `download.pytorch.org/whl/cpu`:
+
+```bash
+# Stage the CPU torch wheels into the wheelhouse on an internet-connected machine:
+pip download torch==<ver>+cpu --index-url https://download.pytorch.org/whl/cpu \
+  --only-binary=:all: --platform manylinux2014_x86_64  --python-version 312 -d src/wheelhouse
+pip download torch==<ver>+cpu --index-url https://download.pytorch.org/whl/cpu \
+  --only-binary=:all: --platform manylinux2014_aarch64 --python-version 312 -d src/wheelhouse
+
+# Then build offline with the flag on (no torch index consulted):
+make build-offline SVC=embedding-service WITH_LOCAL_EMBEDDING=1
+make build-offline SVC=llm-guard-svc     WITH_LLM_GUARD_MODELS=1
+```
+
+If your Artifactory **does** proxy a CPU torch index, point `TORCH_INDEX_URL` at it and use a
+normal (online) `make build … WITH_LOCAL_EMBEDDING=1` instead.
+
 **CI/CD:** Enterprise builds run in GitLab CI. The pipeline sets these variables via CI
 environment configuration. Local developers on the enterprise network do not build images
 manually — images are distributed via the internal Artifactory Docker registry.

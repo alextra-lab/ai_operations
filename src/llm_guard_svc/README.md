@@ -28,6 +28,15 @@ credit card, US SSN, phone, IBAN) plus GLiNER for free-text `PERSON`/`LOCATION`.
 response and the orchestrator skips it. Enable it **only after** staging the models
 (below). The native PII engine is **not supported on the enterprise profile**.
 
+The image is also built **lean by default**: the model/ML stack (`torch`, `transformers`,
+`onnxruntime`, `gliner`, `spaCy`) is **not installed** unless you build with
+**`WITH_LLM_GUARD_MODELS=1`** — so the default image has no `torch` and no `nvidia-*` CUDA
+wheels. It still boots and `/health` passes (so the `ui-webapp → llm-guard` compose dependency
+holds); the model scanners just can't load. The regex/secrets scanners (no models) work in the
+lean image. To run the model-based scanners, build with the flag **and** a CPU-torch source
+(see [docs/operations/AIR_GAPPED_DEPLOYMENT.md](../../docs/operations/AIR_GAPPED_DEPLOYMENT.md)),
+then stage the models below.
+
 ## Prerequisite: stage the models (manual, before enabling)
 
 Models are **not** downloaded during the image build. They are staged once into

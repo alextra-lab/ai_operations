@@ -1,7 +1,7 @@
 # --- Web framework ---
-fastapi>=0.117.1
+fastapi>=0.137.0
 uvicorn==0.49.0
-starlette>=1.2.0
+starlette>=1.3.1
 pydantic>=2.12.5,<3.0.0
 python-json-logger==4.1.0
 httpx>=0.28.1
@@ -56,7 +56,7 @@ numpy>=1.19.0,<3.0.0
 typing-extensions>=4.15.0,<5.0.0
 # cryptography is transitive (via pyOpenSSL/httpx chain). Explicit floor closes
 # Dependabot CVEs alerts 152 and 154, patched in cryptography>=46.0.5.
-cryptography>=48.0.1
+cryptography>=49.0.0
 
 # --- Instrumentation and monitoring ---
 opentelemetry-api==1.42.1

@@ -46,3 +46,10 @@ TORCH_INDEX_URL = https://your-artifactory.example.com/artifactory/api/pypi/torc
 # npm mirror for the frontend (ui-webapp) build. Same rule: URL only, NO
 # credentials here — npm auth goes in config/secrets/npmrc.
 NPM_REGISTRY    = https://your-artifactory.example.com/artifactory/api/npm/npm/
+
+# Optional torch/local-ML opt-ins (default 0 = lean, CPU-only images, no torch/nvidia).
+# Set to 1 ONLY if you have a CPU-torch source (a +cpu index for TORCH_INDEX_URL, or +cpu
+# wheels staged in the wheelhouse for `make build-offline`). See
+# docs/operations/AIR_GAPPED_DEPLOYMENT.md.
+# WITH_LOCAL_EMBEDDING  = 1   # embedding-service: install torch + sentence-transformers
+# WITH_LLM_GUARD_MODELS = 1   # llm-guard-svc: install torch + transformers + onnxruntime + gliner + spaCy

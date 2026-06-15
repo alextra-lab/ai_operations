@@ -13,7 +13,7 @@ This removed the library's hard `transformers==4.51.3` pin and closed 7 CVEs.
 |---|---|---|
 | `regex` | stdlib `re` + presidio TextReplaceBuilder | MIT |
 | `secrets` | `detect-secrets` (vendored plugins) | MIT |
-| `prompt_injection` | ONNX (deberta-v3) via transformers + optimum | Apache-2.0 |
+| `prompt_injection` | ONNX (deberta-v3) via onnxruntime + transformers tokenizer | Apache-2.0 |
 | `gibberish` | ONNX classifier | Apache-2.0 |
 | `language` | ONNX (xlm-roberta) | MIT |
 | `anonymize` (PII) | Presidio pattern recognizers + GLiNER `gliner_multi_pii-v1` | MIT / Apache-2.0 |
@@ -27,6 +27,15 @@ credit card, US SSN, phone, IBAN) plus GLiNER for free-text `PERSON`/`LOCATION`.
 `LLM_GUARD_ENABLED` defaults to **`false`**. The service returns a pass-through
 response and the orchestrator skips it. Enable it **only after** staging the models
 (below). The native PII engine is **not supported on the enterprise profile**.
+
+The image is also built **lean by default**: the model/ML stack (`torch`, `transformers`,
+`onnxruntime`, `gliner`, `spaCy`) is **not installed** unless you build with
+**`WITH_LLM_GUARD_MODELS=1`** — so the default image has no `torch` and no `nvidia-*` CUDA
+wheels. It still boots and `/health` passes (so the `ui-webapp → llm-guard` compose dependency
+holds); the model scanners just can't load. The regex/secrets scanners (no models) work in the
+lean image. To run the model-based scanners, build with the flag **and** a CPU-torch source
+(see [docs/operations/AIR_GAPPED_DEPLOYMENT.md](../../docs/operations/AIR_GAPPED_DEPLOYMENT.md)),
+then stage the models below.
 
 ## Prerequisite: stage the models (manual, before enabling)
 

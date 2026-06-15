@@ -16,8 +16,15 @@ password YOUR_PASSWORD_OR_API_TOKEN
 ```
 
 One `machine` line per index host. If your torch index is a different host,
-add a second block. Keep `PIP_INDEX_URL` / `TORCH_INDEX_URL` in
-`config/make.local.mk` **without** embedded credentials.
+add a second block.
+
+**This is the secure home for pip/torch credentials — not the index URL.**
+`PIP_INDEX_URL` / `TORCH_INDEX_URL` in `config/make.local.mk` must stay
+credential-free (`https://host/.../simple`, no `user:pass@`): those URLs are
+passed to the build as `--build-arg` and would leak into the image's
+`docker history`. pip reads this `netrc` (mounted to `/root/.netrc` on a tmpfs
+for the install `RUN` only) and authenticates to the matching host
+automatically, so the URL never needs the credentials.
 
 ## `npmrc` — npm registry auth
 

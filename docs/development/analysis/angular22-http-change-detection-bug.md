@@ -1,7 +1,11 @@
 # Angular 22 — HTTP responses do not trigger change detection (known bug + workaround)
 
-**Status:** Worked around (per-panel `detectChanges`). Root cause NOT fully understood — flagged for a future deep-dive.
-**First observed:** after the design-system reskin (PR #130), which coincided with the Angular **21 → 22** bump.
+**Status:** RESOLVED (2026-06-11) by rolling back to Angular **21.2** (PR #166 + build fix #167).
+The bug was confirmed to be the **Angular 22 upgrade itself** — reverting to 21 fixed every panel
+app-wide, with the per-panel workaround irrelevant. Root cause within Angular 22 still not pinned;
+**do not re-attempt the 22 upgrade without a minimal repro + fix** (see deep-dive plan below).
+**First observed:** after the Angular **21 → 22** bump (PR #137, 2026-06-10) — a separate atomic
+deps-only PR, NOT the design-system reskin (#130, 2026-06-09) as originally assumed.
 **Affected:** every data-bound component app-wide — admin panels, dev tools, analytics, documents,
 collections, templates, use-cases, and shared dialogs/charts (~64 components patched).
 

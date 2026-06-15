@@ -7,56 +7,27 @@ python-json-logger==4.1.0
 httpx>=0.28.1
 cachetools>=7.1.4,<8.0.0
 
-# --- Native ML stack (LLG-04 finale: llm-guard removed) ---
-# The llm-guard library (which hard-pinned transformers==4.51.3, the source of the
-# 7 unfixable Dependabot CVEs) is gone; all 6 scanners run native implementations.
-# transformers >=5.0.0 closes CVE-2026-1839 / GHSA-69w3-r845-3855 (Dependabot
-# alert 160; Trainer._load_rng_state torch.load RCE — inference-only, not
-# exploitable here, but closed as fixed in the lockfile, AIO-77).
-# Bounded <5.2.0 because gliner==0.2.26 caps transformers<5.2.0; lifting that
-# ceiling requires a gliner upgrade (future ticket).
-# optimum[onnxruntime] removed: its optimum-onnx 0.1.0 transitive dep was the
-# sole blocker for the transformers 5.x upgrade. The three ONNX classifiers now
-# drive onnxruntime.InferenceSession directly (see _onnx_classifier.py, AIO-77).
-torch>=2.4.0
-transformers[torch]>=5.0.0,<5.11.0
-onnxruntime>=1.26.0
-# onnx is transitive (via onnxruntime/optimum). Explicit floor closes 6 Dependabot CVEs
-# (alerts 153-157, 159): GHSA-6xj5-x7h3-3r6c et al., all patched in onnx>=1.21.0.
-onnx>=1.21.0
+# --- Native regex/secrets scanner stack (NO ML models, NO torch) ---
+# These scanners run without the model stack, so they stay in the base image and work
+# even when the image is built lean (WITH_LLM_GUARD_MODELS=0). detect-secrets = regex
+# secret detection; presidio-anonymizer = text redaction (imported at module level by
+# the regex/secrets scanners, so it must be present for the app to import and boot).
 regex>=2026.5.9
-# Required by the DebertaV2 (prompt-injection) and XLM-RoBERTa (language)
-# tokenizers; transformers[torch] does not pull it in. Without it, /api/validate
-# fails with "DebertaV2Tokenizer requires the SentencePiece library".
-sentencepiece>=0.2.1
-
-# --- Native scanner stack (LLG-04: regex + secrets ported off llm-guard) ---
-# Pinned explicitly (was previously an indirect dependency); the version
-# matches the one previously resolved so the vendored detect-secrets plugins behave identically.
 bc-detect-secrets==1.5.47
 presidio-anonymizer==2.2.362
-
-# --- Native PII stack (LLG-04 step 3: anonymize ported off llm-guard) ---
-# Presidio pattern recognizers + GLiNER replace the cc-by-nc distilbert PII model.
-# presidio-analyzer was previously only an indirect dependency; it is pinned
-# explicitly now. gliner 0.2.26 requires transformers>=4.51.3,<5.2.0 (satisfied
-# by the >=5.0.0,<5.2.0 range above) and torch>=2.0.0. Apache-2.0.
-presidio-analyzer==2.2.362
-gliner==0.2.26
-
-# --- spaCy (driven by the bundled language models) ---
-# en_core_web_sm-3.7.1 / zh_core_web_sm-3.7.0 require spacy>=3.7.2,<3.8.0.
-# spaCy 3.7.x depends on thinc 8.2.x, which pins numpy<2.0.0 — hence the
-# numpy ceiling below. presidio-analyzer allows spacy<4.0.0.
-# zh_core_web_sm-3.7.0 pins spacy-pkuseg>=1.0.1,<1.1.0, so 1.0.x is rejected.
-spacy>=3.7.2,<3.9.0
-spacy-pkuseg>=1.0.1,<1.1.0
 numpy>=1.19.0,<3.0.0
 
 typing-extensions>=4.15.0,<5.0.0
 # cryptography is transitive (via pyOpenSSL/httpx chain). Explicit floor closes
 # Dependabot CVEs alerts 152 and 154, patched in cryptography>=46.0.5.
 cryptography>=48.0.1
+
+# --- Model/ML scanner stack (torch, transformers, onnxruntime, gliner, spaCy, ...) ---
+# Moved to requirements-models.txt and installed ONLY when the image is built with
+# --build-arg WITH_LLM_GUARD_MODELS=1. The service is disabled by default (enterprise
+# can't download the models), so the default image ships without torch — no multi-GB
+# nvidia-* CUDA wheels. The app still boots (scanners load lazily, nothing at startup)
+# and /health passes, so the ui-webapp -> llm-guard compose dependency is satisfied.
 
 # --- Instrumentation and monitoring ---
 opentelemetry-api==1.42.1

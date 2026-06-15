@@ -144,17 +144,9 @@ class ServiceConfig(BaseModel):
         if len(names) != len(set(names)):
             raise ValueError("Provider names must be unique")
 
-        # Ensure default provider is set and enabled
-        default_provider = None
-        for provider in v:
-            if provider.is_enabled and (
-                default_provider is None or provider.priority < default_provider.priority
-            ):
-                default_provider = provider
-
-        if default_provider is None:
-            raise ValueError("At least one provider must be enabled")
-
+        # Zero enabled providers is a valid state: the service starts deactivated and
+        # returns 503 "No providers available" for embedding requests until an operator
+        # enables one. (We intentionally do NOT require an enabled/default provider.)
         return v
 
 

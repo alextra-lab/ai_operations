@@ -8,6 +8,9 @@ WORKDIR /app
 ARG PIP_INDEX_URL=https://pypi.org/simple
 ARG OFFLINE=0
 ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
+# Opt-in local embedding (torch + sentence-transformers). Default 0 = lean, CPU-only
+# image with no torch and no nvidia-* CUDA wheels. Set 1 only with a CPU torch source.
+ARG WITH_LOCAL_EMBEDDING=0
 
 # Optional enterprise CA bundle: drop *.crt/*.pem into src/certs/ and image
 # builds trust them (corporate TLS interception / internal Artifactory CA).
@@ -18,15 +21,27 @@ ENV PIP_CERT=/etc/ssl/certs/ca-certificates.crt \
     SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
 # Copy requirements and prebuilt wheels (from host)
-COPY embedding/requirements.txt .
+COPY embedding/requirements.txt embedding/requirements-local.txt ./
 COPY wheelhouse /wheelhouse
 
-# Install runtime dependencies: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0)
+# Base runtime deps (no torch): offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0).
 RUN --mount=type=secret,id=netrc,target=/root/.netrc,required=false \
     if [ "$OFFLINE" = "1" ]; then \
         pip install --no-cache-dir --no-index --find-links=/wheelhouse -r requirements.txt; \
     else \
-        pip install --no-cache-dir --index-url "$TORCH_INDEX_URL" --extra-index-url "$PIP_INDEX_URL" -r requirements.txt; \
+        pip install --no-cache-dir --index-url "$PIP_INDEX_URL" -r requirements.txt; \
+    fi
+
+# Optional local-embedding extras (torch + sentence-transformers). Default off → no torch,
+# no nvidia-* CUDA wheels. When on, torch comes from TORCH_INDEX_URL (must be a CPU index)
+# or the wheelhouse (OFFLINE=1); without a CPU torch source this pulls the CUDA build.
+RUN --mount=type=secret,id=netrc,target=/root/.netrc,required=false \
+    if [ "$WITH_LOCAL_EMBEDDING" = "1" ]; then \
+        if [ "$OFFLINE" = "1" ]; then \
+            pip install --no-cache-dir --no-index --find-links=/wheelhouse -r requirements-local.txt; \
+        else \
+            pip install --no-cache-dir --index-url "$TORCH_INDEX_URL" --extra-index-url "$PIP_INDEX_URL" -r requirements-local.txt; \
+        fi; \
     fi
 
 # Stage 2: Runtime — wheelhouse and build inputs do not ship in this image

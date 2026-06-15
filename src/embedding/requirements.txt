@@ -15,9 +15,10 @@ sqlalchemy>=2.0.50
 psycopg>=3.3.2
 psycopg[binary]>=3.3.2
 
-# For local embedding provider (optional)
-sentence-transformers>=5.5.1
-torch>=2.12.0
+# Local embedding provider (optional): torch + sentence-transformers are NOT installed
+# by default — they live in requirements-local.txt and are only added when the image is
+# built with WITH_LOCAL_EMBEDDING=1. This keeps the default image lean and CPU-only (no
+# torch, no multi-GB nvidia-* CUDA wheels). numpy stays here: small, CUDA-free, broadly used.
 numpy>=2.4.6,<3.0.0
 
 # Instrumentation and Monitoring

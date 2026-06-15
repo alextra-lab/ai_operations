@@ -11,6 +11,11 @@ WORKDIR /app
 ARG PIP_INDEX_URL=https://pypi.org/simple
 ARG OFFLINE=0
 ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
+# Opt-in model/ML scanner stack (torch, transformers, onnxruntime, gliner, spaCy).
+# Default 0 = lean, CPU-only image with no torch and no nvidia-* CUDA wheels. The service
+# is disabled by default and loads models lazily, so the lean image is the normal
+# enterprise case. Set 1 only with the models staged and a CPU torch source.
+ARG WITH_LLM_GUARD_MODELS=0
 
 # Optional enterprise CA bundle: drop *.crt/*.pem into src/certs/ and image
 # builds trust them (corporate TLS interception / internal Artifactory CA).
@@ -28,16 +33,29 @@ ENV PIP_CERT=/etc/ssl/certs/ca-certificates.crt \
 # The former en/zh spaCy model wheels were dropped: the native PII path calls
 # Presidio pattern recognizers directly (no spaCy NlpEngine), so no spaCy model
 # is needed (the `spacy` library remains only as a presidio-analyzer dependency).
-COPY llm_guard_svc/requirements.txt .
+COPY llm_guard_svc/requirements.txt llm_guard_svc/requirements-models.txt ./
 COPY wheelhouse /wheelhouse
 
-# --- Install runtime dependencies: offline from wheelhouse (OFFLINE=1) or from PyPI (OFFLINE=0) ---
+# --- Base runtime deps (no torch): offline from wheelhouse (OFFLINE=1) or PyPI (OFFLINE=0) ---
 RUN --mount=type=secret,id=netrc,target=/root/.netrc,required=false \
     if [ "$OFFLINE" = "1" ]; then \
         pip install --no-cache-dir --no-index --find-links=/wheelhouse -r requirements.txt; \
     else \
-        pip install --no-cache-dir --index-url "$TORCH_INDEX_URL" --extra-index-url "$PIP_INDEX_URL" \
-            -r requirements.txt; \
+        pip install --no-cache-dir --index-url "$PIP_INDEX_URL" -r requirements.txt; \
+    fi
+
+# --- Optional model/ML scanner stack (torch, transformers, onnxruntime, gliner, spaCy) ---
+# Default off → no torch, no nvidia-* CUDA wheels. When on, torch comes from
+# TORCH_INDEX_URL (must be a CPU index) or the wheelhouse (OFFLINE=1); without a CPU torch
+# source this pulls the CUDA build.
+RUN --mount=type=secret,id=netrc,target=/root/.netrc,required=false \
+    if [ "$WITH_LLM_GUARD_MODELS" = "1" ]; then \
+        if [ "$OFFLINE" = "1" ]; then \
+            pip install --no-cache-dir --no-index --find-links=/wheelhouse -r requirements-models.txt; \
+        else \
+            pip install --no-cache-dir --index-url "$TORCH_INDEX_URL" --extra-index-url "$PIP_INDEX_URL" \
+                -r requirements-models.txt; \
+        fi; \
     fi
 
 # Stage 2: Runtime — wheelhouse and build inputs do not ship in this image

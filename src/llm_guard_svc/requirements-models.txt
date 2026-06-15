@@ -1,0 +1,38 @@
+# Optional model/ML scanner stack for llm_guard_svc — NOT installed by default.
+#
+# The service is disabled by default (enterprise can't download the models), so torch is
+# all-or-nothing: the whole model stack lives here and is installed only when the image
+# is built with --build-arg WITH_LLM_GUARD_MODELS=1. Default builds are lean and CPU-only
+# — no torch, no multi-GB nvidia-* CUDA wheels.
+#
+# WARNING: torch's default wheel on a plain PyPI index is the CUDA build and pulls
+# multi-GB nvidia-* packages (x86_64 AND modern arm64). For a CPU-only image, build with
+# TORCH_INDEX_URL pointing at a PyTorch CPU index (serves torch==X+cpu), or supply torch
+# +cpu wheels via the wheelhouse and build with OFFLINE=1. Without a CPU torch source
+# this WILL download CUDA.
+#
+# Scanners enabled by this stack:
+#   - prompt-injection / gibberish / language  -> transformers tokenizer + onnxruntime
+#   - anonymize (free-text PII)                -> presidio-analyzer + GLiNER (torch) + spaCy
+
+# transformers >=5.0.0 closes CVE-2026-1839 / GHSA-69w3-r845-3855 (Dependabot alert 160;
+# Trainer._load_rng_state torch.load RCE). Bounded <5.2.0 because gliner==0.2.26 caps
+# transformers<5.2.0 (lifting that ceiling requires a gliner upgrade — future ticket).
+torch>=2.4.0
+transformers[torch]>=5.0.0,<5.11.0
+onnxruntime>=1.26.0
+# onnx floor closes 6 Dependabot CVEs (alerts 153-157, 159), patched in onnx>=1.21.0.
+onnx>=1.21.0
+# Required by the DebertaV2 (prompt-injection) and XLM-RoBERTa (language) tokenizers;
+# transformers[torch] does not pull it in.
+sentencepiece>=0.2.1
+
+# Free-text PII: Presidio pattern recognizers + GLiNER (Apache-2.0). gliner 0.2.26
+# requires transformers>=4.51.3,<5.2.0 (satisfied above) and torch>=2.0.0.
+presidio-analyzer==2.2.362
+gliner==0.2.26
+# spaCy is a presidio-analyzer dependency; spaCy 3.7.x -> thinc 8.2.x pins numpy<2.0.0,
+# which the optional install resolves against the base numpy. zh_core_web_sm pins
+# spacy-pkuseg>=1.0.1,<1.1.0.
+spacy>=3.7.2,<3.9.0
+spacy-pkuseg>=1.0.1,<1.1.0

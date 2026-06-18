@@ -47,7 +47,7 @@ dependencies = [
 
     "typing-extensions>=4.15.0,<5.0.0",
     # Explicit floor — closes Dependabot cryptography CVEs (alerts 152, 154), patched in >=46.0.5.
-    "cryptography>=48.0.0",
+    "cryptography>=48.0.1",
 
     # Instrumentation
     "opentelemetry-api==1.42.1",

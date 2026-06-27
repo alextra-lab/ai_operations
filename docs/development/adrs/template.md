@@ -85,6 +85,29 @@ State the decision clearly and concisely:
 
 ---
 
+## Verification / Acceptance Criteria
+
+**How will we know this decision actually delivered — not just merged?**
+
+Each criterion is a **testable, discriminating, outcome-level invariant** — the observable
+result that proves the decision worked — plus *how* it is checked (reuse existing
+instrumentation where possible: a query, a probe, a test assertion, a CLI call).
+
+**No-BS bar — every criterion must be able to fail.** Before accepting one, ask: *could a
+broken or half-finished implementation still satisfy it?* If yes, rewrite it until only a
+working outcome passes. Reject existence-checks standing in for behaviour ("the field
+exists" vs "the field holds the *right* value"), "tests pass" where no test asserts the
+actual invariant, vanity counts decoupled from the outcome, and any line that merely
+restates the task.
+
+- **AC-1** — <observable outcome> · **Check:** <query | probe | test | CLI> · *Fails if* <…>
+- **AC-2** — <observable outcome> · **Check:** <…> · *Fails if* <…>
+
+**Seam owner (for a decomposed ADR):** name who asserts the *assembled* intent holds once
+all child tickets land — so the ADR does not close just because its last child merged.
+
+---
+
 ## References
 
 - Link to related ADRs
@@ -106,5 +129,5 @@ State the decision clearly and concisely:
 
 ---
 
-**Template Version:** 1.0
+**Template Version:** 1.1
 **Based On:** [Michael Nygard's ADR pattern](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)

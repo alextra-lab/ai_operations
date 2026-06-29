@@ -1,7 +1,7 @@
 # Core FastAPI stack (matching backend service)
-fastapi>=0.136.3
+fastapi>=0.138.1
 uvicorn==0.49.0
-starlette>=1.2.1
+starlette>=1.3.1
 pydantic>=2.13.4,<3.0.0
 
 # Authentication (reuses shared.auth) - Needed for P1-T3
@@ -10,20 +10,20 @@ bcrypt>=5.0.0,<6.0.0
 passlib==1.7.4
 
 # Database - Needed for P1-T2
-sqlalchemy>=2.0.43
+sqlalchemy>=2.0.51
 psycopg>=3.3.2
 psycopg[binary]>=3.3.2
 asyncpg>=0.31.0
 
 # HTTP clients for provider calls - Needed for P1-T5+
 httpx>=0.28.1
-openai>=2.41.0,<3.0.0
+openai>=2.44.0,<3.0.0
 
 # Retry logic - Needed for P2-T3
 backoff>=2.2.1
 
 # Redis for rate limiting and circuit breaker - P2-T4
-redis>=8.0.0
+redis>=8.0.1
 
 # Logging (reuses shared.logging_utils)
 structlog>=26.1.0  # Structured logging - version constraint for security

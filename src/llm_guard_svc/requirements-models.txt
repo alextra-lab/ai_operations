@@ -16,10 +16,10 @@
 #   - anonymize (free-text PII)                -> presidio-analyzer + GLiNER (torch) + spaCy
 
 # transformers >=5.0.0 closes CVE-2026-1839 / GHSA-69w3-r845-3855 (Dependabot alert 160;
-# Trainer._load_rng_state torch.load RCE). Bounded <5.2.0 because gliner==0.2.26 caps
+# Trainer._load_rng_state torch.load RCE). Bounded <5.2.0 because gliner==0.2.27 caps
 # transformers<5.2.0 (lifting that ceiling requires a gliner upgrade — future ticket).
 torch>=2.4.0
-transformers[torch]>=5.0.0,<5.11.0
+transformers[torch]>=5.0.0,<5.13.0
 onnxruntime>=1.26.0
 # onnx floor closes 6 Dependabot CVEs (alerts 153-157, 159), patched in onnx>=1.21.0.
 onnx>=1.21.0
@@ -29,8 +29,8 @@ sentencepiece>=0.2.1
 
 # Free-text PII: Presidio pattern recognizers + GLiNER (Apache-2.0). gliner 0.2.26
 # requires transformers>=4.51.3,<5.2.0 (satisfied above) and torch>=2.0.0.
-presidio-analyzer==2.2.362
-gliner==0.2.26
+presidio-analyzer==2.2.363
+gliner==0.2.27
 # spaCy is a presidio-analyzer dependency; spaCy 3.7.x -> thinc 8.2.x pins numpy<2.0.0,
 # which the optional install resolves against the base numpy. zh_core_web_sm pins
 # spacy-pkuseg>=1.0.1,<1.1.0.

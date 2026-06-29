@@ -14,7 +14,7 @@ cachetools>=7.1.4,<8.0.0
 # the regex/secrets scanners, so it must be present for the app to import and boot).
 regex>=2026.5.9
 bc-detect-secrets==1.5.47
-presidio-anonymizer==2.2.362
+presidio-anonymizer==2.2.363
 numpy>=1.19.0,<3.0.0
 
 typing-extensions>=4.15.0,<5.0.0
@@ -30,10 +30,10 @@ cryptography>=48.0.1
 # and /health passes, so the ui-webapp -> llm-guard compose dependency is satisfied.
 
 # --- Instrumentation and monitoring ---
-opentelemetry-api==1.42.1
-opentelemetry-sdk==1.42.1
-opentelemetry-exporter-otlp==1.42.1
-opentelemetry-instrumentation-fastapi==0.63b1
-opentelemetry-instrumentation-requests==0.63b1
-opentelemetry-instrumentation-sqlalchemy==0.63b1
+opentelemetry-api==1.43.0
+opentelemetry-sdk==1.43.0
+opentelemetry-exporter-otlp==1.43.0
+opentelemetry-instrumentation-fastapi==0.64b0
+opentelemetry-instrumentation-requests==0.64b0
+opentelemetry-instrumentation-sqlalchemy==0.64b0
 prometheus-client==0.25.0

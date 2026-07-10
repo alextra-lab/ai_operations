@@ -22,7 +22,7 @@ torch>=2.4.0
 transformers[torch]>=5.0.0,<5.11.0
 onnxruntime>=1.26.0
 # onnx floor closes 6 Dependabot CVEs (alerts 153-157, 159), patched in onnx>=1.21.0.
-onnx>=1.21.0
+onnx>=1.22.0
 # Required by the DebertaV2 (prompt-injection) and XLM-RoBERTa (language) tokenizers;
 # transformers[torch] does not pull it in.
 sentencepiece>=0.2.1

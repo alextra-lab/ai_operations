@@ -28,7 +28,7 @@ dependencies = [
     "transformers[torch]>=5.0.0,<5.11.0",
     "onnxruntime>=1.26.0",
     # Explicit floor — closes 6 Dependabot onnx CVEs (alerts 153-157, 159), all patched in onnx>=1.21.0.
-    "onnx>=1.21.0",
+    "onnx>=1.22.0",
     "regex>=2026.5.9",
     "sentencepiece>=0.2.1",
 

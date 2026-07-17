@@ -18,7 +18,7 @@
 # transformers >=5.0.0 closes CVE-2026-1839 / GHSA-69w3-r845-3855 (Dependabot alert 160;
 # Trainer._load_rng_state torch.load RCE). Bounded <5.2.0 because gliner==0.2.26 caps
 # transformers<5.2.0 (lifting that ceiling requires a gliner upgrade — future ticket).
-torch>=2.4.0
+torch>=2.13.0
 transformers[torch]>=5.0.0,<5.11.0
 onnxruntime>=1.26.0
 # onnx floor closes 6 Dependabot CVEs (alerts 153-157, 159), patched in onnx>=1.21.0.

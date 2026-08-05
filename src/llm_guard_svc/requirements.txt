@@ -20,7 +20,7 @@ numpy>=1.19.0,<3.0.0
 typing-extensions>=4.15.0,<5.0.0
 # cryptography is transitive (via pyOpenSSL/httpx chain). Explicit floor closes
 # Dependabot CVEs alerts 152 and 154, patched in cryptography>=46.0.5.
-cryptography>=48.0.1
+cryptography>=50.0.0
 
 # --- Model/ML scanner stack (torch, transformers, onnxruntime, gliner, spaCy, ...) ---
 # Moved to requirements-models.txt and installed ONLY when the image is built with
